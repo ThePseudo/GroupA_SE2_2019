@@ -16,9 +16,10 @@ h1 {
 
 .loginbtn {
     padding: 15px 32px;
+    border-radius: 5px;
     background: cornsilk;
     border: 1px solid darkgray;
-    font-size: 16px;
+    font-size: 20px;
     cursor: pointer;
 }
 
@@ -29,6 +30,6 @@ h1 {
     background: cornsilk;
     margin: 20px;
     border: 1px solid darkgray;
-    font-size: 16px;
+    font-size: 32px;
     cursor: pointer;
 }
