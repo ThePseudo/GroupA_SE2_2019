@@ -5,7 +5,7 @@ top("Office queues - main");
 <h1>Welcome!</h1>
 <h1>Which service do you want to select?</h1>
 
-<a href="login.php" style="color:black;text-decoration:none;"><button class="topright loginbtn">Login</button></a>
+<a href="login_select.php" style="color:black;text-decoration:none;"><button class="topright loginbtn">Login</button></a>
 
 <br /><br /><br /><br />
 <div style="display:block; text-align:center; align-content:center; margin:auto;">
