@@ -1,0 +1,22 @@
+body {
+    background: #fffcf5;
+}
+
+h1 {
+    text-align: center;
+    color: coral;
+}
+
+.topright {
+    position: fixed;
+    vertical-align: top;
+    top: 50px;
+    right: 100px;
+}
+
+.loginbtn {
+    padding: 15px 32px;
+    background: cornsilk;
+    border: 1px solid darkgray;
+    font-size: 16px;
+}

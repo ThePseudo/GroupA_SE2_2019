@@ -1,17 +1,12 @@
-<!DOCTYPE html>
-<html>
+<?php
+require_once("base/templates.php");
+top("Office queues - main");
+?>
+<h1>Welcome!</h1>
+<h1>Which service do you want to select?</h1>
 
-<head>
-    <meta charset='utf-8'>
-    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
-    <title>Page Title</title>
-    <meta name='viewport' content='width=device-width, initial-scale=1'>
-    <link rel='stylesheet' type='text/css' media='screen' href='main.css'>
-    <script src='main.js'></script>
-</head>
+<button class="topright loginbtn">Login</button>
 
-<body>
-    <h1 style="margin:auto; text-align:center; margin-top:20px;">HEY! IT WORKS!</h1>
-</body>
-
-</html>
+<?php
+bottom();
+?>
