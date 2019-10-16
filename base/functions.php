@@ -28,7 +28,7 @@ function newTicket($db, $service)
     $stmt->execute();
     $count = $stmt->fetchColumn(0); // retrieve value column "count"
     $count++;
-
+    $ticket_num = $service.$count;
     //TODO: check max citizen served?
     
     $stmt = null;
@@ -44,6 +44,8 @@ function newTicket($db, $service)
 
     $stmt->execute();
     $db -> commit();
+
     $stmt = null;
     $db = null; //destroy the db's PDO object in order to close  connection to DB
+    return $ticket_num;
 }
