@@ -5,6 +5,7 @@ top("Office queues - login");
 <h1>Log in select</h1>
 <br /><br /><br /><br /><br /><br />
 
+<a href="index.php" style="color:black;text-decoration:none;"><button class="topright loginbtn">Home</button></a>
 <div style="display:block; text-align:center; align-content:center; margin:auto;">
 
     <a href="login_employee.php" style="color:black;text-decoration:none;"><button class="selectbtn">Employee</button></a>
