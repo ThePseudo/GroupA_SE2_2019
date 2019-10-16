@@ -21,12 +21,17 @@ function newTicket($db, $service)
 {
     $date = date("Y-m-d");
     $db->beginTransaction();
-    $stmt = $db->prepare("SELECT count(number) FROM ticket WHERE ID_service = :ID_service && data = :date FOR UPDATE");
+
+    $stmt = $db->prepare("SELECT count(number) FROM ticket WHERE ID_service = :ID_service && date = :date FOR UPDATE");
     $stmt->bindParam(':ID_service', $service);
     $stmt->bindParam(':date', $date);
     $stmt->execute();
-    $count = $stmt->fetch();
+    $count = $stmt->fetchColumn(0); // retrieve value column "count"
     $count++;
+
+    //TODO: check max citizen served?
+    
+    $stmt = null;
 
     $time_print = date("H:i:s");
     $stmt = $db->prepare("INSERT INTO ticket (ID_service,number,date,time_start_waiting,time_end_waiting,time_end_service) VALUES (:id, :number,:date,:time_s_w, :time_e_w, :time_e_s)");
@@ -34,10 +39,11 @@ function newTicket($db, $service)
     $stmt->bindParam(':number', $count);
     $stmt->bindParam(':date', $date);
     $stmt->bindParam(':time_s_w', $time_print);
-    $stmt->bindParam(':time_e_w', null, PDO::PARAM_NULL);
-    $stmt->bindParam(':time_e_s', null, PDO::PARAM_NULL);
+    $stmt->bindValue(':time_e_w', null, PDO::PARAM_NULL);
+    $stmt->bindValue(':time_e_s', null, PDO::PARAM_NULL);
 
     $stmt->execute();
-    $db->commit();
-    $db->close();
+    $db -> commit();
+    $stmt = null;
+    $db = null; //destroy the db's PDO object in order to close  connection to DB
 }
