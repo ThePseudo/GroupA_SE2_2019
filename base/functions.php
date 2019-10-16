@@ -24,7 +24,7 @@ function newTicket($service)
     $date = date("Y-m-d");
     $db->beginTransaction();
 
-    $stmt = $db->prepare("SELECT count(number) FROM ticket WHERE ID_service = :ID_service && date = :date FOR UPDATE");
+    $stmt = $db->prepare("SELECT COUNT(*) FROM ticket WHERE ID_service = :ID_service && date = :date FOR UPDATE");
     $stmt->bindParam(':ID_service', $service);
     $stmt->bindParam(':date', $date);
     $stmt->execute();
