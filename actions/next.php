@@ -1,7 +1,7 @@
 <?php
 
 // session[id] = counter
-require_once("functions.php");
+require_once("../base/functions.php");
 session_start();
 if (isset($_SESSION['id'])) {
     serveNext($_SESSION['id']);
