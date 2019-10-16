@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Creato il: Ott 16, 2019 alle 14:49
+-- Creato il: Ott 16, 2019 alle 16:55
 -- Versione del server: 10.4.8-MariaDB
 -- Versione PHP: 7.3.10
 
@@ -21,6 +21,8 @@ SET time_zone = "+00:00";
 --
 -- Database: `office_db`
 --
+CREATE DATABASE IF NOT EXISTS `office_db` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+USE `office_db`;
 
 -- --------------------------------------------------------
 
@@ -28,6 +30,7 @@ SET time_zone = "+00:00";
 -- Struttura della tabella `employee`
 --
 
+DROP TABLE IF EXISTS `employee`;
 CREATE TABLE `employee` (
   `ID` int(11) NOT NULL,
   `name` varchar(255) NOT NULL,
@@ -36,7 +39,8 @@ CREATE TABLE `employee` (
   `ID_counter` int(11) DEFAULT NULL,
   `status` varchar(10) NOT NULL,
   `ID_ticket_service` varchar(1) DEFAULT NULL,
-  `ID_ticket_number` int(11) DEFAULT NULL
+  `ID_ticket_number` int(11) DEFAULT NULL,
+  `password` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
@@ -45,6 +49,7 @@ CREATE TABLE `employee` (
 -- Struttura della tabella `employee_service`
 --
 
+DROP TABLE IF EXISTS `employee_service`;
 CREATE TABLE `employee_service` (
   `ID_employee` int(11) NOT NULL,
   `ID_service` varchar(1) NOT NULL
@@ -56,6 +61,7 @@ CREATE TABLE `employee_service` (
 -- Struttura della tabella `service`
 --
 
+DROP TABLE IF EXISTS `service`;
 CREATE TABLE `service` (
   `ID` varchar(1) NOT NULL,
   `name` varchar(255) NOT NULL,
@@ -68,6 +74,7 @@ CREATE TABLE `service` (
 -- Struttura della tabella `ticket`
 --
 
+DROP TABLE IF EXISTS `ticket`;
 CREATE TABLE `ticket` (
   `ID_service` varchar(1) NOT NULL,
   `number` int(11) NOT NULL,
@@ -105,6 +112,7 @@ INSERT INTO `ticket` (`ID_service`, `number`, `date`, `time_start_waiting`, `tim
 ('A', 21, '2019-10-16', '14:46:39', NULL, NULL),
 ('A', 22, '2019-10-16', '14:47:16', NULL, NULL),
 ('A', 23, '2019-10-16', '14:47:21', NULL, NULL),
+('A', 24, '2019-10-16', '14:55:06', NULL, NULL),
 ('P', 1, '2019-10-16', '14:25:22', NULL, NULL),
 ('P', 2, '2019-10-16', '14:47:26', NULL, NULL);
 
