@@ -17,6 +17,22 @@ function serveNext($counter)
     // update database with next guy served
 }
 
+function LogIn($username,$password){
+    $db = DBConnect();
+    $db->beginTransaction();
+    $stmt = $db->prepare("SELECT admin FROM employee WHERE ID = :ID && password = :password FOR UPDATE");
+    $stmt->bindParam(':ID', $ID);
+    $stmt->bindParam(':password', $password);
+    $stmt->execute();
+    $admin = $stmt->fetchColumn(0); // retrieve value column "admin"
+    $db->commit();
+    if($admin!=NULL){
+        return "admin";
+    } else {
+        return "employee";
+    }
+}
+
 function newTicket($service)
 {
     $db = DBConnect();
