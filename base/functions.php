@@ -17,8 +17,10 @@ function serveNext($counter)
     // update database with next guy served
 }
 
-function newTicket($db, $service)
+function newTicket($service)
 {
+    $db = DBConnect();
+    
     $date = date("Y-m-d");
     $db->beginTransaction();
 

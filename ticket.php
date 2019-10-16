@@ -1,8 +1,7 @@
 <?php
     include "base/functions.php";
-    $db = DBConnect();
     if(!isset($_GET["type"])) exit;
-    $ticket_num = newTicket($db,$_GET["type"]);
+    $ticket_num = newTicket($_GET["type"]);
 ?>
 
 <html lang = "en">
