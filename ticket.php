@@ -1,5 +1,5 @@
 <?php
-    include "functions.php";
+    include "base/functions.php";
     
     $db = DBConnect();
     if(!isset($_GET["type"])) exit;

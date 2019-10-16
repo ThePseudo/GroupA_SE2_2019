@@ -21,7 +21,7 @@ function newTicket($db, $service)
 {
     $date = date("Y-m-d");
     $db->beginTransaction();
-    $stmt = $db->prepare("SELECT count(number) FROM ticket WHERE ID_service = :ID_service && date = :date FOR UPDATE");
+    $stmt = $db->prepare("SELECT count(number) FROM ticket WHERE ID_service = :ID_service && data = :date FOR UPDATE");
     $stmt->bindParam(':ID_service', $service);
     $stmt->bindParam(':date', $date);
     $stmt->execute();
@@ -29,10 +29,10 @@ function newTicket($db, $service)
     $count++;
 
     $time_print = date("H:i:s");
-    $stmt = $db->prepare("INSERT INTO ticket (ID_service,number,data,time_start_waiting,time_end_waiting,time_end_service) VALUES (:id, :number,:data,:time_s_w, :time_e_w, :time_e_s)");
+    $stmt = $db->prepare("INSERT INTO ticket (ID_service,number,date,time_start_waiting,time_end_waiting,time_end_service) VALUES (:id, :number,:date,:time_s_w, :time_e_w, :time_e_s)");
     $stmt->bindParam(':id', $service);
     $stmt->bindParam(':number', $count);
-    $stmt->bindParam(':data', $date);
+    $stmt->bindParam(':date', $date);
     $stmt->bindParam(':time_s_w', $time_print);
     $stmt->bindParam(':time_e_w', null, PDO::PARAM_NULL);
     $stmt->bindParam(':time_e_s', null, PDO::PARAM_NULL);
