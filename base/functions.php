@@ -16,3 +16,25 @@ function serveNext($counter)
     // select next guy to be served
     // update database with next guy served
 }
+
+function newTicket($db, $service){
+    $stmt = $db->prepare("SELECT count(number) FROM ticket WHERE ID_service = :ID_service && date = :date FOR UPDATE");
+    $stmt->bindParam(':ID_service', $service);
+    $stmt->bindParam(':date', $date);
+    $stmt -> execute();
+    $count = $stmt->fetch();
+    $count ++;
+
+    $date = date("Y-m-d");
+    $time_print = date("H:i:s");
+    $stmt = $db->prepare("INSERT INTO ticket (ID_service,number,data,time_start_waiting,time_end_waiting,time_end_service) VALUES (:id, :number,:data,:time_s_w, :time_e_w, :time_e_s)");
+    $stmt->bindParam(':ID_service', $service);
+    $stmt->bindParam(':number', $count);
+    $stmt->bindParam(':data', $date);
+    $stmt->bindParam(':time_s_w', $time_print);
+    $stmt->bindParam(':time_e_w', null);
+    $stmt->bindParam(':time_e_s', null);
+    
+    $stmt->execute();
+    $db->close();
+}
