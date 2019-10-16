@@ -2,7 +2,7 @@
 require_once("base/templates.php");
 top("Office queues - login");
 ?>
-<h1>Log in employee</h1>
+<h1>Log in</h1>
 <br /><br /><br /><br /><br /><br />
 <a href="index.php" style="color:black;text-decoration:none;"><button class="topright loginbtn">Home</button></a>
 <div style="display:block; text-align:center; align-content:center; margin:auto">
