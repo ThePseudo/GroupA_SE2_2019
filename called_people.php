@@ -7,7 +7,7 @@ top("Office queues - Called");
 
 <a href="index.php" style="color:black;text-decoration:none;"><button class="topright loginbtn">Home</button></a>
 <div style="display:block; text-align:center; align-content:center; margin:auto">
-    <table>
+    <table style="display:block; text-align:center; align-content:center; margin-left:50%; margin-right:50%;">
         <tr>
             <th>Counter</th>
             <th>Ticket</th>
