@@ -17,20 +17,43 @@ function serveNext($counter)
     // update database with next guy served
 }
 
-function LogIn($username,$password){
+function LogIn($ID,$pwd_inserted){ //transazione necessaria?
     $db = DBConnect();
-    $db->beginTransaction();
-    $stmt = $db->prepare("SELECT admin FROM employee WHERE ID = :ID && password = :password FOR UPDATE");
+    //$db->beginTransaction();
+    $stmt = $db->prepare("SELECT password, admin FROM employee WHERE ID = :ID"); //FOR UPDATE necessario?
     $stmt->bindParam(':ID', $ID);
-    $stmt->bindParam(':password', $password);
     $stmt->execute();
-    $admin = $stmt->fetchColumn(0); // retrieve value column "admin"
-    $db->commit();
-    if($admin!=NULL){
-        return "admin";
-    } else {
-        return "employee";
+
+    if(!$stmt->rowCount()){
+        header("location: ../login.php"); 
+        exit;
     }
+
+    $admin = $stmt->fetchColumn(1); // retrieve value column "admin"
+    $pwd_db = $stmt->fetchColumn(0);
+    $db = NULL;
+    
+    if($pwd_db != $pwd_inserted){
+        header("location: ../login.php"); 
+        exit;
+    }
+    
+    //TO DO: non riesco a verificare password hash + sale
+
+    // if(password_verify($pwd_inserted,$pwd_db)!=true){
+    //     $stmt = NULL;
+    //     header("location: ../login.php"); 
+    //     exit;
+    // }
+
+    //$db->commit();
+    
+    if(!$admin){
+        header("location: ../operator_page.php");
+    } else {
+        header("location: ../administrator_page.php");
+    }
+    exit;
 }
 
 function newTicket($service)

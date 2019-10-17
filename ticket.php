@@ -28,7 +28,7 @@
             </div>
             <script>
                 
-                //setTimeout("location.href = 'index.php' ",4000);
+                setTimeout("location.href = 'index.php' ",4000);
             //</script>
 
     
