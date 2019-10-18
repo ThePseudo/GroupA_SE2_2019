@@ -12,7 +12,9 @@ function top($title)
         <title><?php echo $title; ?></title>
         <meta name='viewport' content='width=device-width, initial-scale=1'>
         <link rel='stylesheet' type='text/css' media='screen' href=<?php echo ("'" . $base . "base/style.css'"); ?>>
-        <script src='main.js'></script>
+        <!--<script src='main.js'></script> -->
+        <script type = text/javascript src=js_functions.js> </script>
+
     </head>
 
     <body>
