@@ -2,10 +2,10 @@
 require_once("base/templates.php");
 session_start();
 top("Office queues - operator");
-if (1/*isset($_SESSION['id'])*/) {
+if (isset($_SESSION['id'])) {
     ?>
-
-    <!--<h1>Welcome, operator <?php echo $_SESSION['id']; ?></h1> -->
+    <a href="logout.php" style="color:black;text-decoration:none;"><button class="topright loginbtn">Logout</button></a>
+    <h1>Welcome, operator <?php echo $_SESSION['id']; ?></h1>
     <br /><br /><br />
     <div id = "show_next"></div> 
     <div style="display:block; text-align:center; align-content:center; margin:auto;">
@@ -16,6 +16,8 @@ if (1/*isset($_SESSION['id'])*/) {
     </div>
 
 <?php
+} else {
+    header("location: ./index.php");
 }
 bottom();
 ?>

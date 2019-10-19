@@ -1,4 +1,6 @@
 <?php
+session_start();
+
 function DBConnect()
 {
     $dbname = "office_db";
@@ -20,23 +22,18 @@ function serveNext($counter)
 function LogIn($ID,$pwd_inserted){ //transazione necessaria?
     $db = DBConnect();
     //$db->beginTransaction();
-    $stmt = $db->prepare("SELECT password, admin FROM employee WHERE ID = :ID"); //FOR UPDATE necessario?
+    $stmt = $db->prepare("SELECT admin FROM employee WHERE ID = :ID AND password =:pwd"); //FOR UPDATE necessario?
     $stmt->bindParam(':ID', $ID);
+    $stmt->bindParam(':pwd', $pwd_inserted);
     $stmt->execute();
 
-    if(!$stmt->rowCount()){
+    if($stmt->rowCount()!=1){
         header("location: ../login.php?error=1"); 
         exit;
     }
 
-    $admin = $stmt->fetchColumn(1); // retrieve value column "admin"
-    $pwd_db = $stmt->fetchColumn(0);
+    $admin = $stmt->fetchColumn(0); // retrieve value column "admin"
     $db = NULL;
-    
-    if($pwd_db != $pwd_inserted){
-        header("location: ../login.php?error=1"); 
-        exit;
-    }
     
     //TO DO: non riesco a verificare password hash + sale
 
@@ -47,10 +44,12 @@ function LogIn($ID,$pwd_inserted){ //transazione necessaria?
     // }
 
     //$db->commit();
-    
+    $_SESSION["id"]=$ID;
     if(!$admin){
+        $_SESSION["type"]="operator";
         header("location: ../operator_page.php");
     } else {
+        $_SESSION["type"]="admin";
         header("location: ../administrator_page.php");
     }
     exit;

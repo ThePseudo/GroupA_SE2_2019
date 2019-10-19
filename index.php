@@ -1,6 +1,13 @@
 <?php
 require_once("base/templates.php");
 top("Office queues - main");
+session_start();
+if(isset($_SESSION["id"])&&isset($_SESSION["type"])){
+    if($_SESSION["type"]=="admin")
+        header("location: administrator_page.php");
+    if($_SESSION["type"]=="operator")
+        header("location: operator_page.php");
+}
 
 ?>
 <h1>Welcome!</h1>
