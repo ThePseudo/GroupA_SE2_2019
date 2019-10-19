@@ -40,7 +40,7 @@ if(isset($_POST["service"])){
     $db = NULL;
     $stmt = NULL;
 
-    // add here observable mechanism connected to observer in queues_display
+    // add here observable mechanism connected to observer in queues_display (check https://codeburst.io/observer-pattern-object-oriented-php-4e669431bcb9)
 
     echo $service.$next;
     
