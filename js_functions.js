@@ -17,7 +17,7 @@ function ajaxRequest() {
     return request;
 }
 
-function serveNext(ref_div_to_employee_page){ // TO DO: function's argument
+function serveNext(ref){ // TO DO: function's argument
 
     //-----TODO: Controllo cookie attivi o meno, copia-incolla da adattare
     // if (navigator.cookieEnabled == 0){
@@ -45,10 +45,10 @@ function serveNext(ref_div_to_employee_page){ // TO DO: function's argument
     req.onreadystatechange = function(){ 
         if(this.readyState == 4){ //La risposta alla richiesta è disponibile
             if(this.status == 200 || this.status == 0){
-                if(this.responseText!=false){
-                   //ho avuto risposta, mostro a operatore il numero che dovrebbe essere servito
+                if(this.responseText == "0"){
+                   ref.inneHTML = "NO NEW CITIZEN";
                 }
-                else //no cittadini in coda al momento
+                else ref.innerHTML = this.responseText ;
             }
             else{
                 //TODO: copia-incolla da adattare, caso errore richiesta ajax
