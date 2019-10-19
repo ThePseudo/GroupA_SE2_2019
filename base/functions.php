@@ -60,7 +60,7 @@ function newTicket($service)
 {
     $db = DBConnect();
     
-    $date = date("Y-m-d");
+    $date = date("d-m-Y");
     $db->beginTransaction();
 
     $stmt = $db->prepare("SELECT COUNT(*) FROM ticket WHERE ID_service = :ID_service && date = :date FOR UPDATE");
@@ -88,5 +88,5 @@ function newTicket($service)
 
     $stmt = null;
     $db = null; //destroy the db's PDO object in order to close  connection to DB
-    return $ticket_num;
+    return $ticket_num."#".$date." ".$time_print;
 }

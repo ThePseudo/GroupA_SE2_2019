@@ -1,9 +1,7 @@
 <?php
     require_once("base/templates.php");
     top("Office queues - main");
-    include "base/functions.php";
-    if(!isset($_GET["type"])) exit;
-    $ticket_num = newTicket($_GET["type"]);
+    if(!isset($_GET["ticketnum"])&!isset($_GET["date"])) header("location: ./index.php");
 ?>
 
 <html lang = "en">
@@ -17,9 +15,8 @@
             <div style="display:block; text-align:center; align-content:center; margin:auto;">
                 <h1> Ticket Printed! </h1>
                 <?php 
-                    echo "<h1> $ticket_num </h1>"; 
-                    $date = date("d-m-Y H:i:s");
-                    echo "<h1> $date </h1>";
+                    echo "<h1> ".$_GET['ticketnum']." </h1>"; 
+                    echo "<h1> ".$_GET['date']." </h1>";
                     //echo "<img src = \"resource/logo.png\">";
                     echo "<h1> ADD WAITING TIME HERE </h1>";
                     echo "<h1> ADD ESTIMATED NUMBER OF PEOPLE HERE </h1>";

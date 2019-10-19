@@ -10,8 +10,8 @@ top("Office queues - main");
 
 <br /><br />
 <div style="display:block; text-align:center; align-content:center; margin:auto;">
-    <a href="ticket.php?type=A"><button class="selectbtn">A - ACCOUNTING</button></a><br />
-    <a href="ticket.php?type=P"><button class="selectbtn">P - PACKAGES</button></a><br />
+    <a href="reload.php?type=A"><button class="selectbtn">A - ACCOUNTING</button></a><br />
+    <a href="reload.php?type=P"><button class="selectbtn">P - PACKAGES</button></a><br />
     <a href="queues_display.php" style="color:black;text-decoration:none;"><button class="selectbtn">Currently served</button></a>
 </div>
 <?php
