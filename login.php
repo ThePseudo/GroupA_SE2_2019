@@ -13,4 +13,8 @@ top("Office queues - login");
     </form>
 </div>
 <?php
+    if(isset($_GET["error"]))
+        echo "<h1>Credential not valid<h1>";
+?>
+<?php
 bottom();

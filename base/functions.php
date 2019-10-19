@@ -25,7 +25,7 @@ function LogIn($ID,$pwd_inserted){ //transazione necessaria?
     $stmt->execute();
 
     if(!$stmt->rowCount()){
-        header("location: ../login.php"); 
+        header("location: ../login.php?error=1"); 
         exit;
     }
 
@@ -34,7 +34,7 @@ function LogIn($ID,$pwd_inserted){ //transazione necessaria?
     $db = NULL;
     
     if($pwd_db != $pwd_inserted){
-        header("location: ../login.php"); 
+        header("location: ../login.php?error=1"); 
         exit;
     }
     
