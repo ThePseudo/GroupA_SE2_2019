@@ -1,5 +1,8 @@
 <?php
-session_start();
+
+if (session_status() == PHP_SESSION_NONE) {
+    session_start();
+}
 
 function DBConnect()
 {
@@ -29,7 +32,49 @@ function CounterTicket($num){
     }
 }
 
-function serveNext($counter)
+function serveFirst($ID){
+    $db = DBConnect();
+    $db->beginTransaction();
+    $stmt = $db->prepare("SELECT ID_service FROM employee_service WHERE ID_employee = :ID FOR UPDATE");
+    $stmt->bindParam(':ID', $ID);
+    $stmt->execute();
+    $count = 0;
+    $type = NULL;
+    $nt = 0;
+    $vett = $stmt->fetchAll(0);
+    $date = date("Y-m-d");
+    foreach($vett as $service){
+        $stmt = null;
+        $stmt = $db->prepare("SELECT COUNT(*) as c, MIN(number) as m FROM ticket WHERE ID_service = :ID && date = :date && time_end_waiting IS NULL FOR UPDATE");
+        $stmt->bindParam(':ID', $service["ID_service"]);
+        $stmt->bindParam(':date', $date);
+        $stmt->execute();
+        $num = $stmt->fetchAll();
+        if($stmt->rowCount()!=1){
+            exit;
+        }
+        if($num[0]["c"]>$count){
+            $type=$service["ID_service"];
+            $count=$num;
+            $nt=$num[0]["m"];
+        }
+    }
+    $stmt = null;
+    $time_print = date("H:i:s");
+    $stmt = $db->prepare("UPDATE ticket SET time_end_waiting = :time WHERE ID_service=:ID AND number=:num AND date = :date");
+    $stmt->bindParam(':ID', $type);
+    $stmt->bindParam(':num', $nt);
+    $stmt->bindParam(':date', $date);
+    $stmt->bindParam(':time', $time_print);
+    $stmt->execute();
+    $db->commit();
+    if($type!=NULL && $nt!=0)
+        return $type.$nt;
+    else
+        return NULL;
+}
+
+function serveNext($ID)
 {
     // free counter from database
     // select next guy to be served

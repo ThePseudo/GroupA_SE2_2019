@@ -1,4 +1,5 @@
 <?php
+session_start();
 require_once("base/templates.php");
 top("Office queues - login");
 /*session_start();
