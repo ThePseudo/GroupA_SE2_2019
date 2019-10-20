@@ -12,6 +12,23 @@ function DBConnect()
     return new PDO("mysql:host=$dbplace;dbname=$dbname;charset=$charset;", $user, $password, $settings);
 }
 
+function CounterTicket($num){
+    $db = DBConnect();
+    $stmt = $db->prepare("SELECT ID_ticket_service, ID_ticket_number FROM employee WHERE ID_counter = :ID");
+    $stmt->bindParam(':ID', $num);
+    $stmt->execute();
+    if($stmt->rowCount()!=1){
+        return NULL;
+    }
+    $ticket = $stmt->fetchAll();
+    $db = null; 
+    if($ticket[0]["ID_ticket_service"]!=NULL&&$ticket[0]["ID_ticket_number"]!=NULL){
+        return $ticket[0]["ID_ticket_service"].$ticket[0]["ID_ticket_number"];
+    } else {
+        return NULL;
+    }
+}
+
 function serveNext($counter)
 {
     // free counter from database

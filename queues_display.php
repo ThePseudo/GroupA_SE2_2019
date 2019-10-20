@@ -1,6 +1,7 @@
 <?php
 require_once("base/templates.php");
 top("Office queues - Called");
+include "base/functions.php";
 ?>
 
 <h1>Currently served</h1>
@@ -12,21 +13,20 @@ top("Office queues - Called");
             <th>Counter</th>
             <th>Ticket</th>
         </tr>
-        <tr>
-            <td>1</td>
-            <td>P 001</td>
-        </tr>
-        <tr>
-            <td>2</td>
-            <td>A 001</td>
-        </tr>
-        <tr>
-            <td>3</td>
-            <td>A 002</td>
-        </tr>
+        <?php
+        for($i=0; $i<100; $i++){
+            $ticket=CounterTicket($i);
+            if($ticket!=NULL){
+                echo "<tr><td>$i</td><td>$ticket</td></tr>";
+            }
+        }
+        ?>
     </table>
 </div>
-
+<script>
+                
+                setTimeout("location.href = 'queues_display.php' ",10000);
+            //</script>
 <?php
 bottom();
 ?>
