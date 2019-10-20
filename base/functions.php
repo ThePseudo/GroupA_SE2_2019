@@ -67,18 +67,17 @@ function serveFirst($ID){
     $stmt->bindParam(':date', $date);
     $stmt->bindParam(':time', $time_print);
     $stmt->execute();
+    $stmt = null;
+    $stmt = $db->prepare("UPDATE employee SET ID_ticket_service=:IDS, ID_ticket_number=:num WHERE ID=:IDE");
+    $stmt->bindParam(':IDS', $type);
+    $stmt->bindParam(':IDE', $ID);
+    $stmt->bindParam(':num', $nt);
+    $stmt->execute();
     $db->commit();
     if($type!=NULL && $nt!=0)
         return $type.$nt;
     else
         return NULL;
-}
-
-function serveNext($ID)
-{
-    // free counter from database
-    // select next guy to be served
-    // update database with next guy served
 }
 
 function LogIn($ID,$pwd_inserted){ //transazione necessaria?

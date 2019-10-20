@@ -22,11 +22,28 @@ if (isset($_SESSION['id'])) {
     }
     ?></div> 
     <div style="display:block; text-align:center; align-content:center; margin:auto;">
-        <button type = "button", onclick="serveNext(document.getElementById('show_next'))">
+        <button type = "button", onclick="serveNext()">
             CALL NEXT
             <!--<input type="submit" class="selectbtn" style="margin-top:40px;" value="Next user"> -->
         </button>
     </div>
+    <script>
+    function serveNext(){
+        <?php if($ticket==NULL) { ?>
+            location.href = './operator_page.php';
+        <?php } else { ?>
+            var xhttp = new XMLHttpRequest();
+            xhttp.onreadystatechange = function() {
+                if (this.readyState == 4 && this.status == 200) {
+                    if(this.responseText!=-1)
+                        location.href = './operator_page.php';
+                }
+            };
+            xhttp.open("GET", "./actions/serveNext.php?ticket=<?php echo $ticket ?>", true);
+            xhttp.send();
+        <?php } ?>
+    }
+    </script>
 
 <?php
 } else {
