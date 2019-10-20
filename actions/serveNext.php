@@ -15,19 +15,6 @@
         }
         $count++;
     }
-    $db = DBConnect();
-    $db->beginTransaction();
-    $date = date("Y-m-d");
-    $time_print = date("H:i:s");
-    $stmt = $db->prepare("UPDATE ticket SET time_end_service = :time WHERE ID_service=:ID AND number=:num AND date = :date");
-    $stmt->bindParam(':ID', $service);
-    $stmt->bindParam(':num', $num);
-    $stmt->bindParam(':date', $date);
-    $stmt->bindParam(':time', $time_print);
-    $stmt->execute();
-    $stmt = $db->prepare("UPDATE employee SET status = 'free' WHERE ID=:ID");
-    $stmt->bindParam(':ID', $_SESSION["id"]);
-    $stmt->execute();
-    $db->commit();
+    serveNext($_SESSION["id"],$service,$num);
     return;
 ?>
