@@ -76,7 +76,7 @@ function newTicket($service)
 {
     $db = DBConnect();
     
-    $date = date("d-m-Y");
+    $date = date("Y-m-d");
     $db->beginTransaction();
 
     $stmt = $db->prepare("SELECT COUNT(*) FROM ticket WHERE ID_service = :ID_service && date = :date FOR UPDATE");
