@@ -19,8 +19,7 @@
                     echo "<h1> ".$_GET['ticketnum']." </h1>"; 
                     echo "<h1> ".$_GET['date']." </h1>";
                     //echo "<img src = \"resource/logo.png\">";
-                    $wait_time=WaitExtimation($_GET['ticketnum']);
-                    echo "<h1> EXTIMATED WAITING TIME: ".$wait_time." </h1>";
+                    echo "<h1> EXTIMATED WAITING TIME: ".WaitExtimation($_GET['ticketnum'])." </h1>";
                     echo "<h1> EXTIMATED NUMBER OF PEOPLE: ".PeopleExtimation($_GET['ticketnum'])." </h1>";
                 ?>
                 <a href="index.php"><button class="topright loginbtn">Home</button></a><br />
