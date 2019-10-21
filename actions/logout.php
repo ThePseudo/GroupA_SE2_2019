@@ -1,6 +1,6 @@
 <?php
     session_start();
-    include "./base/functions.php";
+    include "../base/functions.php";
     if(isset($_GET["ticket"])){
         $count=0;
         $service=NULL;
@@ -25,6 +25,6 @@
     }
     unset($_SESSION["id"]);
     unset($_SESSION["type"]);
-    header("location: index.php");
+    header("location: ../index.php");
     exit;
 ?>

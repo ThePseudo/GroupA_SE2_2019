@@ -101,14 +101,17 @@ function WaitExtimation($ticket)
     $num1 = $stmt->fetchColumn(0);
     $vett=explode(":",$time);
     $vett1=explode(":",$time1);
+    $num--;
     $t=$vett[2]+$vett[1]*60+$vett[0]*3600;
     $t1=$vett1[2]+$vett1[1]*60+$vett1[0]*3600;
     $coeff=$num*$t+$num1*$t1;
     $den=$service1*$coeff+$combined*$num*$t;
-    $num=$num*$coeff;
+    $numeratore=$num*$coeff;
     if($den!=0)
-        $calc = $num/$den;
-    else {
+        $calc = $numeratore/$den;
+    else if (($t==0 || $num==0) && ($combined !=0 || $service1 !=0))
+        $calc = 0;
+    else{
         $db->commit();
         return "INFINITE";
     }
