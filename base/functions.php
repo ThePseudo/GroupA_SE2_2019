@@ -158,7 +158,7 @@ function serveFirst($ID)
     $stmt->bindParam(':ID', $ID);
     $stmt->execute();
     $count = 0;
-    $type = NULL;
+    $type = NULL; // service id
     $nt = 0;
     $vett = $stmt->fetchAll(0);
     $date = date("Y-m-d");
@@ -174,7 +174,7 @@ function serveFirst($ID)
             exit;
         }
         
-        // If a counter manages more than one service, 
+        //If a counter manages more than one service, 
         //than search the longest queue and pop the first citizen from that queue
         if ($num[0]["c"] > $count) { 
             $count = $num;  
