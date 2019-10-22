@@ -31,7 +31,7 @@ include "base/functions.php";
             $ticket = CounterTicket($i);
             if ($ticket != NULL) {
                 echo "<tr><td>$i</td><td>$ticket</td></tr>";
-            } else break;
+            }
         }
         ?>
     </table>
