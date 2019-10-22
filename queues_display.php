@@ -5,10 +5,21 @@ include "base/functions.php";
 ?>
 
 <h1>Currently served</h1>
-
+<style>
+    td, th{
+        font-size:30px;
+        border: 1px solid #dddddd;
+        width: 200px;
+    }
+    table{
+        margin: 0 auto;
+        text-align:center; 
+        align-content:center;
+    }
+</style>
 <a href="index.php" style="color:black;text-decoration:none;"><button class="topright loginbtn">Home</button></a>
-<div style="display:block; text-align:center; align-content:center; margin:auto">
-    <table style="display:block; text-align:center; align-content:center; margin-left:50%; margin-right:50%;">
+<div>
+    <table>
         <tr>
             <th>Counter</th>
             <th>Ticket</th>
