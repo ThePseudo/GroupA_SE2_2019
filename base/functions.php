@@ -35,88 +35,99 @@ function CounterTicket($num)
 
 function PeopleExtimation($ticket)
 {
-    $count=0;
-    $service=NULL;
-    $num=0;
-    $arr=str_split($ticket);
-    foreach($arr as $var){
-        if($count==0){
-            $service=$var;
+    $count = 0;
+    $service = NULL;
+    $num = 0;
+    $arr = str_split($ticket);
+    foreach ($arr as $var) {
+        if ($count == 0) {
+            $service = $var;
         } else {
-            $num=$num*10+(int)$var;
+            $num = $num * 10 + (int) $var;
         }
         $count++;
     }
     $db = DBConnect();
     $db->beginTransaction();
-    $stmt = $db->prepare("SELECT DISTINCT COUNT(*) FROM ticket WHERE ID_service = :ID AND time_end_waiting IS NULL");
+    $stmt = $db->prepare("SELECT DISTINCT COUNT(*) FROM ticket WHERE ID_service = :ID AND time_end_waiting IS NULL AND date = :DATE");
     $stmt->bindParam(':ID', $service);
+    $currentDate = date('Y-m-d');
+    $stmt->bindParam(':DATE', $currentDate);
     $stmt->execute();
     $num = $stmt->fetchColumn(0);
     $db->commit();
-    return $num-1;
+    return $num - 1;
 }
 
 function WaitExtimation($ticket)
 {
-    $count=0;
-    $service=NULL;
-    $num=0;
-    $arr=str_split($ticket);
-    foreach($arr as $var){
-        if($count==0){
-            $service=$var;
+    $count = 0;
+    $service = NULL;
+    $num = 0;
+    $arr = str_split($ticket);
+    foreach ($arr as $var) {
+        if ($count == 0) {
+            $service = $var;
         } else {
-            $num=$num*10+(int)$var;
+            $num = $num * 10 + (int) $var;
         }
         $count++;
     }
     $db = DBConnect();
     $db->beginTransaction();
-    $stmt = $db->prepare("SELECT DISTINCT COUNT(*) FROM employee_service WHERE ID_service = :ID AND ID_employee IN (SELECT ID_employee FROM employee_service WHERE ID_service != :ID1)");
+    $stmt = $db->prepare("SELECT DISTINCT COUNT(*) FROM employee_service, ticket
+     WHERE employee_service.ID_service = :ID AND ID_employee IN (SELECT ID_employee FROM employee_service WHERE ID_service <> :ID1) 
+     AND ticket.ID_service = employee_service.ID_service AND date = :DATE");
     $stmt->bindParam(':ID', $service);
     $stmt->bindParam(':ID1', $service);
+    $currentDate = date('Y-m-d');
+    $stmt->bindParam(':DATE', $currentDate);
     $stmt->execute();
     $combined = $stmt->fetchColumn(0);
-    $stmt = $db->prepare("SELECT DISTINCT COUNT(*) FROM employee_service WHERE ID_service = :ID AND ID_employee NOT IN (SELECT ID_employee FROM employee_service WHERE ID_service != :ID1)");
+    $stmt = $db->prepare("SELECT DISTINCT COUNT(*) FROM employee_service WHERE ID_service = :ID AND ID_employee NOT IN (SELECT ID_employee FROM employee_service WHERE ID_service <> :ID1)");
     $stmt->bindParam(':ID', $service);
     $stmt->bindParam(':ID1', $service);
     $stmt->execute();
-    $service1 = $stmt->fetchColumn(0); 
+    $service1 = $stmt->fetchColumn(0);
     $stmt = $db->prepare("SELECT service_time_estimate FROM service WHERE ID = :ID");
     $stmt->bindParam(':ID', $service);
     $stmt->execute();
     $time = $stmt->fetchColumn(0);
-    $stmt = $db->prepare("SELECT service_time_estimate FROM service WHERE ID != :ID");
+
+    $stmt = $db->prepare("SELECT service_time_estimate FROM service WHERE ID <> :ID");
     $stmt->bindParam(':ID', $service);
     $stmt->execute();
     $time1 = $stmt->fetchColumn(0);
-    $stmt = $db->prepare("SELECT DISTINCT COUNT(*) FROM ticket WHERE ID_service = :ID AND time_end_waiting IS NULL");
+    $stmt = $db->prepare("SELECT DISTINCT COUNT(*) FROM ticket WHERE ID_service = :ID AND time_end_waiting IS NULL AND date = :DATE");
     $stmt->bindParam(':ID', $service);
+    $stmt->bindParam(':DATE', $currentDate);
     $stmt->execute();
     $num = $stmt->fetchColumn(0);
-    $stmt = $db->prepare("SELECT DISTINCT COUNT(*) FROM ticket WHERE ID_service != :ID AND time_end_waiting IS NULL");
+    $stmt = $db->prepare("SELECT DISTINCT COUNT(*) FROM ticket WHERE ID_service <> :ID AND time_end_waiting IS NULL  AND date = :DATE");
     $stmt->bindParam(':ID', $service);
+    $stmt->bindParam(':DATE', $currentDate);
     $stmt->execute();
     $num1 = $stmt->fetchColumn(0);
-    $vett=explode(":",$time);
-    $vett1=explode(":",$time1);
+    $vett = explode(":", $time);
+    $vett1 = explode(":", $time1);
     $num--;
-    $t=$vett[2]+$vett[1]*60+$vett[0]*3600;
-    $t1=$vett1[2]+$vett1[1]*60+$vett1[0]*3600;
-    $coeff=$num*$t+$num1*$t1;
-    $den=$service1*$coeff+$combined*$num*$t;
-    $numeratore=$num*$coeff;
-    if($den!=0)
-        $calc = $numeratore/$den;
-    else if (($t==0 || $num==0) && ($combined !=0 || $service1 !=0))
+    $t = (int) $vett[2] + (int) $vett[1] * 60 + (int) $vett[0] * 3600;
+    $t1 = (int) $vett1[2] + (int) $vett1[1] * 60 + (int) $vett1[0] * 3600;
+    $coeff = $num * $t + $num1 * $t1;
+    $den = $service1 * $coeff + $combined * $num * $t;
+    $numeratore = $num * $coeff;
+    if ($den != 0)
+        $calc = $numeratore / $den;
+    else if (($t == 0 || $num == 0) && ($combined != 0 || $service1 != 0))
         $calc = 0;
-    else{
+    else {
         $db->commit();
         return "INFINITE";
     }
+
     $stmt = $db->prepare("SELECT DISTINCT COUNT(ID_employee) FROM employee_service WHERE ID_employee IN (SELECT ID FROM employee WHERE status='occupied')");
     $stmt->bindParam(':ID', $service);
+
     $stmt->execute();
     $occ = $stmt->fetchColumn(0);
     $stmt = $db->prepare("SELECT DISTINCT COUNT(ID_employee) FROM employee_service");
@@ -124,11 +135,12 @@ function WaitExtimation($ticket)
     $stmt->execute();
     $tot = $stmt->fetchColumn(0);
     $db->commit();
-    if($tot!=0)
-        $calc+=($occ/$tot);
-    $calc*=$t;
-    $calc=round($calc, 0);
-    return (($calc-$calc%3600)/3600).":".(($calc%3600-$calc%60)/60).":".($calc%60);
+
+    if ($tot != 0)
+        $calc += ($occ / $tot);
+    $calc *= $t;
+    $calc = round($calc, 0);
+    return (($calc - $calc % 3600) / 3600) . ":" . (($calc % 3600 - $calc % 60) / 60) . ":" . ($calc % 60);
 }
 
 function serveNext($ID, $service, $num)

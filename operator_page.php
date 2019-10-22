@@ -12,7 +12,7 @@ if (isset($_SESSION['id'])) {
                             $ticket = serveFirst($_SESSION['id']);
                             if ($ticket == NULL) {
                                 ?>
-            <h1>Noone in the queue</h1>
+            <h1>No one in the queue</h1>
             <script>
                 setTimeout("location.href = 'operator_page.php' ", 1000);
             </script>
@@ -23,7 +23,7 @@ if (isset($_SESSION['id'])) {
             ?>
     </div>
     <div style="display:block; text-align:center; align-content:center; margin:auto;">
-        <button type="button" , onclick="serveNext()">
+        <button type="button" , onclick="serveNext()" class="loginbtn">
             CALL NEXT
             <!--<input type="submit" class="selectbtn" style="margin-top:40px;" value="Next user"> -->
         </button>

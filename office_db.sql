@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Creato il: Ott 16, 2019 alle 16:55
+-- Creato il: Ott 22, 2019 alle 09:25
 -- Versione del server: 10.4.8-MariaDB
 -- Versione PHP: 7.3.10
 
@@ -31,7 +31,7 @@ USE `office_db`;
 --
 
 DROP TABLE IF EXISTS `employee`;
-CREATE TABLE `employee` (
+CREATE TABLE IF NOT EXISTS `employee` (
   `ID` int(11) NOT NULL,
   `name` varchar(255) NOT NULL,
   `surname` varchar(255) NOT NULL,
@@ -40,8 +40,16 @@ CREATE TABLE `employee` (
   `status` varchar(10) NOT NULL,
   `ID_ticket_service` varchar(1) DEFAULT NULL,
   `ID_ticket_number` int(11) DEFAULT NULL,
-  `password` varchar(255) NOT NULL
+  `password` varchar(255) NOT NULL,
+  PRIMARY KEY (`ID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dump dei dati per la tabella `employee`
+--
+
+INSERT INTO `employee` (`ID`, `name`, `surname`, `admin`, `ID_counter`, `status`, `ID_ticket_service`, `ID_ticket_number`, `password`) VALUES
+(1, 'Marco', 'Pecoraro', 0, 1, 'occupied', NULL, 0, 'pecoraro');
 
 -- --------------------------------------------------------
 
@@ -50,10 +58,18 @@ CREATE TABLE `employee` (
 --
 
 DROP TABLE IF EXISTS `employee_service`;
-CREATE TABLE `employee_service` (
+CREATE TABLE IF NOT EXISTS `employee_service` (
   `ID_employee` int(11) NOT NULL,
-  `ID_service` varchar(1) NOT NULL
+  `ID_service` varchar(1) NOT NULL,
+  PRIMARY KEY (`ID_employee`,`ID_service`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dump dei dati per la tabella `employee_service`
+--
+
+INSERT INTO `employee_service` (`ID_employee`, `ID_service`) VALUES
+(1, 'A');
 
 -- --------------------------------------------------------
 
@@ -62,11 +78,20 @@ CREATE TABLE `employee_service` (
 --
 
 DROP TABLE IF EXISTS `service`;
-CREATE TABLE `service` (
+CREATE TABLE IF NOT EXISTS `service` (
   `ID` varchar(1) NOT NULL,
   `name` varchar(255) NOT NULL,
-  `service_time_estimate` time NOT NULL
+  `service_time_estimate` time NOT NULL,
+  PRIMARY KEY (`ID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dump dei dati per la tabella `service`
+--
+
+INSERT INTO `service` (`ID`, `name`, `service_time_estimate`) VALUES
+('A', 'Accounting', '00:03:00'),
+('P', 'Packaging', '00:03:00');
 
 -- --------------------------------------------------------
 
@@ -75,13 +100,14 @@ CREATE TABLE `service` (
 --
 
 DROP TABLE IF EXISTS `ticket`;
-CREATE TABLE `ticket` (
+CREATE TABLE IF NOT EXISTS `ticket` (
   `ID_service` varchar(1) NOT NULL,
   `number` int(11) NOT NULL,
   `date` date NOT NULL,
   `time_start_waiting` time NOT NULL,
   `time_end_waiting` time DEFAULT NULL,
-  `time_end_service` time DEFAULT NULL
+  `time_end_service` time DEFAULT NULL,
+  PRIMARY KEY (`ID_service`,`number`,`date`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
@@ -90,15 +116,38 @@ CREATE TABLE `ticket` (
 
 INSERT INTO `ticket` (`ID_service`, `number`, `date`, `time_start_waiting`, `time_end_waiting`, `time_end_service`) VALUES
 ('A', 1, '2019-10-16', '14:24:33', NULL, NULL),
+('A', 1, '2019-10-20', '11:05:43', NULL, NULL),
+('A', 1, '2019-10-21', '16:17:08', NULL, NULL),
+('A', 1, '2019-10-22', '08:41:16', '09:19:45', NULL),
 ('A', 2, '2019-10-16', '14:24:40', NULL, NULL),
+('A', 2, '2019-10-20', '21:52:49', NULL, NULL),
+('A', 2, '2019-10-21', '16:17:12', NULL, NULL),
+('A', 2, '2019-10-22', '08:41:50', '09:19:47', NULL),
 ('A', 3, '2019-10-16', '14:24:48', NULL, NULL),
+('A', 3, '2019-10-20', '21:52:52', NULL, NULL),
+('A', 3, '2019-10-21', '16:17:16', NULL, NULL),
+('A', 3, '2019-10-22', '08:51:26', '09:19:48', NULL),
 ('A', 4, '2019-10-16', '14:24:55', NULL, NULL),
+('A', 4, '2019-10-20', '21:52:56', NULL, NULL),
+('A', 4, '2019-10-21', '16:24:51', NULL, NULL),
+('A', 4, '2019-10-22', '08:56:54', '09:19:49', NULL),
 ('A', 5, '2019-10-16', '14:25:02', NULL, NULL),
+('A', 5, '2019-10-21', '16:25:24', NULL, NULL),
+('A', 5, '2019-10-22', '09:01:10', '09:19:49', NULL),
 ('A', 6, '2019-10-16', '14:25:09', NULL, NULL),
+('A', 6, '2019-10-21', '16:25:49', NULL, NULL),
+('A', 6, '2019-10-22', '09:02:20', '09:19:49', NULL),
 ('A', 7, '2019-10-16', '14:25:15', NULL, NULL),
+('A', 7, '2019-10-21', '16:26:29', NULL, NULL),
+('A', 7, '2019-10-22', '09:02:42', '09:19:49', NULL),
 ('A', 8, '2019-10-16', '14:35:26', NULL, NULL),
+('A', 8, '2019-10-21', '16:26:49', NULL, NULL),
+('A', 8, '2019-10-22', '09:19:55', '09:24:31', '09:24:41'),
 ('A', 9, '2019-10-16', '14:36:06', NULL, NULL),
+('A', 9, '2019-10-21', '17:05:19', NULL, NULL),
+('A', 9, '2019-10-22', '09:24:18', '09:24:41', '09:24:42'),
 ('A', 10, '2019-10-16', '14:36:54', NULL, NULL),
+('A', 10, '2019-10-22', '09:24:21', '09:24:42', '09:24:42'),
 ('A', 11, '2019-10-16', '14:37:48', NULL, NULL),
 ('A', 12, '2019-10-16', '14:38:43', NULL, NULL),
 ('A', 13, '2019-10-16', '14:39:34', NULL, NULL),
@@ -114,35 +163,10 @@ INSERT INTO `ticket` (`ID_service`, `number`, `date`, `time_start_waiting`, `tim
 ('A', 23, '2019-10-16', '14:47:21', NULL, NULL),
 ('A', 24, '2019-10-16', '14:55:06', NULL, NULL),
 ('P', 1, '2019-10-16', '14:25:22', NULL, NULL),
-('P', 2, '2019-10-16', '14:47:26', NULL, NULL);
-
---
--- Indici per le tabelle scaricate
---
-
---
--- Indici per le tabelle `employee`
---
-ALTER TABLE `employee`
-  ADD PRIMARY KEY (`ID`);
-
---
--- Indici per le tabelle `employee_service`
---
-ALTER TABLE `employee_service`
-  ADD PRIMARY KEY (`ID_employee`,`ID_service`);
-
---
--- Indici per le tabelle `service`
---
-ALTER TABLE `service`
-  ADD PRIMARY KEY (`ID`);
-
---
--- Indici per le tabelle `ticket`
---
-ALTER TABLE `ticket`
-  ADD PRIMARY KEY (`ID_service`,`number`,`date`);
+('P', 1, '2019-10-20', '21:52:53', NULL, NULL),
+('P', 1, '2019-10-21', '16:25:31', NULL, NULL),
+('P', 2, '2019-10-16', '14:47:26', NULL, NULL),
+('P', 2, '2019-10-20', '21:52:54', NULL, NULL);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
