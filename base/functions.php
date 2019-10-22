@@ -220,7 +220,6 @@ function LogIn($ID, $pwd_inserted)
     $db = DBConnect();
     $stmt = $db->prepare("SELECT * FROM employee WHERE ID = :ID"); // TODO: improve security
     $stmt->bindParam(':ID', $ID);
-    $stmt->bindParam(':pwd', $pwd_inserted);
     $stmt->execute();
 
     $usr = $stmt->fetch();
