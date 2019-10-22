@@ -165,6 +165,7 @@ function serveNext($ID, $service, $num)
 function serveFirst($ID)
 {
     $db = DBConnect();
+    $db->setAttribute(PDO::ATTR_AUTOCOMMIT, 0);
     $db->beginTransaction();
     $stmt = $db->prepare("SELECT ID_service FROM employee_service WHERE ID_employee = :ID FOR UPDATE");
     $stmt->bindParam(':ID', $ID);
@@ -206,6 +207,7 @@ function serveFirst($ID)
         $stmt->bindParam(':num', $nt);
         $stmt->execute();
         $db->commit();
+        $db->setAttribute(PDO::ATTR_AUTOCOMMIT, 1);
         return $type . $nt;
     } else {
         $stmt = $db->prepare("UPDATE employee SET status='occupied', ID_ticket_service=:IDS, ID_ticket_number=:num WHERE ID=:IDE");
@@ -214,6 +216,7 @@ function serveFirst($ID)
         $stmt->bindParam(':num', $nt);
         $stmt->execute();
         $db->commit();
+        $db->setAttribute(PDO::ATTR_AUTOCOMMIT, 1);
         return NULL;
     }
 }
@@ -222,18 +225,16 @@ function LogIn($ID, $pwd_inserted)
 { //transazione necessaria?
     $db = DBConnect();
     //$db->beginTransaction();
-    $stmt = $db->prepare("SELECT admin FROM employee WHERE ID = :ID AND password =:pwd"); // TODO: improve security
+    $stmt = $db->prepare("SELECT * FROM employee WHERE ID = :ID"); // TODO: improve security
     $stmt->bindParam(':ID', $ID);
-    $stmt->bindParam(':pwd', $pwd_inserted);
     $stmt->execute();
+    $usr = $stmt->fetch(); // retrieve value column "admin"
 
-    if ($stmt->rowCount() != 1) {
+    if ($stmt->rowCount() != 1 || $pwd_inserted != $usr["password"]) {
         header("location: ../login.php?error=1");
         exit;
     }
 
-    $admin = $stmt->fetchColumn(0); // retrieve value column "admin"
-    $db = NULL;
 
     //TO DO: No password hash still
 
@@ -242,6 +243,8 @@ function LogIn($ID, $pwd_inserted)
     //     header("location: ../login.php"); 
     //     exit;
     // }
+
+    $admin = $usr['admin'];
 
     //$db->commit();
     $_SESSION["id"] = $ID;
