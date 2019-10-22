@@ -159,13 +159,8 @@ function serveFirst($ID)
     $db = DBConnect();
     $db->setAttribute(PDO::ATTR_AUTOCOMMIT, 0);
     $db->beginTransaction();
-<<<<<<< HEAD
-    $stmt = $db->prepare("SELECT ID_service FROM employee_service WHERE ID_employee = :ID FOR UPDATE");
-    $stmt->bindParam(':ID, ', $ID);
-=======
     $stmt = $db->prepare("SELECT ID_service FROM employee_service WHERE ID_employee = :ID");
     $stmt->bindParam(':ID', $ID);
->>>>>>> 494a8fe148e27b926e157cd3038e6440b3727219
     $stmt->execute();
     $count = array();
     $services = $stmt->fetchAll(0);
