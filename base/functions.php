@@ -159,7 +159,7 @@ function serveFirst($ID)
     $db = DBConnect();
     $db->beginTransaction();
     $stmt = $db->prepare("SELECT ID_service FROM employee_service WHERE ID_employee = :ID FOR UPDATE");
-    $stmt->bindParam(':ID', $ID);
+    $stmt->bindParam(':ID, ', $ID);
     $stmt->execute();
     $count = 0;
     $type = NULL; // service id
