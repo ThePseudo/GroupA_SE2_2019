@@ -17,7 +17,7 @@ include "base/functions.php";
         align-content:center;
     }
 </style>
-<a href="index.php" style="color:black;text-decoration:none;"><button class="topright loginbtn">Home</button></a>
+<a href="index.php" style="color:black;text-decoration:none;"><button class="topright loginbtn" style="font-size:25px">Home</button></a>
 <div>
     <table>
         <tr>
