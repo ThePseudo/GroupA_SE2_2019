@@ -35,45 +35,47 @@ function CounterTicket($num)
 
 function PeopleExtimation($ticket)
 {
-    $count=0;
-    $service=NULL;
-    $num=0;
-    $arr=str_split($ticket);
-    foreach($arr as $var){
-        if($count==0){
-            $service=$var;
+    $count = 0;
+    $service = NULL;
+    $num = 0;
+    $arr = str_split($ticket);
+    foreach ($arr as $var) {
+        if ($count == 0) {
+            $service = $var;
         } else {
-            $num=$num*10+(int)$var;
+            $num = $num * 10 + (int) $var;
         }
         $count++;
     }
     $db = DBConnect();
-    $db->beginTransaction();
-    $stmt = $db->prepare("SELECT DISTINCT COUNT(*) FROM ticket WHERE ID_service = :ID AND time_end_waiting IS NULL");
+    $stmt = $db->prepare("SELECT DISTINCT COUNT(*) FROM ticket WHERE ID_service = :ID AND time_end_waiting IS NULL AND date = :DATE");
     $stmt->bindParam(':ID', $service);
+    $date = date("Y-m-d");
+    $stmt->bindParam(":DATE", $date);
     $stmt->execute();
     $num = $stmt->fetchColumn(0);
-    $db->commit();
-    return $num-1;
+    $db = null;
+    return $num - 1;
 }
 
 function WaitExtimation($ticket)
 {
-    $count=0;
-    $service=NULL;
-    $num=0;
-    $arr=str_split($ticket);
-    foreach($arr as $var){
-        if($count==0){
-            $service=$var;
+    $count = 0;
+    $service = NULL;
+    $num = 0;
+    $arr = str_split($ticket);
+    foreach ($arr as $var) {
+        if ($count == 0) {
+            $service = $var;
         } else {
-            $num=$num*10+(int)$var;
+            $num = $num * 10 + (int) $var;
         }
         $count++;
     }
     $db = DBConnect();
-    $db->beginTransaction();
-    $stmt = $db->prepare("SELECT DISTINCT COUNT(*) FROM employee_service WHERE ID_service = :ID AND ID_employee IN (SELECT ID_employee FROM employee_service WHERE ID_service != :ID1)");
+    $stmt = $db->prepare("SELECT DISTINCT COUNT(*) FROM employee_service, ticket
+     WHERE employee_service.ID_service = :ID AND ID_employee IN (SELECT ID_employee FROM employee_service WHERE ID_service <> :ID1) 
+");
     $stmt->bindParam(':ID', $service);
     $stmt->bindParam(':ID1', $service);
     $stmt->execute();
@@ -82,7 +84,7 @@ function WaitExtimation($ticket)
     $stmt->bindParam(':ID', $service);
     $stmt->bindParam(':ID1', $service);
     $stmt->execute();
-    $service1 = $stmt->fetchColumn(0); 
+    $service1 = $stmt->fetchColumn(0);
     $stmt = $db->prepare("SELECT service_time_estimate FROM service WHERE ID = :ID");
     $stmt->bindParam(':ID', $service);
     $stmt->execute();
@@ -99,20 +101,19 @@ function WaitExtimation($ticket)
     $stmt->bindParam(':ID', $service);
     $stmt->execute();
     $num1 = $stmt->fetchColumn(0);
-    $vett=explode(":",$time);
-    $vett1=explode(":",$time1);
+    $vett = explode(":", $time);
+    $vett1 = explode(":", $time1);
     $num--;
-    $t=$vett[2]+$vett[1]*60+$vett[0]*3600;
-    $t1=$vett1[2]+$vett1[1]*60+$vett1[0]*3600;
-    $coeff=$num*$t+$num1*$t1;
-    $den=$service1*$coeff+$combined*$num*$t;
-    $numeratore=$num*$coeff;
-    if($den!=0)
-        $calc = $numeratore/$den;
-    else if (($t==0 || $num==0) && ($combined !=0 || $service1 !=0))
+    $t = (int) $vett[2] + (int) $vett[1] * 60 + (int) $vett[0] * 3600;
+    $t1 = (int) $vett1[2] + (int) $vett1[1] * 60 + (int) $vett1[0] * 3600;
+    $coeff = $num * $t + $num1 * $t1;
+    $den = $service1 * $coeff + $combined * $num * $t;
+    $numeratore = $num * $coeff;
+    if ($den != 0)
+        $calc = $numeratore / $den;
+    else if (($t == 0 || $num == 0) && ($combined != 0 || $service1 != 0))
         $calc = 0;
-    else{
-        $db->commit();
+    else {
         return "INFINITE";
     }
     $stmt = $db->prepare("SELECT DISTINCT COUNT(ID_employee) FROM employee_service WHERE ID_employee IN (SELECT ID FROM employee WHERE status='occupied')");
@@ -123,17 +124,18 @@ function WaitExtimation($ticket)
     $stmt->bindParam(':ID', $service);
     $stmt->execute();
     $tot = $stmt->fetchColumn(0);
-    $db->commit();
-    if($tot!=0)
-        $calc+=($occ/$tot);
-    $calc*=$t;
-    $calc=round($calc, 0);
-    return (($calc-$calc%3600)/3600).":".(($calc%3600-$calc%60)/60).":".($calc%60);
+
+    if ($tot != 0)
+        $calc += ($occ / $tot);
+    $calc *= $t;
+    $calc = round($calc, 0);
+    return (($calc - $calc % 3600) / 3600) . ":" . (($calc % 3600 - $calc % 60) / 60) . ":" . ($calc % 60);
 }
 
 function serveNext($ID, $service, $num)
 {
     $db = DBConnect();
+    $db->setAttribute(PDO::ATTR_AUTOCOMMIT, 0);
     $db->beginTransaction();
     $date = date("Y-m-d");
     $time_print = date("H:i:s");
@@ -147,6 +149,8 @@ function serveNext($ID, $service, $num)
     $stmt->bindParam(':ID', $ID);
     $stmt->execute();
     $db->commit();
+    $db->setAttribute(PDO::ATTR_AUTOCOMMIT, 1);
+    $db = null;
     return;
 }
 
@@ -163,7 +167,6 @@ function serveFirst($ID)
     $vett = $stmt->fetchAll(0);
     $date = date("Y-m-d");
     foreach ($vett as $service) {
-        $stmt = null;
         $stmt = $db->prepare("SELECT COUNT(*) as c, MIN(number) as m FROM ticket WHERE ID_service = :ID && date = :date && time_end_waiting IS NULL FOR UPDATE");
         $stmt->bindParam(':ID', $service["ID_service"]);
         $stmt->bindParam(':date', $date);
@@ -173,16 +176,15 @@ function serveFirst($ID)
         if ($stmt->rowCount() != 1) { //Check if only one result is returned, else exit (error) 
             exit;
         }
-        
-        //If a counter manages more than one service, 
+
+        // If a counter manages more than one service, 
         //than search the longest queue and pop the first citizen from that queue
-        if ($num[0]["c"] > $count) { 
-            $count = $num;  
+        if ($num[0]["c"] > $count) {
+            $count = $num;
             $type = $service["ID_service"];
             $nt = $num[0]["m"];
         }
     }
-    $stmt = null;
     $time_print = date("H:i:s");
     $stmt = $db->prepare("UPDATE ticket SET time_end_waiting = :time WHERE ID_service=:ID AND number=:num AND date = :date");
     $stmt->bindParam(':ID', $type);
@@ -190,7 +192,6 @@ function serveFirst($ID)
     $stmt->bindParam(':date', $date);
     $stmt->bindParam(':time', $time_print);
     $stmt->execute();
-    $stmt = null;
     if ($type != NULL && $nt != 0) {
         $stmt = $db->prepare("UPDATE employee SET status='occupied', ID_ticket_service=:IDS, ID_ticket_number=:num WHERE ID=:IDE");
         $stmt->bindParam(':IDS', $type);
@@ -198,6 +199,8 @@ function serveFirst($ID)
         $stmt->bindParam(':num', $nt);
         $stmt->execute();
         $db->commit();
+        $db->setAttribute(PDO::ATTR_AUTOCOMMIT, 1);
+        $db = null;
         return $type . $nt;
     } else {
         $stmt = $db->prepare("UPDATE employee SET status='occupied', ID_ticket_service=:IDS, ID_ticket_number=:num WHERE ID=:IDE");
@@ -206,26 +209,28 @@ function serveFirst($ID)
         $stmt->bindParam(':num', $nt);
         $stmt->execute();
         $db->commit();
+        $db->setAttribute(PDO::ATTR_AUTOCOMMIT, 1);
+        $db = null;
         return NULL;
     }
 }
 
 function LogIn($ID, $pwd_inserted)
-{ //transazione necessaria?
+{
     $db = DBConnect();
-    //$db->beginTransaction();
-    $stmt = $db->prepare("SELECT admin FROM employee WHERE ID = :ID AND password =:pwd"); // TODO: improve security
+    $stmt = $db->prepare("SELECT * FROM employee WHERE ID = :ID"); // TODO: improve security
     $stmt->bindParam(':ID', $ID);
     $stmt->bindParam(':pwd', $pwd_inserted);
     $stmt->execute();
 
-    if ($stmt->rowCount() != 1) {
+    $usr = $stmt->fetch();
+
+
+    if ($stmt->rowCount() != 1 || $usr['password'] != $pwd_inserted) {
         header("location: ../login.php?error=1");
         exit;
     }
-
-    $admin = $stmt->fetchColumn(0); // retrieve value column "admin"
-    $db = NULL;
+    $db = null;
 
     //TO DO: No password hash still
 
@@ -235,7 +240,8 @@ function LogIn($ID, $pwd_inserted)
     //     exit;
     // }
 
-    //$db->commit();
+    $admin = $usr['admin'];
+
     $_SESSION["id"] = $ID;
     if (!$admin) {
         $_SESSION["type"] = "operator";
@@ -250,7 +256,7 @@ function LogIn($ID, $pwd_inserted)
 function newTicket($service)
 {
     $db = DBConnect();
-
+    $db->setAttribute(PDO::ATTR_AUTOCOMMIT, 0);
     $date = date("Y-m-d");
     $db->beginTransaction();
 
@@ -276,6 +282,7 @@ function newTicket($service)
 
     $stmt->execute();
     $db->commit();
+    $db->setAttribute(PDO::ATTR_AUTOCOMMIT, 1);
 
     $stmt = null;
     $db = null; //destroy the db's PDO object in order to close  connection to DB
