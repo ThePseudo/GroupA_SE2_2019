@@ -27,7 +27,7 @@ include "base/functions.php";
             <th>Ticket</th>
         </tr>
         <?php
-        for ($i = 0; $i < 100; $i++) {
+        for ($i = 1; $i < 100; $i++) {
             $ticket = CounterTicket($i);
             if ($ticket != NULL) {
                 echo "<tr><td>$i</td><td>$ticket</td></tr>";
