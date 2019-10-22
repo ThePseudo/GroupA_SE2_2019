@@ -50,8 +50,8 @@ function PeopleExtimation($ticket)
     $db = DBConnect();
     $stmt = $db->prepare("SELECT DISTINCT COUNT(*) FROM ticket WHERE ID_service = :ID AND time_end_waiting IS NULL AND date = :DATE");
     $stmt->bindParam(':ID', $service);
-    $currentDate = date('Y-m-d');
-    $stmt->bindParam(':DATE', $currentDate);
+    $date = date("Y-m-d");
+    $stmt->bindParam(":DATE", $date);
     $stmt->execute();
     $num = $stmt->fetchColumn(0);
     $db = null;
@@ -75,14 +75,12 @@ function WaitExtimation($ticket)
     $db = DBConnect();
     $stmt = $db->prepare("SELECT DISTINCT COUNT(*) FROM employee_service, ticket
      WHERE employee_service.ID_service = :ID AND ID_employee IN (SELECT ID_employee FROM employee_service WHERE ID_service <> :ID1) 
-     AND ticket.ID_service = employee_service.ID_service AND date = :DATE");
+");
     $stmt->bindParam(':ID', $service);
     $stmt->bindParam(':ID1', $service);
-    $currentDate = date('Y-m-d');
-    $stmt->bindParam(':DATE', $currentDate);
     $stmt->execute();
     $combined = $stmt->fetchColumn(0);
-    $stmt = $db->prepare("SELECT DISTINCT COUNT(*) FROM employee_service WHERE ID_service = :ID AND ID_employee NOT IN (SELECT ID_employee FROM employee_service WHERE ID_service <> :ID1)");
+    $stmt = $db->prepare("SELECT DISTINCT COUNT(*) FROM employee_service WHERE ID_service = :ID AND ID_employee NOT IN (SELECT ID_employee FROM employee_service WHERE ID_service != :ID1)");
     $stmt->bindParam(':ID', $service);
     $stmt->bindParam(':ID1', $service);
     $stmt->execute();
@@ -91,19 +89,16 @@ function WaitExtimation($ticket)
     $stmt->bindParam(':ID', $service);
     $stmt->execute();
     $time = $stmt->fetchColumn(0);
-
-    $stmt = $db->prepare("SELECT service_time_estimate FROM service WHERE ID <> :ID");
+    $stmt = $db->prepare("SELECT service_time_estimate FROM service WHERE ID != :ID");
     $stmt->bindParam(':ID', $service);
     $stmt->execute();
     $time1 = $stmt->fetchColumn(0);
-    $stmt = $db->prepare("SELECT DISTINCT COUNT(*) FROM ticket WHERE ID_service = :ID AND time_end_waiting IS NULL AND date = :DATE");
+    $stmt = $db->prepare("SELECT DISTINCT COUNT(*) FROM ticket WHERE ID_service = :ID AND time_end_waiting IS NULL");
     $stmt->bindParam(':ID', $service);
-    $stmt->bindParam(':DATE', $currentDate);
     $stmt->execute();
     $num = $stmt->fetchColumn(0);
-    $stmt = $db->prepare("SELECT DISTINCT COUNT(*) FROM ticket WHERE ID_service <> :ID AND time_end_waiting IS NULL  AND date = :DATE");
+    $stmt = $db->prepare("SELECT DISTINCT COUNT(*) FROM ticket WHERE ID_service != :ID AND time_end_waiting IS NULL");
     $stmt->bindParam(':ID', $service);
-    $stmt->bindParam(':DATE', $currentDate);
     $stmt->execute();
     $num1 = $stmt->fetchColumn(0);
     $vett = explode(":", $time);
@@ -121,10 +116,8 @@ function WaitExtimation($ticket)
     else {
         return "INFINITE";
     }
-
     $stmt = $db->prepare("SELECT DISTINCT COUNT(ID_employee) FROM employee_service WHERE ID_employee IN (SELECT ID FROM employee WHERE status='occupied')");
     $stmt->bindParam(':ID', $service);
-
     $stmt->execute();
     $occ = $stmt->fetchColumn(0);
     $stmt = $db->prepare("SELECT DISTINCT COUNT(ID_employee) FROM employee_service");
@@ -164,7 +157,6 @@ function serveNext($ID, $service, $num)
 function serveFirst($ID)
 {
     $db = DBConnect();
-    $db->setAttribute(PDO::ATTR_AUTOCOMMIT, 0);
     $db->beginTransaction();
     $stmt = $db->prepare("SELECT ID_service FROM employee_service WHERE ID_employee = :ID FOR UPDATE");
     $stmt->bindParam(':ID', $ID);
@@ -180,12 +172,16 @@ function serveFirst($ID)
         $stmt->bindParam(':date', $date);
         $stmt->execute();
         $num = $stmt->fetchAll();
-        if ($stmt->rowCount() != 1) {
+
+        if ($stmt->rowCount() != 1) { //Check if only one result is returned, else exit (error) 
             exit;
         }
+
+        // If a counter manages more than one service, 
+        //than search the longest queue and pop the first citizen from that queue
         if ($num[0]["c"] > $count) {
-            $type = $service["ID_service"];
             $count = $num;
+            $type = $service["ID_service"];
             $nt = $num[0]["m"];
         }
     }
@@ -224,10 +220,13 @@ function LogIn($ID, $pwd_inserted)
     $db = DBConnect();
     $stmt = $db->prepare("SELECT * FROM employee WHERE ID = :ID"); // TODO: improve security
     $stmt->bindParam(':ID', $ID);
+    $stmt->bindParam(':pwd', $pwd_inserted);
     $stmt->execute();
-    $usr = $stmt->fetch(); // retrieve value column "admin"
 
-    if ($stmt->rowCount() != 1 || $pwd_inserted != $usr["password"]) {
+    $usr = $stmt->fetch();
+
+
+    if ($stmt->rowCount() != 1 || $usr['password'] != $pwd_inserted) {
         header("location: ../login.php?error=1");
         exit;
     }
