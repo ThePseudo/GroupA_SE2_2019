@@ -177,7 +177,7 @@ function serveFirst($ID)
             exit;
         }
 
-        // If a counter manages more than one service, 
+        //If a counter manages more than one service, 
         //than search the longest queue and pop the first citizen from that queue
         if ($num[0]["c"] > $count) {
             $count = $num;
