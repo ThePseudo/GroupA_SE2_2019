@@ -25,7 +25,3 @@ if (!isset($_GET["ticketnum"]) & !isset($_GET["date"])) header("location: ./inde
             ?>
             <a href="index.php"><button class="topright loginbtn">Home</button></a><br />
         </div>
-        <script>
-            //setTimeout("location.href = 'index.php' ",10000);
-            //
-        </script>
