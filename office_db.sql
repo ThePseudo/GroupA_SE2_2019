@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Creato il: Ott 22, 2019 alle 09:25
+-- Creato il: Ott 22, 2019 alle 09:39
 -- Versione del server: 10.4.8-MariaDB
 -- Versione PHP: 7.3.10
 
@@ -49,7 +49,9 @@ CREATE TABLE IF NOT EXISTS `employee` (
 --
 
 INSERT INTO `employee` (`ID`, `name`, `surname`, `admin`, `ID_counter`, `status`, `ID_ticket_service`, `ID_ticket_number`, `password`) VALUES
-(1, 'Marco', 'Pecoraro', 0, 1, 'occupied', NULL, 0, 'pecoraro');
+(1, 'Marco', 'Pecoraro', 0, 1, 'free', NULL, 0, 'pecoraro'),
+(2, 'Giulio', 'Giuliani', 0, 2, 'free', NULL, 0, '2'),
+(3, 'Simone', 'Simoni', 0, 3, 'free', NULL, NULL, '3');
 
 -- --------------------------------------------------------
 
@@ -69,7 +71,10 @@ CREATE TABLE IF NOT EXISTS `employee_service` (
 --
 
 INSERT INTO `employee_service` (`ID_employee`, `ID_service`) VALUES
-(1, 'A');
+(1, 'A'),
+(1, 'P'),
+(2, 'A'),
+(3, 'P');
 
 -- --------------------------------------------------------
 
@@ -149,9 +154,13 @@ INSERT INTO `ticket` (`ID_service`, `number`, `date`, `time_start_waiting`, `tim
 ('A', 10, '2019-10-16', '14:36:54', NULL, NULL),
 ('A', 10, '2019-10-22', '09:24:21', '09:24:42', '09:24:42'),
 ('A', 11, '2019-10-16', '14:37:48', NULL, NULL),
+('A', 11, '2019-10-22', '09:29:19', '09:29:35', '09:30:37'),
 ('A', 12, '2019-10-16', '14:38:43', NULL, NULL),
+('A', 12, '2019-10-22', '09:30:51', '09:30:52', '09:31:30'),
 ('A', 13, '2019-10-16', '14:39:34', NULL, NULL),
+('A', 13, '2019-10-22', '09:35:04', '09:35:32', '09:36:38'),
 ('A', 14, '2019-10-16', '14:39:50', NULL, NULL),
+('A', 14, '2019-10-22', '09:35:22', '09:35:49', NULL),
 ('A', 15, '2019-10-16', '14:41:11', NULL, NULL),
 ('A', 16, '2019-10-16', '14:42:33', NULL, NULL),
 ('A', 17, '2019-10-16', '14:43:32', NULL, NULL),
@@ -165,6 +174,7 @@ INSERT INTO `ticket` (`ID_service`, `number`, `date`, `time_start_waiting`, `tim
 ('P', 1, '2019-10-16', '14:25:22', NULL, NULL),
 ('P', 1, '2019-10-20', '21:52:53', NULL, NULL),
 ('P', 1, '2019-10-21', '16:25:31', NULL, NULL),
+('P', 1, '2019-10-22', '09:35:19', '09:36:38', '09:36:43'),
 ('P', 2, '2019-10-16', '14:47:26', NULL, NULL),
 ('P', 2, '2019-10-20', '21:52:54', NULL, NULL);
 COMMIT;
