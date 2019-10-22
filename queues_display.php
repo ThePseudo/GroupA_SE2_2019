@@ -6,15 +6,17 @@ include "base/functions.php";
 
 <h1>Currently served</h1>
 <style>
-    td, th{
-        font-size:30px;
+    td,
+    th {
+        font-size: 30px;
         border: 1px solid #dddddd;
         width: 200px;
     }
-    table{
+
+    table {
         margin: 0 auto;
-        text-align:center; 
-        align-content:center;
+        text-align: center;
+        align-content: center;
     }
 </style>
 <a href="index.php" style="color:black;text-decoration:none;"><button class="topright loginbtn" style="font-size:25px">Home</button></a>
@@ -25,19 +27,18 @@ include "base/functions.php";
             <th>Ticket</th>
         </tr>
         <?php
-        for($i=0; $i<100; $i++){
-            $ticket=CounterTicket($i);
-            if($ticket!=NULL){
+        for ($i = 0; $i < 100; $i++) {
+            $ticket = CounterTicket($i);
+            if ($ticket != NULL) {
                 echo "<tr><td>$i</td><td>$ticket</td></tr>";
-            }
+            } else break;
         }
         ?>
     </table>
 </div>
 <script>
-                
-                setTimeout("location.href = 'queues_display.php' ",10000);
-            //</script>
+    setTimeout("location.href = 'queues_display.php' ", 3000);
+</script>
 <?php
 bottom();
 ?>
