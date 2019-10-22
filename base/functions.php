@@ -182,7 +182,7 @@ function serveFirst($ID)
         if ($num[0]["c"] > $count) {
             $count = $num;
             $type = $service["ID_service"];
-            $nt = $num[0]["m"];
+            $nt = $num[0]["m"]; // next number ticket to serve from the longest queue
         }
     }
     $time_print = date("H:i:s");
