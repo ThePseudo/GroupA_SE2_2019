@@ -1,7 +1,9 @@
-FROM node:6.11.5
+FROM node:10
 
 WORKDIR ./
+COPY package*.json .
 RUN npm install
 COPY . .
+EXPOSE 8000
 
-CMD ["npm", "start"]
+CMD ["node", "server.js"]
