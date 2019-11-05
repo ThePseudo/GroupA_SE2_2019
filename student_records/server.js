@@ -19,7 +19,7 @@ app.listen(PORT, HOST);
 */
 
 http.createServer(function (req, res) {
-    res.writeHead(200, { 'Content-Type': 'text/plain' });
+    res.writeHead(200, { 'Content-Type': 'text/HTML' });
     res.end('Hello, world!');
 }).listen(PORT);
 

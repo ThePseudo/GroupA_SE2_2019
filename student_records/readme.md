@@ -1,11 +1,19 @@
-# Build
+# Instructions
+
+## Build
 
 docker image build -t students:1.0 .
 
-# Start
+## Start
 
 docker container run --publish 8000:8000 --detach --name student students:1.0
 
-# Stop
+## Stop
 
 docker container rm --force student
+
+## Usage
+
+Open browser at address:
+
+<http://localhost:8000/>
