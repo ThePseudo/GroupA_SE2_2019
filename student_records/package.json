@@ -2,7 +2,7 @@
     "name": "students",
     "version": "1.0.0",
     "description": "Student management system",
-    "author": "Group A",
+    "author": "Softeng Group A",
     "main": "server.js",
     "scripts": {
         "start": "node server.js"
