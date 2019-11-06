@@ -21,4 +21,4 @@ Open browser at address:
 
 ## Use cases 
 
-Use cases can be found [here](use_cases/sprint1.md).
+Use cases can be found [here](../use_cases/sprint1.md).
