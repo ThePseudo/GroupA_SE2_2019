@@ -48,6 +48,14 @@ As a teacher I want to record the daily lecture topics so that I can inform pare
 
 # Use case diagram
 
+## Image
+
+![UML diagram](uml.png)
+
+
+
+## Code
+
 ```plantuml
 @startuml 
 left to right direction
