@@ -45,3 +45,37 @@ As a teacher I want to record the daily lecture topics so that I can inform pare
     - Retry failed
         - Call sysadmin
 
+
+# Use case diagram
+
+```plantuml
+@startuml 
+left to right direction
+skinparam packageStyle rectangle
+actor Parent as p
+actor Teacher as t
+actor "Administrative officer" as ao
+
+rectangle system {
+(view marks of child) as view
+(record the daily lecture topics) as record
+(enable access to parents) as ep
+(enroll the students) as es
+(enter class composition) as ecc
+(log in) as li
+
+p -- view
+t -- record
+ao -- ep
+ao -- es
+ao -- ecc
+
+view .. li:<<include>>
+record .. li:<<include>>
+ep .. li:<<include>>
+es .. li:<<include>>
+ecc .. li:<<include>>
+}
+
+@enduml
+```
