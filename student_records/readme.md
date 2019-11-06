@@ -17,3 +17,8 @@ docker container rm --force student
 Open browser at address:
 
 <http://localhost:8000/>
+
+
+## Use cases 
+
+Use cases can be found [here](use_cases/sprint1.md).
