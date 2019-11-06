@@ -20,7 +20,7 @@ app.listen(PORT, HOST);
 
 http.createServer(function (req, res) {
     res.writeHead(200, { 'Content-Type': 'text/HTML' });
-    res.end('Hello, world!');
+    res.end('<!DOCTYPE html>\n<h1>Hello, world!</h1>');
 }).listen(PORT);
 
 console.log(`Running on http://${HOST}:${PORT}`);
