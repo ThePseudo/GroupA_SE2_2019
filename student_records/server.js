@@ -2,6 +2,7 @@
 
 const express = require('express');
 const fs = require('fs');
+const https = require('https');
 
 // Constants
 const PORT = 8000;
@@ -13,17 +14,15 @@ const app = express();
 // Main page
 app.get('/', (req, res) => {
     var page = '';
-    fs.readFile("pages/base/base.html", function (err, data) {
-        page = data + "\n";
+    page = fs.readFileSync("pages/base/base.html");
+    page += "\n";
 
-        // HTML here!
-        page += "<H1>Title</H1>";
+    // HTML here!
+    page += "<H1>Title</H1>";
 
-        fs.readFile("pages/base/end.html", function (err, data) {
-            page += ("\n" + data);
-            res.end(page);
-        });
-    });
+    page += "\n"
+    page += fs.readFileSync("pages/base/end.html");
+    res.end(page);
 });
 
 
@@ -32,18 +31,26 @@ app.get('/', (req, res) => {
 // Page not found
 app.get('/*', (req, res) => {
     var page = '';
-    fs.readFile("pages/base/base.html", function (err, data) {
-        page = data + "\n";
+    page = fs.readFileSync("pages/base/base.html");
+    page += "\n";
 
-        // HTML here!
-        page += "<H1>404: Page not found!</H1>";
+    // HTML here!
+    page += "<H1>404: PAGE NOT FOUND</H1>";
 
-        fs.readFile("pages/base/end.html", function (err, data) {
-            page += ("\n" + data);
-            res.end(page);
-        });
-    });
+    page += "\n"
+    page += fs.readFileSync("pages/base/end.html");
+    res.end(page);
 });
+
+/*
+https.createServer({
+    key: "", //fs.readFileSync('server.key'),
+    cert: "" //fs.readFileSync('server.cert')
+}, app)
+    .listen(8000, function () {
+        console.log(`HTTPS Running on http://${HOST}:${PORT}`);
+    })
+*/
 
 app.listen(PORT, HOST);
 console.log(`Running on http://${HOST}:${PORT}`);
