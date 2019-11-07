@@ -18,6 +18,15 @@ Open browser at address:
 
 <http://localhost:8000/>
 
+## See logs
+
+### Windows
+
+docker logs $(docker ps -aq --filter name=student)
+
+### Linux
+
+docker logs $(sudo docker ps -aq --filter name=student)
 
 ## Use cases 
 
