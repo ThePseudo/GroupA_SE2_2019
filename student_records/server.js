@@ -3,6 +3,7 @@
 const express = require('express');
 const fs = require('fs');
 const https = require('https');
+const pug = require('pug');
 
 // Constants
 const PORT = 8000;
@@ -10,36 +11,26 @@ const HOST = '0.0.0.0';
 
 // App
 const app = express();
+app.set('view engine', 'pug');
+
 
 // Main page
 app.get('/', (req, res) => {
-    var page = '';
-    page = fs.readFileSync("pages/base/base.html");
-    page += "\n";
+    const compiledPage = pug.compileFile("pages/home.pug");
+    res.end(compiledPage());
 
-    // HTML here!
-    page += "<H1>Title</H1>";
+});
 
-    page += "\n"
-    page += fs.readFileSync("pages/base/end.html");
+app.get("/style", (req, res) => {
+    var page = fs.readFileSync("pages/base/style.css");
     res.end(page);
 });
 
 
-
-
 // Page not found
 app.get('/*', (req, res) => {
-    var page = '';
-    page = fs.readFileSync("pages/base/base.html");
-    page += "\n";
-
-    // HTML here!
-    page += "<H1>404: PAGE NOT FOUND</H1>";
-
-    page += "\n"
-    page += fs.readFileSync("pages/base/end.html");
-    res.end(page);
+    const compiledPage = pug.compileFile("pages/base/404.pug");
+    res.end(compiledPage());
 });
 
 /*

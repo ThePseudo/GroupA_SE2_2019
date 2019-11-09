@@ -4,6 +4,7 @@ WORKDIR ./
 COPY package*.json .
 RUN npm install
 RUN npm install nodemailer
+RUN npm install pug
 #If we want to add https, to be corrected
 #RUN openssl req -nodes -new -x509 -keyout server.key -out server.cert
 COPY . .
