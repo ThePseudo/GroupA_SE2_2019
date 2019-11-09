@@ -1,7 +1,7 @@
 - var page = ""
 
 mixin loginBtn(text, image, href)
-  div(class='col-sm-4')
+  div(class='col-sm-4 col-xs-5')
     a(href = href)
       button(class='btn blockButton')
         div(class='row')
@@ -20,6 +20,6 @@ html
       div(class='row')
         h2(class = 'title2') Who are you?
       div(class='row')
-        div(class='col-sm-2')
+        div(class='col-sm-2 col-xs-1')
         +loginBtn('Teacher', '../images/teacher.png', 'login_teacher')
         +loginBtn('Parent', '../images/parent.png', 'login_parent')
