@@ -17,8 +17,8 @@ body {
     width: 100%;
     border: 1px solid lightgray;
     background-color: rgb(116, 230, 120);
-    padding: 14px 28px;
-    font-size: 16px;
+    padding: 14px 28px 8px 28px;
+    font-size: 24px;
     cursor: pointer;
     text-align: center;
     transition-duration: 0.2s;
