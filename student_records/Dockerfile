@@ -3,6 +3,7 @@ FROM node:latest
 WORKDIR ./
 COPY package*.json .
 RUN npm install
+RUN npm install express-session
 RUN npm install nodemailer
 RUN npm install pug
 #If we want to add https, to be corrected

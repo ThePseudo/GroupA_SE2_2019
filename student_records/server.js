@@ -1,6 +1,7 @@
 'use strict';
 
 const express = require('express');
+const session = require('express-session')
 const fs = require('fs');
 const https = require('https');
 const pug = require('pug');
@@ -29,8 +30,14 @@ app.get("/style", (req, res) => {
 
 // Page not found
 app.get('/*', (req, res) => {
-    const compiledPage = pug.compileFile("pages/base/404.pug");
-    res.end(compiledPage());
+    fs.readFile(req.path, (err, data) => {
+        if (err) {
+            const compiledPage = pug.compileFile("pages/base/404.pug");
+            res.end(compiledPage());
+        }
+        res.end(data);
+
+    })
 });
 
 /*

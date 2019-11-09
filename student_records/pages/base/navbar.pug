@@ -1,0 +1,14 @@
+- var loggedIn = false;
+mixin list(href, name)
+  li
+    a(href=href)= name
+      if block
+        block
+
+nav(class='navbar navbar-inverse' style='border-radius:0')
+  div(class='container-fluid')
+    div(class='navbar-header')
+      a(href='/' class='navbar-brand') BB
+    ul(class='nav navbar-nav navbar-right')
+      if loggedIn
+        +list('logout', 'logout')

@@ -1,6 +1,25 @@
+- var page = ""
+
+mixin loginBtn(text, image, href)
+  div(class='col-sm-4')
+    a(href = href)
+      button(class='btn blockButton')
+        div(class='row')
+          img(src= image style='width:100%;height:auto;')
+        div(class='row')
+          a(class='noLinkTitle')= text
+
 doctype html
 html
-  - var page = ""
   include base/head.pug
   body
-    h1 BB
+    include base/navbar.pug
+    div(class='container')
+      div(class='row')
+        h1(class='title') Welcome to BB
+      div(class='row')
+        h2(class = 'title2') Who are you?
+      div(class='row')
+        div(class='col-sm-2')
+        +loginBtn('Teacher', '../images/teacher.png', 'login_teacher')
+        +loginBtn('Parent', '../images/parent.png', 'login_parent')
