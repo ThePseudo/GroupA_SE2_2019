@@ -28,10 +28,29 @@ app.get("/style", (req, res) => {
 
 app.get("/marks", (req, res) => {
     const compiledPage = pug.compileFile("pages/student_marks.pug");
-    const marks = "";
+    var marks = [];
+    // TODO: get marks from database
+
+    marks[0] = {
+        date: new Date(2019, 9, 10),
+        subject: "History",
+        mark: "6"
+    };
+
+    marks[1] = {
+        date: new Date(2019, 10, 12),
+        subject: "Math",
+        mark: "8"
+    }
+
+    marks.sort((a, b) => {
+        return b.date - a.date;
+    });
+
     res.end(compiledPage({
         // TODO: student name should be taken from DB
-        student_name: "Marco Pecoraro"
+        student_name: "Marco Pecoraro",
+        student_marks: marks
     }));
 })
 

@@ -1,10 +1,10 @@
 // - Those variables should be in every page
 - var page = "Marks"
-- var loggedIn = true;
+- var loggedIn = true
 
 mixin rowMark(subject, date, mark)
   tr(class="table-row table-row-base")
-    td= date
+    td= (date.getDate() + "/" + date.getMonth() + "/" + date.getFullYear())
     td= subject
     td= mark
 
@@ -24,5 +24,7 @@ html
               th Date
               th Subject
               th Mark
-            +rowMark("Maths", "12/11/19", "8")
-            +rowMark("History", "10/10/19", "6" )
+            for mark in student_marks
+              +rowMark(mark.subject, mark.date, mark.mark)
+            //+rowMark("Maths", "12/11/19", "8")
+            //+rowMark("History", "10/10/19", "6" )
