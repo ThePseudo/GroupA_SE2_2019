@@ -46,4 +46,11 @@ body {
 
 .table-row-base {
     background-color: white;
+    text-align: center; 
+    align-content: center;
+}
+
+th {
+    align-content:center; 
+    text-align:center;
 }

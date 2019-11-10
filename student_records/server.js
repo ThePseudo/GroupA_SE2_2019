@@ -28,6 +28,7 @@ app.get("/style", (req, res) => {
 
 app.get("/marks", (req, res) => {
     const compiledPage = pug.compileFile("pages/student_marks.pug");
+    const marks = "";
     res.end(compiledPage({
         // TODO: student name should be taken from DB
         student_name: "Marco Pecoraro"

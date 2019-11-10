@@ -1,6 +1,12 @@
 // - Those variables should be in every page
-- var page = ""
+- var page = "Marks"
 - var loggedIn = true;
+
+mixin rowMark(subject, date, mark)
+  tr(class="table-row table-row-base")
+    td= date
+    td= subject
+    td= mark
 
 doctype html
 html
@@ -12,17 +18,11 @@ html
         h1(class='title') #{student_name}'s marks
       div(class='row')
         div(class="col-sm-2")
-        div(class="col-sm-8")
+        div(class="col-sm-8" style='align-content:center;')
           table(style="width:100%; text-align:center; align-content:center" class="table table-bordered")
             tr(class='table-row-base')
-              th Subject
               th Date
+              th Subject
               th Mark
-            tr(class="table-row table-row-base")
-              td Maths
-              td 12/11/19
-              td 8
-            tr(class="table-row table-row-base")
-              td History
-              td 10/10/19
-              td 6
+            +rowMark("Maths", "12/11/19", "8")
+            +rowMark("History", "10/10/19", "6" )
