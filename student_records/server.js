@@ -19,14 +19,20 @@ app.set('view engine', 'pug');
 app.get('/', (req, res) => {
     const compiledPage = pug.compileFile("pages/home.pug");
     res.end(compiledPage());
-
 });
 
 app.get("/style", (req, res) => {
-    var page = fs.readFileSync("pages/base/style.css");
+    const page = fs.readFileSync("pages/base/style.css");
     res.end(page);
 });
 
+app.get("/marks", (req, res) => {
+    const compiledPage = pug.compileFile("pages/student_marks.pug");
+    res.end(compiledPage({
+        // TODO: student name should be taken from DB
+        student_name: "Marco Pecoraro"
+    }));
+})
 
 // Page not found
 app.get('/*', (req, res) => {
@@ -39,6 +45,8 @@ app.get('/*', (req, res) => {
 
     })
 });
+
+// HTTPS
 
 /*
 https.createServer({

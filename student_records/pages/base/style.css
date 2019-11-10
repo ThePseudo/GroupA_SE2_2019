@@ -39,3 +39,11 @@ body {
     margin-bottom: 40px;
     text-align: center;
 }
+
+.table-row:hover {
+    background-color: rgb(116, 230, 120);
+}
+
+.table-row-base {
+    background-color: white;
+}
