@@ -1,6 +1,6 @@
 version: '2.3'
 services:
-      db: 
+      db:
         container_name: db
         build: ./mysql_db
         environment:
@@ -12,8 +12,8 @@ services:
         ports: 
             - "3306:3306"
       
-        # networks:
-        #     - rete
+        networks:
+            - rete
     
       serverjs:
           container_name: serverJS
@@ -24,16 +24,14 @@ services:
               - "8080:8080"
           environment:
               - DATABASE_HOST=db
-          depends_on:    #this means that serverJS container in run AFTER the db container
+          depends_on:
                 db:
                   condition: service_healthy
-          # networks:
-          #    - rete
-      
-      # networks:
-      #     default:
-      #         driver: bridge
-      # networks:
-      #       rete:
-      #           driver: bridge
+          
+          networks:
+            - rete
+            
+networks:
+    rete:
+        driver: bridge
         
