@@ -1,0 +1,13 @@
+{
+    "name": "students",
+    "version": "1.0.0",
+    "description": "Student management system",
+    "author": "Softeng Group A",
+    "main": "server.js",
+    "scripts": {
+        "start": "node server.js"
+    },
+    "dependencies": {
+        "express": "^4.16.1"
+    }
+}
