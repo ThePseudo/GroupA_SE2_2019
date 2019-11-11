@@ -1,6 +1,6 @@
 version: '2.3'
 services:
-      db:
+      db: 
         container_name: db
         build: ./mysql_db
         environment:
@@ -24,7 +24,7 @@ services:
               - "8080:8080"
           environment:
               - DATABASE_HOST=db
-          depends_on:
+          depends_on:    #this means that serverJS container in run AFTER the db container
                 db:
                   condition: service_healthy
           # networks:
