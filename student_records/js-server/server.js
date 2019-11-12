@@ -11,6 +11,8 @@ const bcrypt = require('bcrypt');
 const PORT = 8000;
 const HOST = '0.0.0.0';
 
+const DBPORT = 3300;
+
 // App
 const app = express();
 app.set('view engine', 'pug');
