@@ -1,0 +1,19 @@
+version: '2.3'
+services:
+  db:
+    image: mysql  
+    container_name: students-db
+    build: ./mysql_db
+    environment:
+      MYSQL_DATABASE: students
+      MYSQL_ROOT_PASSWORD: pwd
+    ports: 
+      - "3306:3306"
+    
+  js:
+    container_name: students  
+    build: .
+    environment:
+      DATABASE_HOST: students-db
+    ports:
+      - "8000:8000"
