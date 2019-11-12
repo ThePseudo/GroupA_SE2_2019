@@ -38,7 +38,6 @@ docker logs $(docker ps -aq --filter name=student)
 
 docker logs $(sudo docker ps -aq --filter name=student)
 
-
 # Use cases
 
 Use cases can be found [here](../use_cases/sprint1.md).
