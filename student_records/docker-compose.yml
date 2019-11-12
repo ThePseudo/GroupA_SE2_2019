@@ -12,7 +12,7 @@ services:
     
   js:
     container_name: students  
-    build: .
+    build: ./js-server
     environment:
       DATABASE_HOST: students-db
     ports:

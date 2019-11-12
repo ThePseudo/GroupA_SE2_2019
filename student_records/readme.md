@@ -2,6 +2,10 @@
 
 ## Build all
 
+docker-compose build
+
+## Start all
+
 docker-compose up
 
 ## Stop all
