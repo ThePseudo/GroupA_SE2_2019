@@ -6,6 +6,7 @@ const fs = require('fs');
 const https = require('https');
 const pug = require('pug');
 const bcrypt = require('bcrypt');
+var mysql = require('mysql');
 
 // Constants
 const PORT = 8000;
@@ -21,6 +22,18 @@ app.set('view engine', 'pug');
 // Main page
 app.get('/', (req, res) => {
     const compiledPage = pug.compileFile("pages/home.pug");
+    var con = mysql.createConnection({
+        host: "students-db",
+        user: "root",
+        password: "pwd",
+        database: "students",
+        insecureAuth: true
+    });
+
+    con.connect(function (err) {
+        if (err) throw err;
+        console.log("Connected!");
+    });
     res.end(compiledPage());
 });
 
