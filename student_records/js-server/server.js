@@ -5,6 +5,7 @@ const session = require('express-session')
 const fs = require('fs');
 const https = require('https');
 const pug = require('pug');
+const bcrypt = require('bcrypt');
 
 // Constants
 const PORT = 8000;
