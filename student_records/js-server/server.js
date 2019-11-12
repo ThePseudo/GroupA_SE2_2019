@@ -114,8 +114,9 @@ app.get("/price", (req, res) => {
                 var real_taxes = result[0].taxes / 100;
                 var tax_increment = real_taxes * discount_price / 100;
                 console.log("Taxes calculated!");
-                var final_price = discount_price + tax_increment
-                res.end("{\nPrice: " + price / 100 + "\nDiscount price: " + discount_price / 100 + "\nTaxes: " + real_taxes / 100 + "%\nTotal price: " + final_price / 100 + "\n}");
+                var final_price = Math.floor(discount_price + tax_increment);
+                res.end("{\n\t\"Price\": \"" + price / 100 + "\"\n\t\"Discount price\": \"" + discount_price / 100
+                    + "\"\n\t\"Taxes\": \"" + real_taxes / 100 + "\"\n\t\"Total price\": \"" + final_price / 100 + "\"\n}");
             });
         });
     });
