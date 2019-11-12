@@ -70,6 +70,58 @@ app.get("/marks", (req, res) => {
     }));
 })
 
+// PROJECT FOR TORCHIANO - 12/11/19
+
+app.get("/price", (req, res) => {
+    var price = req.query.price;
+    var state = req.query.state;
+    var nitems = req.query.nitems;
+
+    price *= nitems;
+
+    var con = mysql.createConnection({
+        host: "students-db",
+        user: "root",
+        password: "pwd",
+        database: "students",
+        insecureAuth: true
+    });
+
+    con.connect(function (err) {
+        if (err) {
+            console.log(err)
+            res.end(err);
+        }
+        console.log("Connected!");
+        var temp = price / 100;
+        con.query("SELECT discount FROM discounts WHERE threshold <= " + temp + " ORDER BY threshold DESC", function (err, result, fields) {
+            if (err) {
+                console.log(err)
+                res.end(err);
+            }
+            console.log(result[0].discount);
+            var real_discount = result[0].discount / 100;
+            var discount_price = price - real_discount * price;
+            // TAXES
+            con.query("SELECT taxes FROM states WHERE code = '" + state + "'", function (err, result, fields) {
+                if (err) {
+                    console.log(err)
+                    res.end(err);
+                }
+
+                // TAXES CALCULATED
+                console.log(result[0].taxes);
+                var real_taxes = result[0].taxes / 100;
+                var tax_increment = real_taxes * discount_price / 100;
+                console.log("Taxes calculated!");
+                var final_price = discount_price + tax_increment
+                res.end("{\nPrice: " + price / 100 + "\nDiscount price: " + discount_price / 100 + "\nTaxes: " + real_taxes / 100 + "%\nTotal price: " + final_price / 100 + "\n}");
+            });
+        });
+    });
+});
+
+
 // Page not found
 app.get('/*', (req, res) => {
     fs.readFile(req.path, (err, data) => {
