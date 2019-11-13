@@ -45,6 +45,12 @@ app.get("/style", (req, res) => {
     res.end(page);
 });
 
+app.get("/enroll", (req, res) => {
+    const compiledPage = pug.compileFile("pages/enroll.pug");
+    res.end(compiledPage());
+});
+
+
 app.get("/marks", (req, res) => {
     const compiledPage = pug.compileFile("pages/student_marks.pug");
     var marks = [];
