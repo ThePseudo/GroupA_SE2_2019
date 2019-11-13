@@ -31,7 +31,10 @@ app.get('/', (req, res) => {
     });
 
     con.connect(function (err) {
-        if (err) throw err;
+        if (err) {
+            console.log("Error: " + err);
+            return;
+        }
         console.log("Connected!");
     });
     res.end(compiledPage());
@@ -72,6 +75,7 @@ app.get("/marks", (req, res) => {
 
 // PROJECT FOR TORCHIANO - 12/11/19
 
+/*
 app.get("/price", (req, res) => {
     var price = req.query.price;
     var state = req.query.state;
@@ -121,6 +125,7 @@ app.get("/price", (req, res) => {
         });
     });
 });
+*/
 
 // END PROJECT FOR TORCHIANO - 12/11/19
 
