@@ -18,7 +18,6 @@ const DBPORT = 3300;
 const app = express();
 app.set('view engine', 'pug');
 
-
 // Main page
 app.get('/', (req, res) => {
     const compiledPage = pug.compileFile("pages/home.pug");
@@ -38,6 +37,20 @@ app.get('/', (req, res) => {
         console.log("Connected!");
     });
     res.end(compiledPage());
+});
+
+app.get('/login_teacher', (req, res) => {
+    const compiledPage = pug.compileFile("pages/login.pug");
+    res.end(compiledPage({
+        user: "teacher"
+    }));
+});
+
+app.get('/login_parent', (req, res) => {
+    const compiledPage = pug.compileFile("pages/login.pug");
+    res.end(compiledPage({
+        user: "parent"
+    }));
 });
 
 app.get("/style", (req, res) => {
