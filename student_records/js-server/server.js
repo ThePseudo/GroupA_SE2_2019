@@ -122,6 +122,7 @@ app.get("/price", (req, res) => {
     });
 });
 
+// END PROJECT FOR TORCHIANO - 12/11/19
 
 // Page not found
 app.get('/*', (req, res) => {

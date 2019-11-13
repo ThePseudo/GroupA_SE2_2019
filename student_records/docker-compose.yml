@@ -15,5 +15,7 @@ services:
     build: ./js-server
     environment:
       DATABASE_HOST: students-db
+    depends_on: 
+      - "db"
     ports:
       - "8000:8000"

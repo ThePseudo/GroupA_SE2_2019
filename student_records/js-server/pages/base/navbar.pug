@@ -1,6 +1,8 @@
-mixin list(href, name)
+mixin list(href, name, icon)
   li
-    a(href=href)= name
+    a(href=href)
+      span(class= icon)
+      = ' ' + name
       if block
         block
 
@@ -10,4 +12,4 @@ nav(class='navbar navbar-inverse' style='border-radius:0')
       a(href='/' class='navbar-brand') BB
     ul(class='nav navbar-nav navbar-right')
       if loggedIn
-        +list('logout', 'logout')
+        +list('logout', 'logout', 'glyphicon glyphicon-log-out')
