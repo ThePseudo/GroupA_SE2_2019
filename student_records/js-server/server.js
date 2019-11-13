@@ -6,7 +6,8 @@ const fs = require('fs');
 const https = require('https');
 const pug = require('pug');
 const bcrypt = require('bcrypt');
-var mysql = require('mysql');
+const mysql = require('mysql');
+const bodyParser = require('body-parser');
 
 // Constants
 const PORT = 8000;
@@ -17,6 +18,7 @@ const DBPORT = 3300;
 // App
 const app = express();
 app.set('view engine', 'pug');
+app.use(bodyParser.urlencoded({ extended: false }));
 
 // Main page
 app.get('/', (req, res) => {
@@ -84,7 +86,12 @@ app.get("/marks", (req, res) => {
         student_name: "Marco Pecoraro",
         student_marks: marks
     }));
-})
+});
+
+app.post('/login_teacher_action', (req, res) => {
+    var ssn = req.body.SSN;
+    console.log(ssn);
+});
 
 // PROJECT FOR TORCHIANO - 12/11/19
 
