@@ -60,6 +60,25 @@ app.get("/style", (req, res) => {
     res.end(page);
 });
 
+app.get("/enroll", (req, res) => {
+    const compiledPage = pug.compileFile("pages/enroll.pug");
+    res.end(compiledPage());
+});
+
+app.post("/register", (req, res) => {
+    name = req.body.name;
+    surname = req.body.surname;
+    fiscalcode = req.body.fiscalcode;
+    const compiledPage = pug.compileFile("pages/register.pug");
+    res.end(compiledPage({
+        student_name : name,
+        student_surname : surname,
+        student_fiscalcode : fiscalcode
+    }));
+});
+
+
+
 app.get("/marks", (req, res) => {
     const compiledPage = pug.compileFile("pages/student_marks.pug");
     var marks = [];
