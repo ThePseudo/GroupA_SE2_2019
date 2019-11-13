@@ -154,6 +154,17 @@ app.get('/*', (req, res) => {
     })
 });
 
+app.post('/*', (req, res) => {
+    fs.readFile(req.path, (err, data) => {
+        if (err) {
+            const compiledPage = pug.compileFile("pages/base/404.pug");
+            res.end(compiledPage());
+        }
+        res.end(data);
+
+    })
+});
+
 // HTTPS
 
 /*
