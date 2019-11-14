@@ -1,5 +1,6 @@
 body {
     background: #EEEEEE;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 .noLinkTitle {
@@ -53,4 +54,55 @@ body {
 th {
     align-content:center; 
     text-align:center;
+}
+
+.sidebar {
+    display: block;
+    position: absolute;
+    min-width: 200px;
+    width: 15%;
+    margin-left: 0px;
+    margin-top: -20px;
+    background: #222222;
+    height: 100%;
+}
+
+.sidebar-item {
+    text-align: right;
+    font-size: larger;
+    color: #222222;
+    background: #EEEEEE;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    padding-right: 32px;
+    display: block;
+    width: 98%;
+    margin-left: 1%;
+    transition: 0.2s;
+}
+
+.sidebar-item:hover {
+    text-decoration: none;
+    color: #222222;
+    display: block;
+    background: rgb(116, 230, 120);
+    transition: 0.2s;
+}
+
+.active-sidebar-item {
+    text-align: right;
+    font-size: larger;
+    color: #222222;
+    display: block;
+    background: rgb(144, 243, 147);
+    padding-top: 10px;
+    padding-bottom: 10px;
+    padding-right: 32px;
+    display: block;
+    width: 98%;
+    margin-left: 1%;
+}
+
+.active-sidebar-item:hover {
+    text-decoration: none;
 }

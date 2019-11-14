@@ -1,0 +1,14 @@
+// - Variables used: "user"
+
+mixin sidebar_item(link, text)
+  if(text==active)
+    a(class='active-sidebar-item')= text
+  else
+    a(class='sidebar-item' href=link)= text
+
+div(class='sidebar')
+  div(style='margin:40px')
+  if(user=="admin")
+    +sidebar_item("/admin/parents", "Manage parents")
+    +sidebar_item("/admin/students", "Enroll student")
+    +sidebar_item("/admin/class", "Class composition")
