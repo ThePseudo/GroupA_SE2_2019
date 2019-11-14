@@ -18,7 +18,7 @@ const DBPORT = 3300;
 // App
 const app = express();
 app.set('view engine', 'pug');
-app.set('views', './pages'); // necessario per .render()
+app.set('views', './pages');
 app.use(bodyParser.urlencoded({ extended: false }));
 
 // ### Functions definition section ### 
@@ -119,8 +119,13 @@ app.get("/marks", (req, res) => {
 	// Close MySQL connection
 	con.end();
     
-    res.render('student_marks.pug', {markList: markList, student_name: "Marco Pecoraro"});
+    //res.render('student_marks.pug', {markList: markList, student_name: "Marco Pecoraro"});
     
+	res.end(compiledPage({
+		student_name: "Marco Pecoraro",
+		student_marks: markList
+	})
+	);
     // res.end(compiledPage({
     //     // TODO: student name should be taken from DB
     //     student_name: "Marco Pecoraro",
