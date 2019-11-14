@@ -18,6 +18,7 @@ const DBPORT = 3300;
 // App
 const app = express();
 app.set('view engine', 'pug');
+app.set('views', './pages');
 app.use(bodyParser.urlencoded({ extended: false }));
 
 // ### Functions definition section ### 
@@ -78,9 +79,9 @@ app.post("/register", (req, res) => {
 
 
 app.get("/marks", (req, res) => {
-    const compiledPage = pug.compileFile("pages/student_marks.pug");
+    //const compiledPage = pug.compileFile("pages/student_marks.pug");
     var con = wrapper_createConnection();
-
+    var markList = [];
     con.connect(function (err) {
         if (err) {
             console.log("Error: " + err);
@@ -111,18 +112,20 @@ app.get("/marks", (req, res) => {
                     
                 }
             // render the student_marks.plug page.
-                res.render('student_marks', {"markList": markList});
+                
+            
 	  	}
 	});
-
 	// Close MySQL connection
-	connection.end();
-
-    res.end(compiledPage({
-        // TODO: student name should be taken from DB
-        student_name: "Marco Pecoraro",
-        student_marks: marks
-    }));
+	con.end();
+    
+    res.render('student_marks.pug', {"markList": markList});
+    // res.end(compiledPage({
+    //     // TODO: student name should be taken from DB
+    //     student_name: "Marco Pecoraro",
+    //     //student_marks: marks
+    // })
+    // );
 });
 
 app.post('/login_teacher_action', (req, res) => {
