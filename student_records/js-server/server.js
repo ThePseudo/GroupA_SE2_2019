@@ -119,7 +119,8 @@ app.get("/marks", (req, res) => {
 	// Close MySQL connection
 	con.end();
     
-    res.render('student_marks.pug', {"markList": markList});
+    res.render('student_marks.pug', {markList: markList, student_name: "Marco Pecoraro"});
+    
     // res.end(compiledPage({
     //     // TODO: student name should be taken from DB
     //     student_name: "Marco Pecoraro",
