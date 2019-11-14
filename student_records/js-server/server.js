@@ -20,6 +20,18 @@ const app = express();
 app.set('view engine', 'pug');
 app.use(bodyParser.urlencoded({ extended: false }));
 
+//Function definition
+
+function mysqlConnectionCreation(){
+    let con = mysql.createConnection({
+        host: "students-db",
+        user: "root",
+        password: "pwd",
+        database: "students",
+        insecureAuth: true
+    });
+    return con;
+}
 // Main page
 app.get('/', (req, res) => {
     const compiledPage = pug.compileFile("pages/home.pug");
@@ -81,13 +93,7 @@ app.post("/register", (req, res) => {
 
 app.get("/marks", (req, res) => {
     
-    var con = mysql.createConnection({
-        host: "students-db",
-        user: "root",
-        password: "pwd",
-        database: "students",
-        insecureAuth: true
-    });
+    var con = mysqlConnectionCreation();
 
     con.connect(function (err) {
         if (err) {
