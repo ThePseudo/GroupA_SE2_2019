@@ -18,7 +18,7 @@ const DBPORT = 3300;
 // App
 const app = express();
 app.set('view engine', 'pug');
-app.set('views', './pages');
+app.set('views', './pages'); // necessario per .render()
 app.use(bodyParser.urlencoded({ extended: false }));
 
 // ### Functions definition section ### 
