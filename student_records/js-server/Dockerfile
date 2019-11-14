@@ -3,6 +3,7 @@ FROM node:latest
 WORKDIR ./
 COPY package*.json .
 RUN npm install
+RUN npm install password-generator
 RUN npm install body-parser
 RUN npm install bcrypt
 RUN npm install express
