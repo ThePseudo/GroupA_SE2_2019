@@ -4,21 +4,34 @@ const express = require('express');
 const session = require('express-session')
 const fs = require('fs');
 const https = require('https');
+const http = require('http');
 const pug = require('pug');
 const bcrypt = require('bcrypt');
 const mysql = require('mysql');
 const bodyParser = require('body-parser');
 
 // Constants
-const PORT = 8000;
+const PORT = 8080;
 const HOST = '0.0.0.0';
 
 const DBPORT = 3300;
+
+const httpsOptions = {
+    key: fs.readFileSync('./certs/localhost.key'),
+    cert: fs.readFileSync('./certs/localhost.cert')
+};
+
 
 // App
 const app = express();
 app.set('view engine', 'pug');
 app.use(bodyParser.urlencoded({ extended: false }));
+
+
+const options = {
+    key: fs.readFileSync("./certs/localhost.key"),
+    cert: fs.readFileSync("./certs/localhost.cert")
+};
 
 // Main page
 app.get('/', (req, res) => {
@@ -172,17 +185,14 @@ app.post('/*', (req, res) => {
     })
 });
 
-// HTTPS
+//app.listen(PORT, HOST);
 
-/*
-https.createServer({
-    key: "", //fs.readFileSync('server.key'),
-    cert: "" //fs.readFileSync('server.cert')
-}, app)
-    .listen(8000, function () {
-        console.log(`HTTPS Running on http://${HOST}:${PORT}`);
-    })
-*/
+const httpApp = express();
+httpApp.get("*", (req, res) => {
+    res.redirect("https://" + req.hostname + ":" + PORT + req.path);
+});
+http.createServer(httpApp).listen(8000);
+https.createServer(options, app).listen(PORT);
 
-app.listen(PORT, HOST);
-console.log(`Running on http://${HOST}:${PORT}`);
+console.log(`Running on http://${HOST}:8000`);
+console.log(`Running on https://${HOST}:${PORT}`);
