@@ -15,14 +15,6 @@ const HTTPPORT = 8000;
 const HTTPSPORT = 8080;
 const HOST = '0.0.0.0';
 
-const DBPORT = 3300;
-
-const httpsOptions = {
-    key: fs.readFileSync('./certs/localhost.key'),
-    cert: fs.readFileSync('./certs/localhost.cert')
-};
-
-
 // App
 const app = express();
 app.set('view engine', 'pug');
