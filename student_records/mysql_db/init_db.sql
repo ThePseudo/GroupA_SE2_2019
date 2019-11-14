@@ -86,6 +86,15 @@ CREATE TABLE mark
     PRIMARY KEY(id, student_id, course_id)
 );
 
+INSERT INTO mark (id,student_id, course_id, score, date_mark)
+VALUES (1,1,1,6, '2019-9-10'); 
+
+-- INSERT INTO mark (id,student_id, course_id, score, date_mark)
+-- VALUES (1,1,2,8, '2019-9-11'); 
+
+-- INSERT INTO mark (id,student_id, course_id, score, date_mark)
+-- VALUES (1,1,3,10, '2019-9-12'); 
+
 -- RELATIONS
 
 CREATE TABLE student_class

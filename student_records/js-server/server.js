@@ -23,21 +23,21 @@ app.use(bodyParser.urlencoded({ extended: false }));
 // Main page
 app.get('/', (req, res) => {
     const compiledPage = pug.compileFile("pages/home.pug");
-    var con = mysql.createConnection({
-        host: "students-db",
-        user: "root",
-        password: "pwd",
-        database: "students",
-        insecureAuth: true
-    });
+    // var con = mysql.createConnection({
+    //     host: "students-db",
+    //     user: "root",
+    //     password: "pwd",
+    //     database: "students",
+    //     insecureAuth: true
+    // });
 
-    con.connect(function (err) {
-        if (err) {
-            console.log("Error: " + err);
-            return;
-        }
-        console.log("Connected!");
-    });
+    // con.connect(function (err) {
+    //     if (err) {
+    //         console.log("Error: " + err);
+    //         return;
+    //     }
+    //     console.log("Connected!");
+    // });
     res.end(compiledPage());
 });
 
@@ -80,26 +80,62 @@ app.post("/register", (req, res) => {
 
 
 app.get("/marks", (req, res) => {
-    const compiledPage = pug.compileFile("pages/student_marks.pug");
-    var marks = [];
-    // TODO: get marks from database
-
-    marks[0] = {
-        date: new Date(2019, 9, 10),
-        subject: "History",
-        mark: "6"
-    };
-
-    marks[1] = {
-        date: new Date(2019, 10, 12),
-        subject: "Math",
-        mark: "8"
-    }
-
-    marks.sort((a, b) => {
-        return b.date - a.date;
+    
+    var con = mysql.createConnection({
+        host: "students-db",
+        user: "root",
+        password: "pwd",
+        database: "students",
+        insecureAuth: true
     });
 
+    con.connect(function (err) {
+        if (err) {
+            console.log("Error: " + err);
+            return;
+        }
+        console.log("Connected!");
+    });
+
+    let sql = 'SELECT * FROM mark';
+    con.query(sql, (error, marks) => {
+    if (error) {
+        return console.error(error.message);
+    }
+    console.log(marks);
+    });
+
+    //const marks = con.query('SELECT * FROM mark'); 
+    // if (!marks[0].length < 1) {
+    //     connection.destroy();
+    //     throw new Error('Somethings wrong, error retriving marks');
+    // }
+    connection.end(function(err) {
+        if (err) {
+          return console.log('error:' + err.message);
+        }
+        console.log('Close the database connection.');
+    });
+
+    //var marks = [];
+    // // TODO: get marks from database
+
+    // marks[0] = {
+    //     date: new Date(2019, 9, 10),
+    //     subject: "History",
+    //     mark: "6"
+    // };
+
+    // marks[1] = {
+    //     date: new Date(2019, 10, 12),
+    //     subject: "Math",
+    //     mark: "8"
+    // }
+
+    // marks.sort((a, b) => {
+    //     return b.date - a.date;
+    // });
+    const compiledPage = pug.compileFile("pages/student_marks.pug");
     res.end(compiledPage({
         // TODO: student name should be taken from DB
         student_name: "Marco Pecoraro",
