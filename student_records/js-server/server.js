@@ -23,14 +23,13 @@ app.use(bodyParser.urlencoded({ extended: false }));
 // ### Functions definition section ### 
 
 function wrapper_createConnection(){
-    let con = mysql.createConnection({
+    return mysql.createConnection({
         host: "students-db",
         user: "root",
         password: "pwd",
         database: "students",
         insecureAuth: true
     });
-    return con;
 }
 
 
@@ -109,9 +108,10 @@ app.get("/marks", (req, res) => {
                   
                     // Add object into array
                     markList.push(mark);
-                    // render the student_marks.plug page.
-                    res.render('student_marks', {"markList": markList});
+                    
                 }
+            // render the student_marks.plug page.
+                res.render('student_marks', {"markList": markList});
 	  	}
 	});
 
