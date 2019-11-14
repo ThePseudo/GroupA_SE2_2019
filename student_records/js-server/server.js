@@ -79,7 +79,7 @@ app.post("/register", (req, res) => {
 
 
 app.get("/marks", (req, res) => {
-    //const compiledPage = pug.compileFile("pages/student_marks.pug");
+    const compiledPage = pug.compileFile("pages/student_marks.pug");
     var con = wrapper_createConnection();
     var markList = [];
     con.connect(function (err) {
