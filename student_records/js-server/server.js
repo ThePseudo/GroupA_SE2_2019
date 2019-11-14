@@ -11,7 +11,8 @@ const mysql = require('mysql');
 const bodyParser = require('body-parser');
 
 // Constants
-const PORT = 8080;
+const HTTPPORT = 8000;
+const HTTPSPORT = 8080;
 const HOST = '0.0.0.0';
 
 const DBPORT = 3300;
@@ -189,10 +190,10 @@ app.post('/*', (req, res) => {
 
 const httpApp = express();
 httpApp.get("*", (req, res) => {
-    res.redirect("https://" + req.hostname + ":" + PORT + req.path);
+    res.redirect("https://" + req.hostname + ":" + HTTPSPORT + req.path);
 });
-http.createServer(httpApp).listen(8000);
-https.createServer(options, app).listen(PORT);
+http.createServer(httpApp).listen(HTTPPORT);
+https.createServer(options, app).listen(HTTPSPORT);
 
-console.log(`Running on http://${HOST}:8000`);
-console.log(`Running on https://${HOST}:${PORT}`);
+console.log(`Running on http://${HOST}:${HTTPPORT}`);
+console.log(`Running on https://${HOST}:${HTTPSPORT}`);
