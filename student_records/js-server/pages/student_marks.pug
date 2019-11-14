@@ -24,5 +24,10 @@ html
               th Date
               th Subject
               th Mark
-            for mark in student_marks
-              +rowMark(mark.subject, mark.date, mark.mark)
+            for mark in markList
+              tr
+                td= mark.date_mark
+                td= mark.course_id
+                td= mark.score
+               
+            

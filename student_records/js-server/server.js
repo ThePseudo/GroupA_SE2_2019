@@ -20,9 +20,9 @@ const app = express();
 app.set('view engine', 'pug');
 app.use(bodyParser.urlencoded({ extended: false }));
 
-//Function definition
+// ### Functions definition section ### 
 
-function mysqlConnectionCreation(){
+function wrapper_createConnection(){
     let con = mysql.createConnection({
         host: "students-db",
         user: "root",
@@ -32,24 +32,11 @@ function mysqlConnectionCreation(){
     });
     return con;
 }
+
+
 // Main page
 app.get('/', (req, res) => {
     const compiledPage = pug.compileFile("pages/home.pug");
-    // var con = mysql.createConnection({
-    //     host: "students-db",
-    //     user: "root",
-    //     password: "pwd",
-    //     database: "students",
-    //     insecureAuth: true
-    // });
-
-    // con.connect(function (err) {
-    //     if (err) {
-    //         console.log("Error: " + err);
-    //         return;
-    //     }
-    //     console.log("Connected!");
-    // });
     res.end(compiledPage());
 });
 
@@ -92,8 +79,8 @@ app.post("/register", (req, res) => {
 
 
 app.get("/marks", (req, res) => {
-    
-    var con = mysqlConnectionCreation();
+    const compiledPage = pug.compileFile("pages/student_marks.pug");
+    var con = wrapper_createConnection();
 
     con.connect(function (err) {
         if (err) {
@@ -104,44 +91,33 @@ app.get("/marks", (req, res) => {
     });
 
     let sql = 'SELECT * FROM mark';
-    con.query(sql, (error, marks) => {
-    if (error) {
-        return console.error(error.message);
-    }
-    console.log(marks);
-    });
+ 
+    con.query(sql, function(err, rows, fields) {
+		var mark;
 
-    //const marks = con.query('SELECT * FROM mark'); 
-    // if (!marks[0].length < 1) {
-    //     connection.destroy();
-    //     throw new Error('Somethings wrong, error retriving marks');
-    // }
-    connection.end(function(err) {
-        if (err) {
-          return console.log('error:' + err.message);
-        }
-        console.log('Close the database connection.');
-    });
+	  	if (err) {
+	  		res.status(500).json({"status_code": 500,"status_message": "internal server error"});
+	  	} else {
+	  		// Check if the result is found or not
+	  		for (var i = 0; i < rows.length; i++){
+	  			// Create the object to save the data.
+	  			var mark = {
+		  			'course_id':rows[i].course_id,
+		  			'score':rows[i].score,
+		  			'date':rows[i].date_mark
+                  }
+                  
+                    // Add object into array
+                    markList.push(mark);
+                    // render the student_marks.plug page.
+                    res.render('student_marks', {"markList": markList});
+                }
+	  	}
+	});
 
-    //var marks = [];
-    // // TODO: get marks from database
+	// Close MySQL connection
+	connection.end();
 
-    // marks[0] = {
-    //     date: new Date(2019, 9, 10),
-    //     subject: "History",
-    //     mark: "6"
-    // };
-
-    // marks[1] = {
-    //     date: new Date(2019, 10, 12),
-    //     subject: "Math",
-    //     mark: "8"
-    // }
-
-    // marks.sort((a, b) => {
-    //     return b.date - a.date;
-    // });
-    const compiledPage = pug.compileFile("pages/student_marks.pug");
     res.end(compiledPage({
         // TODO: student name should be taken from DB
         student_name: "Marco Pecoraro",
@@ -154,61 +130,6 @@ app.post('/login_teacher_action', (req, res) => {
     console.log(ssn);
 });
 
-// PROJECT FOR TORCHIANO - 12/11/19
-
-/*
-app.get("/price", (req, res) => {
-    var price = req.query.price;
-    var state = req.query.state;
-    var nitems = req.query.nitems;
-
-    price *= nitems;
-
-    var con = mysql.createConnection({
-        host: "students-db",
-        user: "root",
-        password: "pwd",
-        database: "students",
-        insecureAuth: true
-    });
-
-    con.connect(function (err) {
-        if (err) {
-            console.log(err)
-            res.end(err);
-        }
-        console.log("Connected!");
-        var temp = price / 100;
-        con.query("SELECT discount FROM discounts WHERE threshold <= " + temp + " ORDER BY threshold DESC", function (err, result, fields) {
-            if (err) {
-                console.log(err)
-                res.end(err);
-            }
-            console.log(result[0].discount);
-            var real_discount = result[0].discount / 100;
-            var discount_price = price - real_discount * price;
-            // TAXES
-            con.query("SELECT taxes FROM states WHERE code = '" + state + "'", function (err, result, fields) {
-                if (err) {
-                    console.log(err)
-                    res.end(err);
-                }
-
-                // TAXES CALCULATED
-                console.log(result[0].taxes);
-                var real_taxes = result[0].taxes / 100;
-                var tax_increment = real_taxes * discount_price / 100;
-                console.log("Taxes calculated!");
-                var final_price = Math.floor(discount_price + tax_increment);
-                res.end("{\n\t\"Price\": \"" + price / 100 + "\"\n\t\"Discount price\": \"" + discount_price / 100
-                    + "\"\n\t\"Taxes\": \"" + real_taxes / 100 + "\"\n\t\"Total price\": \"" + final_price / 100 + "\"\n}");
-            });
-        });
-    });
-});
-*/
-
-// END PROJECT FOR TORCHIANO - 12/11/19
 
 // Page not found
 app.get('/*', (req, res) => {
