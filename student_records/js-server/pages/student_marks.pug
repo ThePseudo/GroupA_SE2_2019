@@ -24,7 +24,7 @@ html
               th Date
               th Subject
               th Mark
-            for mark in student_marks
+            each mark in student_marks
               tr
                 td= mark.date_mark
                 td= mark.course_id

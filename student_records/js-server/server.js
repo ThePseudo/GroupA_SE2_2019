@@ -74,7 +74,7 @@ app.post("/reg_topic", (req, res) => {
     date = req.body.date;
     classroom = req.body.class;
     desc = req.body.desc;
-    const compiledPage = pug.compileFile("pages/reg_topic.pug");
+    //const compiledPage = pug.compileFile("pages/reg_topic.pug");
 
     con.connect(function(err) {
         if (err) {
@@ -147,9 +147,10 @@ app.post("/register", (req, res) => {
 
 
 app.get("/marks", (req, res) => {
-    const compiledPage = pug.compileFile("pages/student_marks.pug");
+    //const compiledPage = pug.compileFile("pages/student_marks.pug");
     var con = wrapper_createConnection();
-    var markList = [];
+    var student_marks = [];
+    var student_name;
     con.connect(function (err) {
         if (err) {
             console.log("Error: " + err);
@@ -176,24 +177,24 @@ app.get("/marks", (req, res) => {
                   }
                   
                     // Add object into array
-                    markList.push(mark);
-                    
+                    student_marks.push(mark);
+                    console.log(student_marks[i].score);
                 }
-            // render the student_marks.plug page.
-                
-            
 	  	}
 	});
 	// Close MySQL connection
 	con.end();
     
+    res.render('student_marks.pug', {
+        "student_name": "Marco Pecoraro",
+        "student_marks" : student_marks
+     });
+
     //res.render('student_marks.pug', {markList: markList, student_name: "Marco Pecoraro"});
-    
-	res.end(compiledPage({
-		student_name: "Marco Pecoraro",
-		student_marks: markList
-	})
-	);
+    //pug.renderFile('pages/student_marks.pug',{
+        
+    //   });
+	//res.end();
     // res.end(compiledPage({
     //     // TODO: student name should be taken from DB
     //     student_name: "Marco Pecoraro",
