@@ -20,6 +20,12 @@ const app = express();
 app.set('view engine', 'pug');
 app.use(bodyParser.urlencoded({ extended: false }));
 
+// other routers
+module.exports = function (app) {
+    app.use('/action/*', require('./modules'));
+};
+
+
 
 const options = {
     key: fs.readFileSync("./certs/localhost.key"),
@@ -94,10 +100,7 @@ app.get("/marks", (req, res) => {
     }));
 });
 
-app.post('/login_teacher_action', (req, res) => {
-    var ssn = req.body.SSN;
-    console.log(ssn);
-});
+
 
 // PROJECT FOR TORCHIANO - 12/11/19
 
