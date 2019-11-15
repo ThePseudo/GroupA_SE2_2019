@@ -6,7 +6,7 @@
 
 CREATE TABLE teacher
 (
-    id INT PRIMARY KEY,
+    id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
     first_name VARCHAR(50) NOT NULL,
     last_name VARCHAR(50) NOT NULL,
     cod_fisc VARCHAR(20) UNIQUE NOT NULL,
@@ -17,7 +17,7 @@ CREATE TABLE teacher
 
 CREATE TABLE parent
 (
-    id INT PRIMARY KEY,
+    id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
     first_name VARCHAR(50) NOT NULL,
     last_name VARCHAR(50) NOT NULL,
     cod_fisc VARCHAR(20) UNIQUE NOT NULL,
@@ -28,7 +28,7 @@ CREATE TABLE parent
 
 CREATE TABLE student
 (
-    id INT PRIMARY KEY,
+    id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
     first_name VARCHAR(50) NOT NULL,
     last_name VARCHAR(50) NOT NULL,
     cod_fisc VARCHAR(20) UNIQUE NOT NULL,
@@ -38,19 +38,19 @@ CREATE TABLE student
 
 CREATE TABLE class
 (
-    id INT PRIMARY KEY,
+    id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
     class_name VARCHAR(2) UNIQUE NOT NULL
 );
 
 CREATE TABLE course
 (
-    id INT PRIMARY KEY,
+    id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
     course_name VARCHAR(50) UNIQUE NOT NULL
 );
 
 CREATE TABLE admin
 (
-    id INT PRIMARY KEY,
+    id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
     first_name VARCHAR(50) NOT NULL,
     last_name VARCHAR(50) NOT NULL,
     cod_fisc VARCHAR(20) UNIQUE NOT NULL,
@@ -60,7 +60,7 @@ CREATE TABLE admin
 
 CREATE TABLE note
 (
-    id INT,
+    id INT NOT NULL AUTO_INCREMENT,
     student_id INT,
     note_date DATE,
     PRIMARY KEY(id, student_id, note_date)
@@ -68,7 +68,7 @@ CREATE TABLE note
 
 CREATE TABLE topic
 (
-    id INT,
+    id INT NOT NULL AUTO_INCREMENT,
     topic_date DATE UNIQUE NOT NULL,
     id_class INT,
     id_course INT,
@@ -78,7 +78,7 @@ CREATE TABLE topic
 
 CREATE TABLE mark
 (
-    id INT,
+    id INT NOT NULL AUTO_INCREMENT,
     student_id INT,
     course_id INT,
     score INT NOT NULL,
