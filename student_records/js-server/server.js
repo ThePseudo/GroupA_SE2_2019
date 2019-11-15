@@ -31,7 +31,7 @@ app.get('/', (req, res) => {
         insecureAuth: true
     });
 
-    con.connect(function (err) {
+    con.connect(function(err) {
         if (err) {
             console.log("Error: " + err);
             return;
@@ -65,15 +65,83 @@ app.get("/enroll", (req, res) => {
     res.end(compiledPage());
 });
 
+app.get("/topics", (req, res) => {
+    const compiledPage = pug.compileFile("pages/topics.pug");
+    res.end(compiledPage());
+});
+
+app.post("/reg_topic", (req, res) => {
+    course = req.body.course;
+    date = req.body.date;
+    classroom = req.body.class;
+    desc = req.body.desc;
+    const compiledPage = pug.compileFile("pages/reg_topic.pug");
+
+    con.connect(function(err) {
+        if (err) {
+            console.log("Error: " + err);
+            return;
+        }
+        console.log("Connected!");
+    });
+
+    let sql = 'SELECT id FROM class WHERE class_name=' + classroom;
+
+    var class_id;
+
+    con.query(sql, function(err, rows, fields) {
+
+        if (err) {
+            res.status(500).json({ "status_code": 500, "status_message": "internal server error" });
+        } else {
+            // Check if the result is found or not
+            class_id = rows[0].id;
+
+        }
+    });
+
+    let sql1 = 'SELECT id FROM course WHERE course_name=' + course;
+
+    var course_id;
+
+    con.query(sql1, function(err, rows, fields) {
+
+        if (err) {
+            res.status(500).json({ "status_code": 500, "status_message": "internal server error" });
+        } else {
+            // Check if the result is found or not
+            course_id = rows[0].id;
+
+        }
+    });
+
+    let sql2 = 'INSERT INTO topic (topic_date, id_class, id_course, description) VALUES (' + date + ',' + class_id + ',' + course_id + ',' + desc + ')';
+
+    con.query(sql2, function(err, rows, fields) {
+
+        if (err) {
+            res.status(500).json({ "status_code": 500, "status_message": "internal server error" });
+        }
+    });
+
+    res.end(compiledPage({
+        topic_course: name,
+        topic_date: surname,
+        topic_class: classroom,
+        topic_desc: desc
+    }));
+});
+
 app.post("/register", (req, res) => {
     var name = req.body.name;
     var surname = req.body.surname;
     var fiscalcode = req.body.fiscalcode;
     const compiledPage = pug.compileFile("pages/register.pug");
+
     res.end(compiledPage({
-        student_name : name,
-        student_surname : surname,
-        student_fiscalcode : fiscalcode
+        student_name: name,
+        student_surname: surname,
+        student_fiscalcode: fiscalcode
     }));
 });
 
