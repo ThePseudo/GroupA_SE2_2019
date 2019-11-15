@@ -136,12 +136,34 @@ app.post("/register", (req, res) => {
     var name = req.body.name;
     var surname = req.body.surname;
     var fiscalcode = req.body.fiscalcode;
+    var parent1 = req.body.parent1;
+    var parent2 = req.body.parent2;
     const compiledPage = pug.compileFile("pages/register.pug");
+
+    con.connect(function(err) {
+        if (err) {
+            console.log("Error: " + err);
+            return;
+        }
+        console.log("Connected!");
+    });
+
+
+    let sql = 'INSERT INTO student (first_name, second_name, cod_fisc, parent_1 , parent_2) VALUES (' + name + ',' + surname + ',' + fiscalcode + ',' + parent1 + ',' + parent2 +')';
+
+    con.query(sql, function(err, rows, fields) {
+
+        if (err) {
+            res.status(500).json({ "status_code": 500, "status_message": "internal server error" });
+        }
+    });
 
     res.end(compiledPage({
         student_name: name,
         student_surname: surname,
-        student_fiscalcode: fiscalcode
+        student_fiscalcode: fiscalcode,
+        student_parent1 : parent1,
+        student_parent2 : parent2
     }));
 });
 
