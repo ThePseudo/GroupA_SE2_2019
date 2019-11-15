@@ -68,12 +68,13 @@ CREATE TABLE note
 
 CREATE TABLE topic
 (
-    id INT NOT NULL,
+    -- id INT NOT NULL,
     topic_date DATE UNIQUE NOT NULL,
     id_class INT,
     id_course INT,
     description TEXT NOT NULL,
-    PRIMARY KEY(id, id_class, id_course)
+    PRIMARY KEY(id_class, id_course)
+    -- PRIMARY KEY(id, id_class, id_course)
 );
 
 CREATE TABLE mark
