@@ -81,6 +81,7 @@ app.post("/reg_topic", (req, res) => {
     desc = req.body.desc;
     const compiledPage = pug.compileFile("pages/reg_topic.pug");
 
+    var con =wrapper_createConnection();
     con.connect(function(err) {
         if (err) {
             console.log("Error: " + err);
@@ -88,12 +89,13 @@ app.post("/reg_topic", (req, res) => {
         }
         console.log("Connected!");
     });
+    let sql = 'SELECT id FROM class WHERE class_name = ?';
 
-    let sql = 'SELECT id FROM class WHERE class_name=' + classroom;
+    //let sql = 'SELECT id FROM class WHERE class_name=' + classroom;
 
     var class_id;
 
-    con.query(sql, function(err, rows, fields) {
+    con.query(sql,[classroom],function(err, rows, fields) {
 
         if (err) {
             res.status(500).json({ "status_code": 500, "status_message": "internal server error" });
@@ -103,12 +105,12 @@ app.post("/reg_topic", (req, res) => {
 
         }
     });
-
-    let sql1 = 'SELECT id FROM course WHERE course_name=' + course;
+    sql = 'SELECT id FROM course WHERE course_name= ?';
+    //let sql1 = 'SELECT id FROM course WHERE course_name=' + course;
 
     var course_id;
 
-    con.query(sql1, function(err, rows, fields) {
+    con.query(sql,[course], function(err, rows, fields) {
 
         if (err) {
             res.status(500).json({ "status_code": 500, "status_message": "internal server error" });
@@ -118,13 +120,12 @@ app.post("/reg_topic", (req, res) => {
 
         }
     });
-
-    con.query(
-        `INSERT INTO topic (topic_date, id_class, id_course,description)
-        VALUES (?, ?)
-        `,
-        [date, class_id,course_id,desc]);
-        
+    sql = 'INSERT INTO topic (topic_date, id_class, id_course,description) VALUES (?, ?)';
+    con.query(sql,[date, class_id,course_id,desc], function(err) {
+            if (err) res.status(500).json({ "status_code": 500, "status_message": "internal server error" });
+    });
+    con.end();
+    
     // let sql2 = 'INSERT INTO topic (topic_date, id_class, id_course, description) VALUES (' + date + ',' + class_id + ',' + course_id + ',' + desc + ')';
 
     // con.query(sql2, function(err, rows, fields) {
