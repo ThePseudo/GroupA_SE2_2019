@@ -66,9 +66,9 @@ app.get("/enroll", (req, res) => {
 });
 
 app.post("/register", (req, res) => {
-    name = req.body.name;
-    surname = req.body.surname;
-    fiscalcode = req.body.fiscalcode;
+    var name = req.body.name;
+    var surname = req.body.surname;
+    var fiscalcode = req.body.fiscalcode;
     const compiledPage = pug.compileFile("pages/register.pug");
     res.end(compiledPage({
         student_name : name,
