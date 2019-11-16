@@ -75,10 +75,10 @@ app.get("/topics", (req, res) => {
 });
 
 app.post("/reg_topic", (req, res) => {
-    course = req.body.course;
-    date = req.body.date;
-    classroom = req.body.class;
-    desc = req.body.desc;
+    let course = req.body.course;
+    let date = req.body.date;
+    let classroom = req.body.class;
+    let desc = req.body.desc;
     const compiledPage = pug.compileFile("pages/reg_topic.pug");
 
     var con =wrapper_createConnection();
@@ -92,7 +92,6 @@ app.post("/reg_topic", (req, res) => {
     let sql = 'SELECT id FROM class WHERE class_name = ?';
 
     //let sql = 'SELECT id FROM class WHERE class_name=' + classroom;
-
     var class_id;
 
     con.query(sql,[classroom],function(err, rows, fields) {
@@ -101,7 +100,7 @@ app.post("/reg_topic", (req, res) => {
             res.status(500).json({ "status_code": 500, "status_message": "internal server error" });
         } else {
             // Check if the result is found or not
-            class_id = rows[0].id;
+            console.log(class_id = rows[0].id);
 
         }
     });
@@ -116,7 +115,7 @@ app.post("/reg_topic", (req, res) => {
             res.status(500).json({ "status_code": 500, "status_message": "internal server error" });
         } else {
             // Check if the result is found or not
-            course_id = rows[0].id;
+            console.log(course_id = rows[0].id);
 
         }
     });
@@ -125,7 +124,7 @@ app.post("/reg_topic", (req, res) => {
             if (err) res.status(500).json({ "status_code": 500, "status_message": "internal server error" });
     });
     con.end();
-    
+
     // let sql2 = 'INSERT INTO topic (topic_date, id_class, id_course, description) VALUES (' + date + ',' + class_id + ',' + course_id + ',' + desc + ')';
 
     // con.query(sql2, function(err, rows, fields) {
@@ -136,10 +135,10 @@ app.post("/reg_topic", (req, res) => {
     // });
 
     res.end(compiledPage({
-        topic_course: name,
-        topic_date: surname,
-        topic_class: classroom,
-        topic_desc: desc
+        // topic_course: name,
+        // topic_date: surname,
+        // topic_class: classroom,
+        // topic_desc: desc
     }));
 });
 

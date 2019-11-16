@@ -42,11 +42,29 @@ CREATE TABLE class
     class_name VARCHAR(2) UNIQUE NOT NULL
 );
 
+INSERT INTO class (id,class_name)
+VALUES(1,"1A");
+
+INSERT INTO class (id,class_name)
+VALUES(2,"1B");
+
+INSERT INTO class (id,class_name)
+VALUES(3,"1C");
+
 CREATE TABLE course
 (
     id INT PRIMARY KEY NOT NULL ,
     course_name VARCHAR(50) UNIQUE NOT NULL
 );
+
+INSERT INTO course (id,course_name)
+VALUES (1,'Math'); 
+
+INSERT INTO course (id,course_name)
+VALUES (2,'History'); 
+
+INSERT INTO course (id,course_name)
+VALUES (3,'Science');  
 
 CREATE TABLE admin
 (
