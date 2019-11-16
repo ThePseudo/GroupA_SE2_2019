@@ -107,3 +107,11 @@ th {
     color: #222222;
     text-decoration: none;
 }
+
+input[type="date"] {
+     -webkit-align-items: center;
+     align-items: center;
+     overflow: hidden;
+     padding: 0;
+     padding-left: 16px;
+}
