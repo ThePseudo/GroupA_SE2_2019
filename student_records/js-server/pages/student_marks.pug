@@ -2,11 +2,11 @@
 - var page = "Marks"
 - var loggedIn = true
 
-//- mixin rowMark(subject, date, mark)
-//-   tr(class="table-row table-row-base")
-//-     td= (date.getDate() + "/" + date.getMonth() + "/" + date.getFullYear())
-//-     td= subject
-//-     td= mark
+mixin rowMark(subject, date, mark)
+  tr(class="table-row table-row-base")
+    td= (date.getDate() + "/" + date.getMonth() + "/" + date.getFullYear())
+    td= subject
+    td= mark
 
 doctype html
 html
@@ -24,10 +24,5 @@ html
               th Date
               th Subject
               th Mark
-            each mark in student_marks
-              tr
-                td= mark.date_mark
-                td= mark.course_id
-                td= mark.score
-               
-            
+            for mark in student_marks
+              +rowMark(mark.subject, mark.date, mark.mark)
