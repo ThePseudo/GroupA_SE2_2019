@@ -1,24 +1,38 @@
 // Those variables should be in every page
 - var page = ""
 - var loggedIn = false;
-
+- var user = "admin"
 
 doctype html
 html
   include base/head.pug
   body
     include base/navbar.pug
+    include base/sidebar.pug
+
     div(class='container')
       div(class='row')
-        div(class='col-sm-2 col-xs-1')
-            form(method='POST' action='/register')
-                div.form-group
-                    label(for='name') Name:
-                    input#name.form-control(type='text', placeholder='First Name' name='name')
-                div.form-group
-                    label(for='surname') Surname:
-                    input#name.form-control(type='text', placeholder='Last Name' name='surname')    
-                div.form-group
-                    label(for='fiscalcode') Fiscal Code:
-                    input#email.form-control(type='text', placeholder='Fiscal Code' name='fiscalcode')
-                button.btn.btn-primary(type='submit') Sign up
+        h1(class='title') Enroll student
+      form(method='POST' action='/register')
+        div(class='row' style='margin-top: 40px;')
+        div(class='col-sm-4')
+        div(class='col-sm-4')
+          div.form-group
+            label(for='name') Name:
+            input#name.form-control(type='text', placeholder='First Name' name='name')
+        div(class='row')
+        div(class='col-sm-4')
+        div(class='col-sm-4')
+          div.form-group
+            label(for='surname') Surname:
+            input#name.form-control(type='text', placeholder='Last Name' name='surname')
+        div(class='row')
+        div(class='col-sm-4')
+        div(class='col-sm-4')
+          div.form-group
+            label(for='SSN') SSN:
+            input#email.form-control(type='text', placeholder='SSN' name='SSN')
+        div(class='row')
+        div(class='col-sm-6')
+        div(class='col-sm-3')
+          input(type='SUBMIT' value='Enroll student' class='btn blockButton' style='margin-top: 24px; margin-left: 56px; padding: 6px 10px; width: 75%;')
