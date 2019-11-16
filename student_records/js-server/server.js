@@ -171,7 +171,7 @@ app.get("/marks", (req, res) => {
     });
 
     //Retrieve marks of student_id (here 1)
-    let sql =  `SELECT mark.student_id, mark.course_id, mark.score AS score, mark.date_mark AS date, course.course_name AS course_name
+    let sql =  `SELECT mark.student_id, mark.course_id, mark.score AS mark, mark.date_mark AS date, course.course_name AS subject
                 FROM mark
                 INNER JOIN course
                 ON mark.course_id = course.id 
@@ -192,15 +192,15 @@ app.get("/marks", (req, res) => {
                 let jsDate = new Date(Date.parse(MySQL_date.toString().replace('-','/','g')));
 
                 var mark = {
-                'course_name':rows[i].course_name,
-                'score':rows[i].score,
+                'subject':rows[i].subject,
+                'mark':rows[i].mark,
                 'date':jsDate
                 }
                   
                     // Add object into array
                     student_marks.push(mark);
-                    console.log(student_marks[i].course_name);
-                    console.log(student_marks[i].score);
+                    console.log(student_marks[i].subject);
+                    console.log(student_marks[i].mark);
                     console.log(jsDate);
 
                 }
