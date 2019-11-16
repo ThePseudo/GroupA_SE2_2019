@@ -92,7 +92,7 @@ app.post("/reg_topic", (req, res) => {
     let sql = 'SELECT id FROM class WHERE class_name = ?';
 
     //let sql = 'SELECT id FROM class WHERE class_name=' + classroom;
-    var class_id;
+    var id_class;
 
     con.query(sql,[classroom],function(err, rows, fields) {
 
@@ -100,14 +100,14 @@ app.post("/reg_topic", (req, res) => {
             res.status(500).json({ "status_code": 500, "status_message": "internal server error" });
         } else {
             // Check if the result is found or not
-            console.log(class_id = rows[0].id);
+            console.log(id_class = rows[0].id);
 
         }
     });
     sql = 'SELECT id FROM course WHERE course_name= ?';
     //let sql1 = 'SELECT id FROM course WHERE course_name=' + course;
 
-    var course_id;
+    var id_course;
 
     con.query(sql,[course], function(err, rows, fields) {
 
@@ -115,17 +115,22 @@ app.post("/reg_topic", (req, res) => {
             res.status(500).json({ "status_code": 500, "status_message": "internal server error" });
         } else {
             // Check if the result is found or not
-            console.log(course_id = rows[0].id);
+            console.log(id_course = rows[0].id);
 
         }
     });
-    sql = 'INSERT INTO topic (topic_date, id_class, id_course,description) VALUES (?, ?)';
-    con.query(sql,[date, class_id,course_id,desc], function(err) {
-            if (err) res.status(500).json({ "status_code": 500, "status_message": "internal server error" });
-    });
-    con.end();
 
-    // let sql2 = 'INSERT INTO topic (topic_date, id_class, id_course, description) VALUES (' + date + ',' + class_id + ',' + course_id + ',' + desc + ')';
+    //Check conversion date to insert into DB
+    //Check if prepared statement works instead of the second versio commented
+    console.log(date);
+
+    // sql = 'INSERT INTO topic (topic_date, id_class, id_course,description) VALUES (?, ?, ? ,?)';
+    // con.query(sql,["2019-11-03",id_class,id_course,desc], function(err) {
+    //         if (err) res.status(500).json({ "status_code": 500, "status_message": "internal server error" });
+    // });
+    
+
+    // let sql2 = 'INSERT INTO topic (topic_date, id_class, id_course, description) VALUES (' + date + ',' + id_class + ',' + id_course + ',' + desc + ')';
 
     // con.query(sql2, function(err, rows, fields) {
 
@@ -133,7 +138,7 @@ app.post("/reg_topic", (req, res) => {
     //         res.status(500).json({ "status_code": 500, "status_message": "internal server error" });
     //     }
     // });
-
+    con.end();
     res.end(compiledPage({
         // topic_course: name,
         // topic_date: surname,
@@ -170,6 +175,8 @@ app.get("/marks", (req, res) => {
         console.log("Connected!");
     });
 
+    //Marks are shown using the static marks array, the query works but problem with the date format
+    //With object array "student_marks" nothing is shown on student_mark.pug
     //Retrieve marks of student_id (here 1)
     let sql =  `SELECT mark.student_id, mark.course_id, mark.score AS mark, mark.date_mark AS date, course.course_name AS subject
                 FROM mark
