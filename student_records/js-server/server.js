@@ -36,23 +36,7 @@ const options = {
 // Main page
 app.get('/', (req, res) => {
     const compiledPage = pug.compileFile("pages/home.pug");
-    var con = mysql.createConnection({
-        host: "students-db",
-        user: "root",
-        password: "pwd",
-        database: "students",
-        insecureAuth: true
-    });
-}
-
-    con.connect(function (err) {
-    if (err) {
-        console.log("Error: " + err);
-        return;
-    }
-    console.log("Connected!");
-});
-res.end(compiledPage());
+    res.end(compiledPage());
 });
 
 app.get('/login_teacher', (req, res) => {
@@ -96,14 +80,14 @@ app.post("/reg_topic", (req, res) => {
     let desc = req.body.desc;
     const compiledPage = pug.compileFile("pages/reg_topic.pug");
 
-    var con = wrapper_createConnection();
-    con.connect(function (err) {
-        if (err) {
-            console.log("Error: " + err);
-            return;
-        }
-        console.log("Connected!");
+    var con = mysql.createConnection({
+        host: "students-db",
+        user: "root",
+        password: "pwd",
+        database: "students",
+        insecureAuth: true
     });
+
     let sql = 'SELECT id FROM class WHERE class_name = ?';
 
     //let sql = 'SELECT id FROM class WHERE class_name=' + classroom;
@@ -174,47 +158,51 @@ app.post("/register", (req, res) => {
 
 app.get("/marks", (req, res) => {
     //const compiledPage = pug.compileFile("pages/student_marks.pug");
-    var con = wrapper_createConnection();
-    var student_marks = [];
-    var student_name;
-    con.connect(function (err) {
-        if (err) {
-            console.log("Error: " + err);
-            return;
-        }
-        console.log("Connected!");
+    var marks = [];
+    var student_name; // todo: retrieve from db
+    const compiledPage = pug.compileFile("pages/student_marks.pug");
+    var con = mysql.createConnection({
+        host: "students-db",
+        user: "root",
+        password: "pwd",
+        database: "students",
+        insecureAuth: true
     });
 
-    let sql = 'SELECT * FROM mark';
+    let sql = 'SELECT * FROM mark, course WHERE mark.course_id = course.id';
 
     con.query(sql, function (err, rows, fields) {
-        var mark;
-
+        con.end();
         if (err) {
-            res.status(500).json({ "status_code": 500, "status_message": "internal server error" });
+            res.end("There is a problem in the DB connection. Please, try again later");
         } else {
+            console.log(rows);
             // Check if the result is found or not
             for (var i = 0; i < rows.length; i++) {
                 // Create the object to save the data.
                 var mark = {
-                    'course_id': rows[i].course_id,
-                    'score': rows[i].score,
-                    'date': rows[i].date_mark
+                    subject: rows[i].course_name,
+                    date: rows[i].date_mark,
+                    mark: rows[i].score
                 }
 
                 // Add object into array
-                student_marks.push(mark);
-                console.log(student_marks[i].score);
+                marks[i] = mark;
             }
+            res.end(compiledPage({
+                student_name: "Marco Pecoraro",
+                student_marks: marks
+            }));
         }
+
     });
     // Close MySQL connection
-    con.end();
 
-    res.render('student_marks.pug', {
-        "student_name": "Marco Pecoraro",
-        "student_marks": student_marks
-    });
+
+    //res.render('student_marks.pug', {
+    //    "student_name": "Marco Pecoraro",
+    //    "student_marks": student_marks
+    //});
 
     //res.render('student_marks.pug', {markList: markList, student_name: "Marco Pecoraro"});
     //pug.renderFile('pages/student_marks.pug',{
