@@ -18,6 +18,7 @@ const HOST = '0.0.0.0';
 // App
 const app = express();
 app.set('view engine', 'pug');
+app.set('views', './pages');
 app.use(bodyParser.urlencoded({ extended: false }));
 
 // other routers
@@ -42,15 +43,16 @@ app.get('/', (req, res) => {
         database: "students",
         insecureAuth: true
     });
+}
 
     con.connect(function (err) {
-        if (err) {
-            console.log("Error: " + err);
-            return;
-        }
-        console.log("Connected!");
-    });
-    res.end(compiledPage());
+    if (err) {
+        console.log("Error: " + err);
+        return;
+    }
+    console.log("Connected!");
+});
+res.end(compiledPage());
 });
 
 app.get('/login_teacher', (req, res) => {
@@ -77,18 +79,24 @@ app.get("/enroll", (req, res) => {
     res.end(compiledPage());
 });
 
+app.get("/teacher_page", (req, res) => {
+    const compiledPage = pug.compileFile("pages/teacher_page.pug");
+    res.end(compiledPage());
+});
+
 app.get("/topics", (req, res) => {
     const compiledPage = pug.compileFile("pages/topics.pug");
     res.end(compiledPage());
 });
 
 app.post("/reg_topic", (req, res) => {
-    course = req.body.course;
-    date = req.body.date;
-    classroom = req.body.class;
-    desc = req.body.desc;
+    let course = req.body.course;
+    let date = req.body.date;
+    let classroom = req.body.class;
+    let desc = req.body.desc;
     const compiledPage = pug.compileFile("pages/reg_topic.pug");
 
+    var con = wrapper_createConnection();
     con.connect(function (err) {
         if (err) {
             console.log("Error: " + err);
@@ -96,58 +104,63 @@ app.post("/reg_topic", (req, res) => {
         }
         console.log("Connected!");
     });
+    let sql = 'SELECT id FROM class WHERE class_name = ?';
 
-    let sql = 'SELECT id FROM class WHERE class_name=' + classroom;
-
+    //let sql = 'SELECT id FROM class WHERE class_name=' + classroom;
     var class_id;
 
-    con.query(sql, function (err, rows, fields) {
+    con.query(sql, [classroom], function (err, rows, fields) {
 
         if (err) {
             res.status(500).json({ "status_code": 500, "status_message": "internal server error" });
         } else {
             // Check if the result is found or not
-            class_id = rows[0].id;
+            console.log(class_id = rows[0].id);
 
         }
     });
-
-    let sql1 = 'SELECT id FROM course WHERE course_name=' + course;
+    sql = 'SELECT id FROM course WHERE course_name= ?';
+    //let sql1 = 'SELECT id FROM course WHERE course_name=' + course;
 
     var course_id;
 
-    con.query(sql1, function (err, rows, fields) {
+    con.query(sql, [course], function (err, rows, fields) {
 
         if (err) {
             res.status(500).json({ "status_code": 500, "status_message": "internal server error" });
         } else {
             // Check if the result is found or not
-            course_id = rows[0].id;
+            console.log(course_id = rows[0].id);
 
         }
     });
-
-    let sql2 = 'INSERT INTO topic (topic_date, id_class, id_course, description) VALUES (' + date + ',' + class_id + ',' + course_id + ',' + desc + ')';
-
-    con.query(sql2, function (err, rows, fields) {
-
-        if (err) {
-            res.status(500).json({ "status_code": 500, "status_message": "internal server error" });
-        }
+    sql = 'INSERT INTO topic (topic_date, id_class, id_course,description) VALUES (?, ?)';
+    con.query(sql, [date, class_id, course_id, desc], function (err) {
+        if (err) res.status(500).json({ "status_code": 500, "status_message": "internal server error" });
     });
+    con.end();
+
+    // let sql2 = 'INSERT INTO topic (topic_date, id_class, id_course, description) VALUES (' + date + ',' + class_id + ',' + course_id + ',' + desc + ')';
+
+    // con.query(sql2, function(err, rows, fields) {
+
+    //     if (err) {
+    //         res.status(500).json({ "status_code": 500, "status_message": "internal server error" });
+    //     }
+    // });
 
     res.end(compiledPage({
-        topic_course: name,
-        topic_date: surname,
-        topic_class: classroom,
-        topic_desc: desc
+        // topic_course: name,
+        // topic_date: surname,
+        // topic_class: classroom,
+        // topic_desc: desc
     }));
 });
 
 app.post("/register", (req, res) => {
-    name = req.body.name;
-    surname = req.body.surname;
-    fiscalcode = req.body.fiscalcode;
+    var name = req.body.name;
+    var surname = req.body.surname;
+    var fiscalcode = req.body.fiscalcode;
     const compiledPage = pug.compileFile("pages/register.pug");
 
     res.end(compiledPage({
@@ -160,90 +173,64 @@ app.post("/register", (req, res) => {
 
 
 app.get("/marks", (req, res) => {
-    const compiledPage = pug.compileFile("pages/student_marks.pug");
-    var marks = [];
-    // TODO: get marks from database
-
-    marks[0] = {
-        date: new Date(2019, 9, 10),
-        subject: "History",
-        mark: "6"
-    };
-
-    marks[1] = {
-        date: new Date(2019, 10, 12),
-        subject: "Math",
-        mark: "8"
-    }
-
-    marks.sort((a, b) => {
-        return b.date - a.date;
-    });
-
-    res.end(compiledPage({
-        // TODO: student name should be taken from DB
-        student_name: "Marco Pecoraro",
-        student_marks: marks
-    }));
-});
-
-
-
-// PROJECT FOR TORCHIANO - 12/11/19
-
-/*
-app.get("/price", (req, res) => {
-    var price = req.query.price;
-    var state = req.query.state;
-    var nitems = req.query.nitems;
-
-    price *= nitems;
-
-    var con = mysql.createConnection({
-        host: "students-db",
-        user: "root",
-        password: "pwd",
-        database: "students",
-        insecureAuth: true
-    });
-
+    //const compiledPage = pug.compileFile("pages/student_marks.pug");
+    var con = wrapper_createConnection();
+    var student_marks = [];
+    var student_name;
     con.connect(function (err) {
         if (err) {
-            console.log(err)
-            res.end(err);
+            console.log("Error: " + err);
+            return;
         }
         console.log("Connected!");
-        var temp = price / 100;
-        con.query("SELECT discount FROM discounts WHERE threshold <= " + temp + " ORDER BY threshold DESC", function (err, result, fields) {
-            if (err) {
-                console.log(err)
-                res.end(err);
-            }
-            console.log(result[0].discount);
-            var real_discount = result[0].discount / 100;
-            var discount_price = price - real_discount * price;
-            // TAXES
-            con.query("SELECT taxes FROM states WHERE code = '" + state + "'", function (err, result, fields) {
-                if (err) {
-                    console.log(err)
-                    res.end(err);
+    });
+
+    let sql = 'SELECT * FROM mark';
+
+    con.query(sql, function (err, rows, fields) {
+        var mark;
+
+        if (err) {
+            res.status(500).json({ "status_code": 500, "status_message": "internal server error" });
+        } else {
+            // Check if the result is found or not
+            for (var i = 0; i < rows.length; i++) {
+                // Create the object to save the data.
+                var mark = {
+                    'course_id': rows[i].course_id,
+                    'score': rows[i].score,
+                    'date': rows[i].date_mark
                 }
 
-                // TAXES CALCULATED
-                console.log(result[0].taxes);
-                var real_taxes = result[0].taxes / 100;
-                var tax_increment = real_taxes * discount_price / 100;
-                console.log("Taxes calculated!");
-                var final_price = Math.floor(discount_price + tax_increment);
-                res.end("{\n\t\"Price\": \"" + price / 100 + "\"\n\t\"Discount price\": \"" + discount_price / 100
-                    + "\"\n\t\"Taxes\": \"" + real_taxes / 100 + "\"\n\t\"Total price\": \"" + final_price / 100 + "\"\n}");
-            });
-        });
+                // Add object into array
+                student_marks.push(mark);
+                console.log(student_marks[i].score);
+            }
+        }
     });
-});
-*/
+    // Close MySQL connection
+    con.end();
 
-// END PROJECT FOR TORCHIANO - 12/11/19
+    res.render('student_marks.pug', {
+        "student_name": "Marco Pecoraro",
+        "student_marks": student_marks
+    });
+
+    //res.render('student_marks.pug', {markList: markList, student_name: "Marco Pecoraro"});
+    //pug.renderFile('pages/student_marks.pug',{
+
+    //   });
+    //res.end();
+    // res.end(compiledPage({
+    //     // TODO: student name should be taken from DB
+    //     student_name: "Marco Pecoraro",
+    //     //student_marks: marks
+    // })
+    // );
+});
+
+
+
 
 // Page not found
 app.get('/*', (req, res) => {
