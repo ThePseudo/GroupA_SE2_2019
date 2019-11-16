@@ -73,6 +73,7 @@ app.get("/topics", (req, res) => {
     res.end(compiledPage());
 });
 
+// TODO: make this and fix it
 app.post("/reg_topic", (req, res) => {
     let course = req.body.course;
     let date = req.body.date;
