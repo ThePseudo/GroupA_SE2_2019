@@ -94,7 +94,7 @@ th {
     font-size: larger;
     color: #222222;
     display: block;
-    background: rgb(144, 243, 147);
+    background: rgb(170, 255, 173);
     padding-top: 10px;
     padding-bottom: 10px;
     padding-right: 32px;
@@ -104,5 +104,6 @@ th {
 }
 
 .active-sidebar-item:hover {
+    color: #222222;
     text-decoration: none;
 }
