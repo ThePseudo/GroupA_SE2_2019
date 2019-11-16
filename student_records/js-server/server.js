@@ -170,9 +170,15 @@ app.get("/marks", (req, res) => {
         console.log("Connected!");
     });
 
-    let sql = 'SELECT * FROM mark';
- 
-    con.query(sql, function(err, rows, fields) {
+    //Retrieve marks of student_id (here 1)
+    let sql =  `SELECT mark.student_id, mark.course_id, mark.score AS score, mark.date_mark AS date, course.course_name AS course_name
+                FROM mark
+                INNER JOIN course
+                ON mark.course_id = course.id 
+                WHERE student_id = ?`
+                ;
+
+    con.query(sql,[1], function(err, rows, fields) {
 		var mark;
 
 	  	if (err) {
@@ -181,24 +187,50 @@ app.get("/marks", (req, res) => {
 	  		// Check if the result is found or not
 	  		for (var i = 0; i < rows.length; i++){
 	  			// Create the object to save the data.
-	  			var mark = {
-		  			'course_id':rows[i].course_id,
-		  			'score':rows[i].score,
-		  			'date':rows[i].date_mark
-                  }
+                
+                let MySQL_date = rows[i].date;
+                let jsDate = new Date(Date.parse(MySQL_date.toString().replace('-','/','g')));
+
+                var mark = {
+                'course_name':rows[i].course_name,
+                'score':rows[i].score,
+                'date':jsDate
+                }
                   
                     // Add object into array
                     student_marks.push(mark);
+                    console.log(student_marks[i].course_name);
                     console.log(student_marks[i].score);
+                    console.log(jsDate);
+
                 }
 	  	}
 	});
 	// Close MySQL connection
 	con.end();
     
+    var marks = [];
+    // TODO: get marks from database
+
+    marks[0] = {
+        date: new Date(2019, 9, 10),
+        subject: "History",
+        mark: "6"
+    };
+
+    marks[1] = {
+        date: new Date(2019, 10, 12),
+        subject: "Math",
+        mark: "8"
+    }
+
+    marks.sort((a, b) => {
+        return b.date - a.date;
+    });
+
     res.render('student_marks.pug', {
         "student_name": "Marco Pecoraro",
-        "student_marks" : student_marks
+        student_marks : student_marks
      });
 
     //res.render('student_marks.pug', {markList: markList, student_name: "Marco Pecoraro"});

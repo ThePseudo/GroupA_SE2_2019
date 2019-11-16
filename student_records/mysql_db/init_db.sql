@@ -35,6 +35,8 @@ CREATE TABLE student
     parent_1 INT NOT NULL,
     parent_2 INT
 );
+INSERT INTO student (id, first_name, last_name,cod_fisc,parent_1,parent_2)
+VALUES (1,"Marco","Pecoraro","00000000",1,2);
 
 CREATE TABLE class
 (
