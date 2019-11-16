@@ -76,9 +76,8 @@ th {
     padding-bottom: 10px;
     padding-right: 32px;
     display: block;
-    width: 98%;
-    margin-left: 1%;
     transition: 0.2s;
+    border-right: 1px solid rgb(209, 209, 209);
 }
 
 .sidebar-item:hover {
@@ -99,8 +98,7 @@ th {
     padding-bottom: 10px;
     padding-right: 32px;
     display: block;
-    width: 98%;
-    margin-left: 1%;
+    border-right: 1px solid rgb(209, 209, 209);
 }
 
 .active-sidebar-item:hover {
