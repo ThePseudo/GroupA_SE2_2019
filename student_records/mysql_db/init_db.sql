@@ -32,6 +32,7 @@ CREATE TABLE student
     first_name VARCHAR(50) NOT NULL,
     last_name VARCHAR(50) NOT NULL,
     cod_fisc VARCHAR(20) UNIQUE NOT NULL,
+    class_id INT,
     parent_1 INT,
     parent_2 INT
 );
