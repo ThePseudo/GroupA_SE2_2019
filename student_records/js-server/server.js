@@ -158,7 +158,6 @@ app.post("/register", (req, res) => {
 
 
 app.get("/marks", (req, res) => {
-    //const compiledPage = pug.compileFile("pages/student_marks.pug");
     var marks = [];
     var student_name; // todo: retrieve from db
     const compiledPage = pug.compileFile("pages/student_marks.pug");
@@ -197,25 +196,6 @@ app.get("/marks", (req, res) => {
         }
 
     });
-    // Close MySQL connection
-
-
-    //res.render('student_marks.pug', {
-    //    "student_name": "Marco Pecoraro",
-    //    "student_marks": student_marks
-    //});
-
-    //res.render('student_marks.pug', {markList: markList, student_name: "Marco Pecoraro"});
-    //pug.renderFile('pages/student_marks.pug',{
-
-    //   });
-    //res.end();
-    // res.end(compiledPage({
-    //     // TODO: student name should be taken from DB
-    //     student_name: "Marco Pecoraro",
-    //     //student_marks: marks
-    // })
-    // );
 });
 
 
