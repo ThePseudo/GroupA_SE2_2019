@@ -6,7 +6,7 @@
 
 CREATE TABLE teacher
 (
-    id INT NOT NULL PRIMARY KEY,
+    id INT PRIMARY KEY,
     first_name VARCHAR(50) NOT NULL,
     last_name VARCHAR(50) NOT NULL,
     cod_fisc VARCHAR(20) UNIQUE NOT NULL,
@@ -17,7 +17,7 @@ CREATE TABLE teacher
 
 CREATE TABLE parent
 (
-    id INT PRIMARY KEY NOT NULL,
+    id INT PRIMARY KEY,
     first_name VARCHAR(50) NOT NULL,
     last_name VARCHAR(50) NOT NULL,
     cod_fisc VARCHAR(20) UNIQUE NOT NULL,
@@ -28,49 +28,63 @@ CREATE TABLE parent
 
 CREATE TABLE student
 (
-    id INT PRIMARY KEY NOT NULL,
+    id INT PRIMARY KEY,
     first_name VARCHAR(50) NOT NULL,
     last_name VARCHAR(50) NOT NULL,
     cod_fisc VARCHAR(20) UNIQUE NOT NULL,
-    parent_1 INT NOT NULL,
+    class_id INT,
+    parent_1 INT,
     parent_2 INT
 );
 INSERT INTO student (id, first_name, last_name,cod_fisc,parent_1,parent_2)
 VALUES (1,"Marco","Pecoraro","00000000",1,2);
 
+-- Classes
+
 CREATE TABLE class
 (
-    id INT PRIMARY KEY NOT NULL,
+    id INT PRIMARY KEY,
     class_name VARCHAR(2) UNIQUE NOT NULL
 );
 
-INSERT INTO class (id,class_name)
-VALUES(1,"1A");
+INSERT INTO class
+    (id,class_name)
+VALUES(1, "1A");
 
-INSERT INTO class (id,class_name)
-VALUES(2,"1B");
+INSERT INTO class
+    (id,class_name)
+VALUES(2, "1B");
 
-INSERT INTO class (id,class_name)
-VALUES(3,"1C");
+INSERT INTO class
+    (id,class_name)
+VALUES(3, "1C");
+
+-- courses
 
 CREATE TABLE course
 (
-    id INT PRIMARY KEY NOT NULL ,
+    id INT PRIMARY KEY ,
     course_name VARCHAR(50) UNIQUE NOT NULL
 );
 
-INSERT INTO course (id,course_name)
-VALUES (1,'Math'); 
+INSERT INTO course
+    (id,course_name)
+VALUES
+    (1, 'Math');
 
-INSERT INTO course (id,course_name)
-VALUES (2,'History'); 
+INSERT INTO course
+    (id,course_name)
+VALUES
+    (2, 'History');
 
-INSERT INTO course (id,course_name)
-VALUES (3,'Science');  
+INSERT INTO course
+    (id,course_name)
+VALUES
+    (3, 'Science');
 
 CREATE TABLE admin
 (
-    id INT PRIMARY KEY NOT NULL,
+    id INT PRIMARY KEY,
     first_name VARCHAR(50) NOT NULL,
     last_name VARCHAR(50) NOT NULL,
     cod_fisc VARCHAR(20) UNIQUE NOT NULL,
@@ -80,7 +94,7 @@ CREATE TABLE admin
 
 CREATE TABLE note
 (
-    id INT NOT NULL ,
+    id INT NOT NULL,
     student_id INT,
     note_date DATE,
     PRIMARY KEY(id, student_id, note_date)
@@ -88,14 +102,15 @@ CREATE TABLE note
 
 CREATE TABLE topic
 (
-    -- id INT NOT NULL,
+    id INT NOT NULL,
     topic_date DATE UNIQUE NOT NULL,
     id_class INT,
     id_course INT,
     description TEXT NOT NULL,
-    PRIMARY KEY(id_class, id_course)
-    -- PRIMARY KEY(id, id_class, id_course)
+    PRIMARY KEY(id, id_class, id_course)
 );
+
+-- Marks
 
 CREATE TABLE mark
 (
@@ -107,14 +122,21 @@ CREATE TABLE mark
     PRIMARY KEY(id, student_id, course_id)
 );
 
-INSERT INTO mark (id,student_id, course_id, score, date_mark)
-VALUES (1,1,1,6, '2019-9-10'); 
 
-INSERT INTO mark (id,student_id, course_id, score, date_mark)
-VALUES (1,1,2,8, '2019-9-11'); 
+INSERT INTO mark
+    (id,student_id, course_id, score, date_mark)
+VALUES
+    (1, 1, 1, 6, '2019-9-10');
 
-INSERT INTO mark (id,student_id, course_id, score, date_mark)
-VALUES (1,1,3,10, '2019-9-12'); 
+INSERT INTO mark
+    (id,student_id, course_id, score, date_mark)
+VALUES
+    (2, 1, 2, 8, '2019-9-11');
+
+INSERT INTO mark
+    (id,student_id, course_id, score, date_mark)
+VALUES
+    (3, 1, 3, 10, '2019-9-12');
 
 -- RELATIONS
 

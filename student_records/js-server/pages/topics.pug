@@ -1,27 +1,47 @@
 // Those variables should be in every page
-- var page = ""
+- var page = "Daily topic"
 - var loggedIn = false;
+- var date = new Date();
+- var user= "teacher"
+- var active= "Insert daily topic"
 
+- var dateString = date.getFullYear() + "-" + date.getMonth() + "-" + date.getDate()
 
 doctype html
 html
   include base/head.pug
   body
     include base/navbar.pug
+    include base/sidebar.pug
     div(class='container')
       div(class='row')
-        div(class='col-sm-2 col-xs-1')
-            form(method='POST' action='/reg_topic')
-                div.form-group
-                    label(for='course') Course:
-                    input#name.form-control(type='text', placeholder='Latin' name='course')
-                div.form-group
-                    label(for='date') Date:
-                    input#name.form-control(type='date', placeholder='1/1/2000' name='date')    
-                div.form-group
-                    label(for='class') Class:
-                    input#email.form-control(type='text', placeholder='1A' name='class')
-                div.form-group
-                    label(for='desc') Desc:
-                    input#email.form-control(type='text', placeholder='Some bullshit' name='desc')
-                button.btn.btn-primary(type='submit') Sign up
+        h1(class='title') Record daily topic
+      form(method='POST' action='/reg_topic' id="regform")
+        div(class='row' style='margin-top: 40px;')
+          div(class='col-sm-3')
+          div(class='col-sm-6')
+            div.form-group
+              label(for='course') Subject:
+              input(type='text' placeholder='Subject' name='course' class='form-control')
+        div(class='row')
+          div(class='col-sm-3')
+          div(class='col-sm-6')
+            div.form-group
+              label(for='date') Date:
+              input(type='date' name='date' value=dateString max=dateString class="form-control")    
+        div(class='row')
+          div(class='col-sm-3')
+          div(class='col-sm-6')
+            div.form-group
+              label(for='class') Class:
+              input(type='text' placeholder='Class' name='class' class="form-control")
+        div(class='row')
+          div(class='col-sm-3')
+          div(class='col-sm-6')
+            div.form-group
+              label(for='desc') Description:
+              textarea(name="desc" form="regform" class="form-control")
+        div(class='row')
+          div(class='col-sm-6')
+          div(class='col-sm-3')
+            input(type='SUBMIT' value='Record topic' class='btn blockButton' style='margin-top: 24px; margin-left: 25%; padding: 6px 10px; width: 75%;')
