@@ -169,7 +169,7 @@ app.get("/marks", (req, res) => {
         insecureAuth: true
     });
 
-    let sql = 'SELECT * FROM mark, course WHERE mark.course_id = course.id';
+    let sql = 'SELECT * FROM mark, course WHERE mark.course_id = course.id ORDER BY mark.date_mark DESC';
 
     con.query(sql, function (err, rows, fields) {
         con.end();
