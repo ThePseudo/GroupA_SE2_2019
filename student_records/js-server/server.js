@@ -40,14 +40,14 @@ app.get('/', (req, res) => {
 });
 
 app.get('/login_teacher', (req, res) => {
-    const compiledPage = pug.compileFile("pages/login_teacher.pug");
+    const compiledPage = pug.compileFile("pages/login.pug");
     res.end(compiledPage({
         user: "teacher"
     }));
 });
 
 app.get('/login_parent', (req, res) => {
-    const compiledPage = pug.compileFile("pages/login_parent.pug");
+    const compiledPage = pug.compileFile("pages/login.pug");
     res.end(compiledPage({
         user: "parent"
     }));
@@ -79,7 +79,6 @@ app.post("/reg_topic", (req, res) => {
     let date = req.body.date;
     let classroom = req.body.class;
     let desc = req.body.desc;
-    const compiledPage = pug.compileFile("pages/reg_topic.pug");
 
     var con = mysql.createConnection({
         host: "students-db",
@@ -90,56 +89,38 @@ app.post("/reg_topic", (req, res) => {
     });
 
     let sql = 'SELECT id FROM class WHERE class_name = ?';
-
-    //let sql = 'SELECT id FROM class WHERE class_name=' + classroom;
-    var class_id;
-
     con.query(sql, [classroom], function (err, rows, fields) {
 
         if (err) {
-            res.status(500).json({ "status_code": 500, "status_message": "internal server error" });
-        } else {
-            // Check if the result is found or not
-            console.log(class_id = rows[0].id);
-
+            res.end("There is a problem in the DB connection. Please, try again later " + err);
+            return;
         }
+        var class_id = rows[0].id;
+        sql = 'SELECT id FROM course WHERE course_name = ?';
+        con.query(sql, [course], (err, rows, fields) => {
+            if (err) {
+                res.end("There is a problem in the DB connection. Please, try again later " + err);
+                return;
+            }
+            var course_id = rows[0].id;
+            con.query('SELECT COUNT(*) as c FROM topic', (err, rows, fields) => { // because we have no AUTO_UPDATE available on the DB
+                if (err) {
+                    res.end("There is a problem in the DB connection. Please, try again later " + err);
+                    return;
+                }
+                con.query("INSERT INTO topic(id, topic_date, id_class, id_course, description) VALUES(?, ?, ?, ?, ?)",
+                    [rows[0].c, date, class_id, course_id, desc], (err, result) => {
+                        if (err) {
+                            res.end("There is a problem in the DB connection. Please, try again later " + err);
+                            return;
+                        }
+                        console.log("Data successfully uploaded! " + result.insertId);
+                        con.end();
+                        res.redirect("/topics");
+                    });
+            });
+        });
     });
-    sql = 'SELECT id FROM course WHERE course_name= ?';
-    //let sql1 = 'SELECT id FROM course WHERE course_name=' + course;
-
-    var course_id;
-
-    con.query(sql, [course], function (err, rows, fields) {
-
-        if (err) {
-            res.status(500).json({ "status_code": 500, "status_message": "internal server error" });
-        } else {
-            // Check if the result is found or not
-            console.log(course_id = rows[0].id);
-
-        }
-    });
-    sql = 'INSERT INTO topic (topic_date, id_class, id_course,description) VALUES (?, ?)';
-    con.query(sql, [date, class_id, course_id, desc], function (err) {
-        if (err) res.status(500).json({ "status_code": 500, "status_message": "internal server error" });
-    });
-    con.end();
-
-    // let sql2 = 'INSERT INTO topic (topic_date, id_class, id_course, description) VALUES (' + date + ',' + class_id + ',' + course_id + ',' + desc + ')';
-
-    // con.query(sql2, function(err, rows, fields) {
-
-    //     if (err) {
-    //         res.status(500).json({ "status_code": 500, "status_message": "internal server error" });
-    //     }
-    // });
-
-    res.end(compiledPage({
-        // topic_course: name,
-        // topic_date: surname,
-        // topic_class: classroom,
-        // topic_desc: desc
-    }));
 });
 
 app.post("/register", (req, res) => {
