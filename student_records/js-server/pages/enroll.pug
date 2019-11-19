@@ -4,6 +4,7 @@
 - var user = "admin"
 - var active = "Enroll student"
 
+
 doctype html
 html
   include base/head.pug
@@ -12,7 +13,6 @@ html
     include base/sidebar.pug
     div(class='container')
       div(class='row')
-<<<<<<< HEAD
         div(class='col-sm-2 col-xs-1')
             form(method='POST' action='/register')
                 div.form-group
@@ -31,29 +31,3 @@ html
                     label(for='Parent 2') Parent 2:
                     input#email.form-control(type='text', placeholder='Parent 2', name='parent2')
                 button.btn.btn-primary(type='submit') Register Student
-=======
-        h1(class='title') Enroll student
-      form(method='POST' action='/register')
-        div(class='row' style='margin-top: 40px;')
-          div(class='col-sm-3')
-          div(class='col-sm-6')
-            div.form-group
-              label(for='name') Name:
-              input(type='text' placeholder='First Name' name='name' class="form-control")
-        div(class='row')
-          div(class='col-sm-3')
-          div(class='col-sm-6')
-            div.form-group
-              label(for='surname') Last name:
-              input(type='text' placeholder='Last Name' name='surname' class="form-control")
-        div(class='row')
-          div(class='col-sm-3')
-          div(class='col-sm-6')
-            div.form-group
-              label(for='SSN') SSN:
-              input(type='text' placeholder='SSN' name='SSN' class="form-control")
-        div(class='row')
-          div(class='col-sm-6')
-          div(class='col-sm-3')
-            input(type='SUBMIT' value='Enroll student' class='btn blockButton' style='margin-top: 24px; padding: 6px 10px; margin-left: 25%; width: 75%;')
->>>>>>> master
