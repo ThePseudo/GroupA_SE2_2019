@@ -129,7 +129,6 @@ app.post("/register", (req, res) => {
     var fiscalcode = req.body.fiscalcode;
     var parent1 = req.body.parent1;
     var parent2 = req.body.parent2;
-    const compiledPage = pug.compileFile("pages/register.pug");
 
     con.connect(function (err) {
         if (err) {
@@ -148,14 +147,7 @@ app.post("/register", (req, res) => {
             res.status(500).json({ "status_code": 500, "status_message": "internal server error" });
         }
     });
-
-    res.end(compiledPage({
-        student_name: name,
-        student_surname: surname,
-        student_fiscalcode: fiscalcode,
-        student_parent1: parent1,
-        student_parent2: parent2
-    }));
+    res.end();
 });
 
 
