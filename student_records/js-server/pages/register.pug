@@ -1,15 +1,28 @@
 // Those variables should be in every page
-- var page = ""
+- var page = "Register student"
 - var loggedIn = false;
-
+- var user = "admin"
+- var active = "Register student"
 
 doctype html
 html
   include base/head.pug
   body
     include base/navbar.pug
+    include base/sidebar.pug
     div(class='container')
-      div(class='row')
-        td= student_name
-        td= student_surname
-        td= student_fiscalcode
+         div(class="col-lg-3 col-sm-2 col-xs-1")
+          div(class="col-lg-6 col-sm-8 col-xs-10" style='align-content:center;')
+            table(style="width:100%; text-align:center; align-content:center" class="table table-bordered")
+              tr(class='table-row-base')
+                th Name
+                th Surname
+                th Fiscal Code
+                th Parent 1
+                th Parent 2
+              tr
+                th student_name
+                th student_surname
+                th student_fiscalcode
+                th student_parent1
+                th student_parent2
