@@ -40,14 +40,14 @@ app.get('/', (req, res) => {
 });
 
 app.get('/login_teacher', (req, res) => {
-    const compiledPage = pug.compileFile("pages/login.pug");
+    const compiledPage = pug.compileFile("pages/login_teacher.pug");
     res.end(compiledPage({
         user: "teacher"
     }));
 });
 
 app.get('/login_parent', (req, res) => {
-    const compiledPage = pug.compileFile("pages/login.pug");
+    const compiledPage = pug.compileFile("pages/login_parent.pug");
     res.end(compiledPage({
         user: "parent"
     }));
