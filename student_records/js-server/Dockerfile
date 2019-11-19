@@ -7,5 +7,6 @@ RUN npm install
 #RUN openssl req -nodes -new -x509 -keyout server.key -out server.cert
 COPY . .
 EXPOSE 8000
+EXPOSE 8080
 
 CMD ["node", "server.js"]

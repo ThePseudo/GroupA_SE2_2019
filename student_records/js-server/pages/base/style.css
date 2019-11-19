@@ -51,7 +51,7 @@ body {
     align-content: center;
 }
 
-th {
+th, td {
     align-content:center; 
     text-align:center;
 }
@@ -76,9 +76,8 @@ th {
     padding-bottom: 10px;
     padding-right: 32px;
     display: block;
-    width: 98%;
-    margin-left: 1%;
     transition: 0.2s;
+    border-right: 1px solid rgb(209, 209, 209);
 }
 
 .sidebar-item:hover {
@@ -94,15 +93,23 @@ th {
     font-size: larger;
     color: #222222;
     display: block;
-    background: rgb(144, 243, 147);
+    background: rgb(170, 255, 173);
     padding-top: 10px;
     padding-bottom: 10px;
     padding-right: 32px;
     display: block;
-    width: 98%;
-    margin-left: 1%;
+    border-right: 1px solid rgb(209, 209, 209);
 }
 
 .active-sidebar-item:hover {
+    color: #222222;
     text-decoration: none;
+}
+
+input[type="date"] {
+     -webkit-align-items: center;
+     align-items: center;
+     overflow: hidden;
+     padding: 0;
+     padding-left: 16px;
 }
