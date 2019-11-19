@@ -75,12 +75,17 @@ app.get("/topics", (req, res) => {
 
 // TODO: make this and fix it
 app.post("/reg_topic", (req, res) => {
-    let course = req.body.course;
-    let date = req.body.date;
-    let classroom = req.body.class;
-    let desc = req.body.desc;
-    const compiledPage = pug.compileFile("pages/reg_topic.pug");
+    var course = req.body.course;
+    var date = req.body.date;
+    var classroom = req.body.class;
+    var desc = req.body.desc;
+    var id_class;
+    var id_course;
+    var id = 1;
+    var count = 0;
 
+    const compiledPage = pug.compileFile("pages/reg_topic.pug");
+    
     var con = mysql.createConnection({
         host: "students-db",
         user: "root",
@@ -89,67 +94,70 @@ app.post("/reg_topic", (req, res) => {
         insecureAuth: true
     });
 
-    let sql = 'SELECT id FROM class WHERE class_name = ?';
-
-    //let sql = 'SELECT id FROM class WHERE class_name=' + classroom;
-    var id_class;
-
+    /*let sql = 'SELECT id FROM class WHERE class_name = ?';
     con.query(sql, [classroom], function (err, rows, fields) {
-
         if (err) {
             res.status(500).json({ "status_code": 500, "status_message": "internal server error" });
         } else {
             // Check if the result is found or not
-            console.log(id_class = rows[0].id);
-
+            console.log(rows);
+            id_class = {
+                id: rows[0].id
+            };
         }
-    });
-    sql = 'SELECT id FROM course WHERE course_name= ?';
-    //let sql1 = 'SELECT id FROM course WHERE course_name=' + course;
-
-    var id_course;
-
-    con.query(sql, [course], function (err, rows, fields) {
-
-        if (err) {
-            res.status(500).json({ "status_code": 500, "status_message": "internal server error" });
-        } else {
-            // Check if the result is found or not
-            console.log(id_course = rows[0].id);
-
-        }
-    });
-    sql = 'INSERT INTO topic (topic_date, id_class, id_course,description) VALUES (?, ?)';
-    con.query(sql, [date, class_id, course_id, desc], function (err) {
-        if (err) res.status(500).json({ "status_code": 500, "status_message": "internal server error" });
-    });
-    con.end();
-
-    //Check conversion date to insert into DB
-    //Check if prepared statement works instead of the second versio commented
-    console.log(date);
-
-    // sql = 'INSERT INTO topic (topic_date, id_class, id_course,description) VALUES (?, ?, ? ,?)';
-    // con.query(sql,["2019-11-03",id_class,id_course,desc], function(err) {
-    //         if (err) res.status(500).json({ "status_code": 500, "status_message": "internal server error" });
-    // });
+        count++;
+        return show(count);
+    }); 
     
+    sql = 'SELECT id FROM course WHERE course_name= ?';
+    con.query(sql, [course], function (err, rows,fields) {
+         if (err) {
+             res.status(500).json({ "status_code": 500, "status_message": "internal server error" });
+         } else {
+                // Check if the result is found or not
+    //         // id_course = JSON.stringify(rows.id);
+    //         // console.log(rows);
+             id_course = {
+                 id: rows[0].id 
+             }   
+         }
+         count++;
+        return show(count);
+     }); 
 
-    // let sql2 = 'INSERT INTO topic (topic_date, id_class, id_course, description) VALUES (' + date + ',' + id_class + ',' + id_course + ',' + desc + ')';
+     function show(val){
+         console.log(val);
+         if(val==2){
+             console.log(id_class.id);
+             console.log(id_course.id);
+            sql = 'INSERT INTO topic (id, topic_date, id_class, id_course, description) VALUES (?,?,?,?,?)';
+            con.query(sql, [id, date, id_class.id, id_course.id, desc], function (err, rows, fields) {
+                if (err) res.status(500).json({ "status_code": 500, "status_message": "internal server error" });
+            });
+         }
+         return;
+     } 
+     //console.log(id_course.id);
+     //console.log(id_class.id);
+    // // sql = 'INSERT INTO topic (id, topic_date, id_class, id_course, description) VALUES (?,?,?,?,?)';
+    // // con.query(sql, [id, date, id_class, id_course, desc], function (err, rows, fields) {
+    // //     if (err) res.status(500).json({ "status_code": 500, "status_message": "internal server error" });
+    // // });
 
-    // con.query(sql2, function(err, rows, fields) {
+    // // con.end();
+    // console.log(id_class.id);
+    // console.log(id_course.id); */
+    let sql = 'INSERT INTO topic (id, topic_date, id_class, id_course, description) VALUES (' + id + ',' + date + /*', (SELECT id FROM course WHERE course_name = '+course+'), (SELECT id FROM class WHERE class_name = '+classroom+'),'*/ +",fede,silvio," + desc + ')';
 
-    //     if (err) {
-    //         res.status(500).json({ "status_code": 500, "status_message": "internal server error" });
-    //     }
-    // });
+    con.query(sql, function(err, result) {
+
+         if (err) {
+             console.log("[mysql error]",err);
+             //res.status(500).json({ "status_code": 500, "status_message": "internal server error" });
+         }
+    });
     con.end();
-    res.end(compiledPage({
-        // topic_course: name,
-        // topic_date: surname,
-        // topic_class: classroom,
-        // topic_desc: desc
-    }));
+    res.end();
 });
 
 app.post("/register", (req, res) => {
