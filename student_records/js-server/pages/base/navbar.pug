@@ -6,10 +6,10 @@ mixin list(href, name, icon)
       if block
         block
 
-nav(class='navbar navbar-inverse' style='border-radius:0')
+nav(class='navbar navbar-default')
   div(class='container-fluid')
     div(class='navbar-header')
-      a(href='/' class='navbar-brand') BB
+      a(href='/' class='navbar-brand' style="color: white;") BB
     ul(class='nav navbar-nav navbar-right')
       if loggedIn
         +list('logout', 'logout', 'glyphicon glyphicon-log-out')

@@ -39,10 +39,10 @@ app.get('/', (req, res) => {
     res.end(compiledPage());
 });
 
-app.get('/login_teacher', (req, res) => {
+app.get('/login_collaborator', (req, res) => {
     const compiledPage = pug.compileFile("pages/login.pug");
     res.end(compiledPage({
-        user: "teacher"
+        user: "collaborator"
     }));
 });
 

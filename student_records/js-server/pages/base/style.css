@@ -1,10 +1,16 @@
 body {
-    background: #EEEEEE;
+    background: rgba(255, 174, 0, 0.158);
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
+
+
+.navbar-default {
+    background-color: #fda253 !important;
+}
+
 .noLinkTitle {
-    color: rgb(82, 82, 82);
+    color: rgb(221, 221, 221);
     
 }
 
@@ -16,8 +22,9 @@ body {
 .blockButton {
     display: block;
     width: 100%;
+    color: white;
     border: 1px solid lightgray;
-    background-color: rgb(144, 243, 147);
+    background-color: #3455db;
     padding: 14px 28px 8px 28px;
     font-size: 24px;
     cursor: pointer;
@@ -27,7 +34,8 @@ body {
 
 .blockButton:hover {
     transition-duration: 0.2s;
-    background-color: rgb(180, 238, 182);
+    color: white;
+    background-color: #3d64ff;
 }
 
 .title {
