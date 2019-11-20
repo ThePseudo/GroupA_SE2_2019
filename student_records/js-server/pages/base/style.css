@@ -8,6 +8,7 @@ body {
 .navbar-default {
     background-color: #fda253 !important;
     border: 0px;
+    border-radius: 0px;
 }
 
 .noLinkTitle {
