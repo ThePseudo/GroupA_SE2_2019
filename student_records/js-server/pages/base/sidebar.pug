@@ -7,7 +7,7 @@ mixin sidebar_item(link, text)
     a(class='sidebar-item' href=link)= text
 
 div(class='sidebar')
-  div(style='margin:40px')
+  div(style='margin:56px')
   if(user=="admin")
     +sidebar_item("/admin/parents", "Manage parents")
     +sidebar_item("/enroll", "Enroll student")
