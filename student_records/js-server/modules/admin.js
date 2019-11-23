@@ -1,4 +1,6 @@
 const express = require('express');
+const pug = require('pug');
+
 var router = express.Router();
 
 router.use('/:id', function (req, res, next) {
@@ -15,7 +17,11 @@ router.get('/parents', (req, res) => {
 
 router.get('/register_parent', (req, res) => {
     res.end("Hello, register parents!");
+});
 
+router.get("/enroll", (req, res) => {
+    const compiledPage = pug.compileFile("../pages/enroll.pug");
+    res.end(compiledPage());
 });
 
 module.exports = router;

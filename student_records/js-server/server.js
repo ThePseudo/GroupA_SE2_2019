@@ -54,11 +54,6 @@ app.get("/style", (req, res) => {
     res.end(page);
 });
 
-app.get("/enroll", (req, res) => {
-    const compiledPage = pug.compileFile("pages/enroll.pug");
-    res.end(compiledPage());
-});
-
 app.get("/teacher_page", (req, res) => {
     const compiledPage = pug.compileFile("pages/teacher_page.pug");
     res.end(compiledPage());
