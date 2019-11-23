@@ -1,6 +1,6 @@
 mixin list(href, name, icon)
   li
-    a(href=href)
+    a(href=href style="color:white; font-size:18px;")
       span(class= icon)
       = ' ' + name
       if block
@@ -9,7 +9,7 @@ mixin list(href, name, icon)
 nav(class='navbar navbar-default')
   div(class='container-fluid')
     div(class='navbar-header')
-      a(href='/' class='navbar-brand' style="color: white;") BB
+      a(href='/' class='navbar-brand' style="color: white; font-size:24px;") BB
     ul(class='nav navbar-nav navbar-right')
       if loggedIn
         +list('logout', 'logout', 'glyphicon glyphicon-log-out')
