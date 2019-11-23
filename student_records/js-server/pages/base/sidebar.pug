@@ -8,8 +8,10 @@ mixin sidebar_item(link, text)
     a(class='sidebar-item' href=link)= text
 
 div(class='sidebar')
-  div(style='margin:56px')
   if(user=="admin")
+    a(class='active-sidebar-item' style="background:#ffc999;")
+    a(class='active-sidebar-item' style="background:#ffc999; text-align:center; padding-right:10px;") Welcome, administrator
+    a(class='active-sidebar-item' style="background:#ffc999;")
     +sidebar_item("/admin/parents", "Manage parents")
     +sidebar_item("/enroll", "Enroll student")
     +sidebar_item("/admin/register_parent", "Register parent")

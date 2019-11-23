@@ -9,6 +9,7 @@ const pug = require('pug');
 const bcrypt = require('bcrypt');
 const mysql = require('mysql');
 const bodyParser = require('body-parser');
+const adminPages = require('./modules/admin.js');
 
 // Constants
 const HTTPPORT = 8000;
@@ -21,12 +22,7 @@ app.set('view engine', 'pug');
 app.set('views', './pages');
 app.use(bodyParser.urlencoded({ extended: false }));
 
-// other routers
-module.exports = function (app) {
-    app.use('/action/*', require('./modules'));
-};
-
-
+app.use('/admin', adminPages);
 
 const options = {
     key: fs.readFileSync("./certs/localhost.key"),
