@@ -1,23 +1,22 @@
 
-enroll.pug
+enroll.pug ---> form da replicare in giro nelle altre pagine di form
 home.pug T1,AO1,SA1,P1	
-login.pug	T2,AO2,SA2,P2
-meeting_scheduling.pug 
-officer_classcomposition.pug	
-officer_classtimetable.pug	
-officer_communication.pug
-officer_home.pug	
-officer_registerparent.pug	
-officer_registerstudent.pug
-parent_allmark.pug	
-parent_behaviour.pug	
-parent_childhomepage.pug	
-parent_coursehomepage.pug	
-parent_coursehomework.pug	
-parent_courselist.pug	
-parent_coursemark.pug	
-parent_coursetopic.pug	
-parent_homepage.pug
+login.pug T2,AO2,SA2,P2
+meeting_scheduling.pug P8, T?
+officer_classcomposition.pug AO5
+officer_classtimetable.pug AO6
+officer_communication.pug AO4c
+officer_home.pug AO3
+officer_registerparent.pug AO4a
+officer_registerstudent.pug AO4b
+parent_allmark.pug P9
+parent_behaviour.pug P7
+parent_coursehomepage.pug	P5
+parent_coursehomework.pug	P6c
+parent_courselist.pug	P4
+parent_coursemark.pug P6a
+parent_coursetopic.pug P6b
+parent_homepage.pug P3
 student_marks.pug	
 systemad_home.pug SA3
 systemad_registerofficer.pug SA4a
