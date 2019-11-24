@@ -23,13 +23,13 @@ systemad_home.pug
 systemad_registerofficer.pug	
 systemad_registerprincipal.pug	
 systemad_registerteacher.pug	
-teacher_classregister.pug	
-teacher_coursehome.pug	
-teacher_coursematerial.pug	
-teacher_coursetopic.pug	
-teacher_home.pug	
-teacher_insertclassmark.pug
-teacher_page.pug	
-teacher_singlestudent.pug
-timetable.pug
-topics.pug
+teacher_classregister.pug	T8
+teacher_coursehome.pug	T4
+teacher_coursematerial.pug	T5
+teacher_coursetopic.pug	T6
+teacher_home.pug T3
+teacher_insertclassmark.pug T7
+teacher_page.pug	---> da mettere in T3
+teacher_singlestudent.pug T9
+timetable.pug ---> se fosse necessario un consulta orario, per ora non si capisce dalle storie
+topics.pug ---> da mettere in T6
