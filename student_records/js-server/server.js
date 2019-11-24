@@ -10,6 +10,7 @@ const bcrypt = require('bcrypt');
 const mysql = require('mysql');
 const bodyParser = require('body-parser');
 const adminPages = require('./modules/admin.js');
+const parentPages = require('./modules/parent.js')
 
 // Constants
 const HTTPPORT = 8000;
@@ -23,6 +24,7 @@ app.set('views', './pages');
 app.use(bodyParser.urlencoded({ extended: false }));
 
 app.use('/admin', adminPages);
+app.use('/parent', parentPages);
 
 const options = {
     key: fs.readFileSync("./certs/localhost.key"),
@@ -39,6 +41,13 @@ app.get('/login_collaborator', (req, res) => {
     const compiledPage = pug.compileFile("pages/login.pug");
     res.end(compiledPage({
         user: "collaborator"
+    }));
+});
+
+app.get('/login_teacher', (req, res) => {
+    const compiledPage = pug.compileFile("pages/login.pug");
+    res.end(compiledPage({
+        user: "teacher"
     }));
 });
 
