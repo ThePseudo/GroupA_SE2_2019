@@ -1,8 +1,8 @@
 
 enroll.pug
-home.pug	
-login.pug	
-meeting_scheduling.pug
+home.pug T1,AO1,SA1,P1	
+login.pug	T2,AO2,SA2,P2
+meeting_scheduling.pug 
 officer_classcomposition.pug	
 officer_classtimetable.pug	
 officer_communication.pug
@@ -19,10 +19,10 @@ parent_coursemark.pug
 parent_coursetopic.pug	
 parent_homepage.pug
 student_marks.pug	
-systemad_home.pug	
-systemad_registerofficer.pug	
-systemad_registerprincipal.pug	
-systemad_registerteacher.pug	
+systemad_home.pug SA3
+systemad_registerofficer.pug SA4a
+systemad_registerprincipal.pug SA4c
+systemad_registerteacher.pug SA4b
 teacher_classregister.pug T8
 teacher_coursehome.pug T4
 teacher_coursematerial.pug T5
