@@ -121,3 +121,15 @@ input[type="date"] {
      padding: 0;
      padding-left: 16px;
 }
+
+.smallMarginTop {
+
+}
+
+/* mobile */
+
+@media only screen and (max-width: 768px) {
+    .smallMarginTop {
+        margin: 10px;
+    }
+}
