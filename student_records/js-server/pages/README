@@ -17,7 +17,7 @@ parent_courselist.pug	P4
 parent_coursemark.pug P6a
 parent_coursetopic.pug P6b
 parent_homepage.pug P3
-student_marks.pug	
+student_marks.pug	---> da spostare in parent_allmark
 systemad_home.pug SA3
 systemad_registerofficer.pug SA4a
 systemad_registerprincipal.pug SA4c
