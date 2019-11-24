@@ -11,8 +11,8 @@ officer_registerparent.pug AO4a
 officer_registerstudent.pug AO4b
 parent_allmark.pug P9
 parent_behaviour.pug P7
-parent_coursehomepage.pug	P5
-parent_coursehomework.pug	P6c
+parent_coursehomepage.pug P5
+parent_coursehomework.pug P6c
 parent_courselist.pug	P4
 parent_coursemark.pug P6a
 parent_coursetopic.pug P6b
