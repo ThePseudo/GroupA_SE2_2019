@@ -2,7 +2,7 @@
 enroll.pug ---> form da replicare in giro nelle altre pagine di form
 home.pug T1,AO1,SA1,P1	
 login.pug T2,AO2,SA2,P2
-meeting_scheduling.pug P8, T?
+meeting_scheduling.pug P8, T?(ecco nell'svg mancano i collegamenti di teacher al scheduling meeting, ma deve esserci)
 officer_classcomposition.pug AO5
 officer_classtimetable.pug AO6
 officer_communication.pug AO4c
@@ -17,7 +17,7 @@ parent_courselist.pug	P4
 parent_coursemark.pug P6a
 parent_coursetopic.pug P6b
 parent_homepage.pug P3
-student_marks.pug	---> da spostare in parent_allmark
+student_marks.pug ---> da spostare in parent_allmark
 systemad_home.pug SA3
 systemad_registerofficer.pug SA4a
 systemad_registerprincipal.pug SA4c
