@@ -88,7 +88,7 @@ INSERT INTO course
     (id,course_name)
 VALUES
     (1, 'Math');
-
+ 
 INSERT INTO course
     (id,course_name)
 VALUES
