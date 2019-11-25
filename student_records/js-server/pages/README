@@ -1,0 +1,34 @@
+
+enroll.pug ---> form da replicare in giro nelle altre pagine di form
+home.pug T1,AO1,SA1,P1	
+login.pug T2,AO2,SA2,P2
+meeting_scheduling.pug P8, T?(ecco nell'svg mancano i collegamenti di teacher al scheduling meeting, ma deve esserci)
+officer_classcomposition.pug AO5
+officer_classtimetable.pug AO6
+officer_communication.pug AO4c
+officer_home.pug AO3
+officer_registerparent.pug AO4a
+officer_registerstudent.pug AO4b
+parent_allmark.pug P9
+parent_behaviour.pug P7
+parent_coursehomepage.pug P5
+parent_coursehomework.pug P6c
+parent_courselist.pug	P4
+parent_coursemark.pug P6a
+parent_coursetopic.pug P6b
+parent_homepage.pug P3
+student_marks.pug ---> da spostare in parent_allmark
+systemad_home.pug SA3
+systemad_registerofficer.pug SA4a
+systemad_registerprincipal.pug SA4c
+systemad_registerteacher.pug SA4b
+teacher_classregister.pug T8
+teacher_coursehome.pug T4
+teacher_coursematerial.pug T5
+teacher_coursetopic.pug T6
+teacher_home.pug T3
+teacher_insertclassmark.pug T7
+teacher_page.pug ---> da mettere in T3
+teacher_singlestudent.pug T9
+timetable.pug ---> se fosse necessario un consulta orario, per ora non si capisce dalle storie
+topics.pug ---> da mettere in T6
