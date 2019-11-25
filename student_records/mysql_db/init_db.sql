@@ -94,20 +94,21 @@ CREATE TABLE admin
 
 CREATE TABLE note
 (
-    id INT NOT NULL,
-    student_id INT,
-    note_date DATE,
-    PRIMARY KEY(id, student_id, note_date)
+    id INT,
+    student_id INT NOT NULL,
+    note_date DATE NOT NULL,
+    motivation TEXT NOT NULL,
+    PRIMARY KEY(id)
 );
 
 CREATE TABLE topic
 (
-    id INT NOT NULL,
-    topic_date VARCHAR(20) UNIQUE NOT NULL,
-    id_class INT,
-    id_course INT,
+    id INT UNIQUE NOT NULL,
+    topic_date DATE NOT NULL,
+    id_class INT NOT NULL,
+    id_course INT NOT NULL,
     description TEXT NOT NULL,
-    PRIMARY KEY(id, id_class, id_course)
+    PRIMARY KEY(id, topic_date, id_class, id_course)
 );
 
 
@@ -115,12 +116,12 @@ CREATE TABLE topic
 
 CREATE TABLE mark
 (
-    id INT NOT NULL,
-    student_id INT,
-    course_id INT,
+    id INT UNIQUE NOT NULL,
+    student_id INT NOT NULL,
+    course_id INT NOT NULL,
     score INT NOT NULL,
     date_mark DATE NOT NULL,
-    PRIMARY KEY(id, student_id, course_id)
+    PRIMARY KEY(id)
 );
 
 

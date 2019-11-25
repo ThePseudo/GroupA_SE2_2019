@@ -1,0 +1,40 @@
+In queste cartelle viene presentata una bozza di navigazione della web application rispetto alle varie persone e ruoli che si interfacciano con la stessa.
+
+Nella cartella drawio si trovano i file *.drawio che possono essere scaricati e modificati tramite il sito www.draw.io
+Nella cartella svg si trovano gli stessi file nel formato svg per un'immediata visualizzazione ed eventuali presentazioni.
+Ovviamente in caso di modifiche le due cartelle devono essere aggiornate di conseguenza.
+Nel commit lasciare infatti il numero progessivo di versione rispetto alla precedente.
+
+In verde box di testo per piccole note.
+In giallo la lettera e il numero rappresentativo della pagina per nostra organizzazione interna. 
+Questo identificativo non è collegato in alcuna maniera alla storia. 
+Per la grafica raw per ora fare riferimento alla cartella pdf, dove si possono trovare le scan degli fogli redatti in aula.
+
+SETTIMANA 25-29
+
+Federico: 
+- forms and functionality of register : register parent, enroll student, register officer, register teacher, 
+  insert communication (AO4a,AO4b,AO4c,SA4a,SA4b,SA4c)
+- P6a,P6b,P6c showing course marks, daily topics, homework of a child
+
+Savik:
+- TO2, P2, C2 (:SO2,SA2=stessa pagina si capisce la differenza con un flag nel db) forms and functionality 
+  of login (+ Andre che ci aiuta con le sessioni in caso) [collaborator login, teacher login, parent login]
+- P7 showing note e assenza con bottoni per contattare il docente (ma per ora lasciare i bottoni disabilitati, storia del prossimo sprint)
+  
+Andre:
+- Parent GUIs
+- P4 timetable (raw and fake data per iniziare) + course list buttons/links + sidebar con che riporta a P7
+- P5 selezionato il corso pagina corso con marks, topics, materials
+
+Isa:
+- P3 page choose child and general communication
+- create all pages of site and link them together
+- edit and coordination of siteflow
+
+Mary:
+- Setup docker
+- Learning Foundamentals of Node.js
+- Setup and managment Database mySQL
+
+

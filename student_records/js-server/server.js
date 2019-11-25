@@ -40,14 +40,14 @@ app.get('/', (req, res) => {
 });
 
 app.get('/login_teacher', (req, res) => {
-    const compiledPage = pug.compileFile("pages/login_teacher.pug");
+    const compiledPage = pug.compileFile("pages/login.pug");
     res.end(compiledPage({
         user: "teacher"
     }));
 });
 
 app.get('/login_parent', (req, res) => {
-    const compiledPage = pug.compileFile("pages/login_parent.pug");
+    const compiledPage = pug.compileFile("pages/login.pug");
     res.end(compiledPage({
         user: "parent"
     }));
@@ -75,14 +75,10 @@ app.get("/topics", (req, res) => {
 
 // TODO: make this and fix it
 app.post("/reg_topic", (req, res) => {
-    var course = req.body.course;
-    var date = req.body.date;
-    var classroom = req.body.class;
-    var desc = req.body.desc;
-    var id_class;
-    var id_course;
-    var id = 1;
-    var count = 0;
+    let course = req.body.course;
+    let date = req.body.date;
+    let classroom = req.body.class;
+    let desc = req.body.desc;
 
     const compiledPage = pug.compileFile("pages/reg_topic.pug");
     
@@ -94,70 +90,38 @@ app.post("/reg_topic", (req, res) => {
         insecureAuth: true
     });
 
-    /*let sql = 'SELECT id FROM class WHERE class_name = ?';
+    let sql = 'SELECT id FROM class WHERE class_name = ?';
     con.query(sql, [classroom], function (err, rows, fields) {
         if (err) {
-            res.status(500).json({ "status_code": 500, "status_message": "internal server error" });
-        } else {
-            // Check if the result is found or not
-            console.log(rows);
-            id_class = {
-                id: rows[0].id
-            };
+            res.end("There is a problem in the DB connection. Please, try again later " + err);
+            return;
         }
-        count++;
-        return show(count);
-    }); 
-    
-    sql = 'SELECT id FROM course WHERE course_name= ?';
-    con.query(sql, [course], function (err, rows,fields) {
-         if (err) {
-             res.status(500).json({ "status_code": 500, "status_message": "internal server error" });
-         } else {
-                // Check if the result is found or not
-    //         // id_course = JSON.stringify(rows.id);
-    //         // console.log(rows);
-             id_course = {
-                 id: rows[0].id 
-             }   
-         }
-         count++;
-        return show(count);
-     }); 
-
-     function show(val){
-         console.log(val);
-         if(val==2){
-             console.log(id_class.id);
-             console.log(id_course.id);
-            sql = 'INSERT INTO topic (id, topic_date, id_class, id_course, description) VALUES (?,?,?,?,?)';
-            con.query(sql, [id, date, id_class.id, id_course.id, desc], function (err, rows, fields) {
-                if (err) res.status(500).json({ "status_code": 500, "status_message": "internal server error" });
+        var class_id = rows[0].id;
+        sql = 'SELECT id FROM course WHERE course_name = ?';
+        con.query(sql, [course], (err, rows, fields) => {
+            if (err) {
+                res.end("There is a problem in the DB connection. Please, try again later " + err);
+                return;
+            }
+            var course_id = rows[0].id;
+            con.query('SELECT COUNT(*) as c FROM topic', (err, rows, fields) => { // because we have no AUTO_UPDATE available on the DB
+                if (err) {
+                    res.end("There is a problem in the DB connection. Please, try again later " + err);
+                    return;
+                }
+                con.query("INSERT INTO topic(id, topic_date, id_class, id_course, description) VALUES(?, ?, ?, ?, ?)",
+                    [rows[0].c, date, class_id, course_id, desc], (err, result) => {
+                        if (err) {
+                            res.end("There is a problem in the DB connection. Please, try again later " + err);
+                            return;
+                        }
+                        console.log("Data successfully uploaded! " + result.insertId);
+                        con.end();
+                        res.redirect("/topics");
+                    });
             });
-         }
-         return;
-     } 
-     //console.log(id_course.id);
-     //console.log(id_class.id);
-    // // sql = 'INSERT INTO topic (id, topic_date, id_class, id_course, description) VALUES (?,?,?,?,?)';
-    // // con.query(sql, [id, date, id_class, id_course, desc], function (err, rows, fields) {
-    // //     if (err) res.status(500).json({ "status_code": 500, "status_message": "internal server error" });
-    // // });
-
-    // // con.end();
-    // console.log(id_class.id);
-    // console.log(id_course.id); */
-    let sql = 'INSERT INTO topic (id, topic_date, id_class, id_course, description) VALUES (' + id + ',' + date + /*', (SELECT id FROM course WHERE course_name = '+course+'), (SELECT id FROM class WHERE class_name = '+classroom+'),'*/ +",fede,silvio," + desc + ')';
-
-    con.query(sql, function(err, result) {
-
-         if (err) {
-             console.log("[mysql error]",err);
-             //res.status(500).json({ "status_code": 500, "status_message": "internal server error" });
-         }
+        });
     });
-    con.end();
-    res.end();
 });
 
 app.post("/register", (req, res) => {
@@ -166,7 +130,6 @@ app.post("/register", (req, res) => {
     var fiscalcode = req.body.fiscalcode;
     var parent1 = req.body.parent1;
     var parent2 = req.body.parent2;
-    const compiledPage = pug.compileFile("pages/register.pug");
 
     con.connect(function (err) {
         if (err) {
@@ -185,14 +148,7 @@ app.post("/register", (req, res) => {
             res.status(500).json({ "status_code": 500, "status_message": "internal server error" });
         }
     });
-
-    res.end(compiledPage({
-        student_name: name,
-        student_surname: surname,
-        student_fiscalcode: fiscalcode,
-        student_parent1: parent1,
-        student_parent2: parent2
-    }));
+    res.end();
 });
 
 

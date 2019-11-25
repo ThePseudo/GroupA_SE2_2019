@@ -58,7 +58,7 @@ th, td {
 
 .sidebar {
     display: block;
-    position: absolute;
+    position: fixed;
     min-width: 200px;
     width: 15%;
     margin-left: 0px;

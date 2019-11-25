@@ -45,3 +45,7 @@ docker logs $(sudo docker ps -aq --filter name=student)
 # Use cases
 
 Use cases can be found [here](../use_cases/sprint1.md).
+
+# Sprint retrospectives
+
+[Sprint 1](../student_retrospective/sprint1.pptx)
