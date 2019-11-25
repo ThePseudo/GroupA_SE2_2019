@@ -12,8 +12,13 @@ CREATE TABLE teacher
     cod_fisc VARCHAR(20) UNIQUE NOT NULL,
     email VARCHAR(100) NOT NULL,
     password VARCHAR(255) NOT NULL,
-    first_access INT NOT NULL
+    first_access BOOLEAN NOT NULL /* 1 first_ccess already done; 0 not yet */
 );
+
+INSERT INTO teacher
+    (id,first_name,last_name,cod_fisc,email,password,first_access)
+VALUES
+    (1,"Afrodite","Venere","AV85T","venere85@yahoo.com","VenereA85",1);
 
 CREATE TABLE parent
 (
@@ -23,8 +28,17 @@ CREATE TABLE parent
     cod_fisc VARCHAR(20) UNIQUE NOT NULL,
     email VARCHAR(100) NOT NULL,
     password VARCHAR(255) NOT NULL,
-    first_access INT NOT NULL
+    first_access BOOLEAN NOT NULL
 );
+
+INSERT INTO parent
+    (id,first_name,last_name,cod_fisc,email,password,first_access)
+VALUES
+    (1,"Garga","Mella","GM75X","garga.mella@yahoo.com","GargaM75",0);
+INSERT INTO parent
+    (id,first_name,last_name,cod_fisc,email,password,first_access)
+VALUES
+    (2,"Stella","Luna","SL78A","stella.luna@yahoo.com","StellaL78",1);
 
 CREATE TABLE student
 (
@@ -36,6 +50,11 @@ CREATE TABLE student
     parent_1 INT,
     parent_2 INT
 );
+
+INSERT INTO student
+    (id,first_name,last_name,cod_fisc,class_id,parent_1,parent_2)
+VALUES
+    (1,"Giove","Zeus","GZ03A",2,1,2);
 
 -- Classes
 
@@ -109,6 +128,16 @@ CREATE TABLE topic
     PRIMARY KEY(id, topic_date, id_class, id_course)
 );
 
+CREATE TABLE absence
+(
+    id INT PRIMARY KEY,
+    student_id INT NOT NULL,
+    date_ab DATE NOT NULL,
+    start_h INT NOT NULL,
+    end_h INT NOT NULL,
+    justified BOOLEAN NOT NULL
+);
+
 -- Marks
 
 CREATE TABLE mark
@@ -155,6 +184,49 @@ CREATE TABLE teacher_course_class
     year INT,
     PRIMARY KEY(teacher_id, course_id, class_id, year)
 );
+
+CREATE TABLE General_Communication
+(
+    id INT PRIMARY KEY,
+    communication TEXT,
+    comm_date DATE
+);
+
+INSERT INTO General_Communication
+    (id,communication, comm_date)
+VALUES
+    (1, "PippoPippo", '2019-11-26');
+
+INSERT INTO General_Communication
+    (id,communication, comm_date)
+VALUES
+    (2, "PlutoPluto", '2019-11-26');
+
+INSERT INTO General_Communication
+    (id,communication, comm_date)
+VALUES
+    (3, "Paperino", '2019-11-27');
+
+
+CREATE TABLE officer
+(
+    id INT PRIMARY KEY,
+    first_name VARCHAR(50) NOT NULL,
+    last_name VARCHAR(50) NOT NULL,
+    cod_fisc VARCHAR(20) UNIQUE NOT NULL,
+    email VARCHAR(100) NOT NULL,
+    password VARCHAR(255) NOT NULL,
+    first_access BOOLEAN NOT NULL
+);
+
+INSERT INTO officer
+    (id,first_name,last_name,cod_fisc,email,password,first_access)
+VALUES
+    (1,"Ciccio","Pasticcio","CP80X","pasticcio80@gmail.com","CiccioPast80",1);
+INSERT INTO officer
+    (id,first_name,last_name,cod_fisc,email,password,first_access)
+VALUES
+    (2,"Carlo","Magno","CM10A","magno10@gmail.com","CarloM10",0);
 
 -- FOR TORCHIANO - 12/11/19
 -- 
