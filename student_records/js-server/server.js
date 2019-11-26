@@ -6,7 +6,8 @@ const fs = require('fs');
 const https = require('https');
 const http = require('http');
 const pug = require('pug');
-const bcrypt = require('bcrypt');
+//const bcrypt = require('bcrypt'); // substituted also this module with the following module in JSON 
+const bcrypt = require('bcryptjs');
 const mysql = require('mysql');
 const bodyParser = require('body-parser');
 
@@ -68,14 +69,13 @@ app.post('/auth_parent',(req, res) => {
     console.log("password: " + password);
 
 
-	if (cod_fisc==undefined || password==undefined) {
-        console.log("1");
+	if (!cod_fisc || !password) {
         res.end(loginPage({
             err_msg: "Please enter username and password"
         }));
     }
     else{
-        console.log("2");
+        console.log("TRY CHECK");
         var con = mysql.createConnection({
             host: "students-db",
             user: "root",
@@ -84,26 +84,30 @@ app.post('/auth_parent',(req, res) => {
             insecureAuth: true
         });
 
-        let sql = 'SELECT * FROM parent WHERE cod_fisc = ? AND password = ?';
-        con.query(sql, [cod_fisc, password], function(err, rows, fields) {
+        let sql = 'SELECT * FROM parent WHERE cod_fisc = ?';
+        con.query(sql, [cod_fisc], function(err, rows, fields) {
             if (rows.length > 0) {
-                con.end();
-                console.log("OK");
+                console.log("OK USER");
+                if(bcrypt.compareSync(password, rows[5])){
+                    console.log("ok pwd");
+                    parent.id = rows[0].id;
+                    parent.first_name= rows[0].first_name;
+                    parent.last_name= rows[0].last_name;
+                    parent.cod_fisc= rows[0].cod_fisc;
+                    parent.email= rows[0].email;
+
+                    con.end();
+                    res.end(parentPage({
+                        parent: parent
+                    }));
+                } 
                 // req.session.loggedin = true;
                 // req.session.username = username;
+               
+            } else {
                 res.end(loginPage({
                     err_msg: 'Incorrect Username and/or Password!'
-                }));
-            } else {
-                parent.id = rows[0].id;
-                parent.first_name= rows[0].first_name;
-                parent.last_name= rows[0].last_name;
-                parent.cod_fisc= rows[0].cod_fisc;
-                parent.email= rows[0].email;
-                con.end();
-                res.end(parentPage({
-                    parent: parent
-                }));
+                })); 
             }			
         });
     }
