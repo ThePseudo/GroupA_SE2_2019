@@ -64,10 +64,15 @@ router.get("/marks", (req, res) => {
         if (err) {
           res.end("DB error: " + err);
         } else {
-          res.end(compiledPage({
-            student_name: rows[0].first_name + " " + rows[0].last_name,
-            student_marks: marks
-          }));
+          if (rows) {
+            res.end(compiledPage({
+              student_name: rows[0].first_name + " " + rows[0].last_name,
+              student_marks: marks
+            }));
+          }
+          else {
+            res.end("This student does not exist!");
+          }
         }
         con.end();
       });
