@@ -3,12 +3,19 @@ body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
+.container {
+    margin-top: 51px;
+}
 
 
 .navbar-default {
     background-color: #fda253 !important;
     border: 0px;
     border-radius: 0px;
+    position: fixed;
+    width: 100%;
+    top: 0;
+    z-index: 1;
 }
 
 .noLinkTitle {
@@ -71,9 +78,9 @@ th, td {
     min-width: 200px;
     width: 15%;
     margin-left: 0px;
-    margin-top: -20px;
     background: #ffc999;
     height: 100%;
+    transition-duration: 0.2s;
 }
 
 .sidebar-item {
@@ -126,10 +133,32 @@ input[type="date"] {
 
 }
 
+.menuButton {
+    position: fixed;
+    top: 9px;
+    left: 9px;
+}
+
 /* mobile */
 
-@media only screen and (max-width: 768px) {
+@media only screen and (max-width: 1200px) {
     .smallMarginTop {
         margin: 10px;
     }
+
+    .sidebar {
+        min-width: 100%;
+        width: 100%;
+        margin-left: -100%;
+        z-index: 1;
+    }
+    
+    .sidebar-item {
+        text-align: center;
+    }
+
+    .active-sidebar-item {
+        text-align: center;
+    }
+
 }

@@ -7,7 +7,7 @@ mixin sidebar_item(link, text)
   else
     a(class='sidebar-item' href=link)= text
 
-div(class='sidebar')
+div(class='sidebar' id='sidebar')
   if(user=="admin")
     a(class='active-sidebar-item' style="background:#ffc999;")
     a(class='active-sidebar-item' style="background:#ffc999; text-align:center; padding-right:10px;") Welcome, administrator

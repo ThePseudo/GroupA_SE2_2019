@@ -7,9 +7,10 @@ mixin list(href, name, icon)
         block
 
 nav(class='navbar navbar-default')
+  button(class='glyphicon glyphicon-menu-hamburger btn menuButton hidden-lg' id='side-toggle')
   div(class='container-fluid')
-    div(class='navbar-header')
+    div(class='navbar-header' style='margin-left:50%')
       a(href='/' class='navbar-brand' style="color: white; font-size:24px;") BB
-    ul(class='nav navbar-nav navbar-right')
+    ul(class='nav navbar-nav navbar-right hidden-xs')
       if loggedIn
         +list('logout', 'logout', 'glyphicon glyphicon-log-out')
