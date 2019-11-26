@@ -9,27 +9,19 @@
 - var studentsLeft = numStudents
 
 mixin studentBtn(text)
-  div(class='hidden-sm hidden-md hidden-lg col-xs-1')
-  div(class='col-sm-4 col-xs-10 smallMarginTop')
-    a(href = 'parent_courselist')
-      button(class='btn blockButton')
-        div(class='row')
-          img(src= '../../images/child.png' style='width:100%;height:auto;')
-        div(class='row')
-          a(class='noLinkTitle' style='margin-top: 20px;')= text
+  //-div(class='hidden-sm hidden-md hidden-lg col-xs-1')
+  //-div(class='col-sm-4 col-xs-10 smallMarginTop')
+  a(href = 'parent_courselist')
+  button(class='btn blockButton_child') 
+    img(src= '../../images/child.png' style='width:50px;height:50px;')
+    a(class='noLinkTitle' style='margin-top: 20px;')= text
 
-mixin printStudentsRow(text)
-    div(class='row')
-        +studentBtn(text)
+mixin printStudents(studentList)
+  div(class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups")
+    div(class="btn-group" role="group" aria-label="First group")
+      for student in studentList
+        +studentBtn(student)
 
-mixin printcommunicationRow(communication)
-    div(class='row')
-    div(class='hidden-sm hidden-md hidden-lg col-xs-1')
-    div(class='col-sm-4 col-xs-10 smallMarginTop')
-        div(class='row')
-            td= communication.date
-        div(class='row')
-            td= communication.text
 
 doctype html
 html
@@ -41,17 +33,19 @@ html
         h1(class='title') Choose student
       div(class='row')
         h2(class = 'title2') Who do you want to know about?
-      for student in studentList
-        +printStudentsRow(student)
+      div(class='row')
+        +printStudents(studentList)
     
     div(class="container")
       div(class='row')
         h1(class='title') General Communication
         table(class='table')
+          tr(class='table-row-base')
+                th Id Communication
+                th Date
+                th Object
           each comm in communicationList
             tr
               td #{comm.id}
               td #{comm.date}
               td #{comm.text}
-      //- for communication in communicationList
-      //-   +printcommunicationRow(communication)

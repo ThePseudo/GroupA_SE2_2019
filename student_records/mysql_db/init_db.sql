@@ -195,17 +195,17 @@ CREATE TABLE General_Communication
 INSERT INTO General_Communication
     (id,communication, comm_date)
 VALUES
-    (1, "PippoPippo", '2019-11-26');
+    (1, "2 million euros for a 5 years grant at Politecnico di Torino to pave new routes for the design of innovative materials with various technological applications. Giovanni Maria Pavan has been awarded a prestigious European Research Council (ERC) Consolidator Grant with his research project DYNAPOL - Modeling approaches toward bioinspired dynamic materials", '2019-11-26');
 
 INSERT INTO General_Communication
     (id,communication, comm_date)
 VALUES
-    (2, "PlutoPluto", '2019-11-26');
+    (2, "In order to raise awareness inside our University on the wide variation of this concept, adv. Arianna Enrichens, Politecnico Confidential Counsellor, prepared a short video to inform the community about verbal violence on the web as well as on social media.o", '2019-11-26');
 
 INSERT INTO General_Communication
     (id,communication, comm_date)
 VALUES
-    (3, "Paperino", '2019-11-27');
+    (3, "See the pdf on site", '2019-11-27');
 
 
 CREATE TABLE officer
