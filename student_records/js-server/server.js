@@ -93,9 +93,10 @@ app.post('/auth_parent',(req, res) => {
                     //password match
                     console.log("ok password");
                     con.end();
-                    res.end(parentPage({
-                        parent: parent
-                    }));
+                    res.redirect("/parent_homepage");
+                    /* res.end(parentPage({
+                        //parent: parent no needed with session variables!
+                    })); */
                 } else {
                     // Passwords don't match
                     con.end();
