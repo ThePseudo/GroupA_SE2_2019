@@ -9,6 +9,8 @@ const pug = require('pug');
 const bcrypt = require('bcrypt');
 const mysql = require('mysql');
 const bodyParser = require('body-parser');
+const adminPages = require('./modules/admin.js');
+const parentPages = require('./modules/parent.js')
 
 // Constants
 const HTTPPORT = 8000;
@@ -21,12 +23,8 @@ app.set('view engine', 'pug');
 app.set('views', './pages');
 app.use(bodyParser.urlencoded({ extended: false }));
 
-// other routers
-module.exports = function (app) {
-    app.use('/action/*', require('./modules'));
-};
-
-
+app.use('/admin', adminPages);
+app.use('/parent', parentPages);
 
 const options = {
     key: fs.readFileSync("./certs/localhost.key"),
@@ -37,6 +35,13 @@ const options = {
 app.get('/', (req, res) => {
     const compiledPage = pug.compileFile("pages/home.pug");
     res.end(compiledPage());
+});
+
+app.get('/login_collaborator', (req, res) => {
+    const compiledPage = pug.compileFile("pages/login.pug");
+    res.end(compiledPage({
+        user: "collaborator"
+    }));
 });
 
 app.get('/login_teacher', (req, res) => {
@@ -56,11 +61,6 @@ app.get('/login_parent', (req, res) => {
 app.get("/style", (req, res) => {
     const page = fs.readFileSync("pages/base/style.css");
     res.end(page);
-});
-
-app.get("/enroll", (req, res) => {
-    const compiledPage = pug.compileFile("pages/enroll.pug");
-    res.end(compiledPage());
 });
 
 app.get("/teacher_page", (req, res) => {

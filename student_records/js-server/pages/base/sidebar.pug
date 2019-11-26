@@ -1,4 +1,5 @@
 // - Variables used: "user", "active"
+// - User can be admin, teacher, sysadmin or parent
 
 mixin sidebar_item(link, text)
   if(text==active)
@@ -7,10 +8,25 @@ mixin sidebar_item(link, text)
     a(class='sidebar-item' href=link)= text
 
 div(class='sidebar')
-  div(style='margin:40px')
   if(user=="admin")
+    a(class='active-sidebar-item' style="background:#ffc999;")
+    a(class='active-sidebar-item' style="background:#ffc999; text-align:center; padding-right:10px;") Welcome, administrator
+    a(class='active-sidebar-item' style="background:#ffc999;")
     +sidebar_item("/admin/parents", "Manage parents")
-    +sidebar_item("/enroll", "Enroll student")
+    +sidebar_item("/admin/enroll", "Enroll student")
+    +sidebar_item("/admin/register_parent", "Register parent")
+    +sidebar_item("/admin/insert_communication", "Insert communication")
+    +sidebar_item("/admin/time_table", "Time table composition")
     +sidebar_item("/admin/class", "Class composition")
   else if(user=="teacher")
     +sidebar_item("/topics", "Insert daily topic")
+  else if(user=="sysadmin")
+    +sidebar_item("/sysadmin/register_officer", "Register officer")
+    +sidebar_item("/sysadmin/register_teacher", "Register teacher")
+    +sidebar_item("/sysadmin/register_principal", "Register principal")
+  else if(user=="parent")
+    +sidebar_item("/parent/choose_student", "Choose student")
+    +sidebar_item("/parent/show_courses", "Show courses")
+    +sidebar_item("/parent/time_table", "Time table")
+    +sidebar_item("/parent/notes", "Notes and absences")
+    +sidebar_item("/parent/marks", "Show all marks")
