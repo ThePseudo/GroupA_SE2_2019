@@ -7,6 +7,10 @@ mixin sidebar_item(link, text)
   else
     a(class='sidebar-item' href=link)= text
 
+mixin small_item(link, text)
+  a(class='sidebar-item smallLogout hidden-sm hidden-md hidden-lg ' href=link)
+    span(class= 'glyphicon glyphicon-log-out')= ' ' + text
+
 div(class='sidebar' id='sidebar')
   if(user=="admin")
     a(class='active-sidebar-item' style="background:#ffc999;")
@@ -30,3 +34,7 @@ div(class='sidebar' id='sidebar')
     +sidebar_item("/parent/time_table", "Time table")
     +sidebar_item("/parent/notes", "Notes and absences")
     +sidebar_item("/parent/marks", "Show all marks")
+  +small_item("/logout", "Logout")
+
+script
+  include scripts.js

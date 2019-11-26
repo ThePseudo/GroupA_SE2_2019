@@ -46,6 +46,21 @@ body {
     background-color: #ff8d29;
 }
 
+.menuButton {
+    display: block;
+    color: white;
+    background-color: #fc9b47;
+    cursor: pointer;
+    text-align: center;
+    transition-duration: 0.2s;
+}
+
+.menuButton:hover {
+    transition-duration: 0.2s;
+    color: black;
+    background-color: #ff8d29;
+}
+
 .title {
     margin-top: 20px;
     text-align: center;
@@ -130,7 +145,7 @@ input[type="date"] {
 }
 
 .smallMarginTop {
-
+    margin-top: 0px;
 }
 
 .menuButton {
@@ -139,7 +154,11 @@ input[type="date"] {
     left: 9px;
 }
 
-/* mobile */
+.smallLogout {
+    text-align: center !important;
+}
+
+/* Smaller screens */
 
 @media only screen and (max-width: 1200px) {
     .smallMarginTop {
@@ -155,10 +174,22 @@ input[type="date"] {
     
     .sidebar-item {
         text-align: center;
+        font-size: x-large;
     }
 
     .active-sidebar-item {
         text-align: center;
+        font-size: x-large;
+
     }
 
+}
+
+@media only screen and (max-width: 768px) {
+    .smallLogout {
+        text-align: center !important;
+        position: fixed;
+        bottom: 0px;
+        width: 100%;
+    }
 }

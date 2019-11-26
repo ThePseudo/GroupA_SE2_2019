@@ -7,7 +7,8 @@ mixin list(href, name, icon)
         block
 
 nav(class='navbar navbar-default')
-  button(class='glyphicon glyphicon-menu-hamburger btn menuButton hidden-lg' id='side-toggle')
+  if(loggedIn)
+    button(class='glyphicon glyphicon-menu-hamburger menuButton btn menuButton hidden-lg' id='side-toggle' onClick="onMenuButtonClick()")
   div(class='container-fluid')
     div(class='navbar-header' style='margin-left:50%')
       a(href='/' class='navbar-brand' style="color: white; font-size:24px;") BB

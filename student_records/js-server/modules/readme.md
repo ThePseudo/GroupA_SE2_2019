@@ -2,8 +2,10 @@
 
 ## How to create
 
+In the module file:
+
 1. create or use a class
-2. export the class with the line:
+2. export the class with the __last__ line:
 
 ```javascript
 
