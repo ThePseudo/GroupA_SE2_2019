@@ -1,0 +1,51 @@
+//- Those variables should be in every page
+- var page = "Choose student"
+- var loggedIn = true
+- var user = "parent"
+- var active = "Choose student"
+
+//- Inputs: number of students (numStudents) + list of students (studentList)
+
+- var studentsLeft = numStudents
+
+mixin studentBtn(text)
+  div(class='hidden-sm hidden-md hidden-lg col-xs-1')
+  div(class='col-sm-4 col-xs-10 smallMarginTop')
+    a(href = 'parent_courselist')
+      button(class='btn blockButton')
+        div(class='row')
+          img(src= '../../images/child.png' style='width:100%;height:auto;')
+        div(class='row')
+          a(class='noLinkTitle' style='margin-top: 20px;')= text
+
+mixin printStudentsRow(text)
+    div(class='row')
+        +studentBtn(text)
+
+mixin printcommunicationRow(communication)
+    div(class='row')
+    div(class='hidden-sm hidden-md hidden-lg col-xs-1')
+    div(class='col-sm-4 col-xs-10 smallMarginTop')
+        div(class='row')
+            td= communication.date
+        div(class='row')
+            td= communication.text
+
+doctype html
+html
+  include ../base/head.pug
+  body
+    include ../base/navbar.pug
+    div(class="container")
+      div(class='row')
+        h1(class='title') Choose student
+      div(class='row')
+        h2(class = 'title2') Who do you want to know about?
+      for student in studentList
+        +printStudentsRow(student)
+    
+    div(class="container")
+      div(class='row')
+        h1(class='title') General Communication
+      for communication in communicationList
+        +printcommunicationRow(communication)
