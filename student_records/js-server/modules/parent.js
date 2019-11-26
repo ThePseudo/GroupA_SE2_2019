@@ -13,17 +13,49 @@ router.use('/:id', function (req, res, next) {
 });
 
 router.get('/parent_home', (req, res) => {
-    var comm1 = {
-        text: 'pippo franco',
-        date: '11/12/2019'
-    }
+    var commlist = [];
+    var con = mysql.createConnection({
+        host: "students-db",
+        user: "root",
+        password: "pwd",
+        database: "students",
+        insecureAuth: true
+    });
 
-    var comm2 = {
-        text: 'pluto',
-        date: '03/12/2019'
-    }
     const compiledPage = pug.compileFile('../pages/parent/parent_homepage.pug');
-    res.end(compiledPage({
+    let sql = 'SELECT * FROM General_Communication';
+
+    con.query(sql, function (err, rows, fields) {
+        con.end();
+        if (err) {
+            res.end("There is a problem in the DB connection. Please, try again later\n"+err+"\n");
+        } else {
+            console.log(rows);
+            // Check if the result is found or not
+            for (var i = 0; i < rows.length; i++) {
+                // Create the object to save the data.
+                var communication = {
+                    id: rows[i].id,
+                    text: rows[i].communication,
+                    date: rows[i].comm_date
+                }
+
+                // Add object into array
+                commlist[i] = communication;
+            }
+            res.end(compiledPage({
+                communicationList: commlist,
+                studentList: [
+                    'Marco Pecoraro',
+                    'Giulio Pecoraro',
+                    'Luigia Pecoraro'
+                ]
+            }));
+        }
+
+    });
+
+    /* res.end(compiledPage({
         communicationList: [
             comm1,
             comm2
@@ -33,7 +65,7 @@ router.get('/parent_home', (req, res) => {
             'Giulio Pecoraro',
             'Luigia Pecoraro'
         ]
-    }));
+    })); */
 });
 
 router.get('/register_parent', (req, res) => {

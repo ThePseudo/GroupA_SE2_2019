@@ -47,5 +47,11 @@ html
     div(class="container")
       div(class='row')
         h1(class='title') General Communication
-      for communication in communicationList
-        +printcommunicationRow(communication)
+        table(class='table')
+          each comm in communicationList
+            tr
+              td #{comm.id}
+              td #{comm.date}
+              td #{comm.text}
+      //- for communication in communicationList
+      //-   +printcommunicationRow(communication)
