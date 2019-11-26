@@ -9,24 +9,25 @@ html
     include base/navbar.pug
     div(class='container')
       div(class='row')
-        h1(class='title') Welcome, #{user}
+        h1(class='title') LOGIN #{user}
       div(class='row')
         h2(class = 'title2') Please, sign in
+        h2(class = 'err_msg')= err_msg
       // - Parametric form
-      form(action="/action/login_" + user, method="POST") 
+      form(action='/auth_parent' method="POST") 
         div(class='row')
           div(class='col-sm-3')
           div(class='col-sm-6')
             div(class='form-group')
-              label(for='SSN') SSN:
+              label(for='cod_fisc') SSN:
               input(type="text" class='form-control' id='SSN' name="SSN")
         div(class='row')
           div(class='col-sm-3')
           div(class='col-sm-6')
             div(class='form-group')
-              label(for='passwd') Password:
+              label(for='password') Password:
               input(type="password" class='form-control' id='passwd' name="passwd")
         div(class='row')
           div(class='col-sm-7')
           div(class='col-sm-2')
-            input(type='SUBMIT' value='Log in' class='btn blockButton' style='margin-top: 24px; padding: 6px 10px; margin-left:25%; width: 75%;')
+            input(type='SUBMIT' value='Login' class='btn blockButton' style='margin-top: 24px; padding: 6px 10px; margin-left:25%; width: 75%;')

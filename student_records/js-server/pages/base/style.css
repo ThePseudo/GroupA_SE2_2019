@@ -36,6 +36,14 @@ body {
     margin-bottom: 20px;
 }
 
+.err_msg {
+    margin-top: 20px;
+    text-align: center;
+    color: rgb(226, 45, 45);
+    font-size: medium;
+    margin-bottom: 20px;
+}
+
 .title2 {
     margin-bottom: 40px;
     text-align: center;

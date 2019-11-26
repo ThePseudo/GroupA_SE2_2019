@@ -20,6 +20,8 @@ const app = express();
 app.set('view engine', 'pug');
 app.set('views', './pages');
 app.use(bodyParser.urlencoded({ extended: false }));
+//app.use(bodyParser.urlencoded({extended : true}));
+app.use(bodyParser.json());
 
 // other routers
 module.exports = function (app) {
@@ -49,8 +51,61 @@ app.get('/login_teacher', (req, res) => {
 app.get('/login_parent', (req, res) => {
     const compiledPage = pug.compileFile("pages/login.pug");
     res.end(compiledPage({
-        user: "parent"
+        err_msg: ""
     }));
+});
+
+app.post('/auth_parent',(req, res) => {
+    let cod_fisc = req.body.cod_fisc;
+    let password = req.body.password;
+    let parent;
+
+    const loginPage = pug.compileFile("pages/login.pug");
+    const parentPage = pug.compileFile("pages/parent_homepage.pug");
+    
+    console.log("CODICE: " + cod_fisc);
+    console.log("password: " + password);
+
+
+	if (cod_fisc==undefined || password==undefined) {
+        console.log("1");
+        res.end(loginPage({
+            err_msg: "Please enter username and password"
+        }));
+    }
+    else{
+        console.log("2");
+        var con = mysql.createConnection({
+            host: "students-db",
+            user: "root",
+            password: "pwd",
+            database: "students",
+            insecureAuth: true
+        });
+
+        let sql = 'SELECT * FROM parent WHERE cod_fisc = ? AND password = ?';
+        con.query(sql, [cod_fisc, password], function(err, rows, fields) {
+            if (rows.length > 0) {
+                con.end();
+                console.log("OK");
+                // req.session.loggedin = true;
+                // req.session.username = username;
+                res.end(loginPage({
+                    err_msg: 'Incorrect Username and/or Password!'
+                }));
+            } else {
+                parent.id = rows[0].id;
+                parent.first_name= rows[0].first_name;
+                parent.last_name= rows[0].last_name;
+                parent.cod_fisc= rows[0].cod_fisc;
+                parent.email= rows[0].email;
+                con.end();
+                res.end(parentPage({
+                    parent: parent
+                }));
+            }			
+        });
+    }
 });
 
 app.get("/style", (req, res) => {
@@ -195,8 +250,6 @@ app.get("/marks", (req, res) => {
 });
 
 
-
-
 // Page not found
 app.get('/*', (req, res) => {
     fs.readFile(req.path, (err, data) => {
@@ -221,6 +274,7 @@ app.post('/*', (req, res) => {
 });
 
 //app.listen(PORT, HOST);
+
 
 const httpApp = express();
 httpApp.get("*", (req, res) => {

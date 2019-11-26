@@ -26,6 +26,9 @@ CREATE TABLE parent
     first_access INT NOT NULL
 );
 
+INSERT INTO parent (id, first_name, last_name,cod_fisc,email,password, first_access)
+VALUES (1,"Tizio","Caio","1111","tizio@caio.com","password",0);
+
 CREATE TABLE student
 (
     id INT PRIMARY KEY,
