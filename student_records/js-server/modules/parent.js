@@ -12,10 +12,22 @@ router.use('/:id', function (req, res, next) {
     next();
 });
 
-router.get('/choose_student', (req, res) => {
-    const compiledPage = pug.compileFile('../pages/parent/choose_student.pug');
+router.get('/parent_home', (req, res) => {
+    var comm1 = {
+        text: 'pippo franco',
+        date: '11/12/2019'
+    }
+
+    var comm2 = {
+        text: 'pluto',
+        date: '03/12/2019'
+    }
+    const compiledPage = pug.compileFile('../pages/parent/parent_homepage.pug');
     res.end(compiledPage({
-        numStudents: 3,
+        communicationList: [
+            comm1,
+            comm2
+        ],
         studentList: [
             'Marco Pecoraro',
             'Giulio Pecoraro',

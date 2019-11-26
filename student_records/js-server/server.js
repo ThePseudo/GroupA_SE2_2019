@@ -51,6 +51,13 @@ app.get('/login_teacher', (req, res) => {
     }));
 });
 
+/* app.get('/parent_home', (req, res) => {
+    const compiledPage = pug.compileFile("pages/parent/parent_homepage.pug");
+    res.end(compiledPage({
+        user: "parent_home"
+    }));
+}); */
+
 app.get('/login_parent', (req, res) => {
     const compiledPage = pug.compileFile("pages/login.pug");
     res.end(compiledPage({
