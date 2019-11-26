@@ -56,8 +56,9 @@ app.get('/login_parent', (req, res) => {
 });
 
 app.post('/auth_parent',(req, res) => {
-    let cod_fisc = req.body.cod_fisc;
-    let password = req.body.password;
+    //i valori del form sono individuati dal valore dell'attributo "name"!
+    let cod_fisc = req.body.cod_fisc;   
+    let password = req.body.password;   
     let parent;
 
     const loginPage = pug.compileFile("pages/login.pug");
