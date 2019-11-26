@@ -33,6 +33,14 @@ body {
     transition-duration: 0.2s;
 }
 
+.blockButton_child {
+    color: black;
+    background-color: #fc9b47;
+    cursor: pointer;
+    text-align: center;
+    transition-duration: 0.2s;
+}
+
 .blockButton:hover {
     transition-duration: 0.2s;
     color: black;
