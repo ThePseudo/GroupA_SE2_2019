@@ -80,6 +80,31 @@ app.get("/topics", (req, res) => {
     res.end(compiledPage());
 });
 
+app.get("/enroll_teacher", (req, res) => {
+    const compiledPage = pug.compileFile("pages/systemad_registerteacher.pug");
+    res.end(compiledPage());
+});
+
+app.get("/enroll_officer", (req, res) => {
+    const compiledPage = pug.compileFile("pages/systemad_registerofficer.pug");
+    res.end(compiledPage());
+});
+
+app.get("/enroll_principal", (req, res) => {
+    const compiledPage = pug.compileFile("pages/systemad_registerprincipal.pug");
+    res.end(compiledPage());
+});
+
+app.get("/enroll_student", (req, res) => {
+    const compiledPage = pug.compileFile("pages/officer_registerstudent.pug");
+    res.end(compiledPage());
+});
+
+app.get("/enroll_parent", (req, res) => {
+    const compiledPage = pug.compileFile("pages/officer_registerparent.pug");
+    res.end(compiledPage());
+});
+
 // TODO: make this and fix it
 app.post("/reg_topic", (req, res) => {
     let course = req.body.course;
