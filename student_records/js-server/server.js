@@ -36,6 +36,15 @@ const options = {
     cert: fs.readFileSync("./certs/localhost.cert")
 };
 
+app.use(session({
+    secret: 'keyboard cat',
+    resave: false,
+    saveUninitialized: true,
+    cookie: {   secure: true,
+                maxAge: 10000 } // maxAge is in milliseconds
+}));
+  
+
 // Main page
 app.get('/', (req, res) => {
     const compiledPage = pug.compileFile("pages/home.pug");
@@ -56,13 +65,20 @@ app.get('/login_parent', (req, res) => {
     }));
 });
 
+//------------
+//Variabile globale per la sessione. Questa soluzione va bene per un solo utente, per multiuser vedere altre soluzioni (es. Redis Server)
+
+var sessionData; // Questa variabile rappresenta la sessione, un po' il lavoro che face $_SESSION in PHP
+
+//------------
+
 app.post('/auth_parent',(req, res) => {
     //i valori del form sono individuati dal valore dell'attributo "name"!
-    let cod_fisc = req.body.cod_fisc;   
-    let password = req.body.password;   
+    var cod_fisc = req.body.cod_fisc;   
+    var password = req.body.password;   
+    var sessionData;
 
     const loginPage = pug.compileFile("pages/login.pug");
-    const parentPage = pug.compileFile("pages/parent_homepage.pug");
 
     //Check if both cod_fisc and password field are filled
     if (!cod_fisc || !password) {
@@ -82,17 +98,27 @@ app.post('/auth_parent',(req, res) => {
         let sql = 'SELECT * FROM parent WHERE cod_fisc = ?';
         con.query(sql, [cod_fisc],(err, result)=> {
             if (result.length > 0) {
-                let parent = {
-                    first_name: result[0].first_name,
-                    last_name: result[0].last_name,
-                    cod_fisc: result[0].cod_fisc,
-                    email: result[0].email
-                }
                 //The cod_fisc exists in the DB, now check the password
                 if(bcrypt.compareSync(password,  result[0].password)) {
                     //password match
                     console.log("ok password");
                     con.end();
+                    
+                    //SESSION MANAGEMENT
+                    //-----------------------------
+                    
+                    //session è un typeof "session", inizializzo la sessione fuori da questa route e poi la associo a "sessionData"
+                    sessionData = session;
+            
+                    sessionData.user = {};     //Nella variabile ho un campo user che è un oggetto e acui posso aggiungere attributi privati /equivale a $_SESSION['user']
+                    sessionData.user.id = result[0].id; //aggiungo attributo id a user e lo salvo nella variabile "sessionData"
+                    sessionData.user.first_name = result[0].first_name;
+                    sessionData.user.last_name = result[0].last_name
+                    sessionData.user.cod_fisc = result[0].cod_fisc;
+                    sessionData.user.email = result[0].email;
+
+                    //-----------------------------  
+
                     res.redirect("/parent_homepage");
                     /* res.end(parentPage({
                         //parent: parent no needed with session variables!
@@ -279,6 +305,16 @@ app.post('/*', (req, res) => {
         res.end(data);
 
     })
+});
+
+app.get('/logout',(req,res) => {
+    req.session.destroy((err) => {
+        if(err) {
+            return console.log(err);
+        }
+        res.redirect('/'); //ritorno alla root (qui è la homepage)
+    });
+
 });
 
 //app.listen(PORT, HOST);
