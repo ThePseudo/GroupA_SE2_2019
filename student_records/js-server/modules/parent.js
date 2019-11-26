@@ -80,4 +80,39 @@ router.get("/marks", (req, res) => {
   });
 });
 
+
+router.get('/show_courses', (req, res) => {
+  const compiledPage = pug.compileFile('../pages/parent/parent_courselist.pug');
+  var courses = [];
+
+  var con = mysql.createConnection({
+    host: "students-db",
+    user: "root",
+    password: "pwd",
+    database: "students",
+    insecureAuth: true
+  });
+
+  var sql = "SELECT * FROM course ORDER BY id";
+  con.query(sql, (err, rows, fields) => {
+    if (err) {
+      res.end("DB error: " + err);
+    } else {
+      for (var i = 0; i < rows.length; ++i) {
+        var course = {
+          id: rows[i].id,
+          name: rows[i].course_name,
+          newRow: (rows[i].id % 2 == 1)
+        }
+        courses[i] = course;
+      }
+      res.end(compiledPage({
+        courses: courses
+      }));
+    }
+    con.end();
+  });
+});
+
+
 module.exports = router;

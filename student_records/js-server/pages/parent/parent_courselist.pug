@@ -1,1 +1,30 @@
+//- Those variables should be in every page
+- var page = "Courses"
+- var loggedIn = true
+- var user = "parent"
+- var active = "Show courses"
 
+//- Variables: courses
+
+- var pair = 1;
+
+mixin subjectButton(id, subject)
+  button(class="btn blockButton")
+    a(class='noLinkTitle' href= "/parent/courses/" + id)=subject
+
+doctype html
+html
+  include ../base/head.pug
+  body
+    include ../base/navbar.pug
+    include ../base/sidebar.pug
+    div(class='container')
+      div(class='row')
+        h1(class='title') Select a course
+      for course in courses
+        if(course.newRow==true)
+          div(class='row hidden-xs' style="margin: 20px;")
+          div(class='col-sm-2')
+        div(class='col-xs-1 hidden-sm hidden-md hidden-lg')
+        div(class='col-xs-10 col-sm-4 smallMarginTop')
+          +subjectButton(course.id, course.name)

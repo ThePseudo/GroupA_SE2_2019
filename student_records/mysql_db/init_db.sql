@@ -71,7 +71,7 @@ VALUES(3, "1C");
 
 CREATE TABLE course
 (
-    id INT PRIMARY KEY ,
+    id INT PRIMARY KEY,
     course_name VARCHAR(50) UNIQUE NOT NULL
 );
 
