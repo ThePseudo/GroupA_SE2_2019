@@ -5,73 +5,74 @@ const mysql = require('mysql');
 var router = express.Router();
 
 router.use('/:id', function (req, res, next) {
-    console.log('Parent request URL:', req.originalUrl);
-    next();
+  console.log('Parent request URL:', req.originalUrl);
+  next();
 }, function (req, res, next) {
-    console.log('Request Type:', req.method);
-    next();
+  console.log('Request Type:', req.method);
+  next();
 });
 
 router.get('/choose_student', (req, res) => {
-    const compiledPage = pug.compileFile('../pages/parent/choose_student.pug');
-    res.end(compiledPage({
-        numStudents: 3,
-        studentList: [
-            'Marco Pecoraro',
-            'Giulio Pecoraro',
-            'Luigia Pecoraro'
-        ]
-    }));
-});
-
-router.get('/register_parent', (req, res) => {
-    res.end("Hello, register parents!");
+  const compiledPage = pug.compileFile('../pages/parent/choose_student.pug');
+  res.end(compiledPage({
+    numStudents: 3,
+    studentList: [
+      'Marco Pecoraro',
+      'Giulio Pecoraro',
+      'Luigia Pecoraro'
+    ]
+  }));
 });
 
 router.get("/marks", (req, res) => {
-    var marks = [];
-    var student_name; // todo: retrieve from db
-    const compiledPage = pug.compileFile("pages/student_marks.pug");
-    var con = mysql.createConnection({
-        host: "students-db",
-        user: "root",
-        password: "pwd",
-        database: "students",
-        insecureAuth: true
-    });
+  // TODO: ID SHOULD BE TAKEN FROM SESSION
+  var marks = [];
+  const compiledPage = pug.compileFile("../pages/parent/parent_allmark.pug");
+  var con = mysql.createConnection({
+    host: "students-db",
+    user: "root",
+    password: "pwd",
+    database: "students",
+    insecureAuth: true
+  });
 
-    let sql = 'SELECT * FROM mark, course WHERE mark.course_id = course.id ORDER BY date_mark DESC';
+  let sql = 'SELECT * FROM mark, course ' +
+    'WHERE mark.course_id = course.id ' +
+    'AND mark.student_id = ? ' +
+    'ORDER BY mark.date_mark DESC';
 
-    con.query(sql, function (err, rows, fields) {
-        con.end();
-        if (err) {
-            res.end("There is a problem in the DB connection. Please, try again later");
-        } else {
-            console.log(rows);
-            // Check if the result is found or not
-            for (var i = 0; i < rows.length; i++) {
-                // Create the object to save the data.
-                var mark = {
-                    subject: rows[i].course_name,
-                    date: rows[i].date_mark,
-                    mark: rows[i].score
-                }
-
-                // Add object into array
-                marks[i] = mark;
-            }
-            res.end(compiledPage({
-                student_name: "Marco Pecoraro",
-                student_marks: marks
-            }));
+  con.query(sql, [1], function (err, rows, fields) {
+    if (err) {
+      res.end("DB error: " + err);
+    } else {
+      // Check if the result is found or not
+      for (var i = 0; i < rows.length; i++) {
+        // Create the object to save the data.
+        var mark = {
+          subject: rows[i].course_name,
+          date: rows[i].date_mark,
+          mark: rows[i].score
         }
 
-    });
-});
+        // Add object into array
+        marks[i] = mark;
+      }
 
-router.get("/enroll", (req, res) => {
-    const compiledPage = pug.compileFile("../pages/enroll.pug");
-    res.end(compiledPage());
+      sql = "SELECT first_name, last_name FROM student WHERE id = ?"
+
+      con.query(sql, [1], function (err, rows, fields) {
+        if (err) {
+          res.end("DB error: " + err);
+        } else {
+          res.end(compiledPage({
+            student_name: rows[0].first_name + " " + rows[0].last_name,
+            student_marks: marks
+          }));
+        }
+        con.end();
+      });
+    }
+  });
 });
 
 module.exports = router;

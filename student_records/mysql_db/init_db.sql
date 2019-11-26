@@ -26,6 +26,11 @@ CREATE TABLE parent
     first_access INT NOT NULL
 );
 
+INSERT INTO parent
+    (id, first_name, last_name, cod_fisc, email, password, first_access)
+VALUES
+    (1, "Alessio", "Pecoraro", "lsspcr", "a@a.a", "a", 0);
+
 CREATE TABLE student
 (
     id INT PRIMARY KEY,
@@ -36,6 +41,11 @@ CREATE TABLE student
     parent_1 INT,
     parent_2 INT
 );
+
+INSERT INTO student
+    (id, first_name, last_name, cod_fisc, class_id, parent_1)
+VALUES
+    (1, "Marco", "Pecoraro", "PCRMRC95C02L219X", 1, 1);
 
 -- Classes
 
