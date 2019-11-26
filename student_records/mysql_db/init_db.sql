@@ -27,7 +27,7 @@ CREATE TABLE parent
 );
 
 INSERT INTO parent (id, first_name, last_name,cod_fisc,email,password, first_access)
-VALUES (1,"Tizio","Caio","1111","tizio@caio.com","password",0);
+VALUES (1,"Tizio","Caio","1111","tizio@caio.com","$2a$10$0tXRERd11hkw3zKQQmFeTOAuUcMiI6/ThiMNvfMUvKmYkWkL0BRkO",0);
 
 CREATE TABLE student
 (

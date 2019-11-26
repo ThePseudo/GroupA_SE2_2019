@@ -6,8 +6,8 @@ const fs = require('fs');
 const https = require('https');
 const http = require('http');
 const pug = require('pug');
-//const bcrypt = require('bcrypt'); // substituted also this module with the following module in JSON 
-const bcrypt = require('bcryptjs');
+const bcrypt = require('bcrypt'); 
+//const bcrypt = require('bcryptjs');// substituted also this module with the following module in JSON 
 const mysql = require('mysql');
 const bodyParser = require('body-parser');
 
@@ -60,22 +60,17 @@ app.post('/auth_parent',(req, res) => {
     //i valori del form sono individuati dal valore dell'attributo "name"!
     let cod_fisc = req.body.cod_fisc;   
     let password = req.body.password;   
-    let parent;
 
     const loginPage = pug.compileFile("pages/login.pug");
     const parentPage = pug.compileFile("pages/parent_homepage.pug");
-    
-    console.log("CODICE: " + cod_fisc);
-    console.log("password: " + password);
 
-
-	if (!cod_fisc || !password) {
+    //Check if both cod_fisc and password field are filled
+    if (!cod_fisc || !password) {
         res.end(loginPage({
             err_msg: "Please enter username and password"
         }));
     }
-    else{
-        console.log("TRY CHECK");
+    else{ //If yes, try to connect to the DB and check cod_fisc and then password (string+salt hashed via bcrypt module)
         var con = mysql.createConnection({
             host: "students-db",
             user: "root",
@@ -83,33 +78,40 @@ app.post('/auth_parent',(req, res) => {
             database: "students",
             insecureAuth: true
         });
-
+        
         let sql = 'SELECT * FROM parent WHERE cod_fisc = ?';
-        con.query(sql, [cod_fisc], function(err, rows, fields) {
-            if (rows.length > 0) {
-                console.log("OK USER");
-                if(bcrypt.compareSync(password, rows[5])){
-                    console.log("ok pwd");
-                    parent.id = rows[0].id;
-                    parent.first_name= rows[0].first_name;
-                    parent.last_name= rows[0].last_name;
-                    parent.cod_fisc= rows[0].cod_fisc;
-                    parent.email= rows[0].email;
-
+        con.query(sql, [cod_fisc],(err, result)=> {
+            if (result.length > 0) {
+                let parent = {
+                    first_name: result[0].first_name,
+                    last_name: result[0].last_name,
+                    cod_fisc: result[0].cod_fisc,
+                    email: result[0].email
+                }
+                //The cod_fisc exists in the DB, now check the password
+                if(bcrypt.compareSync(password,  result[0].password)) {
+                    //password match
+                    console.log("ok password");
                     con.end();
                     res.end(parentPage({
                         parent: parent
                     }));
+                } else {
+                    // Passwords don't match
+                    con.end();
+                    console.log("error password");
+                    res.end(loginPage({
+                        err_msg: 'Incorrect Username and/or Password!'
+                    }));
                 } 
-                // req.session.loggedin = true;
-                // req.session.username = username;
-               
-            } else {
+            }else {
+                // Passwords don't match
+                console.log("error user");
                 res.end(loginPage({
                     err_msg: 'Incorrect Username and/or Password!'
-                })); 
-            }			
-        });
+                }));
+            } 
+        });  
     }
 });
 
