@@ -29,7 +29,6 @@ app.use(bodyParser.urlencoded({ extended: false }));
 //app.use(bodyParser.urlencoded({extended : true}));
 app.use(bodyParser.json());
 
-<<<<<<< HEAD
 // other routers
 module.exports = function (app) {
     app.use('/action/*', require('./modules'));
@@ -70,10 +69,8 @@ var sessionChecker = (req, res, next) => {
         next();
     }    
 };
-=======
 app.use('/admin', adminPages);
 app.use('/parent', parentPages);
->>>>>>> master
 
 const options = {
     key: fs.readFileSync("./certs/localhost.key"),
@@ -109,7 +106,6 @@ app.get('/login_teacher', (req, res) => {
     }));
 });
 
-<<<<<<< HEAD
 // app.get('/login_parent', (req, res) => {
 //     const compiledPage = pug.compileFile("pages/login.pug");
 //     res.end(compiledPage({
@@ -160,21 +156,6 @@ app.route('/login_parent').get(sessionChecker, (req, res) => {
     })
 
 //------------
-=======
-/* app.get('/parent_home', (req, res) => {
-    const compiledPage = pug.compileFile("pages/parent/parent_homepage.pug");
-    res.end(compiledPage({
-        user: "parent_home"
-    }));
-}); */
-
-app.get('/login_parent', (req, res) => {
-    const compiledPage = pug.compileFile("pages/login.pug");
-    res.end(compiledPage({
-        user: "parent"
-    }));
-});
->>>>>>> master
 
 app.get("/style", (req, res) => {
     const page = fs.readFileSync("pages/base/style.css");
