@@ -1,20 +1,21 @@
-// - Those variables should be in every page
-- var page = "Marks"
+//- Those variables should be in every page
+- var page = "All marks"
 - var loggedIn = true
 - var user = "parent"
+- var active = "Show all marks"
 
-mixin rowMark(sessionData)
+mixin rowMark(subject, date, mark)
   tr(class="table-row table-row-base")
-    td= sessionData.user.id
-    td= sessionData.user.first_name
-    td= sessionData.user.last_name
+    td= (date.getDate() + "/" + date.getMonth() + "/" + date.getFullYear())
+    td= subject
+    td= mark
 
 doctype html
 html
-  include base/head.pug
+  include ../base/head.pug
   body
-    include base/navbar.pug
-    include base/sidebar.pug
+    include ../base/navbar.pug
+    include ../base/sidebar.pug
     div(class='container')
       div(class='row')
         h1(class='title') #{student_name}'s marks
@@ -23,8 +24,8 @@ html
         div(class="col-lg-6 col-sm-8 col-xs-10" style='align-content:center;')
           table(style="width:100%; text-align:center; align-content:center" class="table table-bordered")
             tr(class='table-row-base')
-              th id
-              th first
-              th last
-              +rowMark(sessionData)
-
+              th Date
+              th Subject
+              th Mark
+            for mark in student_marks
+              +rowMark(mark.subject, mark.date, mark.mark)

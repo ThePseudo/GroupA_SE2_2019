@@ -12,8 +12,14 @@ CREATE TABLE teacher
     cod_fisc VARCHAR(20) UNIQUE NOT NULL,
     email VARCHAR(100) NOT NULL,
     password VARCHAR(255) NOT NULL,
-    first_access INT NOT NULL
+    first_access BOOLEAN NOT NULL
+    /* 1 first_ccess already done; 0 not yet */
 );
+
+INSERT INTO teacher
+    (id,first_name,last_name,cod_fisc,email,password,first_access)
+VALUES
+    (1, "Afrodite", "Venere", "AV85T", "venere85@yahoo.com", "VenereA85", 1);
 
 CREATE TABLE parent
 (
@@ -23,11 +29,22 @@ CREATE TABLE parent
     cod_fisc VARCHAR(20) UNIQUE NOT NULL,
     email VARCHAR(100) NOT NULL,
     password VARCHAR(255) NOT NULL,
-    first_access INT NOT NULL
+    first_access BOOLEAN NOT NULL
 );
 
+<<<<<<< HEAD
 INSERT INTO parent (id, first_name, last_name,cod_fisc,email,password, first_access)
 VALUES (1,"Tizio","Caio","1111","tizio@caio.com","$2a$10$0tXRERd11hkw3zKQQmFeTOAuUcMiI6/ThiMNvfMUvKmYkWkL0BRkO",0);
+=======
+INSERT INTO parent
+    (id,first_name,last_name,cod_fisc,email,password,first_access)
+VALUES
+    (1, "Garga", "Mella", "GM75X", "garga.mella@yahoo.com", "GargaM75", 0);
+INSERT INTO parent
+    (id,first_name,last_name,cod_fisc,email,password,first_access)
+VALUES
+    (2, "Stella", "Luna", "SL78A", "stella.luna@yahoo.com", "StellaL78", 1);
+>>>>>>> master
 
 CREATE TABLE student
 (
@@ -41,6 +58,11 @@ CREATE TABLE student
 );
 INSERT INTO student (id, first_name, last_name,cod_fisc,parent_1,parent_2)
 VALUES (1,"Marco","Pecoraro","00000000",1,2);
+
+INSERT INTO student
+    (id,first_name,last_name,cod_fisc,class_id,parent_1,parent_2)
+VALUES
+    (1, "Giove", "Zeus", "GZ03A", 2, 1, 2);
 
 -- Classes
 
@@ -66,7 +88,7 @@ VALUES(3, "1C");
 
 CREATE TABLE course
 (
-    id INT PRIMARY KEY ,
+    id INT PRIMARY KEY,
     course_name VARCHAR(50) UNIQUE NOT NULL
 );
 
@@ -114,6 +136,18 @@ CREATE TABLE topic
     PRIMARY KEY(id, topic_date, id_class, id_course)
 );
 
+<<<<<<< HEAD
+=======
+CREATE TABLE absence
+(
+    id INT PRIMARY KEY,
+    student_id INT NOT NULL,
+    date_ab DATE NOT NULL,
+    start_h INT NOT NULL,
+    end_h INT NOT NULL,
+    justified BOOLEAN NOT NULL
+);
+>>>>>>> master
 
 -- Marks
 
@@ -161,6 +195,49 @@ CREATE TABLE teacher_course_class
     year INT,
     PRIMARY KEY(teacher_id, course_id, class_id, year)
 );
+
+CREATE TABLE General_Communication
+(
+    id INT PRIMARY KEY,
+    communication TEXT,
+    comm_date DATE
+);
+
+INSERT INTO General_Communication
+    (id,communication, comm_date)
+VALUES
+    (1, "2 million euros for a 5 years grant at Politecnico di Torino to pave new routes for the design of innovative materials with various technological applications. Giovanni Maria Pavan has been awarded a prestigious European Research Council (ERC) Consolidator Grant with his research project DYNAPOL - Modeling approaches toward bioinspired dynamic materials", '2019-11-26');
+
+INSERT INTO General_Communication
+    (id,communication, comm_date)
+VALUES
+    (2, "In order to raise awareness inside our University on the wide variation of this concept, adv. Arianna Enrichens, Politecnico Confidential Counsellor, prepared a short video to inform the community about verbal violence on the web as well as on social media.o", '2019-11-26');
+
+INSERT INTO General_Communication
+    (id,communication, comm_date)
+VALUES
+    (3, "See the pdf on site", '2019-11-27');
+
+
+CREATE TABLE officer
+(
+    id INT PRIMARY KEY,
+    first_name VARCHAR(50) NOT NULL,
+    last_name VARCHAR(50) NOT NULL,
+    cod_fisc VARCHAR(20) UNIQUE NOT NULL,
+    email VARCHAR(100) NOT NULL,
+    password VARCHAR(255) NOT NULL,
+    first_access BOOLEAN NOT NULL
+);
+
+INSERT INTO officer
+    (id,first_name,last_name,cod_fisc,email,password,first_access)
+VALUES
+    (1, "Ciccio", "Pasticcio", "CP80X", "pasticcio80@gmail.com", "CiccioPast80", 1);
+INSERT INTO officer
+    (id,first_name,last_name,cod_fisc,email,password,first_access)
+VALUES
+    (2, "Carlo", "Magno", "CM10A", "magno10@gmail.com", "CarloM10", 0);
 
 -- FOR TORCHIANO - 12/11/19
 -- 

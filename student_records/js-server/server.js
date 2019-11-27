@@ -10,6 +10,8 @@ const bcrypt = require('bcrypt');
 //const bcrypt = require('bcryptjs');// substituted also this module with the following module in JSON 
 const mysql = require('mysql');
 const bodyParser = require('body-parser');
+const adminPages = require('./modules/admin.js');
+const parentPages = require('./modules/parent.js')
 
 //Variabile globale per la sessione. Questa soluzione va bene per un solo utente, per multiuser vedere altre soluzioni (es. Redis Server)
 var sessionData; // Questa variabile rappresenta la sessione, un po' il lavoro che face $_SESSION in PHP
@@ -27,6 +29,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 //app.use(bodyParser.urlencoded({extended : true}));
 app.use(bodyParser.json());
 
+<<<<<<< HEAD
 // other routers
 module.exports = function (app) {
     app.use('/action/*', require('./modules'));
@@ -67,6 +70,10 @@ var sessionChecker = (req, res, next) => {
         next();
     }    
 };
+=======
+app.use('/admin', adminPages);
+app.use('/parent', parentPages);
+>>>>>>> master
 
 const options = {
     key: fs.readFileSync("./certs/localhost.key"),
@@ -88,6 +95,13 @@ app.get('/', (req, res) => {
     res.end(compiledPage());
 });
 
+app.get('/login_collaborator', (req, res) => {
+    const compiledPage = pug.compileFile("pages/login.pug");
+    res.end(compiledPage({
+        user: "collaborator"
+    }));
+});
+
 app.get('/login_teacher', (req, res) => {
     const compiledPage = pug.compileFile("pages/login.pug");
     res.end(compiledPage({
@@ -95,6 +109,7 @@ app.get('/login_teacher', (req, res) => {
     }));
 });
 
+<<<<<<< HEAD
 // app.get('/login_parent', (req, res) => {
 //     const compiledPage = pug.compileFile("pages/login.pug");
 //     res.end(compiledPage({
@@ -145,15 +160,25 @@ app.route('/login_parent').get(sessionChecker, (req, res) => {
     })
 
 //------------
+=======
+/* app.get('/parent_home', (req, res) => {
+    const compiledPage = pug.compileFile("pages/parent/parent_homepage.pug");
+    res.end(compiledPage({
+        user: "parent_home"
+    }));
+}); */
+
+app.get('/login_parent', (req, res) => {
+    const compiledPage = pug.compileFile("pages/login.pug");
+    res.end(compiledPage({
+        user: "parent"
+    }));
+});
+>>>>>>> master
 
 app.get("/style", (req, res) => {
     const page = fs.readFileSync("pages/base/style.css");
     res.end(page);
-});
-
-app.get("/enroll", (req, res) => {
-    const compiledPage = pug.compileFile("pages/enroll.pug");
-    res.end(compiledPage());
 });
 
 app.get("/teacher_page", (req, res) => {
@@ -166,7 +191,205 @@ app.get("/topics", (req, res) => {
     res.end(compiledPage());
 });
 
+app.get("/enroll_teacher", (req, res) => {
+    const compiledPage = pug.compileFile("pages/systemad_registerteacher.pug");
+    res.end(compiledPage());
+});
+
+app.get("/enroll_officer", (req, res) => {
+    const compiledPage = pug.compileFile("pages/systemad_registerofficer.pug");
+    res.end(compiledPage());
+});
+
+app.get("/enroll_principal", (req, res) => {
+    const compiledPage = pug.compileFile("pages/systemad_registerprincipal.pug");
+    res.end(compiledPage());
+});
+
+app.get("/enroll_student", (req, res) => {
+    const compiledPage = pug.compileFile("pages/officer_registerstudent.pug");
+    res.end(compiledPage());
+});
+
+app.get("/enroll_parent", (req, res) => {
+    const compiledPage = pug.compileFile("pages/officer_registerparent.pug");
+    res.end(compiledPage());
+});
+
 // TODO: make this and fix it
+
+app.post("/reg_parent", (req, res) => {
+    let name = req.body.name;
+    let surname = req.body.surname;
+    let SSN = req.body.SSN;
+    let email = req.body.email;
+    let password = req.body.password;
+
+    var con = mysql.createConnection({
+        host: "students-db",
+        user: "root",
+        password: "pwd",
+        database: "students",
+        insecureAuth: true
+    });
+
+    con.query('SELECT COUNT(*) as c FROM parent', (err, rows, fields) => { // because we have no AUTO_UPDATE available on the DB
+        if (err) {
+            res.end("There is a problem in the DB connection. Please, try again later " + err);
+            return;
+        }
+        con.query("INSERT INTO parent(id, first_name, last_name, cod_fisc, email, password, first_access) VALUES(?, ?, ?, ?, ?)", [rows[0].c, name, surname, SSN, email, password, 1], (err, result) => {
+            if (err) {
+                res.end("There is a problem in the DB connection. Please, try again later " + err);
+                return;
+            }
+            console.log("Data successfully uploaded! " + result.insertId);
+            con.end();
+            res.redirect("/parents");
+        });
+    });
+});
+
+app.post("/reg_teacher", (req, res) => {
+    let name = req.body.name;
+    let surname = req.body.surname;
+    let SSN = req.body.SSN;
+    let email = req.body.email;
+    let password = req.body.password;
+
+    var con = mysql.createConnection({
+        host: "students-db",
+        user: "root",
+        password: "pwd",
+        database: "students",
+        insecureAuth: true
+    });
+
+    con.query('SELECT COUNT(*) as c FROM teacher', (err, rows, fields) => { // because we have no AUTO_UPDATE available on the DB
+        if (err) {
+            res.end("There is a problem in the DB connection. Please, try again later " + err);
+            return;
+        }
+        con.query("INSERT INTO teacher(id, first_name, last_name, cod_fisc, email, password, first_access) VALUES(?, ?, ?, ?, ?)", [rows[0].c, name, surname, SSN, email, password, 1], (err, result) => {
+            if (err) {
+                res.end("There is a problem in the DB connection. Please, try again later " + err);
+                return;
+            }
+            console.log("Data successfully uploaded! " + result.insertId);
+            con.end();
+            res.redirect("/teachers");
+        });
+    });
+});
+
+app.post("/reg_officer", (req, res) => {
+    let name = req.body.name;
+    let surname = req.body.surname;
+    let SSN = req.body.SSN;
+    let email = req.body.email;
+    let password = req.body.password;
+
+    var con = mysql.createConnection({
+        host: "students-db",
+        user: "root",
+        password: "pwd",
+        database: "students",
+        insecureAuth: true
+    });
+
+    con.query('SELECT COUNT(*) as c FROM officer', (err, rows, fields) => { // because we have no AUTO_UPDATE available on the DB
+        if (err) {
+            res.end("There is a problem in the DB connection. Please, try again later " + err);
+            return;
+        }
+        con.query("INSERT INTO officer(id, first_name, last_name, cod_fisc, email, password, first_access) VALUES(?, ?, ?, ?, ?)", [rows[0].c, name, surname, SSN, email, password, 1], (err, result) => {
+            if (err) {
+                res.end("There is a problem in the DB connection. Please, try again later " + err);
+                return;
+            }
+            console.log("Data successfully uploaded! " + result.insertId);
+            con.end();
+            res.redirect("/officers");
+        });
+    });
+});
+
+app.post("/reg_principal", (req, res) => {
+    let name = req.body.name;
+    let surname = req.body.surname;
+    let SSN = req.body.SSN;
+    let email = req.body.email;
+    let password = req.body.password;
+
+    var con = mysql.createConnection({
+        host: "students-db",
+        user: "root",
+        password: "pwd",
+        database: "students",
+        insecureAuth: true
+    });
+
+    con.query('SELECT COUNT(*) as c FROM principal', (err, rows, fields) => { // because we have no AUTO_UPDATE available on the DB
+        if (err) {
+            res.end("There is a problem in the DB connection. Please, try again later " + err);
+            return;
+        }
+        con.query("INSERT INTO principal(id, first_name, last_name, cod_fisc, email, password, first_access) VALUES(?, ?, ?, ?, ?)", [rows[0].c, name, surname, SSN, email, password, 1], (err, result) => {
+            if (err) {
+                res.end("There is a problem in the DB connection. Please, try again later " + err);
+                return;
+            }
+            console.log("Data successfully uploaded! " + result.insertId);
+            con.end();
+            res.redirect("/principal");
+        });
+    });
+});
+
+app.post("/reg_student", (req, res) => {
+    let name = req.body.name;
+    let surname = req.body.surname;
+    let SSN = req.body.SSN;
+    let SSN1 = req.body.SSN1;
+    let SSN2 = req.body.SSN2;
+
+    var con = mysql.createConnection({
+        host: "students-db",
+        user: "root",
+        password: "pwd",
+        database: "students",
+        insecureAuth: true
+    });
+
+    con.query('SELECT COUNT(*) as c FROM student', (err, rows, fields) => { // because we have no AUTO_UPDATE available on the DB
+        if (err) {
+            res.end("There is a problem in the DB connection. Please, try again later " + err);
+            return;
+        }
+        con.query('SELECT ID as ID1 FROM parent WHERE cod_fisc = ?', [SSN1], (err, rows, fields) => { // because we have no AUTO_UPDATE available on the DB
+            if (err) {
+                res.end("There is a problem in the DB connection. Please, try again later " + err);
+                return;
+            }
+            con.query('SELECT ID as ID2 FROM parent WHERE cod_fisc = ?', [SSN2], (err, rows, fields) => { // because we have no AUTO_UPDATE available on the DB
+                if (err) {
+                    res.end("There is a problem in the DB connection. Please, try again later " + err);
+                    return;
+                }
+                con.query("INSERT INTO student(id, first_name, last_name, cod_fisc, class_id, parent_1, parent_2) VALUES(?, ?, ?, ?, ?)", [rows[0].c, name, surname, SSN, 0, ID1, ID2], (err, result) => {
+                    if (err) {
+                        res.end("There is a problem in the DB connection. Please, try again later " + err);
+                        return;
+                    }
+                    console.log("Data successfully uploaded! " + result.insertId);
+                    con.end();
+                    res.redirect("/students");
+                });
+            });
+        });
+    });
+});
+
 app.post("/reg_topic", (req, res) => {
     let course = req.body.course;
     let date = req.body.date;
@@ -202,16 +425,15 @@ app.post("/reg_topic", (req, res) => {
                     res.end("There is a problem in the DB connection. Please, try again later " + err);
                     return;
                 }
-                con.query("INSERT INTO topic(id, topic_date, id_class, id_course, description) VALUES(?, ?, ?, ?, ?)",
-                    [rows[0].c, date, class_id, course_id, desc], (err, result) => {
-                        if (err) {
-                            res.end("There is a problem in the DB connection. Please, try again later " + err);
-                            return;
-                        }
-                        console.log("Data successfully uploaded! " + result.insertId);
-                        con.end();
-                        res.redirect("/topics");
-                    });
+                con.query("INSERT INTO topic(id, topic_date, id_class, id_course, description) VALUES(?, ?, ?, ?, ?)", [rows[0].c, date, class_id, course_id, desc], (err, result) => {
+                    if (err) {
+                        res.end("There is a problem in the DB connection. Please, try again later " + err);
+                        return;
+                    }
+                    console.log("Data successfully uploaded! " + result.insertId);
+                    con.end();
+                    res.redirect("/topics");
+                });
             });
         });
     });
