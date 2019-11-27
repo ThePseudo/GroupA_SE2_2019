@@ -127,7 +127,7 @@ app.route('/login_parent').get(sessionChecker, (req, res) => {
                      con.end();
                      //SESSION MANAGEMENT
                      setup_session_var("parent",result[0]);
-                     res.render("/pages/parent_homepage.pug");
+                     res.redirect("/pages/parent_homepage");
                      
                  } else {
                      // Passwords don't match
