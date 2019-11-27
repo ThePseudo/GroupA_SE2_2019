@@ -4,11 +4,16 @@
 - var user = "parent"
 - var active = "Show all marks"
 
-mixin rowMark(subject, date, mark)
-  tr(class="table-row table-row-base")
-    td= (date.getDate() + "/" + date.getMonth() + "/" + date.getFullYear())
-    td= subject
-    td= mark
+mixin loginBtn(text, image, href)
+  div(class='hidden-sm hidden-md hidden-lg col-xs-1')
+  div(class='col-sm-4 col-xs-10 smallMarginTop')
+    a(href = href)
+      button(class='btn blockButton')
+        div(class='row')
+          img(src= image style='width:100%;height:auto;')
+        div(class='row')
+          a(class='noLinkTitle' style='margin-top: 20px;')= text
+
 
 doctype html
 html

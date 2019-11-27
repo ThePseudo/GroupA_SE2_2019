@@ -3,12 +3,19 @@ body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
+.container {
+    margin-top: 51px;
+}
 
 
 .navbar-default {
     background-color: #fda253 !important;
     border: 0px;
     border-radius: 0px;
+    position: fixed;
+    width: 100%;
+    top: 0;
+    z-index: 1;
 }
 
 .noLinkTitle {
@@ -33,7 +40,30 @@ body {
     transition-duration: 0.2s;
 }
 
+.blockButton_child {
+    color: black;
+    background-color: #fc9b47;
+    cursor: pointer;
+    text-align: center;
+    transition-duration: 0.2s;
+}
+
 .blockButton:hover {
+    transition-duration: 0.2s;
+    color: black;
+    background-color: #ff8d29;
+}
+
+.menuButton {
+    display: block;
+    color: white;
+    background-color: #fc9b47;
+    cursor: pointer;
+    text-align: center;
+    transition-duration: 0.2s;
+}
+
+.menuButton:hover {
     transition-duration: 0.2s;
     color: black;
     background-color: #ff8d29;
@@ -56,13 +86,14 @@ body {
 
 .table-row-base {
     background-color: white;
-    text-align: center; 
+    text-align: center;
     align-content: center;
 }
 
-th, td {
-    align-content:center; 
-    text-align:center;
+th,
+td {
+    align-content: center;
+    text-align: center;
 }
 
 .sidebar {
@@ -71,9 +102,9 @@ th, td {
     min-width: 200px;
     width: 15%;
     margin-left: 0px;
-    margin-top: -20px;
     background: #ffc999;
     height: 100%;
+    transition-duration: 0.2s;
 }
 
 .sidebar-item {
@@ -115,21 +146,59 @@ th, td {
 }
 
 input[type="date"] {
-     -webkit-align-items: center;
-     align-items: center;
-     overflow: hidden;
-     padding: 0;
-     padding-left: 16px;
+    -webkit-align-items: center;
+    align-items: center;
+    overflow: hidden;
+    padding: 0;
+    padding-left: 16px;
 }
 
 .smallMarginTop {
+    margin-top: 0px;
+}
+
+.menuButton {
+    position: fixed;
+    top: 9px;
+    left: 9px;
+}
+
+.smallLogout {
+    text-align: center !important;
+}
+
+/* Smaller screens */
+
+@media only screen and (max-width: 1200px) {
+    .smallMarginTop {
+        margin: 10px;
+    }
+
+    .sidebar {
+        min-width: 100%;
+        width: 100%;
+        margin-left: -100%;
+        z-index: 1;
+    }
+    
+    .sidebar-item {
+        text-align: center;
+        font-size: x-large;
+    }
+
+    .active-sidebar-item {
+        text-align: center;
+        font-size: x-large;
+
+    }
 
 }
 
-/* mobile */
-
 @media only screen and (max-width: 768px) {
-    .smallMarginTop {
-        margin: 10px;
+    .smallLogout {
+        text-align: center !important;
+        position: fixed;
+        bottom: 0px;
+        width: 100%;
     }
 }
