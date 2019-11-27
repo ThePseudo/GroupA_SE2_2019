@@ -1,7 +1,7 @@
 version: '2.3'
 services:
   db:
-    image: mysql  
+    image: mysql
     container_name: students-db
     build: ./mysql_db
     environment:

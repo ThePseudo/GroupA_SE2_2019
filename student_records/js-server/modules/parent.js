@@ -75,7 +75,6 @@ router.get('/register_parent', (req, res) => {
 router.get("/marks", (req, res) => {
   // TODO: ID SHOULD BE TAKEN FROM SESSION
   var marks = [];
-  const compiledPage = pug.compileFile("../pages/parent/parent_allmark.pug");
   var con = mysql.createConnection({
     host: "students-db",
     user: "root",
@@ -113,10 +112,10 @@ router.get("/marks", (req, res) => {
           res.end("DB error: " + err);
         } else {
           if (rows) {
-            res.end(compiledPage({
+            res.render("../pages/parent/parent_allmark.pug", {
               student_name: rows[0].first_name + " " + rows[0].last_name,
               student_marks: marks
-            }));
+            });
           }
           else {
             res.end("This student does not exist!");
@@ -130,7 +129,6 @@ router.get("/marks", (req, res) => {
 
 
 router.get('/show_courses', (req, res) => {
-  const compiledPage = pug.compileFile('../pages/parent/parent_courselist.pug');
   var courses = [];
 
   var con = mysql.createConnection({
@@ -154,9 +152,9 @@ router.get('/show_courses', (req, res) => {
         }
         courses[i] = course;
       }
-      res.end(compiledPage({
+      res.render('../pages/parent/parent_courselist.pug', {
         courses: courses
-      }));
+      });
     }
     con.end();
   });
