@@ -1,1 +1,30 @@
+// - Those variables should be in every page
+- var page = "Marks"
+- var loggedIn = true
+- var user = "parent"
+
+mixin rowMark(sessionData)
+  tr(class="table-row table-row-base")
+    td= sessionData.user.id
+    td= sessionData.user.first_name
+    td= sessionData.user.last_name
+
+doctype html
+html
+  include base/head.pug
+  body
+    include base/navbar.pug
+    include base/sidebar.pug
+    div(class='container')
+      div(class='row')
+        h1(class='title') #{student_name}'s marks
+      div(class='row')
+        div(class="col-lg-3 col-sm-2 col-xs-1")
+        div(class="col-lg-6 col-sm-8 col-xs-10" style='align-content:center;')
+          table(style="width:100%; text-align:center; align-content:center" class="table table-bordered")
+            tr(class='table-row-base')
+              th id
+              th first
+              th last
+              +rowMark(sessionData)
 

@@ -11,6 +11,9 @@ const bcrypt = require('bcrypt');
 const mysql = require('mysql');
 const bodyParser = require('body-parser');
 
+//Variabile globale per la sessione. Questa soluzione va bene per un solo utente, per multiuser vedere altre soluzioni (es. Redis Server)
+var sessionData; // Questa variabile rappresenta la sessione, un po' il lavoro che face $_SESSION in PHP
+
 // Constants
 const HTTPPORT = 8000;
 const HTTPSPORT = 8080;
@@ -30,6 +33,40 @@ module.exports = function (app) {
 };
 
 
+//functions
+function DB_open_connection(){
+    return  mysql.createConnection({
+                host: "students-db",
+                user: "root",
+                password: "pwd",
+                database: "students",
+                insecureAuth: true
+            });
+}
+
+function setup_session_var(user_type,user_info){
+    //session è un typeof "session", inizializzo la sessione fuori da questa route e poi la associo a "sessionData"
+    sessionData = session;
+    
+    sessionData.user = {};     //Nella variabile ho un campo user che è un oggetto e acui posso aggiungere attributi privati /equivale a $_SESSION['user']
+    sessionData.user.id = user_info.id; //aggiungo attributo id a user e lo salvo nella variabile "sessionData"
+    sessionData.user.first_name = user_info.first_name;
+    sessionData.user.last_name = user_info.last_name
+    sessionData.user.cod_fisc = user_info.cod_fisc;
+    sessionData.user.email = user_info.email;
+    sessionData.user.user_type = user_type;
+
+    console.log(sessionData.user);
+}
+
+// middleware function to check for logged-in users
+var sessionChecker = (req, res, next) => {
+    if (req.session.user && req.cookies.user_sid) {
+        res.redirect('/pages/parent_homepage');
+    } else {
+        next();
+    }    
+};
 
 const options = {
     key: fs.readFileSync("./certs/localhost.key"),
@@ -58,89 +95,56 @@ app.get('/login_teacher', (req, res) => {
     }));
 });
 
-app.get('/login_parent', (req, res) => {
-    const compiledPage = pug.compileFile("pages/login.pug");
-    res.end(compiledPage({
-        err_msg: ""
-    }));
-});
+// app.get('/login_parent', (req, res) => {
+//     const compiledPage = pug.compileFile("pages/login.pug");
+//     res.end(compiledPage({
+//         err_msg: ""
+//     }));
+// });
 
-//------------
-//Variabile globale per la sessione. Questa soluzione va bene per un solo utente, per multiuser vedere altre soluzioni (es. Redis Server)
-
-var sessionData; // Questa variabile rappresenta la sessione, un po' il lavoro che face $_SESSION in PHP
-
-//------------
-
-app.post('/auth_parent',(req, res) => {
-    //i valori del form sono individuati dal valore dell'attributo "name"!
-    var cod_fisc = req.body.cod_fisc;   
-    var password = req.body.password;   
-    var sessionData;
-
-    const loginPage = pug.compileFile("pages/login.pug");
-
-    //Check if both cod_fisc and password field are filled
-    if (!cod_fisc || !password) {
-        res.end(loginPage({
-            err_msg: "Please enter username and password"
-        }));
+app.route('/login_parent').get(sessionChecker, (req, res) => {
+    res.render("/pages/login.pug", {err_msg: ""});
+}).post((req, res) => {
+     //i valori del form sono individuati dal valore dell'attributo "name"!
+     var cod_fisc = req.body.cod_fisc;   
+     var password = req.body.password;   
+    
+     //Check if both cod_fisc and password field are filled
+     if (!cod_fisc || !password) {  
+        res.render("/pages/login.pug", {err_msg: "Please enter username and password"});
     }
-    else{ //If yes, try to connect to the DB and check cod_fisc and then password (string+salt hashed via bcrypt module)
-        var con = mysql.createConnection({
-            host: "students-db",
-            user: "root",
-            password: "pwd",
-            database: "students",
-            insecureAuth: true
-        });
-        
-        let sql = 'SELECT * FROM parent WHERE cod_fisc = ?';
-        con.query(sql, [cod_fisc],(err, result)=> {
-            if (result.length > 0) {
-                //The cod_fisc exists in the DB, now check the password
-                if(bcrypt.compareSync(password,  result[0].password)) {
-                    //password match
-                    console.log("ok password");
-                    con.end();
-                    
-                    //SESSION MANAGEMENT
-                    //-----------------------------
-                    
-                    //session è un typeof "session", inizializzo la sessione fuori da questa route e poi la associo a "sessionData"
-                    sessionData = session;
-            
-                    sessionData.user = {};     //Nella variabile ho un campo user che è un oggetto e acui posso aggiungere attributi privati /equivale a $_SESSION['user']
-                    sessionData.user.id = result[0].id; //aggiungo attributo id a user e lo salvo nella variabile "sessionData"
-                    sessionData.user.first_name = result[0].first_name;
-                    sessionData.user.last_name = result[0].last_name
-                    sessionData.user.cod_fisc = result[0].cod_fisc;
-                    sessionData.user.email = result[0].email;
-
-                    //-----------------------------  
-
-                    res.redirect("/parent_homepage");
-                    /* res.end(parentPage({
-                        //parent: parent no needed with session variables!
-                    })); */
-                } else {
-                    // Passwords don't match
-                    con.end();
-                    console.log("error password");
-                    res.end(loginPage({
-                        err_msg: 'Incorrect Username and/or Password!'
-                    }));
-                } 
+     else{ //If yes, try to connect to the DB and check cod_fisc and then password (string+salt hashed via bcrypt module)
+        console.log("TRY CONNECT");
+        var con = DB_open_connection();
+         let sql = 'SELECT * FROM parent WHERE cod_fisc = ?';
+         con.query(sql, [cod_fisc],(err, result)=> {
+             if (result.length > 0) {
+                console.log("OK USER");
+                 //The cod_fisc exists in the DB, now check the password
+                 if(bcrypt.compareSync(password,  result[0].password)) {
+                    console.log("OK PWD");
+                     //password match
+                     con.end();
+                     //SESSION MANAGEMENT
+                     setup_session_var("parent",result[0]);
+                     res.render("/pages/parent_homepage.pug");
+                     
+                 } else {
+                     // Passwords don't match
+                     con.end();
+                     res.render("/pages/login.pug", {err_msg: 'Incorrect Username and/or Password!'});
+                 } 
             }else {
-                // Passwords don't match
-                console.log("error user");
-                res.end(loginPage({
-                    err_msg: 'Incorrect Username and/or Password!'
-                }));
+                 // user don't match
+                 res.render("/pages/login.pug", {err_msg: 'Incorrect Username and/or Password!'});
             } 
-        });  
-    }
-});
+         });  
+     }
+
+    
+    })
+
+//------------
 
 app.get("/style", (req, res) => {
     const page = fs.readFileSync("pages/base/style.css");
