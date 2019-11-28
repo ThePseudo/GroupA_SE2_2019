@@ -9,12 +9,12 @@ html
     include base/navbar.pug
     div(class='container')
       div(class='row')
-        h1(class='title') LOGIN #{user}
+        h1(class='title') LOGIN 
       div(class='row')
         h2(class = 'title2') Please, sign in
         h2(class = 'err_msg')= err_msg
-      // - Parametric form
-      form(action='/login_parent' method="POST") 
+      //- Parametric form
+      form(action='/auth_router/login' method="POST") 
         div(class='row')
           div(class='col-sm-3')
           div(class='col-sm-6')
@@ -30,4 +30,4 @@ html
         div(class='row')
           div(class='col-sm-7')
           div(class='col-sm-2')
-            input(type='SUBMIT' value='Login' class='btn blockButton' style='margin-top: 24px; padding: 6px 10px; margin-left:25%; width: 75%;')
+            input(type='SUBMIT' value='teacher' name='user_type' class='btn blockButton' style='margin-top: 24px; padding: 6px 10px; margin-left:25%; width: 75%;')

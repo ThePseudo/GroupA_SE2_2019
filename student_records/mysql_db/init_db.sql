@@ -19,7 +19,7 @@ CREATE TABLE teacher
 INSERT INTO teacher
     (id,first_name,last_name,cod_fisc,email,password,first_access)
 VALUES
-    (1, "Afrodite", "Venere", "AV85T", "venere85@yahoo.com", "VenereA85", 1);
+    (1, "Afrodite", "Venere", "AV85T", "venere85@yahoo.com", "$2a$10$0tXRERd11hkw3zKQQmFeTOAuUcMiI6/ThiMNvfMUvKmYkWkL0BRkO", 1);
 
 CREATE TABLE parent
 (
@@ -32,8 +32,6 @@ CREATE TABLE parent
     first_access BOOLEAN NOT NULL
 );
 
-INSERT INTO parent (id, first_name, last_name,cod_fisc,email,password, first_access)
-VALUES (1,"Tizio","Caio","1111","tizio@caio.com","$2a$10$0tXRERd11hkw3zKQQmFeTOAuUcMiI6/ThiMNvfMUvKmYkWkL0BRkO",0);
 INSERT INTO parent
     (id,first_name,last_name,cod_fisc,email,password,first_access)
 VALUES
@@ -42,6 +40,9 @@ INSERT INTO parent
     (id,first_name,last_name,cod_fisc,email,password,first_access)
 VALUES
     (2, "Stella", "Luna", "SL78A", "stella.luna@yahoo.com", "StellaL78", 1);
+
+INSERT INTO parent (id, first_name, last_name,cod_fisc,email,password, first_access)
+VALUES (3,"Tizio","Caio","1111","tizio@caio.com","$2a$10$0tXRERd11hkw3zKQQmFeTOAuUcMiI6/ThiMNvfMUvKmYkWkL0BRkO",0);
 
 CREATE TABLE student
 (
@@ -53,8 +54,6 @@ CREATE TABLE student
     parent_1 INT,
     parent_2 INT
 );
-INSERT INTO student (id, first_name, last_name,cod_fisc,parent_1,parent_2)
-VALUES (1,"Marco","Pecoraro","00000000",1,2);
 
 INSERT INTO student
     (id,first_name,last_name,cod_fisc,class_id,parent_1,parent_2)
