@@ -1,23 +1,16 @@
 'use strict';
 
 const express = require('express');
-const session = require('express-session')
+const session = require('express-session');
+const cookieParser = require("cookie-parser");
+//const session = require('cookie-session');
 const fs = require('fs');
 const https = require('https');
 const http = require('http');
 const pug = require('pug');
 const bcrypt = require('bcrypt'); 
-//const bcrypt = require('bcryptjs');// substituted also this module with the following module in JSON 
 const mysql = require('mysql');
 const bodyParser = require('body-parser');
-const adminPages = require('./modules/admin.js');
-const parentPages = require('./modules/parent.js');
-const auth_router= require("./modules/Auth_manager.js");
-
-// Constants
-const HTTPPORT = 8000;
-const HTTPSPORT = 8080;
-const HOST = '0.0.0.0';
 
 // App
 const app = express();
@@ -26,14 +19,34 @@ app.set('views', './pages');
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
+var sessionMiddleware= session({
+    secret: 'keyboard cat',
+    resave: true,
+    saveUninitialized: true,
+    cookie: {   secure: true,
+                maxAge: 10000 } // maxAge is in milliseconds
+});
+
+app.use(sessionMiddleware); 
+
+const adminPages = require('./modules/admin.js');
+const parentPages = require('./modules/parent.js');
+const auth_router= require("./modules/Auth_manager.js");
+
+
+// Constants
+const HTTPPORT = 8000;
+const HTTPSPORT = 8080;
+const HOST = '0.0.0.0';
+
 // other routers
 module.exports = function (app) {
     app.use('/action/*', require('./modules'));
 };
 
-app.use('/admin', adminPages);
-app.use('/parent', parentPages);
-app.use('/auth_router', auth_router);
+app.use('/admin', sessionMiddleware, adminPages);
+app.use('/parent', sessionMiddleware, parentPages);
+app.use('/auth_router', sessionMiddleware, auth_router);
 
 const options = {
     key: fs.readFileSync("./certs/localhost.key"),

@@ -1,7 +1,7 @@
 'use strict';
 
 const express = require('express');
-const session = require('express-session')
+const session = require('express-session');
 const fs = require('fs');
 const https = require('https');
 const http = require('http');
@@ -11,24 +11,13 @@ const bcrypt = require('bcrypt');
 const mysql = require('mysql');
 const bodyParser = require('body-parser');
 const parent = require('./parent.js');
-const url = require('url');  
-
-//Variabile globale per la sessione. Questa soluzione va bene per un solo utente, per multiuser vedere altre soluzioni (es. Redis Server)
-var sessionData; // Questa variabile rappresenta la sessione, un po' il lavoro che face $_SESSION in PHP
+var SESSION_DATA=null;  
 
 const app = express();
 var router = express.Router();
 app.use("/parent",parent);
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
-
-app.use(session({
-    secret: 'keyboard cat',
-    resave: false,
-    saveUninitialized: true,
-    cookie: {   secure: true,
-                maxAge: 10000 } // maxAge is in milliseconds
-})); 
 
 //functions
 function DB_open_connection(){
@@ -41,9 +30,8 @@ function DB_open_connection(){
             });
 }
 
-function setup_session_var(user_type,user_info){
+function setup_session_var(user_type,user_info,sessionData){
     //session è un typeof "session", inizializzo la sessione fuori da questa route e poi la associo a "sessionData"
-    sessionData = session;
     
     sessionData.user = {};     //Nella variabile ho un campo user che è un oggetto e acui posso aggiungere attributi privati /equivale a $_SESSION['user']
     sessionData.user.id = user_info.id; //aggiungo attributo id a user e lo salvo nella variabile "sessionData"
@@ -52,24 +40,27 @@ function setup_session_var(user_type,user_info){
     sessionData.user.cod_fisc = user_info.cod_fisc;
     sessionData.user.email = user_info.email;
     sessionData.user.user_type = user_type;
-
-    console.log(sessionData.user);
+    
 }
 
-// middleware function to check for logged-in users
-var sessionChecker = (req, res, next) => {
+/* // middleware function to check for logged-in users (esporto all'esterno)
+var sessionChecker = function(req, res, next){
     if (req.session.user && req.cookies.user_sid) {
+        console.log(req.session.user);
         res.redirect('../pages/parent_homepage');
     } else {
         next();
     }    
-};
+} */
 
 router.get('/login_parent', (req, res) => {
-    res.render("../pages/login_parent.pug");
+    console.log(req.session.user);
+        if(req.session.user) res.redirect("/parent/parent_home");
+        res.render("../pages/login_parent.pug");  
 });
 
 router.get('/login_teacher', (req, res) => {
+    console.log(req.session.user);
     res.render("../pages/login_teacher.pug");
 });
 
@@ -105,7 +96,7 @@ router.route('/login')
                      //password match
                      con.end();
                      //SESSION MANAGEMENT
-                     setup_session_var(user_type,result[0]);
+                     setup_session_var(user_type,result[0],req.session);
                      res.redirect("/"+user_type + "/" + user_type + "_home");
                  } else {
                      // Passwords don't match

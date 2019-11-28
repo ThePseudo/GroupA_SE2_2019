@@ -21,7 +21,7 @@ router.get('/parent_home', (req, res) => {
     database: "students",
     insecureAuth: true
   });
-
+  console.log(req.session);///
   const compiledPage = pug.compileFile('../pages/parent/parent_homepage.pug');
   let sql = 'SELECT * FROM General_Communication';
 
