@@ -244,27 +244,7 @@ INSERT INTO General_Communication
     (id,communication, comm_date)
 VALUES
     (3, "See the pdf on site", '2019-11-27');
-
-
-CREATE TABLE officer
-(
-    id INT PRIMARY KEY,
-    first_name VARCHAR(50) NOT NULL,
-    last_name VARCHAR(50) NOT NULL,
-    cod_fisc VARCHAR(20) UNIQUE NOT NULL,
-    email VARCHAR(100) NOT NULL,
-    password VARCHAR(255) NOT NULL,
-    first_access BOOLEAN NOT NULL
-);
-
-INSERT INTO officer
-    (id,first_name,last_name,cod_fisc,email,password,first_access)
-VALUES
-    (1, "Ciccio", "Pasticcio", "CP80X", "pasticcio80@gmail.com", "CiccioPast80", 1);
-INSERT INTO officer
-    (id,first_name,last_name,cod_fisc,email,password,first_access)
-VALUES
-    (2, "Carlo", "Magno", "CM10A", "magno10@gmail.com", "CarloM10", 0);
+    
 
 -- FOR TORCHIANO - 12/11/19
 -- 
