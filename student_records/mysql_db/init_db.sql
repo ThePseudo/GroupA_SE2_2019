@@ -57,6 +57,21 @@ INSERT INTO student
 VALUES
     (1, "Giove", "Zeus", "GZ03A", 2, 1, 2);
 
+INSERT INTO student
+    (id,first_name,last_name,cod_fisc,class_id,parent_1,parent_2)
+VALUES
+    (2, "Martino", "Arte", "GPP3A", 2, 1, 2);
+
+INSERT INTO student
+    (id,first_name,last_name,cod_fisc,class_id,parent_1,parent_2)
+VALUES
+    (3, "Martinella", "Leone", "AA03A", 2, 1, 2);
+
+INSERT INTO student
+    (id,first_name,last_name,cod_fisc,class_id,parent_1,parent_2)
+VALUES
+    (4, "Serena", "Fetta", "GZ0OO", 2, 3, 4);
+
 -- Classes
 
 CREATE TABLE class
