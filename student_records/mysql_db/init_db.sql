@@ -113,6 +113,11 @@ CREATE TABLE admin
     password VARCHAR(255) NOT NULL
 );
 
+INSERT INTO admin
+    (id,first_name,last_name,cod_fisc,email,password)
+VALUES
+    (1, "Giovanni", "PaoloSecondo", "GPS67", "gesu00@yahoo.com", "$2a$10$0tXRERd11hkw3zKQQmFeTOAuUcMiI6/ThiMNvfMUvKmYkWkL0BRkO");
+
 CREATE TABLE note
 (
     id INT,
@@ -226,11 +231,16 @@ CREATE TABLE officer
 INSERT INTO officer
     (id,first_name,last_name,cod_fisc,email,password,first_access)
 VALUES
-    (1, "Ciccio", "Pasticcio", "CP80X", "pasticcio80@gmail.com", "CiccioPast80", 1);
+    (1, "Ciccio", "Pasticcio", "CP80X", "pasticcio80@gmail.com", "$2a$10$0tXRERd11hkw3zKQQmFeTOAuUcMiI6/ThiMNvfMUvKmYkWkL0BRkO", 1);
 INSERT INTO officer
     (id,first_name,last_name,cod_fisc,email,password,first_access)
 VALUES
     (2, "Carlo", "Magno", "CM10A", "magno10@gmail.com", "CarloM10", 0);
+
+INSERT INTO officer
+    (id,first_name,last_name,cod_fisc,email,password,first_access)
+VALUES
+    (3, "Giovanni", "PaoloSecondo", "GPS67", "gesu00@yahoo.com", "$2a$10$0tXRERd11hkw3zKQQmFeTOAuUcMiI6/ThiMNvfMUvKmYkWkL0BRkO", 1);
 
 -- FOR TORCHIANO - 12/11/19
 -- 

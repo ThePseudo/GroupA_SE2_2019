@@ -40,9 +40,34 @@ function setup_session_var(user_type,user_info,sessionData){
     sessionData.user.cod_fisc = user_info.cod_fisc;
     sessionData.user.email = user_info.email;
     sessionData.user.user_type = user_type;
-    
 }
 
+function manageCollaborator(con,user_info,sessionData,response){
+    let sql = 'SELECT * FROM officer JOIN admin ON officer.cod_fisc = admin.cod_fisc WHERE officer.cod_fisc = ?';
+    let insert = [user_info.cod_fisc];
+    sql = mysql.format(sql,insert); //mix all together with "mysql.format()" and pass as parameter to .query() method
+    console.log(sql);
+    con.query(sql, (err, result)=> {
+        if(err){
+            console.log(err);
+            return;
+        }
+        if (result.length > 0) {
+            console.log("OK ADMIN");
+            con.end();
+            console.log("ok prima del setup");
+            setup_session_var("admin",result[0],sessionData);
+            console.log("ok dopo setup");
+            response.redirect("/admin/admin_home");
+        }
+        else{
+            console.log("OK OFFICER");
+            con.end();
+            setup_session_var("officer",result[0],sessionData);
+            response.redirect("/officer/officer_home");
+        }       
+    });
+}
 /* // middleware function to check for logged-in users (esporto all'esterno)
 var sessionChecker = function(req, res, next){
     if (req.session.user && req.cookies.user_sid) {
@@ -62,6 +87,11 @@ router.get('/login_parent', (req, res) => {
 router.get('/login_teacher', (req, res) => {
     console.log(req.session.user);
     res.render("../pages/login_teacher.pug");
+});
+
+router.get('/login_collaborator', (req, res) => {
+    console.log(req.session.user);
+    res.render("../pages/login_officer.pug");
 });
 
 router.route('/login')
@@ -94,10 +124,17 @@ router.route('/login')
                  if(bcrypt.compareSync(password,  result[0].password)) {
                     console.log("OK PWD");
                      //password match
-                     con.end();
+
                      //SESSION MANAGEMENT
+                     if(user_type == "officer"){
+                        user_type = manageCollaborator(con,result[0],req.session,res);
+                        console.log(user_type);
+                     }
+                     else{
+                         con.end();
                      setup_session_var(user_type,result[0],req.session);
                      res.redirect("/"+user_type + "/" + user_type + "_home");
+                     }
                  } else {
                      // Passwords don't match
                      con.end();
