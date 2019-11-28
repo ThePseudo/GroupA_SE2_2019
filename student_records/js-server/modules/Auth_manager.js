@@ -11,6 +11,7 @@ const bcrypt = require('bcrypt');
 const mysql = require('mysql');
 const bodyParser = require('body-parser');
 const parent = require('./parent.js');
+var nodemailer = require('nodemailer'); 
 var SESSION_DATA=null;  
 
 const app = express();
@@ -68,6 +69,31 @@ function manageCollaborator(con,user_info,sessionData,response){
         }       
     });
 }
+
+function send_Email(user_info){
+    var transporter = nodemailer.createTransport({
+        service: 'gmail',
+        auth: {
+          user: 'youremail@gmail.com',
+          pass: 'yourpassword'
+        }
+      });
+      
+      var mailOptions = {
+        from: 'youremail@gmail.com',
+        to: 'myfriend@yahoo.com',
+        subject: 'Sending Email using Node.js',
+        text: 'That was easy!'
+      };
+      
+      transporter.sendMail(mailOptions, function(error, info){
+        if (error) {
+          console.log(error);
+        } else {
+          console.log('Email sent: ' + info.response);
+        }
+      }); 
+}
 /* // middleware function to check for logged-in users (esporto all'esterno)
 var sessionChecker = function(req, res, next){
     if (req.session.user && req.cookies.user_sid) {
@@ -102,7 +128,6 @@ router.route('/login')
     var password = req.body.password;   
 
     var render_path = "../pages/login_" + user_type + ".pug";
-     console.log(user_type);
 
      //Check if both cod_fisc and password field are filled
      if (!cod_fisc || !password) {  
@@ -116,10 +141,16 @@ router.route('/login')
         let sql = 'SELECT * FROM ?? WHERE cod_fisc = ?';
         let insert = [user_type,cod_fisc];
         sql = mysql.format(sql,insert); //mix all together with "mysql.format()" and pass as parameter to .query() method
-       
+        
          con.query(sql, (err, result)=> {
              if (result.length > 0) {
                 console.log("OK USER");
+                if(user_type == 'parent' && !result[0].first_access){
+                    console.log("ok primo accesso");
+                    con.end();
+                    //TODO: function send email
+                    //send_Email(result[0]);
+                }
                  //The cod_fisc exists in the DB, now check the password
                  if(bcrypt.compareSync(password,  result[0].password)) {
                     console.log("OK PWD");
@@ -157,6 +188,24 @@ router.get('/logout',(req,res) => {
     });
 
 });
-//------------
+
+//TODO: da dove prendo cod_fisc?
+router.post('/change_pwd', (req, res) => { 
+    var password = req.body.password;   
+    //Check if password field are filled
+    if (!password) {  
+        res.render("../pages/change_pwd.pug", {err_msg: "Please enter a new password"});
+    }
+    else{ 
+        console.log("TRY CONNECT");
+        var con = DB_open_connection();
+        bcrypt.hash(password, 10).then(function(hash) {
+            con.query('UPDATE parent SET password = ? WHERE id = ?', [hash, userId], function (err, result) {
+                if (error) console.log(err);
+            });
+        });
+    }
+});
+
 
 module.exports = router; //esporto handler delle route in questo modulo
