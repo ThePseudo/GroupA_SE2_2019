@@ -1,6 +1,3 @@
--- CREATE DATABASE IF NOT EXISTS test_db;
--- 
--- ALTER USER 'root'@'db' IDENTIFIED WITH mysql_native_password BY 'pwd'
 
 -- ENTITIES
 

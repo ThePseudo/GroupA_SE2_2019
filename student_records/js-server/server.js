@@ -115,7 +115,7 @@ app.post("/reg_parent", (req, res) => {
     let password = req.body.password;
 
     var con = mysql.createConnection({
-        host: "students-db",
+        host: "localhost",
         user: "root",
         password: "pwd",
         database: "students",
@@ -147,7 +147,7 @@ app.post("/reg_teacher", (req, res) => {
     let password = req.body.password;
 
     var con = mysql.createConnection({
-        host: "students-db",
+        host: "localhost",
         user: "root",
         password: "pwd",
         database: "students",
@@ -179,7 +179,7 @@ app.post("/reg_officer", (req, res) => {
     let password = req.body.password;
 
     var con = mysql.createConnection({
-        host: "students-db",
+        host: "localhost",
         user: "root",
         password: "pwd",
         database: "students",
@@ -211,7 +211,7 @@ app.post("/reg_principal", (req, res) => {
     let password = req.body.password;
 
     var con = mysql.createConnection({
-        host: "students-db",
+        host: "localhost",
         user: "root",
         password: "pwd",
         database: "students",
@@ -243,7 +243,7 @@ app.post("/reg_student", (req, res) => {
     let SSN2 = req.body.SSN2;
 
     var con = mysql.createConnection({
-        host: "students-db",
+        host: "localhost",
         user: "root",
         password: "pwd",
         database: "students",
@@ -286,7 +286,7 @@ app.post("/reg_topic", (req, res) => {
     let desc = req.body.desc;
 
     var con = mysql.createConnection({
-        host: "students-db",
+        host: "localhost",
         user: "root",
         password: "pwd",
         database: "students",
@@ -361,7 +361,7 @@ app.get("/marks", (req, res) => {
     var student_name; // todo: retrieve from db
     const compiledPage = pug.compileFile("pages/student_marks.pug");
     var con = mysql.createConnection({
-        host: "students-db",
+        host: "localhost",
         user: "root",
         password: "pwd",
         database: "students",

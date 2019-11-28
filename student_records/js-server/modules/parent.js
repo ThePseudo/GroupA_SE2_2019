@@ -15,7 +15,7 @@ router.use('/:id', function (req, res, next) {
 router.get('/parent_home', (req, res) => {
   var commlist = [];
   var con = mysql.createConnection({
-    host: "students-db",
+    host: "localhost",
     user: "root",
     password: "pwd",
     database: "students",
@@ -76,12 +76,14 @@ router.get("/marks", (req, res) => {
   // TODO: ID SHOULD BE TAKEN FROM SESSION
   var marks = [];
   var con = mysql.createConnection({
-    host: "students-db",
+    host: "127.0.0.1",
     user: "root",
     password: "pwd",
     database: "students",
     insecureAuth: true
   });
+
+  console.log("Connected to db");
 
   let sql = 'SELECT * FROM mark, course ' +
     'WHERE mark.course_id = course.id ' +
@@ -132,7 +134,7 @@ router.get('/show_courses', (req, res) => {
   var courses = [];
 
   var con = mysql.createConnection({
-    host: "students-db",
+    host: "localhost",
     user: "root",
     password: "pwd",
     database: "students",

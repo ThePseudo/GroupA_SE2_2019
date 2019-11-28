@@ -1,46 +1,25 @@
 # Instructions
 
-## Build all
+## Build
 
-docker-compose build
-
-## Start all
-
-docker-compose up
-
-## Stop all
-
-docker-compose down
-
-## Usage
-
-Open browser at address:
-
-<http://localhost:8000/>
-
-## Old, but usable for single application
-
-### Build
-
+```bash
 docker image build -t students:1.0 .
+```
 
 ### Start
 
-docker container run --publish 8000:8000 --detach --name student students:1.0
+```bash
+docker run -it -p 8080:8080 -p 8000:8000 students:1.0
+```
 
 ### Stop
 
-docker container rm --force student
+Ctrl + C should be enough to stop it. You may also periodically want to prune images and containers, using:
 
-### See logs
-
-#### Windows
-
-docker logs $(docker ps -aq --filter name=student)
-
-#### Linux
-
-docker logs $(sudo docker ps -aq --filter name=student)
+```bash
+docker image prune
+docker container prune
+```
 
 # Use cases
 
