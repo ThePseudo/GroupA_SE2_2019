@@ -189,7 +189,7 @@ router.get('/logout',(req,res) => {
 
 });
 
-//TODO: da dove prendo cod_fisc?
+//TODO: da dove prendo cod_fisc? UNTESTED
 router.post('/change_pwd', (req, res) => { 
     var password = req.body.password;   
     //Check if password field are filled
