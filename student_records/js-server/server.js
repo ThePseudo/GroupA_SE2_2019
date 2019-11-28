@@ -14,7 +14,7 @@ const parentPages = require('./modules/parent.js')
 
 // Constants
 const HTTPPORT = 8000;
-const HTTPSPORT = 9090;
+const HTTPSPORT = 8080;
 const HOST = '0.0.0.0';
 
 // App
@@ -352,7 +352,7 @@ app.post("/reg_topic", (req, res) => {
     });
 
     let sql = 'SELECT id FROM class WHERE class_name = ?';
-    con.query(sql, [classroom], function(err, rows, fields) {
+    con.query(sql, [classroom], function (err, rows, fields) {
 
         if (err) {
             res.end("There is a problem in the DB connection. Please, try again later " + err);
@@ -392,7 +392,7 @@ app.post("/register", (req, res) => {
     var parent1 = req.body.parent1;
     var parent2 = req.body.parent2;
 
-    con.connect(function(err) {
+    con.connect(function (err) {
         if (err) {
             console.log("Error: " + err);
             return;
@@ -403,7 +403,7 @@ app.post("/register", (req, res) => {
 
     let sql = 'INSERT INTO student (first_name, second_name, cod_fisc, parent_1 , parent_2) VALUES (' + name + ',' + surname + ',' + fiscalcode + ',' + parent1 + ',' + parent2 + ')';
 
-    con.query(sql, function(err, rows, fields) {
+    con.query(sql, function (err, rows, fields) {
 
         if (err) {
             res.status(500).json({ "status_code": 500, "status_message": "internal server error" });
@@ -428,7 +428,7 @@ app.get("/marks", (req, res) => {
 
     let sql = 'SELECT * FROM mark, course WHERE mark.course_id = course.id ORDER BY date_mark DESC';
 
-    con.query(sql, function(err, rows, fields) {
+    con.query(sql, function (err, rows, fields) {
         con.end();
         if (err) {
             res.end("There is a problem in the DB connection. Please, try again later");

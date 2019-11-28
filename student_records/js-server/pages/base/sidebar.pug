@@ -7,7 +7,11 @@ mixin sidebar_item(link, text)
   else
     a(class='sidebar-item' href=link)= text
 
-div(class='sidebar')
+mixin small_item(link, text)
+  a(class='sidebar-item smallLogout hidden-sm hidden-md hidden-lg ' href=link)
+    span(class= 'glyphicon glyphicon-log-out')= ' ' + text
+
+div(class='sidebar' id='sidebar')
   if(user=="admin")
     a(class='active-sidebar-item' style="background:#ffc999;")
     a(class='active-sidebar-item' style="background:#ffc999; text-align:center; padding-right:10px;") Welcome, administrator
@@ -25,8 +29,12 @@ div(class='sidebar')
     +sidebar_item("/sysadmin/register_teacher", "Register teacher")
     +sidebar_item("/sysadmin/register_principal", "Register principal")
   else if(user=="parent")
-    +sidebar_item("/parent/choose_student", "Choose student")
+    +sidebar_item("/parent/parent_home", "Choose student")
     +sidebar_item("/parent/show_courses", "Show courses")
     +sidebar_item("/parent/time_table", "Time table")
     +sidebar_item("/parent/notes", "Notes and absences")
     +sidebar_item("/parent/marks", "Show all marks")
+  +small_item("/logout", "Logout")
+
+script
+  include scripts.js
