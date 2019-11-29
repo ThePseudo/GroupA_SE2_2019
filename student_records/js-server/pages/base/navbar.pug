@@ -14,4 +14,4 @@ nav(class='navbar navbar-default')
       a(href='/' class='navbar-brand' style="color: white; font-size:24px;") BB
     ul(class='nav navbar-nav navbar-right hidden-xs')
       if loggedIn
-        +list('logout', 'logout', 'glyphicon glyphicon-log-out')
+        +list('/auth_router/logout', 'logout', 'glyphicon glyphicon-log-out')

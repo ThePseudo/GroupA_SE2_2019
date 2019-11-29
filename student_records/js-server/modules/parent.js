@@ -14,7 +14,8 @@ const bodyParser = require('body-parser');
 //Per accedere a campo user es. SESSION.sessioneData.user.id
 //Per aggiungere campo a user SESSION.sessioneData.user.nomecampo = valore 
 //Per aggiungere campo a sessione -> SESSION.sessioneData.nomecampo = valore
-var SESSION = require("./Auth_manager.js"); 
+
+var SESSION = require("./Auth_manager.js");
 
 var router = express.Router();
 
@@ -31,29 +32,6 @@ router.get("/parent_courselist", (req, res) => {
   const compiledPage = pug.compileFile("../pages/parent/parent_courselist.pug");
   res.end(compiledPage());
 });
-
-//// Page not found
-// router.get('/*', (req, res) => {
-//   fs.readFile(req.path, (err, data) => {
-//       if (err) {
-//           const compiledPage = pug.compileFile("../pages/base/404.pug");
-//           res.end(compiledPage());
-//       }
-//       res.end(data);
-
-//   })
-// });
-
-// router.post('/*', (req, res) => {
-//   fs.readFile(req.path, (err, data) => {
-//       if (err) {
-//           const compiledPage = pug.compileFile("../pages/base/404.pug");
-//           res.end(compiledPage());
-//       }
-//       res.end(data);
-
-//   })
-// });
 
 router.get('/parent_home', (req, res) => {
   console.log(SESSION.sessionData);
@@ -73,39 +51,39 @@ router.get('/parent_home', (req, res) => {
     if (err) {
       res.end("There is a problem in the DB connection. Please, try again later\n" + err + "\n");
       return;
-    } 
+    }
+    console.log(rows);
+    for (var i = 0; i < rows.length; i++) {
+      var communication = {
+        id: rows[i].id,
+        text: rows[i].communication,
+        date: rows[i].comm_date
+      }
+      commlist[i] = communication;
+    }
+    //let sql = 'SELECT id,first_name,last_name FROM student';
+    con.query('SELECT id,first_name,last_name FROM student WHERE parent_1=1 OR parent_2=1', (err, rows, fields) => {
+      if (err) {
+        res.end("There is a problem in the DB connection. Please, try again later\n" + err + "\n");
+        return;
+      }
       console.log(rows);
       for (var i = 0; i < rows.length; i++) {
-        var communication = {
+        var student = {
           id: rows[i].id,
-          text: rows[i].communication,
-          date: rows[i].comm_date
+          first_name: rows[i].first_name,
+          last_name: rows[i].last_name
         }
-        commlist[i] = communication;
+        studlist[i] = student;
       }
-      //let sql = 'SELECT id,first_name,last_name FROM student';
-      con.query('SELECT id,first_name,last_name FROM student WHERE parent_1=1 OR parent_2=1', (err, rows, fields) => {
-        if (err) {
-          res.end("There is a problem in the DB connection. Please, try again later\n" + err + "\n");
-          return;
-        } 
-        console.log(rows);
-        for (var i = 0; i < rows.length; i++) {
-          var student = {
-            id: rows[i].id,
-            first_name: rows[i].first_name,
-            last_name: rows[i].last_name
-          }
-          studlist[i] = student;
-        }
-        //console.log("Data successfully uploaded! " + result.insertId);
-        con.end();
-        res.end(compiledPage({
-          communicationList: commlist,
-          studentList: studlist,
-        }));
+      //console.log("Data successfully uploaded! " + result.insertId);
+      con.end();
+      res.end(compiledPage({
+        communicationList: commlist,
+        studentList: studlist,
+      }));
 
-      });
+    });
   });
 });
 
