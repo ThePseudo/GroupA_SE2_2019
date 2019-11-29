@@ -18,6 +18,26 @@ INSERT INTO teacher
 VALUES
     (1, "Afrodite", "Venere", "AV85T", "venere85@yahoo.com", "VenereA85", 1);
 
+CREATE TABLE officer
+(
+    id INT PRIMARY KEY,
+    first_name VARCHAR(50) NOT NULL,
+    last_name VARCHAR(50) NOT NULL,
+    cod_fisc VARCHAR(20) UNIQUE NOT NULL,
+    email VARCHAR(100) NOT NULL,
+    password VARCHAR(255) NOT NULL,
+    first_access BOOLEAN NOT NULL
+);
+
+INSERT INTO officer
+    (id,first_name,last_name,cod_fisc,email,password,first_access)
+VALUES
+    (1, "Ciccio", "Pasticcio", "CP80X", "pasticcio80@gmail.com", "CiccioPast80", 1);
+INSERT INTO officer
+    (id,first_name,last_name,cod_fisc,email,password,first_access)
+VALUES
+    (2, "Carlo", "Magno", "CM10A", "magno10@gmail.com", "CarloM10", 0);
+
 CREATE TABLE parent
 (
     id INT PRIMARY KEY,
@@ -53,6 +73,21 @@ INSERT INTO student
     (id,first_name,last_name,cod_fisc,class_id,parent_1,parent_2)
 VALUES
     (1, "Giove", "Zeus", "GZ03A", 2, 1, 2);
+
+INSERT INTO student
+    (id,first_name,last_name,cod_fisc,class_id,parent_1,parent_2)
+VALUES
+    (2, "Martino", "Arte", "GPP3A", 2, 1, 2);
+
+INSERT INTO student
+    (id,first_name,last_name,cod_fisc,class_id,parent_1,parent_2)
+VALUES
+    (3, "Martinella", "Leone", "AA03A", 2, 1, 2);
+
+INSERT INTO student
+    (id,first_name,last_name,cod_fisc,class_id,parent_1,parent_2)
+VALUES
+    (4, "Serena", "Fetta", "GZ0OO", 2, 3, 4);
 
 -- Classes
 
@@ -111,6 +146,7 @@ CREATE TABLE note
 (
     id INT,
     student_id INT NOT NULL,
+    teacher_id INT NOT NULL,
     note_date DATE NOT NULL,
     motivation TEXT NOT NULL,
     PRIMARY KEY(id)
@@ -145,24 +181,25 @@ CREATE TABLE mark
     course_id INT NOT NULL,
     score INT NOT NULL,
     date_mark DATE NOT NULL,
+    period_mark INT NOT NULL,
     PRIMARY KEY(id)
 );
 
 
 INSERT INTO mark
-    (id,student_id, course_id, score, date_mark)
+    (id,student_id, course_id, score, date_mark, period_mark)
 VALUES
-    (1, 1, 1, 6, '2019-9-10');
+    (1, 1, 1, 6, '2019-9-10', 1);
 
 INSERT INTO mark
-    (id,student_id, course_id, score, date_mark)
+    (id,student_id, course_id, score, date_mark, period_mark)
 VALUES
-    (2, 1, 2, 8, '2019-9-11');
+    (2, 1, 2, 8, '2019-9-11', 2);
 
 INSERT INTO mark
-    (id,student_id, course_id, score, date_mark)
+    (id,student_id, course_id, score, date_mark, period_mark)
 VALUES
-    (3, 1, 3, 10, '2019-9-12');
+    (3, 1, 3, 10, '2019-9-12', 1);
 
 -- RELATIONS
 
@@ -204,27 +241,7 @@ INSERT INTO General_Communication
     (id,communication, comm_date)
 VALUES
     (3, "See the pdf on site", '2019-11-27');
-
-
-CREATE TABLE officer
-(
-    id INT PRIMARY KEY,
-    first_name VARCHAR(50) NOT NULL,
-    last_name VARCHAR(50) NOT NULL,
-    cod_fisc VARCHAR(20) UNIQUE NOT NULL,
-    email VARCHAR(100) NOT NULL,
-    password VARCHAR(255) NOT NULL,
-    first_access BOOLEAN NOT NULL
-);
-
-INSERT INTO officer
-    (id,first_name,last_name,cod_fisc,email,password,first_access)
-VALUES
-    (1, "Ciccio", "Pasticcio", "CP80X", "pasticcio80@gmail.com", "CiccioPast80", 1);
-INSERT INTO officer
-    (id,first_name,last_name,cod_fisc,email,password,first_access)
-VALUES
-    (2, "Carlo", "Magno", "CM10A", "magno10@gmail.com", "CarloM10", 0);
+    
 
 -- FOR TORCHIANO - 12/11/19
 -- 
