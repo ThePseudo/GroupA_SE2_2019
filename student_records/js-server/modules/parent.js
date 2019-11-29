@@ -22,7 +22,6 @@ router.use('/:id', function (req, res, next) {
 
 router.get('/parent_home', (req, res) => {
   console.log(SESSION.sessionData);
-  SESSION.sessionData.user.test = "ok";
   var commlist = [];
   var con = mysql.createConnection({
     host: "students-db",

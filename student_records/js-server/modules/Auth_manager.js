@@ -9,7 +9,7 @@ const pug = require('pug');
 const bcrypt = require('bcrypt'); 
 const mysql = require('mysql');
 const bodyParser = require('body-parser');
-const nodemailer = require('nodemailer'); 
+const ethereal = require("./ethereal.js");
 const app = express();
 var router = express.Router();
 
@@ -25,7 +25,6 @@ var sessionObj = {};
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
-
 
 //functions
 function DB_open_connection(){
@@ -76,40 +75,6 @@ function manageCollaborator(con,user_info,response){
         }       
     });
 }
-
-function send_Email(user_info){
-    var transporter = nodemailer.createTransport({
-        service: 'gmail',
-        auth: {
-          user: 'youremail@gmail.com',
-          pass: 'yourpassword'
-        }
-      });
-      
-      var mailOptions = {
-        from: 'youremail@gmail.com',
-        to: 'myfriend@yahoo.com',
-        subject: 'Sending Email using Node.js',
-        text: 'That was easy!'
-      };
-      
-      transporter.sendMail(mailOptions, function(error, info){
-        if (error) {
-          console.log(error);
-        } else {
-          console.log('Email sent: ' + info.response);
-        }
-      }); 
-}
-/* // middleware function to check for logged-in users (esporto all'esterno)
-var sessionChecker = function(req, res, next){
-    if (req.session.user && req.cookies.user_sid) {
-        console.log(req.session.user);
-        res.redirect('../pages/parent_homepage');
-    } else {
-        next();
-    }    
-} */
 
 router.get('/login_parent', (req, res) => {
     console.log(req.session);
@@ -162,7 +127,9 @@ router.route('/login')
                     console.log("ok primo accesso");
                     con.end();
                     //TODO: function send email
-                    //send_Email(result[0]); 
+                    ethereal.mail_handler(result[0]);
+                    res.end();
+                    return;
                 }
                  //The cod_fisc exists in the DB, now check the password
                  if(bcrypt.compareSync(password,  result[0].password)) {
@@ -199,8 +166,10 @@ router.get('/logout',(req,res) => {
         res.redirect('/'); //ritorno alla root (qui è la homepage)
 });
 
-//TODO: da dove prendo cod_fisc? UNTESTED
-/* router.post('/change_pwd', (req, res) => { 
+//TODO: TESTS
+router.route('/change_pwd').get((req, res) => {
+    res.render("../pages/change_pwd.pug");
+}).post((req,res)=>{
     var password = req.body.password;   
     //Check if password field are filled
     if (!password) {  
@@ -210,12 +179,12 @@ router.get('/logout',(req,res) => {
         console.log("TRY CONNECT");
         var con = DB_open_connection();
         bcrypt.hash(password, 10).then(function(hash) {
-            con.query('UPDATE parent SET password = ? WHERE id = ?', [hash, userId], function (err, result) {
+            con.query('UPDATE parent SET password = ? WHERE id = ?', [hash, sessionObj.user.id], function (err, result) {
                 if (error) console.log(err);
             });
         });
     }
-}); */
+});
 
 
 module.exports = router; //esporto handler delle route in questo modulo
