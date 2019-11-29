@@ -252,18 +252,6 @@ INSERT INTO General_Communication
 VALUES
     (3, "See the pdf on site", '2019-11-27');
 
-
-CREATE TABLE officer
-(
-    id INT PRIMARY KEY,
-    first_name VARCHAR(50) NOT NULL,
-    last_name VARCHAR(50) NOT NULL,
-    cod_fisc VARCHAR(20) UNIQUE NOT NULL,
-    email VARCHAR(100) NOT NULL,
-    password VARCHAR(255) NOT NULL,
-    first_access BOOLEAN NOT NULL
-);
-
 INSERT INTO officer
     (id,first_name,last_name,cod_fisc,email,password,first_access)
 VALUES
