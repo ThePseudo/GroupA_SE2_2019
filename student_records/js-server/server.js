@@ -1,30 +1,44 @@
 'use strict';
 
 const express = require('express');
-const session = require('express-session')
+const session = require('express-session');
+var FileStore = require('session-file-store')(session);
+const cookieParser = require("cookie-parser");
+//const session = require('cookie-session');
 const fs = require('fs');
 const https = require('https');
 const http = require('http');
 const pug = require('pug');
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcrypt'); 
 const mysql = require('mysql');
 const bodyParser = require('body-parser');
-const adminPages = require('./modules/admin.js');
-const parentPages = require('./modules/parent.js')
-
-// Constants
-const HTTPPORT = 8000;
-const HTTPSPORT = 8080;
-const HOST = '0.0.0.0';
 
 // App
 const app = express();
 app.set('view engine', 'pug');
 app.set('views', './pages');
 app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
 
+const adminPages = require('./modules/admin.js');
+const parentPages = require('./modules/parent.js');
+const auth_router= require("./modules/Auth_manager.js");
+var SESSION = auth_router.sessionData;
+
+// Constants
+const HTTPPORT = 8000;
+const HTTPSPORT = 8080;
+const HOST = '0.0.0.0';
+
+// other routers
+module.exports = function (app) {
+    app.use('/action/*', require('./modules'));
+};
+
+//mount external route, now I can access to external route via ex. /admin/routename inside adminPages module .js
 app.use('/admin', adminPages);
 app.use('/parent', parentPages);
+app.use('/auth_router', auth_router);
 
 const options = {
     key: fs.readFileSync("./certs/localhost.key"),
@@ -35,34 +49,6 @@ const options = {
 app.get('/', (req, res) => {
     const compiledPage = pug.compileFile("pages/home.pug");
     res.end(compiledPage());
-});
-
-app.get('/login_collaborator', (req, res) => {
-    const compiledPage = pug.compileFile("pages/login.pug");
-    res.end(compiledPage({
-        user: "collaborator"
-    }));
-});
-
-app.get('/login_teacher', (req, res) => {
-    const compiledPage = pug.compileFile("pages/login.pug");
-    res.end(compiledPage({
-        user: "teacher"
-    }));
-});
-
-/* app.get('/parent_home', (req, res) => {
-    const compiledPage = pug.compileFile("pages/parent/parent_homepage.pug");
-    res.end(compiledPage({
-        user: "parent_home"
-    }));
-}); */
-
-app.get('/login_parent', (req, res) => {
-    const compiledPage = pug.compileFile("pages/login.pug");
-    res.end(compiledPage({
-        user: "parent"
-    }));
 });
 
 app.get("/style", (req, res) => {
@@ -343,6 +329,8 @@ app.post("/reg_topic", (req, res) => {
     let classroom = req.body.class;
     let desc = req.body.desc;
 
+    const compiledPage = pug.compileFile("pages/reg_topic.pug");
+    
     var con = mysql.createConnection({
         host: "localhost",
         user: "root",
@@ -353,7 +341,6 @@ app.post("/reg_topic", (req, res) => {
 
     let sql = 'SELECT id FROM class WHERE class_name = ?';
     con.query(sql, [classroom], function (err, rows, fields) {
-
         if (err) {
             res.end("There is a problem in the DB connection. Please, try again later " + err);
             return;
@@ -456,8 +443,6 @@ app.get("/marks", (req, res) => {
 });
 
 
-
-
 // Page not found
 app.get('/*', (req, res) => {
     fs.readFile(req.path, (err, data) => {
@@ -482,6 +467,7 @@ app.post('/*', (req, res) => {
 });
 
 //app.listen(PORT, HOST);
+
 
 const httpApp = express();
 httpApp.get("*", (req, res) => {

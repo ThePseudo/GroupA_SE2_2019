@@ -8,6 +8,14 @@ const http = require('http');
 const bcrypt = require('bcrypt');
 const bodyParser = require('body-parser');
 
+//IMPORTO oggetto rappresentante la sessione.
+//Per accedere ->  SESSION.sessioneData
+//Per accedere a user SESSION.sessioneData.user
+//Per accedere a campo user es. SESSION.sessioneData.user.id
+//Per aggiungere campo a user SESSION.sessioneData.user.nomecampo = valore 
+//Per aggiungere campo a sessione -> SESSION.sessioneData.nomecampo = valore
+var SESSION = require("./Auth_manager.js"); 
+
 var router = express.Router();
 
 router.use('/:id', function (req, res, next) {
@@ -48,6 +56,7 @@ router.get("/parent_courselist", (req, res) => {
 // });
 
 router.get('/parent_home', (req, res) => {
+  console.log(SESSION.sessionData);
   var commlist = [];
   var studlist = [];
   var con = mysql.createConnection({
@@ -57,7 +66,6 @@ router.get('/parent_home', (req, res) => {
     database: "students",
     insecureAuth: true
   });
-
   const compiledPage = pug.compileFile('../pages/parent/parent_homepage.pug');
 
   con.query('SELECT * FROM General_Communication', (err, rows, fields) => {
