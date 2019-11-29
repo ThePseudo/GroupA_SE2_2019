@@ -196,7 +196,7 @@ router.route('/login')
 router.get('/logout',(req,res) => {
     sessionObj={};
         console.log(sessionObj);
-        res.redirect('/login_parent'); //ritorno alla root (qui è la homepage)
+        res.redirect('/'); //ritorno alla root (qui è la homepage)
 });
 
 //TODO: da dove prendo cod_fisc? UNTESTED
