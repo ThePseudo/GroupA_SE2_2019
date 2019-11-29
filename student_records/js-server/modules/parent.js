@@ -2,6 +2,14 @@ const express = require('express');
 const pug = require('pug');
 const mysql = require('mysql');
 
+//IMPORTO oggetto rappresentante la sessione.
+//Per accedere ->  SESSION.sessioneData
+//Per accedere a user SESSION.sessioneData.user
+//Per accedere a campo user es. SESSION.sessioneData.user.id
+//Per aggiungere campo a user SESSION.sessioneData.user.nomecampo = valore 
+//Per aggiungere campo a sessione -> SESSION.sessioneData.nomecampo = valore
+var SESSION = require("./Auth_manager.js"); 
+
 var router = express.Router();
 
 router.use('/:id', function (req, res, next) {
@@ -13,6 +21,8 @@ router.use('/:id', function (req, res, next) {
 });
 
 router.get('/parent_home', (req, res) => {
+  console.log(SESSION.sessionData);
+  SESSION.sessionData.user.test = "ok";
   var commlist = [];
   var con = mysql.createConnection({
     host: "students-db",
@@ -21,7 +31,6 @@ router.get('/parent_home', (req, res) => {
     database: "students",
     insecureAuth: true
   });
-  console.log(req.session);///
   const compiledPage = pug.compileFile('../pages/parent/parent_homepage.pug');
   let sql = 'SELECT * FROM General_Communication';
 

@@ -7,18 +7,25 @@ const https = require('https');
 const http = require('http');
 const pug = require('pug');
 const bcrypt = require('bcrypt'); 
-//const bcrypt = require('bcryptjs');// substituted also this module with the following module in JSON 
 const mysql = require('mysql');
 const bodyParser = require('body-parser');
-const parent = require('./parent.js');
-var nodemailer = require('nodemailer'); 
-var SESSION_DATA=null;  
-
+const nodemailer = require('nodemailer'); 
 const app = express();
 var router = express.Router();
-app.use("/parent",parent);
+
+var sessionObj = {};
+
+/* var sessionObj= session({
+    secret: 'keyboard cat',
+    resave: true,
+    saveUninitialized: true,
+    cookie: {   secure: true,
+                maxAge: 10000 } // maxAge is in milliseconds
+}); */
+
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
+
 
 //functions
 function DB_open_connection(){
@@ -31,19 +38,19 @@ function DB_open_connection(){
             });
 }
 
-function setup_session_var(user_type,user_info,sessionData){
+function setup_session_var(user_type,user_info){
     //session è un typeof "session", inizializzo la sessione fuori da questa route e poi la associo a "sessionData"
     
-    sessionData.user = {};     //Nella variabile ho un campo user che è un oggetto e acui posso aggiungere attributi privati /equivale a $_SESSION['user']
-    sessionData.user.id = user_info.id; //aggiungo attributo id a user e lo salvo nella variabile "sessionData"
-    sessionData.user.first_name = user_info.first_name;
-    sessionData.user.last_name = user_info.last_name
-    sessionData.user.cod_fisc = user_info.cod_fisc;
-    sessionData.user.email = user_info.email;
-    sessionData.user.user_type = user_type;
+    sessionObj.user = {};     //Nella variabile ho un campo user che è un oggetto e acui posso aggiungere attributi privati /equivale a $_SESSION['user']
+    sessionObj.user.id = user_info.id; //aggiungo attributo id a user e lo salvo nella variabile "sessionData"
+    sessionObj.user.first_name = user_info.first_name;
+    sessionObj.user.last_name = user_info.last_name
+    sessionObj.user.cod_fisc = user_info.cod_fisc;
+    sessionObj.user.email = user_info.email;
+    sessionObj.user.user_type = user_type;
 }
 
-function manageCollaborator(con,user_info,sessionData,response){
+function manageCollaborator(con,user_info,response){
     let sql = 'SELECT * FROM officer JOIN admin ON officer.cod_fisc = admin.cod_fisc WHERE officer.cod_fisc = ?';
     let insert = [user_info.cod_fisc];
     sql = mysql.format(sql,insert); //mix all together with "mysql.format()" and pass as parameter to .query() method
@@ -57,14 +64,14 @@ function manageCollaborator(con,user_info,sessionData,response){
             console.log("OK ADMIN");
             con.end();
             console.log("ok prima del setup");
-            setup_session_var("admin",result[0],sessionData);
+            setup_session_var("admin",result[0]);
             console.log("ok dopo setup");
             response.redirect("/admin/admin_home");
         }
         else{
             console.log("OK OFFICER");
             con.end();
-            setup_session_var("officer",result[0],sessionData);
+            setup_session_var("officer",result[0]);
             response.redirect("/officer/officer_home");
         }       
     });
@@ -105,18 +112,25 @@ var sessionChecker = function(req, res, next){
 } */
 
 router.get('/login_parent', (req, res) => {
-    console.log(req.session.user);
-        if(req.session.user) res.redirect("/parent/parent_home");
-        res.render("../pages/login_parent.pug");  
+    console.log(req.session);
+    console.log(sessionObj);
+    if(sessionObj.user) 
+        res.redirect("/parent/parent_home");
+    res.render("../pages/login_parent.pug");  
 });
 
 router.get('/login_teacher', (req, res) => {
-    console.log(req.session.user);
+    console.log(sessionObj);
+    if(sessionObj.user) 
+        res.redirect("/parent/teacher_home");
     res.render("../pages/login_teacher.pug");
 });
 
 router.get('/login_collaborator', (req, res) => {
-    console.log(req.session.user);
+    if(sessionObj.user){
+        let redirect_route ="/"+ sessionObj.user.user_type + "/" + sessionObj.user.user_type +"_home";
+        res.redirect(redirect_route);
+    } 
     res.render("../pages/login_officer.pug");
 });
 
@@ -126,7 +140,6 @@ router.route('/login')
     var user_type = req.body.user_type;
     var cod_fisc = req.body.cod_fisc;   
     var password = req.body.password;   
-
     var render_path = "../pages/login_" + user_type + ".pug";
 
      //Check if both cod_fisc and password field are filled
@@ -149,7 +162,7 @@ router.route('/login')
                     console.log("ok primo accesso");
                     con.end();
                     //TODO: function send email
-                    //send_Email(result[0]);
+                    //send_Email(result[0]); 
                 }
                  //The cod_fisc exists in the DB, now check the password
                  if(bcrypt.compareSync(password,  result[0].password)) {
@@ -158,13 +171,14 @@ router.route('/login')
 
                      //SESSION MANAGEMENT
                      if(user_type == "officer"){
-                        user_type = manageCollaborator(con,result[0],req.session,res);
+                        user_type = manageCollaborator(con,result[0],res);
                         console.log(user_type);
                      }
                      else{
-                         con.end();
-                     setup_session_var(user_type,result[0],req.session);
-                     res.redirect("/"+user_type + "/" + user_type + "_home");
+                        con.end();
+                        console.log("1");
+                        setup_session_var(user_type,result[0]);
+                        res.redirect("/"+user_type + "/" + user_type + "_home");
                      }
                  } else {
                      // Passwords don't match
@@ -180,17 +194,13 @@ router.route('/login')
     });
 
 router.get('/logout',(req,res) => {
-    req.session.destroy((err) => {
-        if(err) {
-            return console.log(err);
-        }
-        res.redirect('/'); //ritorno alla root (qui è la homepage)
-    });
-
+    sessionObj={};
+        console.log(sessionObj);
+        res.redirect('/login_parent'); //ritorno alla root (qui è la homepage)
 });
 
 //TODO: da dove prendo cod_fisc? UNTESTED
-router.post('/change_pwd', (req, res) => { 
+/* router.post('/change_pwd', (req, res) => { 
     var password = req.body.password;   
     //Check if password field are filled
     if (!password) {  
@@ -205,7 +215,8 @@ router.post('/change_pwd', (req, res) => {
             });
         });
     }
-});
+}); */
 
 
 module.exports = router; //esporto handler delle route in questo modulo
+module.exports.sessionData = sessionObj;

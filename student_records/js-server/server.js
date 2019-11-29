@@ -2,6 +2,7 @@
 
 const express = require('express');
 const session = require('express-session');
+var FileStore = require('session-file-store')(session);
 const cookieParser = require("cookie-parser");
 //const session = require('cookie-session');
 const fs = require('fs');
@@ -19,20 +20,10 @@ app.set('views', './pages');
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
-var sessionMiddleware= session({
-    secret: 'keyboard cat',
-    resave: true,
-    saveUninitialized: true,
-    cookie: {   secure: true,
-                maxAge: 10000 } // maxAge is in milliseconds
-});
-
-app.use(sessionMiddleware); 
-
 const adminPages = require('./modules/admin.js');
 const parentPages = require('./modules/parent.js');
 const auth_router= require("./modules/Auth_manager.js");
-
+var SESSION = auth_router.sessionData;
 
 // Constants
 const HTTPPORT = 8000;
@@ -44,9 +35,10 @@ module.exports = function (app) {
     app.use('/action/*', require('./modules'));
 };
 
-app.use('/admin', sessionMiddleware, adminPages);
-app.use('/parent', sessionMiddleware, parentPages);
-app.use('/auth_router', sessionMiddleware, auth_router);
+//mount external route, now I can access to external route via ex. /admin/routename inside adminPages module .js
+app.use('/admin', adminPages);
+app.use('/parent', parentPages);
+app.use('/auth_router', auth_router);
 
 const options = {
     key: fs.readFileSync("./certs/localhost.key"),
@@ -57,20 +49,6 @@ const options = {
 app.get('/', (req, res) => {
     const compiledPage = pug.compileFile("pages/home.pug");
     res.end(compiledPage());
-});
-
-app.get('/login_collaborator', (req, res) => {
-    const compiledPage = pug.compileFile("pages/login.pug");
-    res.end(compiledPage({
-        user: "collaborator"
-    }));
-});
-
-app.get('/login_teacher', (req, res) => {
-    const compiledPage = pug.compileFile("pages/login.pug");
-    res.end(compiledPage({
-        user: "teacher"
-    }));
 });
 
 app.get("/style", (req, res) => {
