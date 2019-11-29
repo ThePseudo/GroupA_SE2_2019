@@ -14,7 +14,11 @@ docker run -it -p 8080:8080 -p 8000:8000 --name students students:1.0
 
 ### Stop
 
-Ctrl + C should be enough to stop it. You may also periodically want to prune images and containers, using:
+```bash
+docker container rm --force students
+```
+
+You may also periodically want to prune images and containers, using:
 
 ```bash
 docker image prune
