@@ -41,9 +41,11 @@ body {
 }
 
 .blockButton_child {
+    display: block;
     color: black;
     background-color: #fc9b47;
     cursor: pointer;
+    font-size: auto;
     text-align: center;
     transition-duration: 0.2s;
 }

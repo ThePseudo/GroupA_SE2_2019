@@ -67,27 +67,27 @@ app.get("/topics", (req, res) => {
 });
 
 app.get("/enroll_teacher", (req, res) => {
-    const compiledPage = pug.compileFile("pages/systemad_registerteacher.pug");
+    const compiledPage = pug.compileFile("pages/sysadmin/systemad_registerteacher.pug");
     res.end(compiledPage());
 });
 
 app.get("/enroll_officer", (req, res) => {
-    const compiledPage = pug.compileFile("pages/systemad_registerofficer.pug");
+    const compiledPage = pug.compileFile("pages/sysadmin/systemad_registerofficer.pug");
     res.end(compiledPage());
 });
 
 app.get("/enroll_principal", (req, res) => {
-    const compiledPage = pug.compileFile("pages/systemad_registerprincipal.pug");
+    const compiledPage = pug.compileFile("pages/sysadmin/systemad_registerprincipal.pug");
     res.end(compiledPage());
 });
 
-app.get("/enroll_student", (req, res) => {
-    const compiledPage = pug.compileFile("pages/officer_registerstudent.pug");
+app.get("/admin/enroll_student", (req, res) => {
+    const compiledPage = pug.compileFile("pages/officer/officer_registerstudent.pug");
     res.end(compiledPage());
 });
 
-app.get("/enroll_parent", (req, res) => {
-    const compiledPage = pug.compileFile("pages/officer_registerparent.pug");
+app.get("/admin/enroll_parent", (req, res) => {
+    const compiledPage = pug.compileFile("pages/officer/officer_registerparent.pug");
     res.end(compiledPage());
 });
 
@@ -101,7 +101,7 @@ app.post("/reg_parent", (req, res) => {
     let password = req.body.password;
 
     var con = mysql.createConnection({
-        host: "students-db",
+        host: "localhost",
         user: "root",
         password: "pwd",
         database: "students",
@@ -113,7 +113,11 @@ app.post("/reg_parent", (req, res) => {
             res.end("There is a problem in the DB connection. Please, try again later " + err);
             return;
         }
-        con.query("INSERT INTO parent(id, first_name, last_name, cod_fisc, email, password, first_access) VALUES(?, ?, ?, ?, ?)", [rows[0].c, name, surname, SSN, email, password, 1], (err, result) => {
+        if (rows.length <= 0) {
+            res.end("Count impossible to compute");
+            return;
+        }
+        con.query("INSERT INTO parent(id, first_name, last_name, cod_fisc, email, password, first_access) VALUES(?, ?, ?, ?, ?, ?, ?)", [rows[0].c + 1, name, surname, SSN, email, password, 1], (err, result) => {
             if (err) {
                 res.end("There is a problem in the DB connection. Please, try again later " + err);
                 return;
@@ -133,7 +137,7 @@ app.post("/reg_teacher", (req, res) => {
     let password = req.body.password;
 
     var con = mysql.createConnection({
-        host: "students-db",
+        host: "localhost",
         user: "root",
         password: "pwd",
         database: "students",
@@ -145,7 +149,11 @@ app.post("/reg_teacher", (req, res) => {
             res.end("There is a problem in the DB connection. Please, try again later " + err);
             return;
         }
-        con.query("INSERT INTO teacher(id, first_name, last_name, cod_fisc, email, password, first_access) VALUES(?, ?, ?, ?, ?)", [rows[0].c, name, surname, SSN, email, password, 1], (err, result) => {
+        if (rows.length <= 0) {
+            res.end("Count impossible to compute");
+            return;
+        }
+        con.query("INSERT INTO teacher(id, first_name, last_name, cod_fisc, email, password, first_access) VALUES(?, ?, ?, ?, ?, ?, ?)", [rows[0].c + 1, name, surname, SSN, email, password, 1], (err, result) => {
             if (err) {
                 res.end("There is a problem in the DB connection. Please, try again later " + err);
                 return;
@@ -165,7 +173,7 @@ app.post("/reg_officer", (req, res) => {
     let password = req.body.password;
 
     var con = mysql.createConnection({
-        host: "students-db",
+        host: "localhost",
         user: "root",
         password: "pwd",
         database: "students",
@@ -177,7 +185,11 @@ app.post("/reg_officer", (req, res) => {
             res.end("There is a problem in the DB connection. Please, try again later " + err);
             return;
         }
-        con.query("INSERT INTO officer(id, first_name, last_name, cod_fisc, email, password, first_access) VALUES(?, ?, ?, ?, ?)", [rows[0].c, name, surname, SSN, email, password, 1], (err, result) => {
+        if (rows.length <= 0) {
+            res.end("Count impossible to compute");
+            return;
+        }
+        con.query("INSERT INTO officer(id, first_name, last_name, cod_fisc, email, password, first_access) VALUES(?, ?, ?, ?, ?, ?, ?)", [rows[0].c + 1, name, surname, SSN, email, password, 1], (err, result) => {
             if (err) {
                 res.end("There is a problem in the DB connection. Please, try again later " + err);
                 return;
@@ -197,19 +209,23 @@ app.post("/reg_principal", (req, res) => {
     let password = req.body.password;
 
     var con = mysql.createConnection({
-        host: "students-db",
+        host: "localhost",
         user: "root",
         password: "pwd",
         database: "students",
         insecureAuth: true
     });
 
-    con.query('SELECT COUNT(*) as c FROM principal', (err, rows, fields) => { // because we have no AUTO_UPDATE available on the DB
+    con.query('SELECT COUNT(*) as c FROM collaborator', (err, rows, fields) => { // because we have no AUTO_UPDATE available on the DB
         if (err) {
             res.end("There is a problem in the DB connection. Please, try again later " + err);
             return;
         }
-        con.query("INSERT INTO principal(id, first_name, last_name, cod_fisc, email, password, first_access) VALUES(?, ?, ?, ?, ?)", [rows[0].c, name, surname, SSN, email, password, 1], (err, result) => {
+        if (rows.length <= 0) {
+            res.end("Count impossible to compute");
+            return;
+        }
+        con.query("INSERT INTO collaborator(id, first_name, last_name, cod_fisc, email, password, first_access) VALUES(?, ?, ?, ?, ?, ?, ?)", [rows[0].c + 1, name, surname, SSN, email, password, 1], (err, result) => {
             if (err) {
                 res.end("There is a problem in the DB connection. Please, try again later " + err);
                 return;
@@ -229,7 +245,7 @@ app.post("/reg_student", (req, res) => {
     let SSN2 = req.body.SSN2;
 
     var con = mysql.createConnection({
-        host: "students-db",
+        host: "localhost",
         user: "root",
         password: "pwd",
         database: "students",
@@ -241,17 +257,59 @@ app.post("/reg_student", (req, res) => {
             res.end("There is a problem in the DB connection. Please, try again later " + err);
             return;
         }
-        con.query('SELECT ID as ID1 FROM parent WHERE cod_fisc = ?', [SSN1], (err, rows, fields) => { // because we have no AUTO_UPDATE available on the DB
+        if (rows.length <= 0) {
+            res.end("Count impossible to compute");
+            return;
+        }
+        let c = rows[0].c + 1;
+        con.query('SELECT ID FROM parent WHERE cod_fisc = ?', [SSN1], (err, rows, fields) => { // because we have no AUTO_UPDATE available on the DB
             if (err) {
                 res.end("There is a problem in the DB connection. Please, try again later " + err);
                 return;
             }
-            con.query('SELECT ID as ID2 FROM parent WHERE cod_fisc = ?', [SSN2], (err, rows, fields) => { // because we have no AUTO_UPDATE available on the DB
+            if (rows.length <= 0) {
+                con.query('SELECT ID FROM parent WHERE cod_fisc = ?', [SSN2], (err, rows, fields) => { // because we have no AUTO_UPDATE available on the DB
+                    if (err) {
+                        res.end("There is a problem in the DB connection. Please, try again later " + err);
+                        return;
+                    }
+                    if (rows.length <= 0) {
+                        res.end("Parent/s ID/s not found");
+                        return;
+                    }
+                    let ID2 = rows[0].ID;
+                    con.query("INSERT INTO student(id, first_name, last_name, cod_fisc, class_id, parent_1, parent_2) VALUES(?, ?, ?, ?, ?, ?, ?)", [c, name, surname, SSN, 0, ID2, ""], (err, result) => {
+                        if (err) {
+                            res.end("There is a problem in the DB connection. Please, try again later " + err);
+                            return;
+                        }
+                        console.log("Data successfully uploaded! " + result.insertId);
+                        con.end();
+                        res.redirect("/students");
+                    });
+                });
+                return;
+            }
+            let ID1 = rows[0].ID;
+            con.query('SELECT ID FROM parent WHERE cod_fisc = ?', [SSN2], (err, rows, fields) => { // because we have no AUTO_UPDATE available on the DB
                 if (err) {
                     res.end("There is a problem in the DB connection. Please, try again later " + err);
                     return;
                 }
-                con.query("INSERT INTO student(id, first_name, last_name, cod_fisc, class_id, parent_1, parent_2) VALUES(?, ?, ?, ?, ?)", [rows[0].c, name, surname, SSN, 0, ID1, ID2], (err, result) => {
+                if (rows.length <= 0) {
+                    con.query("INSERT INTO student(id, first_name, last_name, cod_fisc, class_id, parent_1, parent_2) VALUES(?, ?, ?, ?, ?, ?, ?)", [c, name, surname, SSN, 0, ID1, ""], (err, result) => {
+                        if (err) {
+                            res.end("There is a problem in the DB connection. Please, try again later " + err);
+                            return;
+                        }
+                        console.log("Data successfully uploaded! " + result.insertId);
+                        con.end();
+                        res.redirect("/students");
+                    });
+                    return;
+                }
+                let ID2 = rows[0].ID;
+                con.query("INSERT INTO student(id, first_name, last_name, cod_fisc, class_id, parent_1, parent_2) VALUES(?, ?, ?, ?, ?, ?, ?)", [c, name, surname, SSN, 0, ID1, ID2], (err, result) => {
                     if (err) {
                         res.end("There is a problem in the DB connection. Please, try again later " + err);
                         return;
@@ -274,7 +332,7 @@ app.post("/reg_topic", (req, res) => {
     const compiledPage = pug.compileFile("pages/reg_topic.pug");
     
     var con = mysql.createConnection({
-        host: "students-db",
+        host: "localhost",
         user: "root",
         password: "pwd",
         database: "students",
@@ -348,7 +406,7 @@ app.get("/marks", (req, res) => {
     var student_name; // todo: retrieve from db
     const compiledPage = pug.compileFile("pages/student_marks.pug");
     var con = mysql.createConnection({
-        host: "students-db",
+        host: "localhost",
         user: "root",
         password: "pwd",
         database: "students",

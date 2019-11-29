@@ -1,6 +1,3 @@
--- CREATE DATABASE IF NOT EXISTS test_db;
--- 
--- ALTER USER 'root'@'db' IDENTIFIED WITH mysql_native_password BY 'pwd'
 
 -- ENTITIES
 
@@ -59,6 +56,21 @@ INSERT INTO student
     (id,first_name,last_name,cod_fisc,class_id,parent_1,parent_2)
 VALUES
     (1, "Giove", "Zeus", "GZ03A", 2, 1, 2);
+
+INSERT INTO student
+    (id,first_name,last_name,cod_fisc,class_id,parent_1,parent_2)
+VALUES
+    (2, "Martino", "Arte", "GPP3A", 2, 1, 2);
+
+INSERT INTO student
+    (id,first_name,last_name,cod_fisc,class_id,parent_1,parent_2)
+VALUES
+    (3, "Martinella", "Leone", "AA03A", 2, 1, 2);
+
+INSERT INTO student
+    (id,first_name,last_name,cod_fisc,class_id,parent_1,parent_2)
+VALUES
+    (4, "Serena", "Fetta", "GZ0OO", 2, 3, 4);
 
 -- Classes
 
@@ -122,6 +134,7 @@ CREATE TABLE note
 (
     id INT,
     student_id INT NOT NULL,
+    teacher_id INT NOT NULL,
     note_date DATE NOT NULL,
     motivation TEXT NOT NULL,
     PRIMARY KEY(id)
@@ -156,24 +169,25 @@ CREATE TABLE mark
     course_id INT NOT NULL,
     score INT NOT NULL,
     date_mark DATE NOT NULL,
+    period_mark INT NOT NULL,
     PRIMARY KEY(id)
 );
 
 
 INSERT INTO mark
-    (id,student_id, course_id, score, date_mark)
+    (id,student_id, course_id, score, date_mark, period_mark)
 VALUES
-    (1, 1, 1, 6, '2019-9-10');
+    (1, 1, 1, 6, '2019-9-10', 1);
 
 INSERT INTO mark
-    (id,student_id, course_id, score, date_mark)
+    (id,student_id, course_id, score, date_mark, period_mark)
 VALUES
-    (2, 1, 2, 8, '2019-9-11');
+    (2, 1, 2, 8, '2019-9-11', 2);
 
 INSERT INTO mark
-    (id,student_id, course_id, score, date_mark)
+    (id,student_id, course_id, score, date_mark, period_mark)
 VALUES
-    (3, 1, 3, 10, '2019-9-12');
+    (3, 1, 3, 10, '2019-9-12', 1);
 
 -- RELATIONS
 

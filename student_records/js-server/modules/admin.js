@@ -11,10 +11,10 @@ var SESSION = require("./Auth_manager.js");
 
 var router = express.Router();
 
-router.use('/:id', function (req, res, next) {
+router.use('/:id', function(req, res, next) {
     console.log('Request URL:', req.originalUrl);
     next();
-}, function (req, res, next) {
+}, function(req, res, next) {
     console.log('Request Type:', req.method);
     next();
 });
