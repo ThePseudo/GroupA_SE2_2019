@@ -8,16 +8,7 @@ const ethereal = require("./ethereal.js");
 const app = express();
 var router = express.Router();
 
-var sessionObj = {
-    user: {
-        id: "",
-        first_name: "",
-        last_name: "",
-        cod_fisc: "",
-        email: "",
-        user_type: ""
-    }
-};
+var sessionObj = {};
 
 /* var sessionObj= session({
     secret: 'keyboard cat',
