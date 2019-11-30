@@ -9,7 +9,7 @@ const fs = require('fs');
 const https = require('https');
 const http = require('http');
 const pug = require('pug');
-const bcrypt = require('bcrypt'); 
+const bcrypt = require('bcrypt');
 const mysql = require('mysql');
 const bodyParser = require('body-parser');
 
@@ -22,12 +22,12 @@ app.use(bodyParser.json());
 
 const adminPages = require('./modules/admin.js');
 const parentPages = require('./modules/parent.js');
-const auth_router= require("./modules/Auth_manager.js");
+const auth_router = require("./modules/Auth_manager.js");
 var SESSION = auth_router.sessionData;
 
 // Constants
 const HTTPPORT = 8000;
-const HTTPSPORT = 9090;
+const HTTPSPORT = 8080;
 const HOST = '0.0.0.0';
 
 // other routers
@@ -382,7 +382,7 @@ app.post("/reg_topic", (req, res) => {
     let desc = req.body.desc;
 
     const compiledPage = pug.compileFile("pages/reg_topic.pug");
-    
+
     var con = mysql.createConnection({
         host: "localhost",
         user: "root",
