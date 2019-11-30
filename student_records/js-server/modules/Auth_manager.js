@@ -1,11 +1,6 @@
 'use strict';
 
 const express = require('express');
-const session = require('express-session');
-const fs = require('fs');
-const https = require('https');
-const http = require('http');
-const pug = require('pug');
 const bcrypt = require('bcrypt');
 const mysql = require('mysql');
 const bodyParser = require('body-parser');
@@ -13,7 +8,16 @@ const ethereal = require("./ethereal.js");
 const app = express();
 var router = express.Router();
 
-var sessionObj = {};
+var sessionObj = {
+    user: {
+        id: "",
+        first_name: "",
+        last_name: "",
+        cod_fisc: "",
+        email: "",
+        user_type: ""
+    }
+};
 
 /* var sessionObj= session({
     secret: 'keyboard cat',
