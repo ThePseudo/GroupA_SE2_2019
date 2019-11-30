@@ -14,47 +14,46 @@ const mysql = require('mysql');
 var SESSION = require("./Auth_manager.js");
 
 var router = express.Router();
-/*
-router.use('/:id/*',
-  function (req, res, next) {
-    console.log("User: " + SESSION.sessionData);
-    if (SESSION.sessionData.user.user_type != 'parent') {
-      res.redirect('/auth_router/logout')
-    }
-    next();
-  },
-  function (req, res, next) {
-    var parentID = SESSION.sessionData.user.id;
-    console.log(parentID);
-    var childID = req.params.id;
-    var con = mysql.createConnection({
-      host: "localhost",
-      user: "root",
-      password: "pwd",
-      database: "students",
-      insecureAuth: true
-    });
 
-    if (!isNaN(childID)) {
-      console.log(childID);
-      let sql = "SELECT id FROM student WHERE id = ? AND (parent_1 == ? OR parent_2 == ?)"
-      con.query(sql, [childID, parentID, parentID], (err, rows, fields) => {
-        if (err) {
-          res.end("Database problem: " + err)
-        } else {
-          if (rows.length < 1) {
-            res.end("It's not your child you're looking for, is it?");
-          }
-          else
-            next();
-        }
-      });
-    }
-    else {
-      next();
-    }
+router.use("/*", function (req, res, next) {
+  if (SESSION.sessionData.user.user_type != 'parent') {
+    res.redirect('/auth_router/logout')
+  }
+  next();
+});
+
+
+router.use('/:id/*', function (req, res, next) {
+  var parentID = SESSION.sessionData.user.id;
+  console.log(parentID);
+  var childID = req.params.id;
+  var con = mysql.createConnection({
+    host: "localhost",
+    user: "root",
+    password: "pwd",
+    database: "students",
+    insecureAuth: true
   });
-  */
+
+  if (!isNaN(childID)) {
+    let sql = "SELECT id FROM student WHERE id = ? AND (parent_1 = ? OR parent_2 = ?)"
+    con.query(sql, [childID, parentID, parentID], (err, rows, fields) => {
+      if (err) {
+        res.end("Database problem: " + err)
+      } else {
+        if (rows.length < 1) {
+          res.end("It's not your child you're looking for, is it?");
+        }
+        else
+          next();
+      }
+    });
+  }
+  else {
+    next();
+  }
+});
+
 
 router.get('/parent_home', (req, res) => {
   console.log(SESSION.sessionData);
