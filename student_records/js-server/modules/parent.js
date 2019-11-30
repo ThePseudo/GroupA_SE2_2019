@@ -1,59 +1,60 @@
+'use strict';
+
 const express = require('express');
 const pug = require('pug');
 const mysql = require('mysql');
-const session = require('express-session')
-const fs = require('fs');
-const https = require('https');
-const http = require('http');
-const bcrypt = require('bcrypt');
-const bodyParser = require('body-parser');
 
 //IMPORTO oggetto rappresentante la sessione.
-//Per accedere ->  SESSION.sessioneData
-//Per accedere a user SESSION.sessioneData.user
-//Per accedere a campo user es. SESSION.sessioneData.user.id
-//Per aggiungere campo a user SESSION.sessioneData.user.nomecampo = valore 
-//Per aggiungere campo a sessione -> SESSION.sessioneData.nomecampo = valore
-var SESSION = require("./Auth_manager.js"); 
+//Per accedere ->  SESSION.sessionData
+//Per accedere a user SESSION.sessionData.user
+//Per accedere a campo user es. SESSION.sessionData.user.id
+//Per aggiungere campo a user SESSION.sessionData.user.nomecampo = valore 
+//Per aggiungere campo a sessione -> SESSION.sessionData.nomecampo = valore
+
+var SESSION = require("./Auth_manager.js");
 
 var router = express.Router();
+/*
+router.use('/:id/*',
+  function (req, res, next) {
+    console.log("User: " + SESSION.sessionData);
+    if (SESSION.sessionData.user.user_type != 'parent') {
+      res.redirect('/auth_router/logout')
+    }
+    next();
+  },
+  function (req, res, next) {
+    var parentID = SESSION.sessionData.user.id;
+    console.log(parentID);
+    var childID = req.params.id;
+    var con = mysql.createConnection({
+      host: "localhost",
+      user: "root",
+      password: "pwd",
+      database: "students",
+      insecureAuth: true
+    });
 
-router.use('/:id', function (req, res, next) {
-  console.log('Parent request URL:', req.originalUrl);
-  next();
-}, function (req, res, next) {
-  console.log('Request Type:', req.method);
-  next();
-});
-
-
-router.get("/parent_courselist", (req, res) => {
-  const compiledPage = pug.compileFile("../pages/parent/parent_courselist.pug");
-  res.end(compiledPage());
-});
-
-//// Page not found
-// router.get('/*', (req, res) => {
-//   fs.readFile(req.path, (err, data) => {
-//       if (err) {
-//           const compiledPage = pug.compileFile("../pages/base/404.pug");
-//           res.end(compiledPage());
-//       }
-//       res.end(data);
-
-//   })
-// });
-
-// router.post('/*', (req, res) => {
-//   fs.readFile(req.path, (err, data) => {
-//       if (err) {
-//           const compiledPage = pug.compileFile("../pages/base/404.pug");
-//           res.end(compiledPage());
-//       }
-//       res.end(data);
-
-//   })
-// });
+    if (!isNaN(childID)) {
+      console.log(childID);
+      let sql = "SELECT id FROM student WHERE id = ? AND (parent_1 == ? OR parent_2 == ?)"
+      con.query(sql, [childID, parentID, parentID], (err, rows, fields) => {
+        if (err) {
+          res.end("Database problem: " + err)
+        } else {
+          if (rows.length < 1) {
+            res.end("It's not your child you're looking for, is it?");
+          }
+          else
+            next();
+        }
+      });
+    }
+    else {
+      next();
+    }
+  });
+  */
 
 router.get('/parent_home', (req, res) => {
   console.log(SESSION.sessionData);
@@ -73,48 +74,45 @@ router.get('/parent_home', (req, res) => {
     if (err) {
       res.end("There is a problem in the DB connection. Please, try again later\n" + err + "\n");
       return;
-    } 
+    }
+    console.log(rows);
+    for (var i = 0; i < rows.length; i++) {
+      var communication = {
+        id: rows[i].id,
+        text: rows[i].communication,
+        date: rows[i].comm_date
+      }
+      commlist[i] = communication;
+    }
+    //let sql = 'SELECT id,first_name,last_name FROM student';
+    con.query('SELECT id,first_name,last_name FROM student WHERE parent_1=1 OR parent_2=1', (err, rows, fields) => {
+      if (err) {
+        res.end("There is a problem in the DB connection. Please, try again later\n" + err + "\n");
+        return;
+      }
       console.log(rows);
       for (var i = 0; i < rows.length; i++) {
-        var communication = {
+        var student = {
           id: rows[i].id,
-          text: rows[i].communication,
-          date: rows[i].comm_date
+          first_name: rows[i].first_name,
+          last_name: rows[i].last_name
         }
-        commlist[i] = communication;
+        studlist[i] = student;
       }
-      //let sql = 'SELECT id,first_name,last_name FROM student';
-      con.query('SELECT id,first_name,last_name FROM student WHERE parent_1=1 OR parent_2=1', (err, rows, fields) => {
-        if (err) {
-          res.end("There is a problem in the DB connection. Please, try again later\n" + err + "\n");
-          return;
-        } 
-        console.log(rows);
-        for (var i = 0; i < rows.length; i++) {
-          var student = {
-            id: rows[i].id,
-            first_name: rows[i].first_name,
-            last_name: rows[i].last_name
-          }
-          studlist[i] = student;
-        }
-        //console.log("Data successfully uploaded! " + result.insertId);
-        con.end();
-        res.end(compiledPage({
-          communicationList: commlist,
-          studentList: studlist,
-        }));
+      //console.log("Data successfully uploaded! " + result.insertId);
+      con.end();
+      res.end(compiledPage({
+        communicationList: commlist,
+        studentList: studlist,
+      }));
 
-      });
+    });
   });
 });
 
-router.get('/register_parent', (req, res) => {
-  res.end("Hello, register parents!");
-});
-
-router.get("/marks", (req, res) => {
-  // TODO: ID SHOULD BE TAKEN FROM SESSION
+router.get(":childID/marks", (req, res) => {
+  console.log(SESSION.sessionData);
+  var childID = req.params.childID;
   var marks = [];
   var con = mysql.createConnection({
     host: "127.0.0.1",
@@ -124,14 +122,13 @@ router.get("/marks", (req, res) => {
     insecureAuth: true
   });
 
-  console.log("Connected to db");
 
   let sql = 'SELECT * FROM mark, course ' +
     'WHERE mark.course_id = course.id ' +
     'AND mark.student_id = ? ' +
     'ORDER BY mark.date_mark DESC';
 
-  con.query(sql, [1], function (err, rows, fields) {
+  con.query(sql, [childID], function (err, rows, fields) {
     if (err) {
       res.end("DB error: " + err);
     } else {
@@ -170,8 +167,10 @@ router.get("/marks", (req, res) => {
   });
 });
 
+// COURSES
 
-router.get('/show_courses', (req, res) => {
+router.get('/:childID/show_courses', (req, res) => {
+  console.log(SESSION.sessionData);
   var courses = [];
 
   var con = mysql.createConnection({
@@ -200,6 +199,53 @@ router.get('/show_courses', (req, res) => {
       });
     }
     con.end();
+  });
+});
+
+router.get('/:childid/course/:id', (req, res) => {
+  var con = mysql.createConnection({
+    host: "localhost",
+    user: "root",
+    password: "pwd",
+    database: "students",
+    insecureAuth: true
+  });
+
+  var sql = 'SELECT course_name FROM course WHERE id = ?';
+
+  con.query(sql, [req.params.id], (err, rows, fields) => {
+    if (err) {
+      res.end("DB error: " + err);
+    } else {
+      res.render('../pages/parent/parent_coursehomepage.pug', {
+        courseName: rows[0].course_name,
+        courseID: req.params.id
+      });
+    }
+  });
+});
+
+router.get('/course/:id/marks', (req, res) => {
+  var con = mysql.createConnection({
+    host: "localhost",
+    user: "root",
+    password: "pwd",
+    database: "students",
+    insecureAuth: true
+  });
+  // TODO: retrieve child from session
+
+  var sql = 'SELECT  course_name FROM course, mark WHERE course.id = ?';
+
+  con.query(sql, [req.params.id], (err, rows, fields) => {
+    if (err) {
+      res.end("DB error: " + err);
+    } else {
+      res.render('../pages/parent/parent_coursemark.pug', {
+        courseName: rows[0].course_name,
+        courseID: req.params.id
+      });
+    }
   });
 });
 

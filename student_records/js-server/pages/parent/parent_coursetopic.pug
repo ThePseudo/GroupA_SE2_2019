@@ -1,13 +1,16 @@
 //- Those variables should be in every page
-- var page = "Course topics"
+- var page = pageId
 - var loggedIn = true
 - var user = "parent"
-- var active = "Show course topics"
+- var active = ""
 
-mixin rowMark(date, desc)
+//- variables: subject, topics[] {date, description}
+
+mixin rowTopic(date, description)
   tr(class="table-row table-row-base")
     td= (date.getDate() + "/" + date.getMonth() + "/" + date.getFullYear())
-    td= desc
+    td= date
+    td= description
 
 doctype html
 html
@@ -25,5 +28,5 @@ html
             tr(class='table-row-base')
               th Date
               th Topic
-            for topic in student_topics
-              +rowMark(topic.date, topic.desc)
+            for topic in topics
+              +rowTopic(topic.date, topic.description)

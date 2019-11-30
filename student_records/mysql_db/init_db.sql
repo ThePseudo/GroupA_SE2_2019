@@ -18,6 +18,27 @@ INSERT INTO teacher
 VALUES
     (1, "Afrodite", "Venere", "AV85T", "venere85@yahoo.com", "$2a$10$0tXRERd11hkw3zKQQmFeTOAuUcMiI6/ThiMNvfMUvKmYkWkL0BRkO", 1);
 
+CREATE TABLE officer
+(
+    id INT PRIMARY KEY,
+    first_name VARCHAR(50) NOT NULL,
+    last_name VARCHAR(50) NOT NULL,
+    cod_fisc VARCHAR(20) UNIQUE NOT NULL,
+    email VARCHAR(100) NOT NULL,
+    password VARCHAR(255) NOT NULL,
+    first_access BOOLEAN NOT NULL
+);
+
+INSERT INTO officer
+    (id,first_name,last_name,cod_fisc,email,password,first_access)
+VALUES
+    (1, "Ciccio", "Pasticcio", "CP80X", "pasticcio80@gmail.com", "$2a$10$0tXRERd11hkw3zKQQmFeTOAuUcMiI6/ThiMNvfMUvKmYkWkL0BRkO", 1);
+INSERT INTO officer
+    (id,first_name,last_name,cod_fisc,email,password,first_access)
+VALUES
+    (2, "Giovanni", "PaoloSecondo", "GPS67", "gesu00@yahoo.com", "$2a$10$0tXRERd11hkw3zKQQmFeTOAuUcMiI6/ThiMNvfMUvKmYkWkL0BRkO", 1);
+
+
 CREATE TABLE parent
 (
     id INT PRIMARY KEY,
@@ -30,16 +51,9 @@ CREATE TABLE parent
 );
 
 INSERT INTO parent
-    (id,first_name,last_name,cod_fisc,email,password,first_access)
+    (id, first_name, last_name,cod_fisc,email,password, first_access)
 VALUES
-    (1, "Garga", "Mella", "GM75X", "garga.mella@yahoo.com", "GargaM75", 0);
-INSERT INTO parent
-    (id,first_name,last_name,cod_fisc,email,password,first_access)
-VALUES
-    (2, "Stella", "Luna", "SL78A", "stella.luna@yahoo.com", "StellaL78", 1);
-
-INSERT INTO parent (id, first_name, last_name,cod_fisc,email,password, first_access)
-VALUES (3,"Tizio","Caio","1111","tizio@caio.com","$2a$10$0tXRERd11hkw3zKQQmFeTOAuUcMiI6/ThiMNvfMUvKmYkWkL0BRkO",1);
+    (1, "Tizio", "Caio", "1111", "tizio@caio.com", "$2a$10$0tXRERd11hkw3zKQQmFeTOAuUcMiI6/ThiMNvfMUvKmYkWkL0BRkO", 1);
 
 CREATE TABLE student
 (
@@ -168,7 +182,7 @@ CREATE TABLE homework
     student_id INT NOT NULL,
     course_id INT NOT NULL,
     description TEXT NOT NULL,
-    date_hw DATE NOT NULL, 
+    date_hw DATE NOT NULL,
     PRIMARY KEY(id)
 );
 
@@ -241,32 +255,6 @@ INSERT INTO General_Communication
     (id,communication, comm_date)
 VALUES
     (3, "See the pdf on site", '2019-11-27');
-
-
-CREATE TABLE officer
-(
-    id INT PRIMARY KEY,
-    first_name VARCHAR(50) NOT NULL,
-    last_name VARCHAR(50) NOT NULL,
-    cod_fisc VARCHAR(20) UNIQUE NOT NULL,
-    email VARCHAR(100) NOT NULL,
-    password VARCHAR(255) NOT NULL,
-    first_access BOOLEAN NOT NULL
-);
-
-INSERT INTO officer
-    (id,first_name,last_name,cod_fisc,email,password,first_access)
-VALUES
-    (1, "Ciccio", "Pasticcio", "CP80X", "pasticcio80@gmail.com", "$2a$10$0tXRERd11hkw3zKQQmFeTOAuUcMiI6/ThiMNvfMUvKmYkWkL0BRkO", 1);
-INSERT INTO officer
-    (id,first_name,last_name,cod_fisc,email,password,first_access)
-VALUES
-    (2, "Carlo", "Magno", "CM10A", "magno10@gmail.com", "CarloM10", 0);
-
-INSERT INTO officer
-    (id,first_name,last_name,cod_fisc,email,password,first_access)
-VALUES
-    (3, "Giovanni", "PaoloSecondo", "GPS67", "gesu00@yahoo.com", "$2a$10$0tXRERd11hkw3zKQQmFeTOAuUcMiI6/ThiMNvfMUvKmYkWkL0BRkO", 1);
 
 -- FOR TORCHIANO - 12/11/19
 -- 

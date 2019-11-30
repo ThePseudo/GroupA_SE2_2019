@@ -1,3 +1,5 @@
+'use strict';
+
 const express = require('express');
 const pug = require('pug');
 
@@ -7,14 +9,15 @@ const pug = require('pug');
 //Per accedere a campo user es. SESSION.sessioneData.user.id
 //Per aggiungere campo a user SESSION.sessioneData.user.nomecampo = valore 
 //Per aggiungere campo a sessione -> SESSION.sessioneData.nomecampo = valore
-var SESSION = require("./Auth_manager.js"); 
+
+var SESSION = require("./Auth_manager.js");
 
 var router = express.Router();
 
-router.use('/:id', function(req, res, next) {
+router.use('/:id', function (req, res, next) {
     console.log('Request URL:', req.originalUrl);
     next();
-}, function(req, res, next) {
+}, function (req, res, next) {
     console.log('Request Type:', req.method);
     next();
 });
