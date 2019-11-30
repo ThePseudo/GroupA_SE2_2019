@@ -8,6 +8,14 @@ const http = require('http');
 const bcrypt = require('bcrypt');
 const bodyParser = require('body-parser');
 
+//IMPORTO oggetto rappresentante la sessione.
+//Per accedere ->  SESSION.sessioneData
+//Per accedere a user SESSION.sessioneData.user
+//Per accedere a campo user es. SESSION.sessioneData.user.id
+//Per aggiungere campo a user SESSION.sessioneData.user.nomecampo = valore 
+//Per aggiungere campo a sessione -> SESSION.sessioneData.nomecampo = valore
+var SESSION = require("./Auth_manager.js"); 
+
 var router = express.Router();
 
 router.use('/:id', function (req, res, next) {
@@ -48,16 +56,16 @@ router.get("/parent_courselist", (req, res) => {
 // });
 
 router.get('/parent_home', (req, res) => {
+  console.log(SESSION.sessionData);
   var commlist = [];
   var studlist = [];
   var con = mysql.createConnection({
-    host: "students-db",
+    host: "localhost",
     user: "root",
     password: "pwd",
     database: "students",
     insecureAuth: true
   });
-
   const compiledPage = pug.compileFile('../pages/parent/parent_homepage.pug');
 
   con.query('SELECT * FROM General_Communication', (err, rows, fields) => {
@@ -108,14 +116,15 @@ router.get('/register_parent', (req, res) => {
 router.get("/marks", (req, res) => {
   // TODO: ID SHOULD BE TAKEN FROM SESSION
   var marks = [];
-  const compiledPage = pug.compileFile("../pages/parent/parent_allmark.pug");
   var con = mysql.createConnection({
-    host: "students-db",
+    host: "127.0.0.1",
     user: "root",
     password: "pwd",
     database: "students",
     insecureAuth: true
   });
+
+  console.log("Connected to db");
 
   let sql = 'SELECT * FROM mark, course ' +
     'WHERE mark.course_id = course.id ' +
@@ -146,10 +155,10 @@ router.get("/marks", (req, res) => {
           res.end("DB error: " + err);
         } else {
           if (rows) {
-            res.end(compiledPage({
+            res.render("../pages/parent/parent_allmark.pug", {
               student_name: rows[0].first_name + " " + rows[0].last_name,
               student_marks: marks
-            }));
+            });
           }
           else {
             res.end("This student does not exist!");
@@ -163,11 +172,10 @@ router.get("/marks", (req, res) => {
 
 
 router.get('/show_courses', (req, res) => {
-  const compiledPage = pug.compileFile('../pages/parent/parent_courselist.pug');
   var courses = [];
 
   var con = mysql.createConnection({
-    host: "students-db",
+    host: "localhost",
     user: "root",
     password: "pwd",
     database: "students",
@@ -187,9 +195,9 @@ router.get('/show_courses', (req, res) => {
         }
         courses[i] = course;
       }
-      res.end(compiledPage({
+      res.render('../pages/parent/parent_courselist.pug', {
         courses: courses
-      }));
+      });
     }
     con.end();
   });
