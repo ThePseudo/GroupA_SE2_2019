@@ -148,6 +148,7 @@ router.get("/marks", (req, res) => {
   });
 });
 
+// COURSES
 
 router.get('/show_courses', (req, res) => {
   var courses = [];
@@ -178,6 +179,30 @@ router.get('/show_courses', (req, res) => {
       });
     }
     con.end();
+  });
+});
+
+router.get('/course/:id', (req, res) => {
+  console.log("Course ID: " + req.params.id);
+  var con = mysql.createConnection({
+    host: "localhost",
+    user: "root",
+    password: "pwd",
+    database: "students",
+    insecureAuth: true
+  });
+
+  var sql = 'SELECT course_name FROM course WHERE id = ?';
+
+  con.query(sql, [req.params.id], (err, rows, fields) => {
+    if (err) {
+      res.end("DB error: " + err);
+    } else {
+      res.render('../pages/parent/parent_coursehomepage.pug', {
+        courseName: rows[0].course_name,
+        courseID: req.params.id
+      });
+    }
   });
 });
 

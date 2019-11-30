@@ -1,8 +1,17 @@
 //- Those variables should be in every page
-- var page = pageId
+- var page = courseName
 - var loggedIn = true
 - var user = "parent"
 - var active = ""
+
+//- Uses variable: courseName
+
+mixin button(name, href)
+  div(class="row" style="margin: 20px")
+    div(class="col-xs-1 col-sm-4")
+    div(class="col-xs-10 col-sm-4")
+      a(href= "/parent/course/"+courseID+"/"+href class="noLinkTitle")
+        button(class="btn blockButton noLinkTitle")=name
 
 doctype html
 html
@@ -10,3 +19,11 @@ html
   body
     include ../base/navbar.pug
     include ../base/sidebar.pug
+    div(class="container")
+      div(class="row")
+        h1(class='title') #{courseName}
+      div(class="row")
+        h2(class = 'title2') What do you want to see?
+      +button("Marks", "marks")
+      +button("Topics", "topics")
+      +button("Material and homeworks", "material_homework")

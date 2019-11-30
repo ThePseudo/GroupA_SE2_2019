@@ -5,8 +5,8 @@
 - var active = "Show courses"
 
 mixin subjectButton(id, subject)
-  button(class="btn blockButton")
-    a(class='noLinkTitle' href= "/parent/courses/" + id)=subject
+  a(href= "/parent/course/"+id class="noLinkTitle")
+    button(class="btn blockButton noLinkTitle")=subject
 
 doctype html
 html
