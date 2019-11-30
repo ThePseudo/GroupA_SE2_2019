@@ -1,11 +1,13 @@
-//- Those variables should be in every page
+//- Those variables should be in every page. ALWAYS PASS childID
 - var page = "Courses"
 - var loggedIn = true
 - var user = "parent"
 - var active = "Show courses"
 
+//- Varialbes: childID
+
 mixin subjectButton(id, subject)
-  a(href= "/parent/course/"+id class="noLinkTitle")
+  a(href= "/parent/"+childID+"/course/"+id class="noLinkTitle")
     button(class="btn blockButton noLinkTitle")=subject
 
 doctype html

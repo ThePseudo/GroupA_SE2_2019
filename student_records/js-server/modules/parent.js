@@ -15,9 +15,16 @@ var SESSION = require("./Auth_manager.js");
 
 var router = express.Router();
 
-router.use("/*", function (req, res, next) {
-  if (SESSION.sessionData.user.user_type != 'parent') {
-    res.redirect('/auth_router/logout')
+router.use(/\/.*/, function (req, res, next) {
+  try {
+    if (SESSION.sessionData.user.user_type != 'parent') {
+      res.redirect('/auth_router/logout');
+      return;
+    }
+  }
+  catch (error) {
+    res.redirect("/");
+    return;
   }
   next();
 });
@@ -25,7 +32,6 @@ router.use("/*", function (req, res, next) {
 
 router.use('/:id/*', function (req, res, next) {
   var parentID = SESSION.sessionData.user.id;
-  console.log(parentID);
   var childID = req.params.id;
   var con = mysql.createConnection({
     host: "localhost",
@@ -109,8 +115,7 @@ router.get('/parent_home', (req, res) => {
   });
 });
 
-router.get(":childID/marks", (req, res) => {
-  console.log(SESSION.sessionData);
+router.get("/:childID/marks", (req, res) => {
   var childID = req.params.childID;
   var marks = [];
   var con = mysql.createConnection({
@@ -120,7 +125,6 @@ router.get(":childID/marks", (req, res) => {
     database: "students",
     insecureAuth: true
   });
-
 
   let sql = 'SELECT * FROM mark, course ' +
     'WHERE mark.course_id = course.id ' +
@@ -153,7 +157,8 @@ router.get(":childID/marks", (req, res) => {
           if (rows) {
             res.render("../pages/parent/parent_allmark.pug", {
               student_name: rows[0].first_name + " " + rows[0].last_name,
-              student_marks: marks
+              student_marks: marks,
+              childID: childID
             });
           }
           else {
@@ -169,7 +174,6 @@ router.get(":childID/marks", (req, res) => {
 // COURSES
 
 router.get('/:childID/show_courses', (req, res) => {
-  console.log(SESSION.sessionData);
   var courses = [];
 
   var con = mysql.createConnection({
@@ -194,14 +198,15 @@ router.get('/:childID/show_courses', (req, res) => {
         courses[i] = course;
       }
       res.render('../pages/parent/parent_courselist.pug', {
-        courses: courses
+        courses: courses,
+        childID: req.params.childID
       });
     }
     con.end();
   });
 });
 
-router.get('/:childid/course/:id', (req, res) => {
+router.get('/:childID/course/:id', (req, res) => {
   var con = mysql.createConnection({
     host: "localhost",
     user: "root",
@@ -218,13 +223,14 @@ router.get('/:childid/course/:id', (req, res) => {
     } else {
       res.render('../pages/parent/parent_coursehomepage.pug', {
         courseName: rows[0].course_name,
-        courseID: req.params.id
+        courseID: req.params.id,
+        childID: req.params.childID
       });
     }
   });
 });
 
-router.get('/course/:id/marks', (req, res) => {
+router.get('/:childID/course/:id/marks', (req, res) => {
   var con = mysql.createConnection({
     host: "localhost",
     user: "root",
@@ -232,21 +238,51 @@ router.get('/course/:id/marks', (req, res) => {
     database: "students",
     insecureAuth: true
   });
-  // TODO: retrieve child from session
+  // TODO: retrieve child from DB
 
-  var sql = 'SELECT  course_name FROM course, mark WHERE course.id = ?';
+  var sql = 'SELECT course_name FROM course, mark WHERE course.id = ?';
 
   con.query(sql, [req.params.id], (err, rows, fields) => {
     if (err) {
       res.end("DB error: " + err);
-    } else {
-      res.render('../pages/parent/parent_coursemark.pug', {
-        courseName: rows[0].course_name,
-        courseID: req.params.id
-      });
+      return;
     }
+    var course_name = rows[0].course_name;
+    sql = "SELECT first_name, last_name FROM student WHERE id = ?";
+    con.query(sql, [req.params.childID], (err, rows, fields) => {
+      if (err) {
+        res.end("DB error: " + err);
+        return;
+      }
+      var student_name = rows[0].first_name + " " + rows[0].last_name;
+      sql = 'SELECT date_mark, score FROM mark, course ' +
+        'WHERE mark.course_id = course.id ' +
+        'AND mark.student_id = ? ' +
+        'AND mark.course_id = ? ' +
+        'ORDER BY mark.date_mark DESC';
+      con.query(sql, [req.params.childID, req.params.id], (err, rows, fields) => {
+        if (err) {
+          res.end("DB error: " + err);
+          return;
+        }
+        var marks = [];
+        for (var i = 0; i < rows.length; ++i) {
+          var student_mark = {
+            date: rows[i].date_mark,
+            mark: rows[i].score
+          }
+          marks[i] = student_mark;
+        }
+
+        res.render('../pages/parent/parent_coursemark.pug', {
+          courseName: course_name,
+          student_name: student_name,
+          student_marks: marks,
+          childID: req.params.childID
+        });
+      });
+    });
   });
 });
-
 
 module.exports = router;
