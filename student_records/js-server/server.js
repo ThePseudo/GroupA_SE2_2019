@@ -14,7 +14,7 @@ const parentPages = require('./modules/parent.js')
 
 // Constants
 const HTTPPORT = 8000;
-const HTTPSPORT = 8080;
+const HTTPSPORT = 9090;
 const HOST = '0.0.0.0';
 
 // App
@@ -105,7 +105,59 @@ app.get("/admin/enroll_parent", (req, res) => {
     res.end(compiledPage());
 });
 
+app.get("/admin/insert_communication", (req, res) => {
+    const compiledPage = pug.compileFile("pages/officer/officer_communication.pug");
+    res.end(compiledPage());
+});
+
+app.get("/parent/course_mark", (req, res) => {
+    const compiledPage = pug.compileFile("pages/parent/parent_coursemark.pug");
+    res.end(compiledPage());
+});
+
+app.get("/parent/course_hw", (req, res) => {
+    const compiledPage = pug.compileFile("pages/parent/parent_coursehomework.pug");
+    res.end(compiledPage());
+});
+
+app.get("/parent/course_topic", (req, res) => {
+    const compiledPage = pug.compileFile("pages/parent/parent_coursetopic.pug");
+    res.end(compiledPage());
+});
+
 // TODO: make this and fix it
+
+app.post("/insert_comm", (req, res) => {
+    let desc = req.body.desc;
+
+    var con = mysql.createConnection({
+        host: "student-db",
+        user: "root",
+        password: "pwd",
+        database: "students",
+        insecureAuth: true
+    });
+    let date = new Date();
+    con.query('SELECT COUNT(*) as c FROM General_Communication', (err, rows, fields) => { // because we have no AUTO_UPDATE available on the DB
+        if (err) {
+            res.end("There is a problem in the DB connection. Please, try again later " + err);
+            return;
+        }
+        if (rows.length <= 0) {
+            res.end("Count impossible to compute");
+            return;
+        }
+        con.query("INSERT INTO teacher(id, communication, comm_date) VALUES(?, ?, ?)", [rows[0].c + 1, desc, date], (err, result) => {
+            if (err) {
+                res.end("There is a problem in the DB connection. Please, try again later " + err);
+                return;
+            }
+            console.log("Data successfully uploaded! " + result.insertId);
+            con.end();
+            res.redirect("/teachers");
+        });
+    });
+});
 
 app.post("/reg_parent", (req, res) => {
     let name = req.body.name;

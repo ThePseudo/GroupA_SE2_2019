@@ -175,6 +175,18 @@ CREATE TABLE absence
     justified BOOLEAN NOT NULL
 );
 
+-- Homework
+
+CREATE TABLE homework
+(
+    id INT UNIQUE NOT NULL,
+    student_id INT NOT NULL,
+    course_id INT NOT NULL,
+    description TEXT NOT NULL,
+    date_hw DATE NOT NULL, 
+    PRIMARY KEY(id)
+);
+
 -- Marks
 
 CREATE TABLE mark

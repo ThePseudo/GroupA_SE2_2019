@@ -1,1 +1,29 @@
+//- Those variables should be in every page
+- var page = "Course homeworks"
+- var loggedIn = true
+- var user = "parent"
+- var active = "Show course homeworks"
 
+mixin rowMark(date, desc)
+  tr(class="table-row table-row-base")
+    td= (date.getDate() + "/" + date.getMonth() + "/" + date.getFullYear())
+    td= desc
+
+doctype html
+html
+  include ../base/head.pug
+  body
+    include ../base/navbar.pug
+    include ../base/sidebar.pug
+    div(class='container')
+      div(class='row')
+        h1(class='title') #{student_name}'s #{course} homeworks
+      div(class='row')
+        div(class="col-lg-3 col-sm-2 col-xs-1")
+        div(class="col-lg-6 col-sm-8 col-xs-10" style='align-content:center;')
+          table(style="width:100%; text-align:center; align-content:center" class="table table-bordered")
+            tr(class='table-row-base')
+              th Date
+              th Homework
+            for hw in student_hws
+              +rowMark(hw.date, hw.desc)
