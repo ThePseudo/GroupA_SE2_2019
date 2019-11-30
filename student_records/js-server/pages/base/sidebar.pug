@@ -1,4 +1,4 @@
-// - Variables used: "user", "active"
+// - Variables used: "user", "active", "childID"
 // - User can be admin, teacher, sysadmin or parent
 
 mixin sidebar_item(link, text)
@@ -25,8 +25,15 @@ div(class='sidebar')
     +sidebar_item("/sysadmin/register_teacher", "Register teacher")
     +sidebar_item("/sysadmin/register_principal", "Register principal")
   else if(user=="parent")
-    +sidebar_item("/parent/choose_student", "Choose student")
-    +sidebar_item("/parent/show_courses", "Show courses")
-    +sidebar_item("/parent/time_table", "Time table")
-    +sidebar_item("/parent/notes", "Notes and absences")
-    +sidebar_item("/parent/marks", "Show all marks")
+    a(class='active-sidebar-item' style="background:#ffc999;")
+    a(class='active-sidebar-item' style="background:#ffc999; text-align:center; padding-right:10px;") Welcome, parent
+    a(class='active-sidebar-item' style="background:#ffc999;")
+    +sidebar_item("/parent/parent_home", "Choose student")
+    +sidebar_item("/parent/"+childID+"/show_courses", "Show courses")
+    +sidebar_item("/parent/"+childID+"/time_table", "Time table")
+    +sidebar_item("/parent/"+childID+"/notes", "Notes and absences")
+    +sidebar_item("/parent/"+childID+"/marks", "Show all marks")
+  +small_item("/logout", "Logout")
+
+script
+  include scripts.js
