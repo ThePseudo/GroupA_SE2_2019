@@ -12,7 +12,7 @@ html
         h1(class='title') INSERT NEW PASSWORD
       div(class='row')
         h2(class = 'title2') Please, insert here a new password
-        h2(class = 'err_msg')= err_msg
+        h2(class = 'err_msg') &nbsp #{err_msg}
       //- Parametric form
       form(action='/auth_router/change_pwd' method="POST") 
         div(class='row')

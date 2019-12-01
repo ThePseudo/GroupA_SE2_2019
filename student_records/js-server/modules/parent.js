@@ -15,7 +15,10 @@ var SESSION = require("./Auth_manager.js");
 
 var router = express.Router();
 
-router.use("/*", function (req, res, next) {
+router.get("/*", function (req, res, next) {
+  if(SESSION.sessionData=={}){
+    res.redirect('/');
+  }
   if (SESSION.sessionData.user.user_type != 'parent') {
     res.redirect('/auth_router/logout')
   }

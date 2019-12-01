@@ -72,25 +72,21 @@ function manageCollaborator(con, user_info, response) {
 }
 
 router.get('/login_parent', (req, res) => {
-    console.log(req.session);
-    console.log(sessionObj);
     if (sessionObj.user)
-        res.redirect("/parent/parent_home");
+        res.redirect("/" + sessionObj.user.user_type + "/" + sessionObj.user.user_type +"_home");
     res.render("../pages/login_parent.pug");
 });
 
 router.get('/login_teacher', (req, res) => {
     console.log(sessionObj);
     if (sessionObj.user)
-        res.redirect("/parent/teacher_home");
+        res.redirect("/" + sessionObj.user.user_type + "/" + sessionObj.user.user_type +"_home");
     res.render("../pages/login_teacher.pug");
 });
 
 router.get('/login_collaborator', (req, res) => {
-    if (sessionObj.user) {
-        let redirect_route = "/" + sessionObj.user.user_type + "/" + sessionObj.user.user_type + "_home";
-        res.redirect(redirect_route);
-    }
+    if (sessionObj.user) 
+        res.redirect("/" + sessionObj.user.user_type + "/" + sessionObj.user.user_type +"_home");
     res.render("../pages/login_officer.pug");
 });
 
@@ -118,14 +114,28 @@ router.route('/login')
             con.query(sql, (err, result) => {
                 if (result.length > 0) {
                     console.log("OK USER");
-                    if (user_type == 'parent' && !result[0].first_access) {
+                    
+                    //Se sono primo access, vengo reindirizzato per il cambio password
+                    if (!result[0].first_access) {
                         console.log("ok primo accesso");
                         con.end();
-                        //TODO: function send email
-                        ethereal.mail_handler(result[0]);
-                        res.end();
+                        if(password == result[0].password){ //non uso la funzione di verifica hash perchè ho una stringa normale temporanea  
+                            setup_session_var(user_type, result[0]);
+                            
+                            // Da mettere in enroll function ! (Fede) 
+                            //invece di resut[0], passare cod_fisc e password
+                            //Prototipo funzione function (first_name,last_name,username,email,tmp_pwd,user_type)
+                            ethereal.mail_handler(result[0].first_name,result[0].last_name, result[0].cod_fisc, result[0].email, result[0].password, user_type);
+                            
+                            //-------
+                            res.redirect("/change_pwd");
+                        }
+                        else res.render(render_path, { err_msg: 'Incorrect Username and/or Password!' });
+
                         return;
                     }
+
+                    //------------------------
                     //The cod_fisc exists in the DB, now check the password
                     if (bcrypt.compareSync(password, result[0].password)) {
                         console.log("OK PWD");
@@ -174,10 +184,11 @@ router.route('/change_pwd').get((req, res) => {
         console.log("TRY CONNECT");
         var con = DB_open_connection();
         bcrypt.hash(password, 10).then(function (hash) {
-            con.query('UPDATE parent SET password = ? WHERE id = ?', [hash, sessionObj.user.id], function (err, result) {
-                if (error) console.log(err);
+            con.query('UPDATE parent SET password = ? WHERE id = ?', [hash, sessionObj.user.cof_fisc], function (err, result) {
+                if (err) console.log(err);
             });
         });
+
     }
 });
 

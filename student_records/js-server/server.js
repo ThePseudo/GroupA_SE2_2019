@@ -23,7 +23,6 @@ app.use(bodyParser.json());
 const adminPages = require('./modules/admin.js');
 const parentPages = require('./modules/parent.js');
 const auth_router = require("./modules/Auth_manager.js");
-var SESSION = auth_router.sessionData;
 
 // Constants
 const HTTPPORT = 8000;
@@ -39,6 +38,7 @@ module.exports = function (app) {
 app.use('/admin', adminPages);
 app.use('/parent', parentPages);
 app.use('/auth_router', auth_router);
+var SESSION = auth_router.sessionData;
 
 const options = {
     key: fs.readFileSync("./certs/localhost.key"),
@@ -47,6 +47,8 @@ const options = {
 
 // Main page
 app.get('/', (req, res) => {
+    if (SESSION != undefined) 
+        res.redirect("/" + sessionData.user.user_type + "/" + sessionData.user.user_type +"_home");
     const compiledPage = pug.compileFile("pages/home.pug");
     res.end(compiledPage());
 });
