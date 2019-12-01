@@ -169,7 +169,7 @@ router.route('/login')
     });
 
 router.get('/logout', (req, res) => {
-    sessionObj = null;
+    sessionObj = {};
     console.log(sessionObj);
     res.redirect('/'); //ritorno alla root (qui è la homepage)
 });
@@ -187,7 +187,7 @@ router.route('/change_pwd').get((req, res) => {
     else {
         console.log("TRY CONNECT");
         var con = DB_open_connection();
-        let hash =  hash = bcrypt.hashSync(password, 10);
+        let hash =bcrypt.hashSync(password, 10);
         con.query('UPDATE parent SET password = ?, first_access=? WHERE id = ?', [hash, 1, sessionObj.user.cof_fisc], function (err, result) {
                 if (err) console.log(err);
         });

@@ -46,6 +46,7 @@ const options = {
 };
 
 // Main page
+
 app.get('/', (req, res) => {
    /* if (auth_router.sessionData.user) 
         res.redirect("/" + auth_router.sessionData.user.user_type + "/" + auth_router.sessionData .user.user_type +"_home");
