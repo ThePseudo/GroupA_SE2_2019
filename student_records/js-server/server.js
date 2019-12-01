@@ -27,7 +27,7 @@ var SESSION = auth_router.sessionData;
 
 // Constants
 const HTTPPORT = 8000;
-const HTTPSPORT = 9090;
+const HTTPSPORT = 8080;
 const HOST = '0.0.0.0';
 
 // other routers
