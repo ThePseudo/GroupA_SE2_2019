@@ -25,8 +25,11 @@ var router = express.Router();
     console.log(user_t);
     res.redirect('/'+ user_t + "/" + user_t + "_home");
   }
-  console.log("ok sono loggato e sono parent");
-  else next();
+  
+  else {
+    console.log("ok sono loggato e sono parent");
+    next();
+  }
 });
 
  /*  router.all("/*", function (req, res, next) {

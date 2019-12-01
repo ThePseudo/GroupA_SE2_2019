@@ -84,7 +84,7 @@ router.get('/login_teacher', (req, res) => {
     if (sessionObj==null)
         res.redirect("/" + sessionObj.user.user_type + "/" + sessionObj.user.user_type +"_home");
     console.log("Non sono loggato e voglio essere teacher");
-    es.render("../pages/login_teacher.pug");
+    res.render("../pages/login_teacher.pug");
 });
 
 router.get('/login_collaborator', (req, res) => {
