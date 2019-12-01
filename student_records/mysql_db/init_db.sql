@@ -164,6 +164,18 @@ CREATE TABLE topic
     PRIMARY KEY(id, topic_date, id_class, id_course)
 );
 
+INSERT INTO topic
+    (id, topic_date, id_class, id_course, description)
+VALUES(1, "2019-09-30", 1, 1, "Monoms");
+
+INSERT INTO topic
+    (id, topic_date, id_class, id_course, description)
+VALUES(2, "2019-09-29", 2, 1, "Monoms");
+
+INSERT INTO topic
+    (id, topic_date, id_class, id_course, description)
+VALUES(3, "2019-09-30", 2, 1, "Polynoms");
+
 CREATE TABLE absence
 (
     id INT PRIMARY KEY,
@@ -255,40 +267,3 @@ INSERT INTO General_Communication
     (id,communication, comm_date)
 VALUES
     (3, "See the pdf on site", '2019-11-27');
-
--- FOR TORCHIANO - 12/11/19
--- 
--- CREATE TABLE states
--- (
---     code VARCHAR(2) PRIMARY KEY,
---     taxes INT NOT NULL
--- );
--- 
--- 
--- INSERT INTO states
--- VALUES('UT', 685);
--- INSERT INTO states
--- VALUES('NV', 800);
--- INSERT INTO states
--- VALUES('TX', 625);
--- INSERT INTO states
--- VALUES('AL', 400);
--- INSERT INTO states
--- VALUES('CA', 825);
--- 
--- CREATE TABLE discounts
--- (
---     threshold INT PRIMARY KEY,
---     discount INT NOT NULL
--- );
--- 
--- INSERT INTO discounts
--- VALUES(1000, 3);
--- INSERT INTO discounts
--- VALUES(5000, 5);
--- INSERT INTO discounts
--- VALUES(7000, 7);
--- INSERT INTO discounts
--- VALUES(10000, 10);
--- INSERT INTO discounts
--- VALUES(50000, 15);

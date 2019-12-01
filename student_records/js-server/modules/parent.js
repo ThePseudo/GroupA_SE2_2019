@@ -116,6 +116,7 @@ router.get('/parent_home', (req, res) => {
 });
 
 router.get("/:childID/marks", (req, res) => {
+  var fullName = SESSION.sessionData.user.first_name + " " + SESSION.sessionData.user.last_name;
   var childID = req.params.childID;
   var marks = [];
   var con = mysql.createConnection({
@@ -158,7 +159,8 @@ router.get("/:childID/marks", (req, res) => {
             res.render("../pages/parent/parent_allmark.pug", {
               student_name: rows[0].first_name + " " + rows[0].last_name,
               student_marks: marks,
-              childID: childID
+              childID: childID,
+              fullName: fullName
             });
           }
           else {
@@ -175,7 +177,7 @@ router.get("/:childID/marks", (req, res) => {
 
 router.get('/:childID/show_courses', (req, res) => {
   var courses = [];
-
+  var fullName = SESSION.sessionData.user.first_name + " " + SESSION.sessionData.user.last_name;
   var con = mysql.createConnection({
     host: "localhost",
     user: "root",
@@ -199,7 +201,8 @@ router.get('/:childID/show_courses', (req, res) => {
       }
       res.render('../pages/parent/parent_courselist.pug', {
         courses: courses,
-        childID: req.params.childID
+        childID: req.params.childID,
+        fullName: fullName
       });
     }
     con.end();
@@ -207,6 +210,7 @@ router.get('/:childID/show_courses', (req, res) => {
 });
 
 router.get('/:childID/course/:id', (req, res) => {
+  var fullName = SESSION.sessionData.user.first_name + " " + SESSION.sessionData.user.last_name;
   var con = mysql.createConnection({
     host: "localhost",
     user: "root",
@@ -224,13 +228,17 @@ router.get('/:childID/course/:id', (req, res) => {
       res.render('../pages/parent/parent_coursehomepage.pug', {
         courseName: rows[0].course_name,
         courseID: req.params.id,
-        childID: req.params.childID
+        childID: req.params.childID,
+        fullName: fullName
       });
     }
   });
 });
 
+/// course marks
+
 router.get('/:childID/course/:id/marks', (req, res) => {
+  var fullName = SESSION.sessionData.user.first_name + " " + SESSION.sessionData.user.last_name;
   var con = mysql.createConnection({
     host: "localhost",
     user: "root",
@@ -238,9 +246,8 @@ router.get('/:childID/course/:id/marks', (req, res) => {
     database: "students",
     insecureAuth: true
   });
-  // TODO: retrieve child from DB
 
-  var sql = 'SELECT course_name FROM course, mark WHERE course.id = ?';
+  var sql = 'SELECT course_name FROM course WHERE course.id = ?';
 
   con.query(sql, [req.params.id], (err, rows, fields) => {
     if (err) {
@@ -278,7 +285,67 @@ router.get('/:childID/course/:id/marks', (req, res) => {
           courseName: course_name,
           student_name: student_name,
           student_marks: marks,
-          childID: req.params.childID
+          childID: req.params.childID,
+          fullName: fullName
+        });
+      });
+    });
+  });
+});
+
+// course topics
+
+router.get('/:childID/course/:id/topics', (req, res) => {
+  var fullName = SESSION.sessionData.user.first_name + " " + SESSION.sessionData.user.last_name;
+  var con = mysql.createConnection({
+    host: "localhost",
+    user: "root",
+    password: "pwd",
+    database: "students",
+    insecureAuth: true
+  });
+
+  var sql = 'SELECT course_name FROM course WHERE course.id = ?';
+
+  con.query(sql, [req.params.id], (err, rows, fields) => {
+    if (err) {
+      res.end("DB error: " + err);
+      return;
+    }
+    var course_name = rows[0].course_name;
+    sql = "SELECT first_name, last_name, class_id FROM student WHERE id = ?";
+    con.query(sql, [req.params.childID], (err, rows, fields) => {
+      if (err) {
+        res.end("DB error: " + err);
+        return;
+      }
+      var student_name = rows[0].first_name + " " + rows[0].last_name;
+      var classID = rows[0].class_id;
+      sql = 'SELECT topic_date, description FROM topic, course ' +
+        'WHERE topic.id_course = course.id ' +
+        'AND topic.id_class = ? ' +
+        'AND topic.id_course = ? ' +
+        'ORDER BY topic.topic_date DESC';
+      con.query(sql, [classID, req.params.id], (err, rows, fields) => {
+        if (err) {
+          res.end("DB error: " + err);
+          return;
+        }
+        var topics = [];
+        for (var i = 0; i < rows.length; ++i) {
+          var topic = {
+            date: rows[i].topic_date,
+            description: rows[i].description
+          }
+          topics[i] = topic;
+        }
+
+        res.render('../pages/parent/parent_coursetopic.pug', {
+          courseName: course_name,
+          student_name: student_name,
+          topics: topics,
+          childID: req.params.childID,
+          fullName: fullName
         });
       });
     });

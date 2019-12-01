@@ -1,5 +1,5 @@
-//- Those variables should be in every page. ALWAYS PASS childID
-- var page = pageId
+//- Those variables should be in every page. ALWAYS PASS childID, fullName
+- var page = "Course topics"
 - var loggedIn = true
 - var user = "parent"
 - var active = ""
@@ -8,9 +8,8 @@
 
 mixin rowTopic(date, description)
   tr(class="table-row table-row-base")
-    td= (date.getDate() + "/" + date.getMonth() + "/" + date.getFullYear())
-    td= date
-    td= description
+    td(style="width: 30%;")= (date.getDate() + "/" + (date.getMonth()+1) + "/" + date.getFullYear())
+    td(style="width: 70%; text-align: left; padding-left: 20px;")= description
 
 doctype html
 html
@@ -22,8 +21,8 @@ html
       div(class='row')
         h1(class='title') #{student_name}'s #{course} topics
       div(class='row')
-        div(class="col-lg-3 col-sm-2 col-xs-1")
-        div(class="col-lg-6 col-sm-8 col-xs-10" style='align-content:center;')
+        div(class="col-lg-2 col-sm-2")
+        div(class="col-lg-8 col-sm-12 col-xs-12" style='align-content:center;')
           table(style="width:100%; text-align:center; align-content:center" class="table table-bordered")
             tr(class='table-row-base')
               th Date
