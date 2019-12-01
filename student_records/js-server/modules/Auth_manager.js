@@ -42,6 +42,7 @@ function setup_session_var(user_type, user_info) {
     sessionObj.user.cod_fisc = user_info.cod_fisc;
     sessionObj.user.email = user_info.email;
     sessionObj.user.user_type = user_type;
+    sessionObj.user.first_access = user_info.first_access;
 }
 
 function manageCollaborator(con, user_info, response) {
@@ -72,16 +73,18 @@ function manageCollaborator(con, user_info, response) {
 }
 
 router.get('/login_parent', (req, res) => {
-    if (sessionObj.user)
+    if (sessionObj!=null && sessionObj.user.first_access)
         res.redirect("/" + sessionObj.user.user_type + "/" + sessionObj.user.user_type +"_home");
+    console.log("non sono loggato e voglio essere teacher");
     res.render("../pages/login_parent.pug");
 });
 
 router.get('/login_teacher', (req, res) => {
     console.log(sessionObj);
-    if (sessionObj.user)
+    if (sessionObj==null)
         res.redirect("/" + sessionObj.user.user_type + "/" + sessionObj.user.user_type +"_home");
-    res.render("../pages/login_teacher.pug");
+    console.log("Non sono loggato e voglio essere teacher");
+    es.render("../pages/login_teacher.pug");
 });
 
 router.get('/login_collaborator', (req, res) => {
@@ -128,7 +131,7 @@ router.route('/login')
                             ethereal.mail_handler(result[0].first_name,result[0].last_name, result[0].cod_fisc, result[0].email, result[0].password, user_type);
                             
                             //-------
-                            res.redirect("/change_pwd");
+                            res.redirect("/auth_router/change_pwd");
                         }
                         else res.render(render_path, { err_msg: 'Incorrect Username and/or Password!' });
 
@@ -166,7 +169,7 @@ router.route('/login')
     });
 
 router.get('/logout', (req, res) => {
-    sessionObj = {};
+    sessionObj = null;
     console.log(sessionObj);
     res.redirect('/'); //ritorno alla root (qui è la homepage)
 });
@@ -175,6 +178,7 @@ router.get('/logout', (req, res) => {
 router.route('/change_pwd').get((req, res) => {
     res.render("../pages/change_pwd.pug");
 }).post((req, res) => {
+    res.render("../pages/change_pwd.pug");
     var password = req.body.password;
     //Check if password field are filled
     if (!password) {
@@ -183,15 +187,29 @@ router.route('/change_pwd').get((req, res) => {
     else {
         console.log("TRY CONNECT");
         var con = DB_open_connection();
-        bcrypt.hash(password, 10).then(function (hash) {
-            con.query('UPDATE parent SET password = ? WHERE id = ?', [hash, sessionObj.user.cof_fisc], function (err, result) {
+        let hash =  hash = bcrypt.hashSync(password, 10);
+        con.query('UPDATE parent SET password = ?, first_access=? WHERE id = ?', [hash, 1, sessionObj.user.cof_fisc], function (err, result) {
                 if (err) console.log(err);
-            });
         });
 
+        console.log("qui");
+        con.end();
+        res.redirect("/"+ sessionObj.user.user_type + "/" + sessionObj.user.user_type + "_login");
     }
 });
 
 
 module.exports = router; //esporto handler delle route in questo modulo
 module.exports.sessionData = sessionObj;
+
+module.exports.sessionChecker = function(response,next){
+    console.log("check session login");
+    if(sessionObj==null)response.redirect("/");
+    else next();
+}
+module.exports.userChecker = function(user_type,response){
+    console.log("check user");
+    if(sessionObj.user.user_type != user_type)
+        response.redirect("/" + user_type + "/" + user_type +"_home");
+    else next();
+}

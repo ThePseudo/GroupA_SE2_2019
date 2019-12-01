@@ -47,9 +47,9 @@ const options = {
 
 // Main page
 app.get('/', (req, res) => {
-    if (SESSION != undefined) 
-        res.redirect("/" + sessionData.user.user_type + "/" + sessionData.user.user_type +"_home");
-    const compiledPage = pug.compileFile("pages/home.pug");
+   /* if (auth_router.sessionData.user) 
+        res.redirect("/" + auth_router.sessionData.user.user_type + "/" + auth_router.sessionData .user.user_type +"_home");
+ */    const compiledPage = pug.compileFile("pages/home.pug");
     res.end(compiledPage());
 });
 
