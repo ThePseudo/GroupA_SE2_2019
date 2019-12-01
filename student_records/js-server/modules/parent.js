@@ -115,6 +115,9 @@ router.get('/parent_home', (req, res) => {
   });
 });
 
+
+// ALL MARKS
+
 router.get("/:childID/marks", (req, res) => {
   var fullName = SESSION.sessionData.user.first_name + " " + SESSION.sessionData.user.last_name;
   var childID = req.params.childID;
@@ -229,7 +232,7 @@ router.get('/:childID/course/:id', (req, res) => {
         courseName: rows[0].course_name,
         courseID: req.params.id,
         childID: req.params.childID,
-        fullName: fullName
+        fullName: fullName,
       });
     }
   });
@@ -285,7 +288,8 @@ router.get('/:childID/course/:id/marks', (req, res) => {
           student_name: student_name,
           student_marks: marks,
           childID: req.params.childID,
-          fullName: fullName
+          fullName: fullName,
+          courseID: req.params.id
         });
       });
     });
@@ -343,7 +347,8 @@ router.get('/:childID/course/:id/topics', (req, res) => {
           student_name: student_name,
           topics: topics,
           childID: req.params.childID,
-          fullName: fullName
+          fullName: fullName,
+          courseID: req.params.id
         });
       });
     });
@@ -401,7 +406,8 @@ router.get('/:childID/course/:id/material_homework', (req, res) => {
           student_name: student_name,
           student_hws: homeworks,
           childID: req.params.childID,
-          fullName: fullName
+          fullName: fullName,
+          courseID: req.params.id
         });
       });
     });
