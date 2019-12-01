@@ -4,7 +4,7 @@
 - var user = "parent"
 - var active = ""
 
-//- variables: subject, topics[] {date, description}
+//- variables: courseName, topics[] {date, description}
 
 mixin rowTopic(date, description)
   tr(class="table-row table-row-base")
@@ -19,7 +19,7 @@ html
     include ../base/sidebar.pug
     div(class='container')
       div(class='row')
-        h1(class='title') #{student_name}'s #{course} topics
+        h1(class='title') #{student_name}'s #{courseName} topics
       div(class='row')
         div(class="col-lg-2 col-sm-2")
         div(class="col-lg-8 col-sm-12 col-xs-12" style='align-content:center;')
