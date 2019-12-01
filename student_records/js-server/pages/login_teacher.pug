@@ -1,0 +1,33 @@
+// - Those variables should be in every page
+- var page = "Teacher " + " login";
+- var loggedIn = false;
+
+doctype html
+html
+  include base/head.pug
+  body
+    include base/navbar.pug
+    div(class='container')
+      div(class='row')
+        h1(class='title') LOGIN 
+      div(class='row')
+        h2(class = 'title2') Please, sign in
+        h2(class = 'err_msg')= err_msg
+      //- Parametric form
+      form(action='/auth_router/login' method="POST") 
+        div(class='row')
+          div(class='col-sm-3')
+          div(class='col-sm-6')
+            div(class='form-group')
+              label(for='cod_fisc') SSN:
+              input(type="text" class='form-control' id='cod_fisc' name="cod_fisc")
+        div(class='row')
+          div(class='col-sm-3')
+          div(class='col-sm-6')
+            div(class='form-group')
+              label(for='password') Password:
+              input(type="password" class='form-control' id='password' name="password")
+        div(class='row')
+          div(class='col-sm-7')
+          div(class='col-sm-2')
+            input(type='SUBMIT' value='teacher' name='user_type' class='btn blockButton' style='margin-top: 24px; padding: 6px 10px; margin-left:25%; width: 75%;')

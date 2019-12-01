@@ -7,19 +7,27 @@ mixin sidebar_item(link, text)
   else
     a(class='sidebar-item' href=link)= text
 
-div(class='sidebar')
+mixin small_item(link, text)
+  a(class='sidebar-item smallLogout hidden-sm hidden-md hidden-lg ' href=link)
+    span(class= 'glyphicon glyphicon-log-out')= ' ' + text
+
+div(class='sidebar' id='sidebar')
   if(user=="admin")
     a(class='active-sidebar-item' style="background:#ffc999;")
     a(class='active-sidebar-item' style="background:#ffc999; text-align:center; padding-right:10px;") Admin
     a(class='active-sidebar-item' style="background:#ffc999; text-align:center; padding-right:10px;") #{fullName}
     a(class='active-sidebar-item' style="background:#ffc999;")
     +sidebar_item("/admin/parents", "Manage parents")
-    +sidebar_item("/admin/enroll", "Enroll student")
-    +sidebar_item("/admin/register_parent", "Register parent")
+    +sidebar_item("/admin/enroll_student", "Enroll student")
+    +sidebar_item("/admin/enroll_parent", "Register parent")
     +sidebar_item("/admin/insert_communication", "Insert communication")
     +sidebar_item("/admin/time_table", "Time table composition")
     +sidebar_item("/admin/class", "Class composition")
   else if(user=="teacher")
+    a(class='active-sidebar-item' style="background:#ffc999;")
+    a(class='active-sidebar-item' style="background:#ffc999; text-align:center; padding-right:10px;") Teacher
+    a(class='active-sidebar-item' style="background:#ffc999; text-align:center; padding-right:10px;") #{fullName}
+    a(class='active-sidebar-item' style="background:#ffc999;")
     +sidebar_item("/topics", "Insert daily topic")
   else if(user=="sysadmin")
     +sidebar_item("/sysadmin/register_officer", "Register officer")

@@ -1,1 +1,60 @@
+//- Those variables should be in every page
+- var page = "Choose student"
+- var loggedIn = true
+- var user = "parent"
+- var active = "Choose student"
 
+//- Inputs: number of students (numStudents) + list of students (studentList)
+
+- var studentsLeft = numStudents
+
+mixin studentBtn(studentList)
+
+  div(class="container-fluid")
+  table(class='table')
+    tr
+      for student in studentList
+        td
+          a(class='noLinkTitle button' href = student.id+'/show_courses')
+            button(class='btn blockButton')
+              div              
+                img(src= '../../images/child.png' style='width:50px;height:50px;')
+                text= student.first_name + " " + student.last_name
+
+
+
+
+  //- div(class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups" margin="50px")
+  //-   div(class="btn-group" role="group" aria-label="First group" margin="50px")
+  //-     for student in studentList
+  //-       a(class='noLinkTitle button' href = 'parent_courselist')
+  //-         button(class='btn blockButton_child') 
+  //-           img(src= '../../images/child.png' style='width:50px;height:50px;')
+  //-           td= student.first_name + " " + student.last_name
+
+doctype html
+html
+  include ../base/head.pug
+  body
+    include ../base/navbar.pug
+    div(class="container")
+      div(class='row')
+        h1(class='title') Choose student
+      div(class='row')
+        h2(class = 'title2') Who do you want to know about?
+      div(class='row')
+        +studentBtn(studentList)
+
+    div(class="container")
+      div(class='row')
+        h1(class='title') General Communication
+        table(class='table')
+          tr(class='table-row-base')
+            th Id Communication
+            th Date
+            th Object
+          each comm in communicationList
+            tr
+              td #{comm.id}
+              td #{comm.date}
+              td #{comm.text}

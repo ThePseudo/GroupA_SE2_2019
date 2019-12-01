@@ -1,6 +1,17 @@
+'use strict';
+
 const express = require('express');
 const pug = require('pug');
 const mysql = require('mysql');
+
+//IMPORTO oggetto rappresentante la sessione.
+//Per accedere ->  SESSION.sessionData
+//Per accedere a user SESSION.sessionData.user
+//Per accedere a campo user es. SESSION.sessionData.user.id
+//Per aggiungere campo a user SESSION.sessionData.user.nomecampo = valore 
+//Per aggiungere campo a sessione -> SESSION.sessionData.nomecampo = valore
+
+var SESSION = require("./Auth_manager.js");
 
 var router = express.Router();
 
@@ -46,18 +57,62 @@ router.use('/:id/*', function (req, res, next) {
   }
   else {
     next();
-  });
+  }
+});
 
-router.get('/choose_student', (req, res) => {
-  const compiledPage = pug.compileFile('../pages/parent/choose_student.pug');
-  res.end(compiledPage({
-    numStudents: 3,
-    studentList: [
-      'Marco Pecoraro',
-      'Giulio Pecoraro',
-      'Luigia Pecoraro'
-    ]
-  }));
+
+router.get('/parent_home', (req, res) => {
+  console.log(SESSION.sessionData);
+  var commlist = [];
+  var studlist = [];
+  var con = mysql.createConnection({
+    host: "localhost",
+    user: "root",
+    password: "pwd",
+    database: "students",
+    insecureAuth: true
+  });
+  const compiledPage = pug.compileFile('../pages/parent/parent_homepage.pug');
+
+  con.query('SELECT * FROM General_Communication', (err, rows, fields) => {
+
+    if (err) {
+      res.end("There is a problem in the DB connection. Please, try again later\n" + err + "\n");
+      return;
+    }
+    console.log(rows);
+    for (var i = 0; i < rows.length; i++) {
+      var communication = {
+        id: rows[i].id,
+        text: rows[i].communication,
+        date: rows[i].comm_date
+      }
+      commlist[i] = communication;
+    }
+    //let sql = 'SELECT id,first_name,last_name FROM student';
+    con.query('SELECT id,first_name,last_name FROM student WHERE parent_1=1 OR parent_2=1', (err, rows, fields) => {
+      if (err) {
+        res.end("There is a problem in the DB connection. Please, try again later\n" + err + "\n");
+        return;
+      }
+      console.log(rows);
+      for (var i = 0; i < rows.length; i++) {
+        var student = {
+          id: rows[i].id,
+          first_name: rows[i].first_name,
+          last_name: rows[i].last_name
+        }
+        studlist[i] = student;
+      }
+      //console.log("Data successfully uploaded! " + result.insertId);
+      con.end();
+      res.end(compiledPage({
+        communicationList: commlist,
+        studentList: studlist,
+      }));
+
+    });
+  });
 });
 
 router.get("/:childID/marks", (req, res) => {
@@ -89,39 +144,30 @@ router.get("/:childID/marks", (req, res) => {
           mark: rows[i].score
         }
 
-        router.get("/marks", (req, res) => {
-          var marks = [];
-          var student_name; // todo: retrieve from db
-          const compiledPage = pug.compileFile("pages/student_marks.pug");
-          var con = mysql.createConnection({
-            host: "students-db",
-            user: "root",
-            password: "pwd",
-            database: "students",
-            insecureAuth: true
-          });
+        // Add object into array
+        marks[i] = mark;
+      }
 
-          let sql = 'SELECT * FROM mark, course WHERE mark.course_id = course.id ORDER BY date_mark DESC';
+      sql = "SELECT first_name, last_name FROM student WHERE id = ?"
 
-          con.query(sql, function (err, rows, fields) {
-            con.end();
-            if (err) {
-              res.end("There is a problem in the DB connection. Please, try again later");
-            } else {
-              if (rows) {
-                res.render("../pages/parent/parent_allmark.pug", {
-                  student_name: rows[0].first_name + " " + rows[0].last_name,
-                  student_marks: marks,
-                  childID: childID
-                });
-              }
-              else {
-                res.end("This student does not exist!");
-              }
-            }
-            con.end();
-          });
+      con.query(sql, [1], function (err, rows, fields) {
+        if (err) {
+          res.end("DB error: " + err);
+        } else {
+          if (rows) {
+            res.render("../pages/parent/parent_allmark.pug", {
+              student_name: rows[0].first_name + " " + rows[0].last_name,
+              student_marks: marks,
+              childID: childID
+            });
+          }
+          else {
+            res.end("This student does not exist!");
+          }
         }
+        con.end();
+      });
+    }
   });
 });
 

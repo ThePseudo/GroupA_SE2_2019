@@ -1,5 +1,16 @@
+'use strict';
+
 const express = require('express');
 const pug = require('pug');
+
+//IMPORTO oggetto rappresentante la sessione.
+//Per accedere ->  SESSION.sessioneData
+//Per accedere a user SESSION.sessioneData.user
+//Per accedere a campo user es. SESSION.sessioneData.user.id
+//Per aggiungere campo a user SESSION.sessioneData.user.nomecampo = valore 
+//Per aggiungere campo a sessione -> SESSION.sessioneData.nomecampo = valore
+
+var SESSION = require("./Auth_manager.js");
 
 var router = express.Router();
 
