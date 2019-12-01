@@ -262,9 +262,8 @@ router.get('/:childID/course/:id/marks', (req, res) => {
         return;
       }
       var student_name = rows[0].first_name + " " + rows[0].last_name;
-      sql = 'SELECT date_mark, score FROM mark, course ' +
-        'WHERE mark.course_id = course.id ' +
-        'AND mark.student_id = ? ' +
+      sql = 'SELECT date_mark, score FROM mark ' +
+        'WHERE mark.student_id = ? ' +
         'AND mark.course_id = ? ' +
         'ORDER BY mark.date_mark DESC';
       con.query(sql, [req.params.childID, req.params.id], (err, rows, fields) => {
@@ -321,9 +320,8 @@ router.get('/:childID/course/:id/topics', (req, res) => {
       }
       var student_name = rows[0].first_name + " " + rows[0].last_name;
       var classID = rows[0].class_id;
-      sql = 'SELECT topic_date, description FROM topic, course ' +
-        'WHERE topic.id_course = course.id ' +
-        'AND topic.id_class = ? ' +
+      sql = 'SELECT topic_date, description FROM topic ' +
+        'WHERE topic.id_class = ? ' +
         'AND topic.id_course = ? ' +
         'ORDER BY topic.topic_date DESC';
       con.query(sql, [classID, req.params.id], (err, rows, fields) => {
@@ -344,6 +342,64 @@ router.get('/:childID/course/:id/topics', (req, res) => {
           courseName: course_name,
           student_name: student_name,
           topics: topics,
+          childID: req.params.childID,
+          fullName: fullName
+        });
+      });
+    });
+  });
+});
+
+// course homeworks
+
+router.get('/:childID/course/:id/material_homework', (req, res) => {
+  var fullName = SESSION.sessionData.user.first_name + " " + SESSION.sessionData.user.last_name;
+  var con = mysql.createConnection({
+    host: "localhost",
+    user: "root",
+    password: "pwd",
+    database: "students",
+    insecureAuth: true
+  });
+
+  var sql = 'SELECT course_name FROM course WHERE course.id = ?';
+
+  con.query(sql, [req.params.id], (err, rows, fields) => {
+    if (err) {
+      res.end("DB error: " + err);
+      return;
+    }
+    var course_name = rows[0].course_name;
+    sql = "SELECT first_name, last_name, class_id FROM student WHERE id = ?";
+    con.query(sql, [req.params.childID], (err, rows, fields) => {
+      if (err) {
+        res.end("DB error: " + err);
+        return;
+      }
+      var student_name = rows[0].first_name + " " + rows[0].last_name;
+      var classID = rows[0].class_id;
+      sql = 'SELECT date_hw, description FROM homework ' +
+        'WHERE class_id = ? ' +
+        'AND course_id = ? ' +
+        'ORDER BY date_hw DESC';
+      con.query(sql, [classID, req.params.id], (err, rows, fields) => {
+        if (err) {
+          res.end("DB error: " + err);
+          return;
+        }
+        var homeworks = [];
+        for (var i = 0; i < rows.length; ++i) {
+          var homework = {
+            date: rows[i].date_hw,
+            description: rows[i].description
+          }
+          homeworks[i] = homework;
+        }
+
+        res.render('../pages/parent/parent_coursehomework.pug', {
+          courseName: course_name,
+          student_name: student_name,
+          student_hws: homeworks,
           childID: req.params.childID,
           fullName: fullName
         });
