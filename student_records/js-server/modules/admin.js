@@ -14,6 +14,27 @@ var SESSION = require("./Auth_manager.js");
 
 var router = express.Router();
 
+router.use(/\/.*/, function (req, res, next) {
+  try {
+    if (SESSION.sessionData.user.user_type != 'admin') {
+      res.redirect('/auth_router/logout');
+      return;
+    }
+  }
+  catch (error) {
+    res.redirect("/");
+    return;
+  }
+  next();
+});
+
+/* router.get("/*", function (req, res, next) {
+    if (SESSION.sessionData.user.user_type != 'admin') {
+      res.redirect('/auth_router/logout')
+    }
+    next();
+});
+ */
 router.use('/:id', function (req, res, next) {
     console.log('Request URL:', req.originalUrl);
     next();

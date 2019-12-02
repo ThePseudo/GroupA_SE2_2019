@@ -12,6 +12,8 @@ const mysql = require('mysql');
 //Per aggiungere campo a sessione -> SESSION.sessionData.nomecampo = valore
 
 var SESSION = require("./Auth_manager.js");
+// var checkLogin = SESSION.sessionChecker;
+// var checkUser = SESSION.userChecker;
 
 var router = express.Router();
 
@@ -28,6 +30,11 @@ router.use(/\/.*/, function (req, res, next) {
   }
   next();
 });
+
+ /*  router.all("/*", function (req, res, next) {
+    checkLogin(res);
+    checkUser("parent",res);
+  }); */
 
 
 router.use('/:id/*', function (req, res, next) {
@@ -63,6 +70,8 @@ router.use('/:id/*', function (req, res, next) {
 
 router.get('/parent_home', (req, res) => {
   console.log(SESSION.sessionData);
+/*   checkLogin(res);
+  checkUser("parent",res); */
   var commlist = [];
   var studlist = [];
   var con = mysql.createConnection({
