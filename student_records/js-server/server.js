@@ -61,11 +61,6 @@ app.get("/style", (req, res) => {
     res.end(page);
 });
 
-app.get("/teacher_page", (req, res) => {
-    const compiledPage = pug.compileFile("pages/teacher_page.pug");
-    res.end(compiledPage());
-});
-
 app.get("/topics", (req, res) => {
     const compiledPage = pug.compileFile("pages/topics.pug");
     res.end(compiledPage());
@@ -98,21 +93,6 @@ app.get("/admin/enroll_parent", (req, res) => {
 
 app.get("/admin/insert_communication", (req, res) => {
     const compiledPage = pug.compileFile("pages/officer/officer_communication.pug");
-    res.end(compiledPage());
-});
-
-app.get("/parent/course_mark", (req, res) => {
-    const compiledPage = pug.compileFile("pages/parent/parent_coursemark.pug");
-    res.end(compiledPage());
-});
-
-app.get("/parent/course_hw", (req, res) => {
-    const compiledPage = pug.compileFile("pages/parent/parent_coursehomework.pug");
-    res.end(compiledPage());
-});
-
-app.get("/parent/course_topic", (req, res) => {
-    const compiledPage = pug.compileFile("pages/parent/parent_coursetopic.pug");
     res.end(compiledPage());
 });
 
@@ -455,50 +435,6 @@ app.post("/register", (req, res) => {
     });
     res.end();
 });
-
-
-
-app.get("/marks", (req, res) => {
-    var marks = [];
-    var student_name; // todo: retrieve from db
-    const compiledPage = pug.compileFile("pages/student_marks.pug");
-    var con = mysql.createConnection({
-        host: "localhost",
-        user: "root",
-        password: "pwd",
-        database: "students",
-        insecureAuth: true
-    });
-
-    let sql = 'SELECT * FROM mark, course WHERE mark.course_id = course.id ORDER BY date_mark DESC';
-
-    con.query(sql, function (err, rows, fields) {
-        con.end();
-        if (err) {
-            res.end("There is a problem in the DB connection. Please, try again later");
-        } else {
-            console.log(rows);
-            // Check if the result is found or not
-            for (var i = 0; i < rows.length; i++) {
-                // Create the object to save the data.
-                var mark = {
-                    subject: rows[i].course_name,
-                    date: rows[i].date_mark,
-                    mark: rows[i].score
-                }
-
-                // Add object into array
-                marks[i] = mark;
-            }
-            res.end(compiledPage({
-                student_name: "Marco Pecoraro",
-                student_marks: marks
-            }));
-        }
-
-    });
-});
-
 
 // Page not found
 app.get('/*', (req, res) => {
