@@ -59,6 +59,14 @@ INSERT INTO parent
     (id, first_name, last_name,cod_fisc,email,password, first_access)
 VALUES
     (2, "Giorno", "Giovanna", "2222", "tizio@caio.com", "$2a$10$0tXRERd11hkw3zKQQmFeTOAuUcMiI6/ThiMNvfMUvKmYkWkL0BRkO", 1);
+INSERT INTO parent
+    (id, first_name, last_name,cod_fisc,email,password, first_access)
+VALUES
+    (3, "tai", "deitali", "3333", "tai@deitali.com", "password", 0);
+INSERT INTO parent
+    (id, first_name, last_name,cod_fisc,email,password, first_access)
+VALUES
+    (4, "Tizio", "Caio", "4444", "tizio@caio.com", "$2a$10$0tXRERd11hkw3zKQQmFeTOAuUcMiI6/ThiMNvfMUvKmYkWkL0BRkO", 1);
 
 CREATE TABLE student
 (

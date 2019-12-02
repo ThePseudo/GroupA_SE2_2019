@@ -1,4 +1,4 @@
-'use strict';
+//'use strict';
 
 const express = require('express');
 const bcrypt = require('bcrypt');
@@ -8,6 +8,16 @@ const ethereal = require("./ethereal.js");
 const app = express();
 const session = require('express-session');
 var router = express.Router();
+
+//global.sessionObj = {};
+
+/* var sessionObj= session({
+    secret: 'keyboard cat',
+    resave: true,
+    saveUninitialized: true,
+    cookie: {   secure: true,
+                maxAge: 10000 } // maxAge is in milliseconds
+}); */
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
@@ -41,6 +51,7 @@ function setup_session_var(user_type, user_info, session) {
     session.user.cod_fisc = user_info.cod_fisc;
     session.user.email = user_info.email;
     session.user.user_type = user_type;
+    session.user.first_access = user_info.first_access;
 }
 
 function manageCollaborator(con, user_info, response, req) {
@@ -71,26 +82,23 @@ function manageCollaborator(con, user_info, response, req) {
 }
 
 router.get('/login_parent', (req, res) => {
-    /*
-    console.log(req.session);
-    console.log(sessionObj);
-    if (sessionObj.user)
-        res.redirect("/parent/parent_home");*/
+
+    if (req.session.user)
+        res.redirect("/parent/parent_home");* /
     res.render("../pages/login_parent.pug");
 });
 
 router.get('/login_teacher', (req, res) => {
-    /*
-    console.log(sessionObj);
-    if (sessionObj.user)
-        res.redirect("/parent/teacher_home");*/
+
+    if (req.session.user)
+        res.redirect("/parent/teacher_home");* /
     res.render("../pages/login_teacher.pug");
 });
 
 router.get('/login_collaborator', (req, res) => {
     /*
-    if (sessionObj.user) {
-        let redirect_route = "/" + sessionObj.user.user_type + "/" + sessionObj.user.user_type + "_home";
+    if (req.session.user) {
+        let redirect_route = "/" + req.session.user.user_type + "/" + req.session.user.user_type + "_home";
         res.redirect(redirect_route);
     }*/
     res.render("../pages/login_officer.pug");
@@ -123,10 +131,20 @@ router.route('/login')
                     if (user_type == 'parent' && !result[0].first_access) {
                         console.log("ok primo accesso");
                         con.end();
-                        //TODO: function send email
-                        ethereal.mail_handler(result[0]);
-                        res.end();
-                        return;
+                        if (password == result[0].password) { //non uso la funzione di verifica hash perchè ho una stringa normale temporanea  
+                            console.log("I dati sessione sono\n" + result[0]);
+                            setup_session_var(user_type, result[0]);
+
+                            // Da mettere in enroll function ! (Fede) 
+                            //invece di resut[0], passare cod_fisc e password
+                            //Prototipo funzione function (first_name,last_name,username,email,tmp_pwd,user_type)
+                            ethereal.mail_handler(result[0].first_name, result[0].last_name, result[0].cod_fisc, result[0].email, result[0].password, user_type);
+
+                            //-------
+                            res.redirect("/auth_router/change_pwd");
+
+                        }
+                        else res.render(render_path, { err_msg: 'Incorrect Username and/or Password!' });
                     }
                     //The cod_fisc exists in the DB, now check the password
                     if (bcrypt.compareSync(password, result[0].password)) {
@@ -159,8 +177,8 @@ router.route('/login')
 
 router.get('/logout', (req, res) => {
     /*
-    sessionObj = {};
-    console.log(sessionObj);
+    req.session = {};
+    console.log(req.session);
     */
     req.session.destroy();
     res.redirect('/'); //ritorno alla root (qui è la homepage)
@@ -178,10 +196,22 @@ router.route('/change_pwd').get((req, res) => {
     else {
         console.log("TRY CONNECT");
         var con = DB_open_connection();
-        bcrypt.hash(password, 10).then(function (hash) {
-            con.query('UPDATE parent SET password = ? WHERE id = ?', [hash, sessionObj.user.id], function (err, result) {
-                if (error) console.log(err);
-            });
+        let hash = bcrypt.hashSync(password, 10);
+        console.log(req.session.user.cod_fisc);
+        con.query('UPDATE parent SET password = ?, first_access = ? WHERE cod_fisc = ?', [hash, 1, req.session.user.cod_fisc], function (err, result) {
+            console.log(result);
+
+            if (err) {
+                console.log(err);
+            }
+            else {
+                console.log(req.session.user);
+                let user_t = req.session.user.user_type;
+                console.log(user_t);
+                con.end();
+                res.redirect("/parent/parent_home");
+                //res.redirect("/"+ user_t + "/"+ user_t + "_home");
+            }
         });
     }
 });
