@@ -1,4 +1,4 @@
-'use strict';
+//'use strict';
 
 const express = require('express');
 const pug = require('pug');
@@ -11,7 +11,7 @@ const mysql = require('mysql');
 //Per aggiungere campo a user SESSION.sessionData.user.nomecampo = valore 
 //Per aggiungere campo a sessione -> SESSION.sessionData.nomecampo = valore
 
-var SESSION = require("./Auth_manager.js");
+//var SESSION = require("./Auth_manager.js");
 // var checkLogin = SESSION.sessionChecker;
 // var checkUser = SESSION.userChecker;
 
@@ -19,7 +19,7 @@ var router = express.Router();
 
 router.use(/\/.*/, function (req, res, next) {
   try {
-    if (SESSION.sessionData.user.user_type != 'parent') {
+    if (sessionObj.user.user_type != 'parent') {
       res.redirect('/auth_router/logout');
       return;
     }
@@ -38,7 +38,7 @@ router.use(/\/.*/, function (req, res, next) {
 
 
 router.use('/:id/*', function (req, res, next) {
-  var parentID = SESSION.sessionData.user.id;
+  var parentID = sessionObj.user.id;
   var childID = req.params.id;
   var con = mysql.createConnection({
     host: "localhost",
@@ -69,7 +69,8 @@ router.use('/:id/*', function (req, res, next) {
 
 
 router.get('/parent_home', (req, res) => {
-  console.log(SESSION.sessionData);
+  //console.log(SESSION.sessionData);
+  console.log(sessionObj);
 /*   checkLogin(res);
   checkUser("parent",res); */
   var commlist = [];

@@ -1,4 +1,4 @@
-'use strict';
+//'use strict';
 
 const express = require('express');
 const bcrypt = require('bcrypt');
@@ -8,7 +8,7 @@ const ethereal = require("./ethereal.js");
 const app = express();
 var router = express.Router();
 
-var sessionObj = {};
+global.sessionObj = {};
 
 /* var sessionObj= session({
     secret: 'keyboard cat',
@@ -34,7 +34,7 @@ function DB_open_connection() {
 
 function setup_session_var(user_type, user_info) {
     //session è un typeof "session", inizializzo la sessione fuori da questa route e poi la associo a "sessionData"
-    sessionObj = {};
+    
     sessionObj.user = {};     //Nella variabile ho un campo user che è un oggetto e acui posso aggiungere attributi privati /equivale a $_SESSION['user']
     sessionObj.user.id = user_info.id; //aggiungo attributo id a user e lo salvo nella variabile "sessionData"
     sessionObj.user.first_name = user_info.first_name;
@@ -73,14 +73,14 @@ function manageCollaborator(con, user_info, response) {
 }
 
 router.get('/login_parent', (req, res) => {
-    console.log(sessionObj);
+    
     if (sessionObj.user)
         res.redirect("/parent/parent_home");
     res.render("../pages/login_parent.pug");
 });
 
 router.get('/login_teacher', (req, res) => {
-    console.log(sessionObj);
+    
     if (sessionObj.user)
         res.redirect("/parent/teacher_home");
     res.render("../pages/login_teacher.pug");
@@ -193,7 +193,9 @@ router.route('/change_pwd').get((req, res) => {
         console.log("TRY CONNECT");
         var con = DB_open_connection();
         let hash =bcrypt.hashSync(password, 10);
-        con.query('UPDATE parent SET password = ?, first_access=? WHERE id = ?', [hash, 1, sessionObj.user.cof_fisc], function (err, result) {
+        con.query('UPDATE parent SET password = ?, first_access=? WHERE id = ?', [hash, 1, sessionObj.user.cod_fisc], function (err, result) {
+            console.log(result);
+           
             if (err){
                  console.log(err);
             }
