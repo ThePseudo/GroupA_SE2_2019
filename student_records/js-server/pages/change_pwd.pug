@@ -12,7 +12,7 @@ html
         h1(class='title') INSERT NEW PASSWORD
       div(class='row')
         h2(class = 'title2') Please, insert here a new password
-        h2(class = 'err_msg') &nbsp #{err_msg}
+        h2(class = 'err_msg')= err_msg
       //- Parametric form
       form(action='/auth_router/change_pwd' method="POST") 
         div(class='row')
@@ -24,4 +24,4 @@ html
         div(class='row')
           div(class='col-sm-7')
           div(class='col-sm-2')
-            input(type='SUBMIT' value='change' name='change_pwd' class='btn blockButton' style='margin-top: 24px; padding: 6px 10px; margin-left:25%; width: 75%;')
+            input(type='SUBMIT' value='change_pwd' name='change' class='btn blockButton' style='margin-top: 24px; padding: 6px 10px; margin-left:25%; width: 75%;')

@@ -34,7 +34,7 @@ function DB_open_connection() {
 
 function setup_session_var(user_type, user_info) {
     //session è un typeof "session", inizializzo la sessione fuori da questa route e poi la associo a "sessionData"
-    sessionObj = {};
+
     sessionObj.user = {};     //Nella variabile ho un campo user che è un oggetto e acui posso aggiungere attributi privati /equivale a $_SESSION['user']
     sessionObj.user.id = user_info.id; //aggiungo attributo id a user e lo salvo nella variabile "sessionData"
     sessionObj.user.first_name = user_info.first_name;
@@ -42,7 +42,6 @@ function setup_session_var(user_type, user_info) {
     sessionObj.user.cod_fisc = user_info.cod_fisc;
     sessionObj.user.email = user_info.email;
     sessionObj.user.user_type = user_type;
-    sessionObj.user.first_access = user_info.first_access;
 }
 
 function manageCollaborator(con, user_info, response) {
@@ -73,6 +72,7 @@ function manageCollaborator(con, user_info, response) {
 }
 
 router.get('/login_parent', (req, res) => {
+    console.log(req.session);
     console.log(sessionObj);
     if (sessionObj.user)
         res.redirect("/parent/parent_home");
@@ -93,7 +93,6 @@ router.get('/login_collaborator', (req, res) => {
     }
     res.render("../pages/login_officer.pug");
 });
-
 
 router.route('/login')
     .post((req, res) => {
@@ -119,51 +118,34 @@ router.route('/login')
             con.query(sql, (err, result) => {
                 if (result.length > 0) {
                     console.log("OK USER");
-                    setup_session_var(user_type, result[0]);
-                    //Se sono primo access, vengo reindirizzato per il cambio password
-                    if (!result[0].first_access) {
+                    if (user_type == 'parent' && !result[0].first_access) {
                         console.log("ok primo accesso");
                         con.end();
-                        if(password == result[0].password){ //non uso la funzione di verifica hash perchè ho una stringa normale temporanea  
-                            console.log("I dati sessione sono\n" + result[0]);
-                            setup_session_var(user_type, result[0]);
-                            
-                            // Da mettere in enroll function ! (Fede) 
-                            //invece di resut[0], passare cod_fisc e password
-                            //Prototipo funzione function (first_name,last_name,username,email,tmp_pwd,user_type)
-                            //ethereal.mail_handler(result[0].first_name,result[0].last_name, result[0].cod_fisc, result[0].email, result[0].password, user_type);
-                            
-                            //-------
-                            res.redirect("/auth_router/change_pwd");
-                           
-                        }
-                        else res.render(render_path, { err_msg: 'Incorrect Username and/or Password!' });
+                        //TODO: function send email
+                        ethereal.mail_handler(result[0]);
+                        res.end();
+                        return;
                     }
-                    
-                    //------------------------
                     //The cod_fisc exists in the DB, now check the password
-                    else{
-                        if (bcrypt.compareSync(password, result[0].password)) {
-                            console.log("OK PWD");
-                            //password match
+                    if (bcrypt.compareSync(password, result[0].password)) {
+                        console.log("OK PWD");
+                        //password match
 
-                            //SESSION MANAGEMENT
-                            if (user_type == "officer") {
-                                console.log("Sono" + user_type);
-                                user_type = manageCollaborator(con, result[0], res);
-                            }
-                            else {
-                                con.end();
-                                console.log("Non sono collaborator");
-                                setup_session_var(user_type, result[0]);
-                                console.log("Ora faccio redirection verso parent home");
-                                res.redirect("/" + user_type + "/" + user_type + "_home");
-                            }
-                        } else {
-                            // Passwords don't match
-                            con.end();
-                            res.render(render_path, { err_msg: 'Incorrect Username and/or Password!' });
+                        //SESSION MANAGEMENT
+                        if (user_type == "officer") {
+                            user_type = manageCollaborator(con, result[0], res);
+                            console.log(user_type);
                         }
+                        else {
+                            con.end();
+                            console.log("1");
+                            setup_session_var(user_type, result[0]);
+                            res.redirect("/" + user_type + "/" + user_type + "_home");
+                        }
+                    } else {
+                        // Passwords don't match
+                        con.end();
+                        res.render(render_path, { err_msg: 'Incorrect Username and/or Password!' });
                     }
                 } else {
                     // user don't match
@@ -183,7 +165,6 @@ router.get('/logout', (req, res) => {
 router.route('/change_pwd').get((req, res) => {
     res.render("../pages/change_pwd.pug");
 }).post((req, res) => {
-    //res.render("../pages/change_pwd.pug");
     var password = req.body.password;
     //Check if password field are filled
     if (!password) {
@@ -192,19 +173,10 @@ router.route('/change_pwd').get((req, res) => {
     else {
         console.log("TRY CONNECT");
         var con = DB_open_connection();
-        let hash =bcrypt.hashSync(password, 10);
-        con.query('UPDATE parent SET password = ?, first_access=? WHERE id = ?', [hash, 1, sessionObj.user.cof_fisc], function (err, result) {
-            if (err){
-                 console.log(err);
-            }
-            else{
-                console.log(sessionObj.user);
-                let user_t =  sessionObj.user.user_type;
-                console.log(user_t);
-                con.end();
-                res.redirect("/parent/parent_home");
-                //res.redirect("/"+ user_t + "/"+ user_t + "_home");
-            }
+        bcrypt.hash(password, 10).then(function (hash) {
+            con.query('UPDATE parent SET password = ? WHERE id = ?', [hash, sessionObj.user.id], function (err, result) {
+                if (error) console.log(err);
+            });
         });
     }
 });
@@ -212,16 +184,3 @@ router.route('/change_pwd').get((req, res) => {
 
 module.exports = router; //esporto handler delle route in questo modulo
 module.exports.sessionData = sessionObj;
-
-/* module.exports.sessionChecker = function(response,next){
-    console.log("check session login");
-    if(sessionObj==null)response.redirect("/");
-    else next();
-}
-module.exports.userChecker = function(user_type,response){
-    console.log("check user");
-    if(sessionObj.user.user_type != user_type)
-        response.redirect("/" + user_type + "/" + user_type +"_home");
-    else next();
-}
- */
