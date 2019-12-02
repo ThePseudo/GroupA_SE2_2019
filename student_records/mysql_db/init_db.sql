@@ -55,6 +55,11 @@ INSERT INTO parent
 VALUES
     (1, "Tizio", "Caio", "1111", "tizio@caio.com", "$2a$10$0tXRERd11hkw3zKQQmFeTOAuUcMiI6/ThiMNvfMUvKmYkWkL0BRkO", 1);
 
+INSERT INTO parent
+    (id, first_name, last_name,cod_fisc,email,password, first_access)
+VALUES
+    (2, "Giorno", "Giovanna", "2222", "tizio@caio.com", "$2a$10$0tXRERd11hkw3zKQQmFeTOAuUcMiI6/ThiMNvfMUvKmYkWkL0BRkO", 1);
+
 CREATE TABLE student
 (
     id INT PRIMARY KEY,

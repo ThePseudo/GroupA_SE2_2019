@@ -19,11 +19,16 @@ app.set('view engine', 'pug');
 app.set('views', './pages');
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
+app.use(session({
+    secret: 'students',
+    saveUninitialized: false,
+    resave: true,
+    httpOnly: false
+}));
 
 const adminPages = require('./modules/admin.js');
 const parentPages = require('./modules/parent.js');
 const auth_router = require("./modules/Auth_manager.js");
-var SESSION = auth_router.sessionData;
 
 // Constants
 const HTTPPORT = 8000;

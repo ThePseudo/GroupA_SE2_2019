@@ -6,17 +6,8 @@ const mysql = require('mysql');
 const bodyParser = require('body-parser');
 const ethereal = require("./ethereal.js");
 const app = express();
+const session = require('express-session');
 var router = express.Router();
-
-var sessionObj = {};
-
-/* var sessionObj= session({
-    secret: 'keyboard cat',
-    resave: true,
-    saveUninitialized: true,
-    cookie: {   secure: true,
-                maxAge: 10000 } // maxAge is in milliseconds
-}); */
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
@@ -32,16 +23,24 @@ function DB_open_connection() {
     });
 }
 
-function setup_session_var(user_type, user_info) {
+
+router.use(session({
+    secret: 'students',
+    saveUninitialized: false,
+    resave: true,
+    httpOnly: false
+}));
+
+function setup_session_var(user_type, user_info, session) {
     //session è un typeof "session", inizializzo la sessione fuori da questa route e poi la associo a "sessionData"
 
-    sessionObj.user = {};     //Nella variabile ho un campo user che è un oggetto e acui posso aggiungere attributi privati /equivale a $_SESSION['user']
-    sessionObj.user.id = user_info.id; //aggiungo attributo id a user e lo salvo nella variabile "sessionData"
-    sessionObj.user.first_name = user_info.first_name;
-    sessionObj.user.last_name = user_info.last_name
-    sessionObj.user.cod_fisc = user_info.cod_fisc;
-    sessionObj.user.email = user_info.email;
-    sessionObj.user.user_type = user_type;
+    session.user = {};     //Nella variabile ho un campo user che è un oggetto e acui posso aggiungere attributi privati /equivale a $_SESSION['user']
+    session.user.id = user_info.id; //aggiungo attributo id a user e lo salvo nella variabile "sessionData"
+    session.user.first_name = user_info.first_name;
+    session.user.last_name = user_info.last_name
+    session.user.cod_fisc = user_info.cod_fisc;
+    session.user.email = user_info.email;
+    session.user.user_type = user_type;
 }
 
 function manageCollaborator(con, user_info, response) {
@@ -58,39 +57,42 @@ function manageCollaborator(con, user_info, response) {
             console.log("OK ADMIN");
             con.end();
             console.log("ok prima del setup");
-            setup_session_var("admin", result[0]);
+            setup_session_var("admin", result[0], req.session);
             console.log("ok dopo setup");
             response.redirect("/admin/admin_home");
         }
         else {
             console.log("OK OFFICER");
             con.end();
-            setup_session_var("officer", result[0]);
+            setup_session_var("officer", result[0], req.session);
             response.redirect("/officer/officer_home");
         }
     });
 }
 
 router.get('/login_parent', (req, res) => {
+    /*
     console.log(req.session);
     console.log(sessionObj);
     if (sessionObj.user)
-        res.redirect("/parent/parent_home");
+        res.redirect("/parent/parent_home");*/
     res.render("../pages/login_parent.pug");
 });
 
 router.get('/login_teacher', (req, res) => {
+    /*
     console.log(sessionObj);
     if (sessionObj.user)
-        res.redirect("/parent/teacher_home");
+        res.redirect("/parent/teacher_home");*/
     res.render("../pages/login_teacher.pug");
 });
 
 router.get('/login_collaborator', (req, res) => {
+    /*
     if (sessionObj.user) {
         let redirect_route = "/" + sessionObj.user.user_type + "/" + sessionObj.user.user_type + "_home";
         res.redirect(redirect_route);
-    }
+    }*/
     res.render("../pages/login_officer.pug");
 });
 
@@ -139,7 +141,7 @@ router.route('/login')
                         else {
                             con.end();
                             console.log("1");
-                            setup_session_var(user_type, result[0]);
+                            setup_session_var(user_type, result[0], req.session);
                             res.redirect("/" + user_type + "/" + user_type + "_home");
                         }
                     } else {
@@ -156,8 +158,11 @@ router.route('/login')
     });
 
 router.get('/logout', (req, res) => {
+    /*
     sessionObj = {};
     console.log(sessionObj);
+    */
+    req.session.destroy();
     res.redirect('/'); //ritorno alla root (qui è la homepage)
 });
 
@@ -183,4 +188,3 @@ router.route('/change_pwd').get((req, res) => {
 
 
 module.exports = router; //esporto handler delle route in questo modulo
-module.exports.sessionData = sessionObj;
