@@ -24,7 +24,7 @@ router.use(session({
 router.use(/\/.*/, function (req, res, next) {
   try {
     if (req.session.user.user_type != 'parent') {
-      res.redirect("/");
+      res.redirect("/auth_manager/logout");
       return;
     }
   } catch (err) {
@@ -95,28 +95,29 @@ router.get('/parent_home', (req, res) => {
       commlist[i] = communication;
     }
     //let sql = 'SELECT id,first_name,last_name FROM student';
-    con.query('SELECT id,first_name,last_name FROM student WHERE parent_1=1 OR parent_2=1', (err, rows, fields) => {
-      if (err) {
-        res.end("There is a problem in the DB connection. Please, try again later\n" + err + "\n");
-        return;
-      }
-      console.log(rows);
-      for (var i = 0; i < rows.length; i++) {
-        var student = {
-          id: rows[i].id,
-          first_name: rows[i].first_name,
-          last_name: rows[i].last_name
+    con.query('SELECT id,first_name,last_name FROM student WHERE parent_1= ? OR parent_2 = ?',
+      [req.session.user.id, req.session.user.id], (err, rows, fields) => {
+        if (err) {
+          res.end("There is a problem in the DB connection. Please, try again later\n" + err + "\n");
+          return;
         }
-        studlist[i] = student;
-      }
-      //console.log("Data successfully uploaded! " + result.insertId);
-      con.end();
-      res.end(compiledPage({
-        communicationList: commlist,
-        studentList: studlist,
-      }));
+        console.log(rows);
+        for (var i = 0; i < rows.length; i++) {
+          var student = {
+            id: rows[i].id,
+            first_name: rows[i].first_name,
+            last_name: rows[i].last_name
+          }
+          studlist[i] = student;
+        }
+        //console.log("Data successfully uploaded! " + result.insertId);
+        con.end();
+        res.end(compiledPage({
+          communicationList: commlist,
+          studentList: studlist,
+        }));
 
-    });
+      });
   });
 });
 

@@ -43,7 +43,7 @@ function setup_session_var(user_type, user_info, session) {
     session.user.user_type = user_type;
 }
 
-function manageCollaborator(con, user_info, response) {
+function manageCollaborator(con, user_info, response, req) {
     let sql = 'SELECT * FROM officer JOIN admin ON officer.cod_fisc = admin.cod_fisc WHERE officer.cod_fisc = ?';
     let insert = [user_info.cod_fisc];
     sql = mysql.format(sql, insert); //mix all together with "mysql.format()" and pass as parameter to .query() method
@@ -135,7 +135,7 @@ router.route('/login')
 
                         //SESSION MANAGEMENT
                         if (user_type == "officer") {
-                            user_type = manageCollaborator(con, result[0], res);
+                            user_type = manageCollaborator(con, result[0], res, req);
                             console.log(user_type);
                         }
                         else {
