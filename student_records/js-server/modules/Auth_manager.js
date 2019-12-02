@@ -73,25 +73,27 @@ function manageCollaborator(con, user_info, response) {
 }
 
 router.get('/login_parent', (req, res) => {
-    if (sessionObj!=null && sessionObj.user.first_access)
-        res.redirect("/" + sessionObj.user.user_type + "/" + sessionObj.user.user_type +"_home");
-    console.log("non sono loggato e voglio essere teacher");
+    console.log(sessionObj);
+    if (sessionObj.user)
+        res.redirect("/parent/parent_home");
     res.render("../pages/login_parent.pug");
 });
 
 router.get('/login_teacher', (req, res) => {
     console.log(sessionObj);
-    if (sessionObj==null)
-        res.redirect("/" + sessionObj.user.user_type + "/" + sessionObj.user.user_type +"_home");
-    console.log("Non sono loggato e voglio essere teacher");
+    if (sessionObj.user)
+        res.redirect("/parent/teacher_home");
     res.render("../pages/login_teacher.pug");
 });
 
 router.get('/login_collaborator', (req, res) => {
-    if (sessionObj.user) 
-        res.redirect("/" + sessionObj.user.user_type + "/" + sessionObj.user.user_type +"_home");
+    if (sessionObj.user) {
+        let redirect_route = "/" + sessionObj.user.user_type + "/" + sessionObj.user.user_type + "_home";
+        res.redirect(redirect_route);
+    }
     res.render("../pages/login_officer.pug");
 });
+
 
 router.route('/login')
     .post((req, res) => {
@@ -128,38 +130,40 @@ router.route('/login')
                             // Da mettere in enroll function ! (Fede) 
                             //invece di resut[0], passare cod_fisc e password
                             //Prototipo funzione function (first_name,last_name,username,email,tmp_pwd,user_type)
-                            ethereal.mail_handler(result[0].first_name,result[0].last_name, result[0].cod_fisc, result[0].email, result[0].password, user_type);
+                            //ethereal.mail_handler(result[0].first_name,result[0].last_name, result[0].cod_fisc, result[0].email, result[0].password, user_type);
                             
                             //-------
                             res.redirect("/auth_router/change_pwd");
+                           
                         }
                         else res.render(render_path, { err_msg: 'Incorrect Username and/or Password!' });
-
-                        return;
                     }
-
+                    
                     //------------------------
                     //The cod_fisc exists in the DB, now check the password
-                    if (bcrypt.compareSync(password, result[0].password)) {
-                        console.log("OK PWD");
-                        //password match
+                    else{
+                            if (bcrypt.compareSync(password, result[0].password)) {
+                            console.log("OK PWD");
+                            //password match
 
-                        //SESSION MANAGEMENT
-                        if (user_type == "officer") {
-                            user_type = manageCollaborator(con, result[0], res);
-                            console.log(user_type);
-                        }
-                        else {
+                            //SESSION MANAGEMENT
+                            if (user_type == "officer") {
+                                user_type = manageCollaborator(con, result[0], res);
+                                console.log(user_type);
+                            }
+                            else {
+                                con.end();
+                                console.log("1");
+                                setup_session_var(user_type, result[0]);
+                                res.redirect("/" + user_type + "/" + user_type + "_home");
+                            }
+                        } else {
+                            // Passwords don't match
                             con.end();
-                            console.log("1");
-                            setup_session_var(user_type, result[0]);
-                            res.redirect("/" + user_type + "/" + user_type + "_home");
+                            res.render(render_path, { err_msg: 'Incorrect Username and/or Password!' });
                         }
-                    } else {
-                        // Passwords don't match
-                        con.end();
-                        res.render(render_path, { err_msg: 'Incorrect Username and/or Password!' });
                     }
+                   
                 } else {
                     // user don't match
                     res.render(render_path, { err_msg: 'Incorrect Username and/or Password!' });
@@ -178,7 +182,7 @@ router.get('/logout', (req, res) => {
 router.route('/change_pwd').get((req, res) => {
     res.render("../pages/change_pwd.pug");
 }).post((req, res) => {
-    res.render("../pages/change_pwd.pug");
+    //res.render("../pages/change_pwd.pug");
     var password = req.body.password;
     //Check if password field are filled
     if (!password) {
@@ -189,12 +193,19 @@ router.route('/change_pwd').get((req, res) => {
         var con = DB_open_connection();
         let hash =bcrypt.hashSync(password, 10);
         con.query('UPDATE parent SET password = ?, first_access=? WHERE id = ?', [hash, 1, sessionObj.user.cof_fisc], function (err, result) {
-                if (err) console.log(err);
+            if (err){
+                 console.log(err);
+            }
+            else{
+                console.log(sessionObj.user);
+                let user_t =  sessionObj.user.user_type;
+                console.log(user_t);
+                con.end();
+                res.redirect("/parent/parent_home");
+                //res.redirect("/"+ user_t + "/"+ user_t + "_home");
+            }
         });
-
-        console.log("qui");
-        con.end();
-        res.redirect("/"+ sessionObj.user.user_type + "/" + sessionObj.user.user_type + "_login");
+        
     }
 });
 
