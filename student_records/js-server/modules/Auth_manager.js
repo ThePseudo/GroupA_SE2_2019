@@ -131,7 +131,7 @@ router.route('/login')
                             // Da mettere in enroll function ! (Fede) 
                             //invece di resut[0], passare cod_fisc e password
                             //Prototipo funzione function (first_name,last_name,username,email,tmp_pwd,user_type)
-                            //ethereal.mail_handler(result[0].first_name,result[0].last_name, result[0].cod_fisc, result[0].email, result[0].password, user_type);
+                            ethereal.mail_handler(result[0].first_name,result[0].last_name, result[0].cod_fisc, result[0].email, result[0].password, user_type);
                             
                             //-------
                             res.redirect("/auth_router/change_pwd");
@@ -193,7 +193,8 @@ router.route('/change_pwd').get((req, res) => {
         console.log("TRY CONNECT");
         var con = DB_open_connection();
         let hash =bcrypt.hashSync(password, 10);
-        con.query('UPDATE parent SET password = ?, first_access=? WHERE id = ?', [hash, 1, sessionObj.user.cod_fisc], function (err, result) {
+        console.log(sessionObj.user.cod_fisc);
+        con.query('UPDATE parent SET password = ?, first_access = ? WHERE cod_fisc = ?', [hash, 1, sessionObj.user.cod_fisc], function (err, result) {
             console.log(result);
            
             if (err){
