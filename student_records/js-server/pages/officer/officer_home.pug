@@ -1,1 +1,18 @@
+// Those variables should be in every page
+- var page = "Daily topic"
+- var loggedIn = false;
+- var date = new Date();
+- var user= "admin"
+- var active= "Insert communication"
 
+- var dateString = date.getFullYear() + "-" + date.getMonth() + "-" + date.getDate()
+
+doctype html
+html
+  include ../base/head.pug
+  body
+    include ../base/navbar.pug
+    include ../base/sidebar.pug
+    div(class='container')
+      div(class='row')
+        h1(class='title') Hello I'm the officer
