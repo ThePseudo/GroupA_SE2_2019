@@ -111,23 +111,24 @@ VALUES(3, "1C");
 CREATE TABLE course
 (
     id INT PRIMARY KEY,
-    course_name VARCHAR(50) UNIQUE NOT NULL
+    course_name VARCHAR(50) UNIQUE NOT NULL,
+    color VARCHAR(6) UNIQUE NOT NULL
 );
 
 INSERT INTO course
-    (id,course_name)
+    (id,course_name, color)
 VALUES
-    (1, 'Math');
+    (1, 'Math', 'FF0000');
 
 INSERT INTO course
-    (id,course_name)
+    (id,course_name, color)
 VALUES
-    (2, 'History');
+    (2, 'History', '0000FF');
 
 INSERT INTO course
-    (id,course_name)
+    (id,course_name, color)
 VALUES
-    (3, 'Science');
+    (3, 'Science', '00FF00');
 
 CREATE TABLE admin
 (

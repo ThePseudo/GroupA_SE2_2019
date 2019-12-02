@@ -198,14 +198,35 @@ router.get('/:childID/show_courses', (req, res) => {
         var course = {
           id: rows[i].id,
           name: rows[i].course_name,
-          newRow: (rows[i].id % 2 == 1)
+          newRow: (rows[i].id % 2 == 1),
+          color: rows[i].color
         }
         courses[i] = course;
       }
+
+      // TODO: retrieve data from DB, need new table
+      var course_hour = []; // length: 7
+      var course_hour_row = []; // length: 6
+      course_hour_row = ["FF0000", "0000FF", "FFFFFF", "FFFFFF", "FFFFFF", "FFFFFF"];
+      course_hour[0] = course_hour_row;
+      course_hour_row = ["FFFFFF", "FF0000", "FFFFFF", "FFFFFF", "FFFFFF", "FFFFFF"];
+      course_hour[1] = course_hour_row;
+      course_hour_row = ["00FF00", "FF0000", "FFFFFF", "FFFFFF", "FFFFFF", "FFFFFF"];
+      course_hour[2] = course_hour_row;
+      course_hour_row = ["00FF00", "FFFFFF", "FFFFFF", "FFFFFF", "FFFFFF", "FFFFFF"];
+      course_hour[3] = course_hour_row;
+      course_hour_row = ["FFFFFF", "FFFFFF", "FFFFFF", "FFFFFF", "FF0000", "FFFFFF"];
+      course_hour[4] = course_hour_row;
+      course_hour_row = ["FFFFFF", "FFFFFF", "FFFFFF", "FFFFFF", "FFFFFF", "FFFFFF"];
+      course_hour[5] = course_hour_row;
+      course_hour_row = ["FFFFFF", "FFFFFF", "FFFFFF", "FFFFFF", "FFFFFF", "FFFFFF"];
+      course_hour[6] = course_hour_row;
+
       res.render('../pages/parent/parent_courselist.pug', {
         courses: courses,
         childID: req.params.childID,
-        fullName: fullName
+        fullName: fullName,
+        course_hours: course_hour
       });
     }
     con.end();
@@ -232,7 +253,7 @@ router.get('/:childID/course/:id', (req, res) => {
         courseName: rows[0].course_name,
         courseID: req.params.id,
         childID: req.params.childID,
-        fullName: fullName,
+        fullName: fullName
       });
     }
   });
