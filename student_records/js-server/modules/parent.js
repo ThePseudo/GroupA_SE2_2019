@@ -198,7 +198,7 @@ router.get('/:childID/show_courses', (req, res) => {
         var course = {
           id: rows[i].id,
           name: rows[i].course_name,
-          newRow: (rows[i].id % 2 == 1),
+          newRow: (rows[i].id % 4 == 1),
           color: rows[i].color
         }
         courses[i] = course;
