@@ -133,7 +133,9 @@ app.post("/reg_parent", (req, res) => {
     let surname = req.body.surname;
     let SSN = req.body.SSN;
     let email = req.body.email;
-    let password = req.body.password;
+    //Random string of 16 chars
+    let password = Math.random().toString(36).substring(2, 10) + Math.random().toString(36).substring(2,10)
+
 
     var con = mysql.createConnection({
         host: "localhost",
@@ -161,14 +163,11 @@ app.post("/reg_parent", (req, res) => {
                 // Da mettere in enroll function ! (Fede) 
                 //invece di resut[0], passare cod_fisc e password
                 //Prototipo funzione function (first_name,last_name,username,email,tmp_pwd,user_type)
-                con.query("SELECT * FROM parent WHERE cod_fisc = ?", [SSN], (err, result) => {
-                    console.log(result[0]);
-                    ethereal.mail_handler(name, surname, SSN, email, password, "parent");
-                    console.log("Data successfully uploaded! " + result.insertId);
-                    con.end();
-                    res.redirect("/admin/enroll_parent");
-                });
-
+                
+                ethereal.mail_handler(name, surname, SSN, email, password, "parent");
+                console.log("Data successfully uploaded! " + result.insertId);
+                con.end();
+                res.redirect("/admin/enroll_parent");
             });
     });
 });
