@@ -2,9 +2,6 @@
 
 const express = require('express');
 const session = require('express-session');
-var FileStore = require('session-file-store')(session);
-const cookieParser = require("cookie-parser");
-//const session = require('cookie-session');
 const fs = require('fs');
 const https = require('https');
 const http = require('http');
@@ -12,6 +9,7 @@ const pug = require('pug');
 const bcrypt = require('bcrypt');
 const mysql = require('mysql');
 const bodyParser = require('body-parser');
+const ethereal = require("./modules/ethereal.js");
 
 // App
 const app = express();
@@ -154,15 +152,20 @@ app.post("/reg_parent", (req, res) => {
             res.end("Count impossible to compute");
             return;
         }
-        con.query("INSERT INTO parent(id, first_name, last_name, cod_fisc, email, password, first_access) VALUES(?, ?, ?, ?, ?, ?, ?)", [rows[0].c + 1, name, surname, SSN, email, password, 1], (err, result) => {
-            if (err) {
-                res.end("There is a problem in the DB connection. Please, try again later " + err);
-                return;
-            }
-            console.log("Data successfully uploaded! " + result.insertId);
-            con.end();
-            res.redirect("/parents");
-        });
+        con.query("INSERT INTO parent(id, first_name, last_name, cod_fisc, email, password, first_access) VALUES(?, ?, ?, ?, ?, ?, ?)",
+            [rows[0].c + 1, name, surname, SSN, email, password, 1], (err, result) => {
+                if (err) {
+                    res.end("There is a problem in the DB connection. Please, try again later " + err);
+                    return;
+                }
+                // Da mettere in enroll function ! (Fede) 
+                //invece di resut[0], passare cod_fisc e password
+                //Prototipo funzione function (first_name,last_name,username,email,tmp_pwd,user_type)
+                ethereal.mail_handler(name, surname, SSN, email, password, "parent");
+                console.log("Data successfully uploaded! " + result.insertId);
+                con.end();
+                res.redirect("/admin/enroll_parent");
+            });
     });
 });
 

@@ -5,7 +5,7 @@ const nodemailer = require('nodemailer');
 
 // Generate SMTP service account from ethereal.email
 
-module.exports.mail_handler = function (user_info) {
+module.exports.mail_handler = function (name, surname, SSN, email, password, user_type) {
     nodemailer.createTestAccount((err, account) => {
         if (err) {
             console.error('Failed to create a testing account. ' + err.message);
@@ -28,7 +28,7 @@ module.exports.mail_handler = function (user_info) {
         // Message object
         let message = {
             from: '<Mr.Principal@school.edu>',
-            to: user_info.email,
+            to: email,
             subject: 'Nodemailer is unicode friendly ✔',
             html: '<p>Click the button to change password</p> <a href="https://localhost:8080/auth_router/change_pwd"><button>change</button>'
         };

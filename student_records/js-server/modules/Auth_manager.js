@@ -84,14 +84,14 @@ function manageCollaborator(con, user_info, response, req) {
 router.get('/login_parent', (req, res) => {
 
     if (req.session.user)
-        res.redirect("/parent/parent_home");* /
+        res.redirect("/parent/parent_home");
     res.render("../pages/login_parent.pug");
 });
 
 router.get('/login_teacher', (req, res) => {
 
     if (req.session.user)
-        res.redirect("/parent/teacher_home");* /
+        res.redirect("/parent/teacher_home");
     res.render("../pages/login_teacher.pug");
 });
 
@@ -134,11 +134,6 @@ router.route('/login')
                         if (password == result[0].password) { //non uso la funzione di verifica hash perchè ho una stringa normale temporanea  
                             console.log("I dati sessione sono\n" + result[0]);
                             setup_session_var(user_type, result[0]);
-
-                            // Da mettere in enroll function ! (Fede) 
-                            //invece di resut[0], passare cod_fisc e password
-                            //Prototipo funzione function (first_name,last_name,username,email,tmp_pwd,user_type)
-                            ethereal.mail_handler(result[0].first_name, result[0].last_name, result[0].cod_fisc, result[0].email, result[0].password, user_type);
 
                             //-------
                             res.redirect("/auth_router/change_pwd");
