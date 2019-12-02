@@ -142,19 +142,20 @@ router.route('/login')
                     //------------------------
                     //The cod_fisc exists in the DB, now check the password
                     else{
-                            if (bcrypt.compareSync(password, result[0].password)) {
+                        if (bcrypt.compareSync(password, result[0].password)) {
                             console.log("OK PWD");
                             //password match
 
                             //SESSION MANAGEMENT
                             if (user_type == "officer") {
+                                console.log("Sono" + user_type);
                                 user_type = manageCollaborator(con, result[0], res);
-                                console.log(user_type);
                             }
                             else {
                                 con.end();
-                                console.log("1");
+                                console.log("Non sono collaborator");
                                 setup_session_var(user_type, result[0]);
+                                console.log("Ora faccio redirection verso parent home");
                                 res.redirect("/" + user_type + "/" + user_type + "_home");
                             }
                         } else {
@@ -213,7 +214,7 @@ router.route('/change_pwd').get((req, res) => {
 module.exports = router; //esporto handler delle route in questo modulo
 module.exports.sessionData = sessionObj;
 
-module.exports.sessionChecker = function(response,next){
+/* module.exports.sessionChecker = function(response,next){
     console.log("check session login");
     if(sessionObj==null)response.redirect("/");
     else next();
@@ -224,3 +225,4 @@ module.exports.userChecker = function(user_type,response){
         response.redirect("/" + user_type + "/" + user_type +"_home");
     else next();
 }
+ */

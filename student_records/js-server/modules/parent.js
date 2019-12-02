@@ -18,6 +18,7 @@ var checkUser = SESSION.userChecker;
 var router = express.Router();
 
 router.use(/\/.*/, function (req, res, next) {
+  console.log("Faccio un check prima di caricare home");
   try {
     if (SESSION.sessionData.user.user_type != 'parent') {
       res.redirect('/auth_router/logout');
