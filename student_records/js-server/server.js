@@ -153,7 +153,7 @@ app.post("/reg_parent", (req, res) => {
             return;
         }
         con.query("INSERT INTO parent(id, first_name, last_name, cod_fisc, email, password, first_access) VALUES(?, ?, ?, ?, ?, ?, ?)",
-            [rows[0].c + 1, name, surname, SSN, email, password, 1], (err, result) => {
+            [rows[0].c + 1, name, surname, SSN, email, password, 0], (err, result) => {
                 if (err) {
                     res.end("There is a problem in the DB connection. Please, try again later " + err);
                     return;
@@ -161,10 +161,14 @@ app.post("/reg_parent", (req, res) => {
                 // Da mettere in enroll function ! (Fede) 
                 //invece di resut[0], passare cod_fisc e password
                 //Prototipo funzione function (first_name,last_name,username,email,tmp_pwd,user_type)
-                ethereal.mail_handler(name, surname, SSN, email, password, "parent");
-                console.log("Data successfully uploaded! " + result.insertId);
-                con.end();
-                res.redirect("/admin/enroll_parent");
+                con.query("SELECT * FROM parent WHERE cod_fisc = ?", [SSN], (err, result) => {
+                    console.log(result[0]);
+                    ethereal.mail_handler(name, surname, SSN, email, password, "parent");
+                    console.log("Data successfully uploaded! " + result.insertId);
+                    con.end();
+                    res.redirect("/admin/enroll_parent");
+                });
+
             });
     });
 });
