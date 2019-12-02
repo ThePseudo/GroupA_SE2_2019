@@ -128,16 +128,14 @@ router.route('/login')
             con.query(sql, (err, result) => {
                 if (result.length > 0) {
                     console.log("OK USER");
+
                     if (user_type == 'parent' && !result[0].first_access) {
                         console.log("ok primo accesso");
                         con.end();
                         if (password == result[0].password) { //non uso la funzione di verifica hash perchè ho una stringa normale temporanea  
-                            console.log("I dati sessione sono\n" + result[0]);
-                            setup_session_var(user_type, result[0]);
-
-                            //-------
+                            setup_session_var(user_type, result[0],req.session);
                             res.redirect("/auth_router/change_pwd");
-
+                            return;
                         }
                         else res.render(render_path, { err_msg: 'Incorrect Username and/or Password!' });
                     }
