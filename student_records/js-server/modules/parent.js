@@ -12,13 +12,12 @@ const mysql = require('mysql');
 //Per aggiungere campo a sessione -> SESSION.sessionData.nomecampo = valore
 
 var SESSION = require("./Auth_manager.js");
-var checkLogin = SESSION.sessionChecker;
-var checkUser = SESSION.userChecker;
+// var checkLogin = SESSION.sessionChecker;
+// var checkUser = SESSION.userChecker;
 
 var router = express.Router();
 
 router.use(/\/.*/, function (req, res, next) {
-  console.log("Faccio un check prima di caricare home");
   try {
     if (SESSION.sessionData.user.user_type != 'parent') {
       res.redirect('/auth_router/logout');
@@ -29,6 +28,7 @@ router.use(/\/.*/, function (req, res, next) {
     res.redirect("/");
     return;
   }
+  next();
 });
 
  /*  router.all("/*", function (req, res, next) {

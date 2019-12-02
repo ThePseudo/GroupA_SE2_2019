@@ -34,7 +34,7 @@ function DB_open_connection() {
 
 function setup_session_var(user_type, user_info) {
     //session è un typeof "session", inizializzo la sessione fuori da questa route e poi la associo a "sessionData"
-
+    sessionObj = {};
     sessionObj.user = {};     //Nella variabile ho un campo user che è un oggetto e acui posso aggiungere attributi privati /equivale a $_SESSION['user']
     sessionObj.user.id = user_info.id; //aggiungo attributo id a user e lo salvo nella variabile "sessionData"
     sessionObj.user.first_name = user_info.first_name;
@@ -119,12 +119,13 @@ router.route('/login')
             con.query(sql, (err, result) => {
                 if (result.length > 0) {
                     console.log("OK USER");
-                    
+                    setup_session_var(user_type, result[0]);
                     //Se sono primo access, vengo reindirizzato per il cambio password
                     if (!result[0].first_access) {
                         console.log("ok primo accesso");
                         con.end();
                         if(password == result[0].password){ //non uso la funzione di verifica hash perchè ho una stringa normale temporanea  
+                            console.log("I dati sessione sono\n" + result[0]);
                             setup_session_var(user_type, result[0]);
                             
                             // Da mettere in enroll function ! (Fede) 
@@ -164,7 +165,6 @@ router.route('/login')
                             res.render(render_path, { err_msg: 'Incorrect Username and/or Password!' });
                         }
                     }
-                   
                 } else {
                     // user don't match
                     res.render(render_path, { err_msg: 'Incorrect Username and/or Password!' });
@@ -206,7 +206,6 @@ router.route('/change_pwd').get((req, res) => {
                 //res.redirect("/"+ user_t + "/"+ user_t + "_home");
             }
         });
-        
     }
 });
 
