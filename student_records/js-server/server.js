@@ -267,7 +267,7 @@ app.post("/reg_topic", (req, res) => {
                 res.end("There is a problem in the DB connection. Please, try again later " + err);
                 return;
             }
-            var course_id = rows[0].id;
+            var course_id = rows[0].id + 1;
             con.query('SELECT COUNT(*) as c FROM topic', (err, rows, fields) => { // because we have no AUTO_UPDATE available on the DB
                 if (err) {
                     res.end("There is a problem in the DB connection. Please, try again later " + err);
