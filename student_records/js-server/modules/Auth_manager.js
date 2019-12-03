@@ -4,7 +4,6 @@ const express = require('express');
 const bcrypt = require('bcrypt');
 const mysql = require('mysql');
 const bodyParser = require('body-parser');
-const ethereal = require("./ethereal.js");
 const app = express();
 const session = require('express-session');
 var router = express.Router();
