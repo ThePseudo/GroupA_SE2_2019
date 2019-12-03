@@ -54,6 +54,15 @@ app.get('/', (req, res) => {
     res.end(compiledPage());
 });
 
+// TEMP
+app.get("/teacher/teacher_home", (req, res) => {
+    res.redirect("/topics");
+});
+
+app.get("/admin/admin_home", (req, res) => {
+    res.redirect("/admin/enroll_parent");
+});
+
 app.get("/style", (req, res) => {
     const page = fs.readFileSync("pages/base/style.css");
     res.end(page);
@@ -134,7 +143,7 @@ app.post("/reg_parent", (req, res) => {
     let SSN = req.body.SSN;
     let email = req.body.email;
     //Random string of 16 chars
-    let password = Math.random().toString(36).substring(2, 10) + Math.random().toString(36).substring(2,10)
+    let password = Math.random().toString(36).substring(2, 10) + Math.random().toString(36).substring(2, 10)
 
 
     var con = mysql.createConnection({
@@ -163,7 +172,7 @@ app.post("/reg_parent", (req, res) => {
                 // Da mettere in enroll function ! (Fede) 
                 //invece di resut[0], passare cod_fisc e password
                 //Prototipo funzione function (first_name,last_name,username,email,tmp_pwd,user_type)
-                
+
                 ethereal.mail_handler(name, surname, SSN, email, password, "parent");
                 console.log("Data successfully uploaded! " + result.insertId);
                 con.end();
