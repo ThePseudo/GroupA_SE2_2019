@@ -84,15 +84,18 @@ function manageCollaborator(con, user_info, response, req) {
 
 router.get('/login_parent', (req, res) => {
 
-    if (req.session.user)
+    if (req.session.user) {
         res.redirect("/parent/parent_home");
+        return;
+    }
     res.render("../pages/login_parent.pug");
 });
 
 router.get('/login_teacher', (req, res) => {
-
-    if (req.session.user)
+    if (req.session.user) {
         res.redirect("/parent/teacher_home");
+        return;
+    }
     res.render("../pages/login_teacher.pug");
 });
 
@@ -134,7 +137,7 @@ router.route('/login')
                         console.log("ok primo accesso");
                         con.end();
                         if (password == result[0].password) { //non uso la funzione di verifica hash perchè ho una stringa normale temporanea  
-                            setup_session_var(user_type, result[0],req.session);
+                            setup_session_var(user_type, result[0], req.session);
                             res.redirect("/auth_router/change_pwd");
                             return;
                         }
