@@ -328,7 +328,7 @@ app.post("/reg_student", (req, res) => {
                         }
                         console.log("Data successfully uploaded! " + result.insertId);
                         con.end();
-                        res.redirect("/students");
+                        res.redirect("/admin/enroll_student");
                     });
                 });
                 return;
@@ -347,7 +347,7 @@ app.post("/reg_student", (req, res) => {
                         }
                         console.log("Data successfully uploaded! " + result.insertId);
                         con.end();
-                        res.redirect("/students");
+                        res.redirect("/admin/enroll_student");
                     });
                     return;
                 }
@@ -359,7 +359,7 @@ app.post("/reg_student", (req, res) => {
                     }
                     console.log("Data successfully uploaded! " + result.insertId);
                     con.end();
-                    res.redirect("/students");
+                    res.redirect("/admin/enroll_student");
                 });
             });
         });
@@ -372,7 +372,7 @@ app.post("/reg_topic", (req, res) => {
     let classroom = req.body.class;
     let desc = req.body.desc;
 
-    const compiledPage = pug.compileFile("pages/reg_topic.pug");
+    const compiledPage = pug.compileFile("pages/topics.pug");
 
     var con = mysql.createConnection({
         host: "localhost",
