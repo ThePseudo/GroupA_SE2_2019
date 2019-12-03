@@ -1,4 +1,4 @@
-// - Variables used: "user", "active", "childID"
+// - Variables used: "user", "active", "childID", "fullName"
 // - User can be admin, teacher, sysadmin or parent
 
 mixin sidebar_item(link, text)
@@ -14,7 +14,8 @@ mixin small_item(link, text)
 div(class='sidebar' id='sidebar')
   if(user=="admin")
     a(class='active-sidebar-item' style="background:#ffc999;")
-    a(class='active-sidebar-item' style="background:#ffc999; text-align:center; padding-right:10px;") Welcome, administrator
+    a(class='active-sidebar-item' style="background:#ffc999; text-align:center; padding-right:10px;") Admin
+    a(class='active-sidebar-item' style="background:#ffc999; text-align:center; padding-right:10px;") #{fullName}
     a(class='active-sidebar-item' style="background:#ffc999;")
     +sidebar_item("/admin/parents", "Manage parents")
     +sidebar_item("/admin/enroll_student", "Enroll student")
@@ -24,7 +25,8 @@ div(class='sidebar' id='sidebar')
     +sidebar_item("/admin/class", "Class composition")
   else if(user=="teacher")
     a(class='active-sidebar-item' style="background:#ffc999;")
-    a(class='active-sidebar-item' style="background:#ffc999; text-align:center; padding-right:10px;") Welcome, teacher
+    a(class='active-sidebar-item' style="background:#ffc999; text-align:center; padding-right:10px;") Teacher
+    a(class='active-sidebar-item' style="background:#ffc999; text-align:center; padding-right:10px;") #{fullName}
     a(class='active-sidebar-item' style="background:#ffc999;")
     +sidebar_item("/topics", "Insert daily topic")
   else if(user=="sysadmin")
@@ -33,11 +35,11 @@ div(class='sidebar' id='sidebar')
     +sidebar_item("/sysadmin/register_principal", "Register principal")
   else if(user=="parent")
     a(class='active-sidebar-item' style="background:#ffc999;")
-    a(class='active-sidebar-item' style="background:#ffc999; text-align:center; padding-right:10px;") Welcome, parent
+    a(class='active-sidebar-item' style="background:#ffc999; text-align:center; padding-right:10px;") Parent
+    a(class='active-sidebar-item' style="background:#ffc999; text-align:center; padding-right:10px;") #{fullName}
     a(class='active-sidebar-item' style="background:#ffc999;")
-    +sidebar_item("/parent/parent_home", "Choose student")
+    +sidebar_item("/parent/parent_home", "Your home")
     +sidebar_item("/parent/"+childID+"/show_courses", "Show courses")
-    +sidebar_item("/parent/"+childID+"/time_table", "Time table")
     +sidebar_item("/parent/"+childID+"/notes", "Notes and absences")
     +sidebar_item("/parent/"+childID+"/marks", "Show all marks")
   +small_item("/logout", "Logout")

@@ -1,10 +1,10 @@
-//- Those variables should be in every page. ALWAYS PASS childID
+//- Those variables should be in every page. ALWAYS PASS childID, fullName, courseID
 - var page = "Course marks"
 - var loggedIn = true
 - var user = "parent"
 - var active = "Show course marks"
 
-//- variables used: student_name, subject, student_marks[] {date, mark}, 
+//- variables used: student_name, student_marks[] {date, mark}, 
 
 mixin rowMark(date, mark)
   tr(class="table-row table-row-base")
@@ -17,12 +17,14 @@ html
   body
     include ../base/navbar.pug
     include ../base/sidebar.pug
-    div(class='container')
+    div(class='container sidebarContainer')
+      a(href="../"+courseID class="noLinkTitle backButton")
+        span(class="glyphicon glyphicon-menu-left backButton")
       div(class='row')
-        h1(class='title') #{student_name}'s #{subject} marks
+        h1(class='title') #{student_name}'s #{courseName} marks
       div(class='row')
-        div(class="col-lg-3 col-sm-2 col-xs-1")
-        div(class="col-lg-6 col-sm-8 col-xs-10" style='align-content:center;')
+        div(class="col-lg-2 col-sm-2")
+        div(class="col-lg-8 col-sm-12 col-xs-12" style='align-content:center;')
           table(style="width:100%; text-align:center; align-content:center" class="table table-bordered")
             tr(class='table-row-base')
               th Date

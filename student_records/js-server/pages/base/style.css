@@ -3,10 +3,18 @@ body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
+.container-fluid {
+    margin-top: 51px;
+}
+
 .container {
     margin-top: 51px;
 }
 
+.sidebarContainer {
+    width: 85%;
+    margin-left: 15%;
+}
 
 .navbar-default {
     background-color: #fda253 !important;
@@ -14,8 +22,8 @@ body {
     border-radius: 0px;
     position: fixed;
     width: 100%;
-    top: 0;
     z-index: 1;
+    top: -51px;
 }
 
 .noLinkTitle {
@@ -177,9 +185,23 @@ input[type="date"] {
     text-align: center !important;
 }
 
+.backButton {
+    margin-top: 8px;
+    font-size: 24px;
+    height: auto;
+    position: absolute;
+    padding: 8px;
+    
+}
+
 /* Smaller screens */
 
 @media only screen and (max-width: 1200px) {
+    .sidebarContainer {
+        margin-left: 0px;
+        width: 100%;
+    }
+
     .smallMarginTop {
         margin: 10px;
     }

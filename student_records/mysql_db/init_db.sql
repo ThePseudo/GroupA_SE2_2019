@@ -55,6 +55,19 @@ INSERT INTO parent
 VALUES
     (1, "Tizio", "Caio", "1111", "tizio@caio.com", "$2a$10$0tXRERd11hkw3zKQQmFeTOAuUcMiI6/ThiMNvfMUvKmYkWkL0BRkO", 1);
 
+INSERT INTO parent
+    (id, first_name, last_name,cod_fisc,email,password, first_access)
+VALUES
+    (2, "Giorno", "Giovanna", "2222", "tizio@caio.com", "$2a$10$0tXRERd11hkw3zKQQmFeTOAuUcMiI6/ThiMNvfMUvKmYkWkL0BRkO", 1);
+INSERT INTO parent
+    (id, first_name, last_name,cod_fisc,email,password, first_access)
+VALUES
+    (3, "tai", "deitali", "3333", "tai@deitali.com", "password", 0);
+INSERT INTO parent
+    (id, first_name, last_name,cod_fisc,email,password, first_access)
+VALUES
+    (4, "Tizio", "Caio", "4444", "tizio@caio.com", "$2a$10$0tXRERd11hkw3zKQQmFeTOAuUcMiI6/ThiMNvfMUvKmYkWkL0BRkO", 1);
+
 CREATE TABLE student
 (
     id INT PRIMARY KEY,
@@ -111,23 +124,24 @@ VALUES(3, "1C");
 CREATE TABLE course
 (
     id INT PRIMARY KEY,
-    course_name VARCHAR(50) UNIQUE NOT NULL
+    course_name VARCHAR(50) UNIQUE NOT NULL,
+    color VARCHAR(6) UNIQUE NOT NULL
 );
 
 INSERT INTO course
-    (id,course_name)
+    (id,course_name, color)
 VALUES
-    (1, 'Math');
+    (1, 'Math', 'FF0000');
 
 INSERT INTO course
-    (id,course_name)
+    (id,course_name, color)
 VALUES
-    (2, 'History');
+    (2, 'History', '0000FF');
 
 INSERT INTO course
-    (id,course_name)
+    (id,course_name, color)
 VALUES
-    (3, 'Science');
+    (3, 'Science', '00FF00');
 
 CREATE TABLE admin
 (
@@ -164,6 +178,18 @@ CREATE TABLE topic
     PRIMARY KEY(id, topic_date, id_class, id_course)
 );
 
+INSERT INTO topic
+    (id, topic_date, id_class, id_course, description)
+VALUES(1, "2019-09-30", 1, 1, "Monoms");
+
+INSERT INTO topic
+    (id, topic_date, id_class, id_course, description)
+VALUES(2, "2019-09-29", 2, 1, "Monoms");
+
+INSERT INTO topic
+    (id, topic_date, id_class, id_course, description)
+VALUES(3, "2019-09-30", 2, 1, "Polynoms");
+
 CREATE TABLE absence
 (
     id INT PRIMARY KEY,
@@ -179,11 +205,12 @@ CREATE TABLE absence
 CREATE TABLE homework
 (
     id INT UNIQUE NOT NULL,
-    student_id INT NOT NULL,
     course_id INT NOT NULL,
+    class_id INT NOT NULL,
     description TEXT NOT NULL,
     date_hw DATE NOT NULL,
-    PRIMARY KEY(id)
+    PRIMARY KEY
+    (id)
 );
 
 -- Marks
@@ -255,40 +282,3 @@ INSERT INTO General_Communication
     (id,communication, comm_date)
 VALUES
     (3, "See the pdf on site", '2019-11-27');
-
--- FOR TORCHIANO - 12/11/19
--- 
--- CREATE TABLE states
--- (
---     code VARCHAR(2) PRIMARY KEY,
---     taxes INT NOT NULL
--- );
--- 
--- 
--- INSERT INTO states
--- VALUES('UT', 685);
--- INSERT INTO states
--- VALUES('NV', 800);
--- INSERT INTO states
--- VALUES('TX', 625);
--- INSERT INTO states
--- VALUES('AL', 400);
--- INSERT INTO states
--- VALUES('CA', 825);
--- 
--- CREATE TABLE discounts
--- (
---     threshold INT PRIMARY KEY,
---     discount INT NOT NULL
--- );
--- 
--- INSERT INTO discounts
--- VALUES(1000, 3);
--- INSERT INTO discounts
--- VALUES(5000, 5);
--- INSERT INTO discounts
--- VALUES(7000, 7);
--- INSERT INTO discounts
--- VALUES(10000, 10);
--- INSERT INTO discounts
--- VALUES(50000, 15);

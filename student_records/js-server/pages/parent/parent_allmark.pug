@@ -1,4 +1,4 @@
-//- Those variables should be in every page. ALWAYS PASS childID
+//- Those variables should be in every page. ALWAYS PASS childID, fullName
 - var page = "All marks"
 - var loggedIn = true
 - var user = "parent"
@@ -16,7 +16,7 @@ html
   body
     include ../base/navbar.pug
     include ../base/sidebar.pug
-    div(class='container')
+    div(class='container sidebarContainer')
       div(class='row')
         h1(class='title') #{student_name}'s marks
       div(class='row')
