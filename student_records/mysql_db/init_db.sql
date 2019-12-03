@@ -36,7 +36,7 @@ VALUES
 INSERT INTO officer
     (id,first_name,last_name,cod_fisc,email,password,first_access)
 VALUES
-    (2, "Giovanni", "PaoloSecondo", "GPS67", "gesu00@yahoo.com", "$2a$10$0tXRERd11hkw3zKQQmFeTOAuUcMiI6/ThiMNvfMUvKmYkWkL0BRkO", 1);
+    (2, "Giovanni", "Rossi", "GPS67", "Rossi@yahoo.com", "$2a$10$0tXRERd11hkw3zKQQmFeTOAuUcMiI6/ThiMNvfMUvKmYkWkL0BRkO", 1);
 
 
 CREATE TABLE parent
@@ -58,7 +58,7 @@ VALUES
 INSERT INTO parent
     (id, first_name, last_name,cod_fisc,email,password, first_access)
 VALUES
-    (2, "Giorno", "Giovanna", "2222", "tizio@caio.com", "$2a$10$0tXRERd11hkw3zKQQmFeTOAuUcMiI6/ThiMNvfMUvKmYkWkL0BRkO", 1);
+    (2, "Giorno", "Giovanna", "2222", "giorno@giovanna.com", "$2a$10$0tXRERd11hkw3zKQQmFeTOAuUcMiI6/ThiMNvfMUvKmYkWkL0BRkO", 1);
 INSERT INTO parent
     (id, first_name, last_name,cod_fisc,email,password, first_access)
 VALUES
@@ -66,7 +66,7 @@ VALUES
 INSERT INTO parent
     (id, first_name, last_name,cod_fisc,email,password, first_access)
 VALUES
-    (4, "Tizio", "Caio", "4444", "tizio@caio.com", "$2a$10$0tXRERd11hkw3zKQQmFeTOAuUcMiI6/ThiMNvfMUvKmYkWkL0BRkO", 1);
+    (4, "Marco", "Verdi", "4444", "marco@verdi.com", "$2a$10$0tXRERd11hkw3zKQQmFeTOAuUcMiI6/ThiMNvfMUvKmYkWkL0BRkO", 1);
 
 CREATE TABLE student
 (
@@ -156,7 +156,7 @@ CREATE TABLE admin
 INSERT INTO admin
     (id,first_name,last_name,cod_fisc,email,password)
 VALUES
-    (1, "Giovanni", "PaoloSecondo", "GPS67", "gesu00@yahoo.com", "$2a$10$0tXRERd11hkw3zKQQmFeTOAuUcMiI6/ThiMNvfMUvKmYkWkL0BRkO");
+    (1, "Giovanni", "Rossi", "GPS67", "Rossi@yahoo.com", "$2a$10$0tXRERd11hkw3zKQQmFeTOAuUcMiI6/ThiMNvfMUvKmYkWkL0BRkO");
 
 CREATE TABLE note
 (

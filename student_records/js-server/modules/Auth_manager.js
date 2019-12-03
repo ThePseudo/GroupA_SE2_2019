@@ -43,7 +43,7 @@ router.use(session({
 
 function setup_session_var(user_type, user_info, session) {
     //session è un typeof "session", inizializzo la sessione fuori da questa route e poi la associo a "sessionData"
-
+    console.log(user_info);
     session.user = {};     //Nella variabile ho un campo user che è un oggetto e acui posso aggiungere attributi privati /equivale a $_SESSION['user']
     session.user.id = user_info.id; //aggiungo attributo id a user e lo salvo nella variabile "sessionData"
     session.user.first_name = user_info.first_name;
@@ -58,7 +58,6 @@ function manageCollaborator(con, user_info, response, req) {
     let sql = 'SELECT * FROM officer JOIN admin ON officer.cod_fisc = admin.cod_fisc WHERE officer.cod_fisc = ?';
     let insert = [user_info.cod_fisc];
     sql = mysql.format(sql, insert); //mix all together with "mysql.format()" and pass as parameter to .query() method
-    console.log(sql);
     con.query(sql, (err, result) => {
         if (err) {
             console.log(err);
@@ -68,14 +67,16 @@ function manageCollaborator(con, user_info, response, req) {
             console.log("OK ADMIN");
             con.end();
             console.log("ok prima del setup");
-            setup_session_var("admin", result[0], req.session);
+            setup_session_var("admin", user_info, req.session);
             console.log("ok dopo setup");
             response.redirect("/admin/admin_home");
         }
         else {
             console.log("OK OFFICER");
             con.end();
-            setup_session_var("officer", result[0], req.session);
+            console.log("ok prima del setup");
+            setup_session_var("officer", user_info, req.session);
+            console.log("ok dopo setup");
             response.redirect("/officer/officer_home");
         }
     });
@@ -128,16 +129,14 @@ router.route('/login')
             con.query(sql, (err, result) => {
                 if (result.length > 0) {
                     console.log("OK USER");
+
                     if (user_type == 'parent' && !result[0].first_access) {
                         console.log("ok primo accesso");
                         con.end();
                         if (password == result[0].password) { //non uso la funzione di verifica hash perchè ho una stringa normale temporanea  
-                            console.log("I dati sessione sono\n" + result[0]);
-                            setup_session_var(user_type, result[0]);
-
-                            //-------
+                            setup_session_var(user_type, result[0],req.session);
                             res.redirect("/auth_router/change_pwd");
-
+                            return;
                         }
                         else res.render(render_path, { err_msg: 'Incorrect Username and/or Password!' });
                     }

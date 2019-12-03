@@ -12,7 +12,7 @@ html
         h1(class='title') Officer login
       div(class='row')
         h2(class = 'title2') Please, sign in
-        h2(class = 'err_msg')= err_msg
+        h2(class = 'err_msg') &nbsp #{err_msg}
       //- Parametric form
       form(action='/auth_router/login' method="POST") 
         div(class='row')
