@@ -34,7 +34,7 @@ const HTTPSPORT = 8080;
 const HOST = '0.0.0.0';
 
 // other routers
-module.exports = function(app) {
+module.exports = function (app) {
     app.use('/action/*', require('./modules'));
 };
 
@@ -152,23 +152,24 @@ app.post("/reg_parent", (req, res) => {
             res.end("Count impossible to compute");
             return;
         }
-        con.query("INSERT INTO parent(id, first_name, last_name, cod_fisc, email, password, first_access) VALUES(?, ?, ?, ?, ?, ?, ?)", [rows[0].c + 1, name, surname, SSN, email, password, 0], (err, result) => {
-            if (err) {
-                res.end("There is a problem in the DB connection. Please, try again later " + err);
-                return;
-            }
-            // Da mettere in enroll function ! (Fede) 
-            //invece di resut[0], passare cod_fisc e password
-            //Prototipo funzione function (first_name,last_name,username,email,tmp_pwd,user_type)
-            con.query("SELECT * FROM parent WHERE cod_fisc = ?", [SSN], (err, result) => {
-                console.log(result[0]);
-                ethereal.mail_handler(name, surname, SSN, email, password, "parent");
-                console.log("Data successfully uploaded! " + result.insertId);
-                con.end();
-                res.redirect("/admin/enroll_parent");
-            });
+        con.query("INSERT INTO parent(id, first_name, last_name, cod_fisc, email, password, first_access) VALUES(?, ?, ?, ?, ?, ?, ?)",
+            [rows[0].c + 1, name, surname, SSN, email, password, 0], (err, result) => {
+                if (err) {
+                    res.end("There is a problem in the DB connection. Please, try again later " + err);
+                    return;
+                }
+                // Da mettere in enroll function ! (Fede) 
+                //invece di resut[0], passare cod_fisc e password
+                //Prototipo funzione function (first_name,last_name,username,email,tmp_pwd,user_type)
+                con.query("SELECT * FROM parent WHERE cod_fisc = ?", [SSN], (err, result) => {
+                    console.log(result[0]);
+                    ethereal.mail_handler(name, surname, SSN, email, password, "parent");
+                    console.log("Data successfully uploaded! " + result.insertId);
+                    con.end();
+                    res.redirect("/admin/enroll_parent");
+                });
 
-        });
+            });
     });
 });
 
@@ -383,7 +384,7 @@ app.post("/reg_topic", (req, res) => {
     });
 
     let sql = 'SELECT id FROM class WHERE class_name = ?';
-    con.query(sql, [classroom], function(err, rows, fields) {
+    con.query(sql, [classroom], function (err, rows, fields) {
         if (err) {
             res.end("There is a problem in the DB connection. Please, try again later " + err);
             return;
@@ -395,13 +396,13 @@ app.post("/reg_topic", (req, res) => {
                 res.end("There is a problem in the DB connection. Please, try again later " + err);
                 return;
             }
-            var course_id = rows[0].id;
+            var course_id = rows[0].id + 1;
             con.query('SELECT COUNT(*) as c FROM topic', (err, rows, fields) => { // because we have no AUTO_UPDATE available on the DB
                 if (err) {
                     res.end("There is a problem in the DB connection. Please, try again later " + err);
                     return;
                 }
-                con.query("INSERT INTO topic(id, topic_date, id_class, id_course, description) VALUES(?, ?, ?, ?, ?)", [rows[0].c + 1, date, class_id, course_id, desc], (err, result) => {
+                con.query("INSERT INTO topic(id, topic_date, id_class, id_course, description) VALUES(?, ?, ?, ?, ?)", [rows[0].c, date, class_id, course_id, desc], (err, result) => {
                     if (err) {
                         res.end("There is a problem in the DB connection. Please, try again later " + err);
                         return;
@@ -422,7 +423,7 @@ app.post("/register", (req, res) => {
     var parent1 = req.body.parent1;
     var parent2 = req.body.parent2;
 
-    con.connect(function(err) {
+    con.connect(function (err) {
         if (err) {
             console.log("Error: " + err);
             return;
@@ -433,7 +434,7 @@ app.post("/register", (req, res) => {
 
     let sql = 'INSERT INTO student (first_name, second_name, cod_fisc, parent_1 , parent_2) VALUES (' + name + ',' + surname + ',' + fiscalcode + ',' + parent1 + ',' + parent2 + ')';
 
-    con.query(sql, function(err, rows, fields) {
+    con.query(sql, function (err, rows, fields) {
 
         if (err) {
             res.status(500).json({ "status_code": 500, "status_message": "internal server error" });
