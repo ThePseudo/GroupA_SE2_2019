@@ -24,14 +24,14 @@ router.use(session({
 router.use(/\/.*/, function (req, res, next) {
   try {
     if (req.session.user.user_type != 'parent') {
-      res.redirect("/auth_manager/logout");
+      res.redirect("/");
       return;
+    } else {
+      next();
     }
   } catch (err) {
     res.redirect("/");
   }
-
-  next();
 });
 
 

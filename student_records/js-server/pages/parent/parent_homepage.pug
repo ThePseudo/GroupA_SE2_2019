@@ -9,28 +9,25 @@
 - var studentsLeft = numStudents
 
 mixin studentBtn(studentList)
-
-  div(class="container-fluid")
-  table(class='table')
-    tr
-      for student in studentList
-        td
-          a(class='noLinkTitle button' href = student.id+'/show_courses')
-            button(class='btn blockButton')
-              div              
-                img(src= '../../images/child.png' style='width:50px;height:50px;')
-                text= student.first_name + " " + student.last_name
+  div(class="row")
+    for student in studentList
+      div(class="col-md-4")
+        a(class='noLinkTitle button smallMarginTop' href = student.id+'/show_courses')
+          button(class='btn blockButton')
+            div              
+              img(src= '../../images/child.png' style='width:50px;height:50px;')
+              text= student.first_name + " " + student.last_name
 
 
 
 
-  //- div(class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups" margin="50px")
-  //-   div(class="btn-group" role="group" aria-label="First group" margin="50px")
-  //-     for student in studentList
-  //-       a(class='noLinkTitle button' href = 'parent_courselist')
-  //-         button(class='btn blockButton_child') 
-  //-           img(src= '../../images/child.png' style='width:50px;height:50px;')
-  //-           td= student.first_name + " " + student.last_name
+//- div(class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups" margin="50px")
+//-   div(class="btn-group" role="group" aria-label="First group" margin="50px")
+//-     for student in studentList
+//-       a(class='noLinkTitle button' href = 'parent_courselist')
+//-         button(class='btn blockButton_child') 
+//-           img(src= '../../images/child.png' style='width:50px;height:50px;')
+//-           td= student.first_name + " " + student.last_name
 
 doctype html
 html
