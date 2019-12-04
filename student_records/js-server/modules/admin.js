@@ -29,32 +29,32 @@ router.get("/admin/admin_home", (req, res) => {
     res.end(compiledPage());
 });
 
-router.get("/enroll_teacher", (req, res) => {
+router.get("/admin/enroll_teacher", (req, res) => {
     const compiledPage = pug.compileFile("../pages/sysadmin/systemad_registerteacher.pug");
     res.end(compiledPage());
 });
 
-router.get("/enroll_officer", (req, res) => {
+router.get("/admin/enroll_officer", (req, res) => {
     const compiledPage = pug.compileFile("../pages/sysadmin/systemad_registerofficer.pug");
     res.end(compiledPage());
 });
 
-router.get("/enroll_principal", (req, res) => {
+router.get("/admin/enroll_principal", (req, res) => {
     const compiledPage = pug.compileFile("../pages/sysadmin/systemad_registerprincipal.pug");
     res.end(compiledPage());
 });
 
-router.get("/enroll_student", (req, res) => {
+router.get("/officer/enroll_student", (req, res) => {
     const compiledPage = pug.compileFile("../pages/officer/officer_registerstudent.pug");
     res.end(compiledPage());
 });
 
-router.get("/enroll_parent", (req, res) => {
+router.get("/officer/enroll_parent", (req, res) => {
     const compiledPage = pug.compileFile("../pages/officer/officer_registerparent.pug");
     res.end(compiledPage());
 });
 
-router.get("/insert_communication", (req, res) => {
+router.get("/admin/insert_communication", (req, res) => {
     const compiledPage = pug.compileFile("../pages/officer/officer_communication.pug");
     res.end(compiledPage());
 });
