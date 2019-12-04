@@ -3,20 +3,23 @@
 - var loggedIn = true
 - var user = "parent"
 - var active = "Choose student"
-
-//- Inputs: number of students (numStudents) + list of students (studentList)
+- var sidebarForceHidden = true;
+//- Inputs: number of students (numStudents) + list of students (studentList) + name of parent (fullName)
 
 - var studentsLeft = numStudents
 
 mixin studentBtn(studentList)
   div(class="row")
     for student in studentList
-      div(class="col-md-4")
+      div(class="row hidden-md hidden-sm hidden-lg")
+      div(class="col-xs-1 hidden-md hidden-sm hidden-lg")
+      div(class="col-md-4 col-xs-10")
         a(class='noLinkTitle button smallMarginTop' href = student.id+'/show_courses')
           button(class='btn blockButton')
             div              
               img(src= '../../images/child.png' style='width:50px;height:50px;')
               text= student.first_name + " " + student.last_name
+
 
 
 
@@ -34,6 +37,7 @@ html
   include ../base/head.pug
   body
     include ../base/navbar.pug
+    include ../base/sidebar.pug
     div(class="container")
       div(class='row')
         h1(class='title') Choose student

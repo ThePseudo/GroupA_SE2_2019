@@ -7,10 +7,10 @@ mixin list(href, name, icon)
         block
 
 nav(class='navbar navbar-default')
-  if(loggedIn)
-    button(class='glyphicon glyphicon-menu-hamburger menuButton btn menuButton hidden-lg' id='side-toggle' onClick="onMenuButtonClick()")
+  if loggedIn
+    button(class='glyphicon glyphicon-menu-hamburger menuButton btn menuButton hidden-lg' id='navtoggle' onClick="onMenuButtonClick()")
   div(class='container-fluid')
-    div(class='navbar-header' style='margin-left:50%')
+    div(class='navbar-header' style='margin-left:50%;')
       a(href='/' class='navbar-brand') BB
     ul(class='nav navbar-nav navbar-right hidden-xs')
       if loggedIn

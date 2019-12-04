@@ -69,6 +69,12 @@ body {
     background-color: #0091EA;
 }
 
+.activeMenuButton {
+    transition-duration: 0.2s;
+    color: white;
+    background-color: #0091EA;
+}
+
 .menuButton {
     display: block;
     color: black;
@@ -237,5 +243,9 @@ input[type="date"] {
         position: fixed;
         bottom: 0px;
         width: 100%;
+    }
+
+    .sidebar {
+        margin-top: -1px;
     }
 }
