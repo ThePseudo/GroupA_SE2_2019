@@ -1,6 +1,6 @@
 body {
     background: #E1F5FE;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: Arial, Helvetica, sans-serif;
 }
 
 .container-fluid {
@@ -24,6 +24,7 @@ body {
     width: 100%;
     z-index: 1;
     top: -51px;
+    box-shadow: 2px 4px 10px rgba(0,0,0,.2)
 }
 
 .navbar-brand {
@@ -133,18 +134,19 @@ td {
     margin-left: 0px;
     background: #B3E5FC;
     height: 100%;
+    border-right: 1px solid rgba(0,0,0,.12);
     transition-duration: 0.2s;
 }
 
 .sidebar-item {
-    text-align: right;
+    text-align: left;
     font-size: larger;
     color: #222222;
     text-decoration: none;
     background: #B3E5FC;
-    padding-top: 10px;
-    padding-bottom: 10px;
-    padding-right: 32px;
+    padding-top: 8px;
+    padding-bottom: 8px;
+    padding-left: 24px;
     display: block;
     transition: 0.2s;
 }
@@ -158,14 +160,15 @@ td {
 }
 
 .active-sidebar-item {
-    text-align: right;
+    text-align: left;
     font-size: larger;
     color: #222222;
+    font-weight: bold;
     display: block;
     background: #29B6F6;
-    padding-top: 10px;
-    padding-bottom: 10px;
-    padding-right: 32px;
+    padding-top: 8px;
+    padding-bottom: 8px;
+    padding-left: 24px;
     display: block;
 }
 
@@ -243,9 +246,5 @@ input[type="date"] {
         position: fixed;
         bottom: 0px;
         width: 100%;
-    }
-
-    .sidebar {
-        margin-top: -1px;
     }
 }

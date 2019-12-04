@@ -15,35 +15,27 @@ if sidebarForceHidden
   div(class='sidebar' id='sidebar' style="margin-left: -100%;")
     if(user=="admin")
       a(class='active-sidebar-item' style="background:#B3E5FC;")
-      a(class='active-sidebar-item' style="background:#B3E5FC; text-align:center; padding-right:10px;")
-        | Admin
-        br
+      a(class='active-sidebar-item' style="background:#B3E5FC; text-align:center; padding-right:10px; border-bottom: 1px solid rgba(0,0,0,.12);")
         | #{fullName}
       a(class='active-sidebar-item' style="background:#B3E5FC;")
     else if(user=="teacher")
       a(class='active-sidebar-item' style="background:#B3E5FC;")
-      a(class='active-sidebar-item' style="background:#B3E5FC; text-align:center; padding-right:10px;")
-        | Teacher
-        br
+      a(class='active-sidebar-item' style="background:#B3E5FC; text-align:center; padding-right:10px; border-bottom: 1px solid rgba(0,0,0,.12);")
         | #{fullName}
     else if(user=="parent")
       a(class='active-sidebar-item' style="background:#B3E5FC;")
-      a(class='active-sidebar-item' style="background:#B3E5FC; text-align:center; padding-right:10px;")
-        | Parent
-        br
+      a(class='active-sidebar-item' style="background:#B3E5FC; text-align:center; padding-right:10px; border-bottom: 1px solid rgba(0,0,0,.12);")
         | #{fullName}
       a(class='active-sidebar-item' style="background:#B3E5FC;")
-    +small_item("/logout", "Logout")
+    +small_item("/logout", "Log out")
 
 else
   div(class='sidebar' id='sidebar')
     if(user=="admin")
       a(class='active-sidebar-item' style="background:#B3E5FC;")
-      a(class='active-sidebar-item' style="background:#B3E5FC; text-align:center; padding-right:10px;")
-        | Admin
-        br
+      a(class='active-sidebar-item' style="background:#B3E5FC; padding-right:10px;")
         | #{fullName}
-      a(class='active-sidebar-item' style="background:#B3E5FC;")
+      a(class='active-sidebar-item' style="background:#B3E5FC; border-bottom: 1px solid rgba(0,0,0,.12);")
       +sidebar_item("/admin/parents", "Manage parents")
       +sidebar_item("/admin/enroll_student", "Enroll student")
       +sidebar_item("/admin/enroll_parent", "Register parent")
@@ -52,11 +44,9 @@ else
       +sidebar_item("/admin/class", "Class composition")
     else if(user=="teacher")
       a(class='active-sidebar-item' style="background:#B3E5FC;")
-      a(class='active-sidebar-item' style="background:#B3E5FC; text-align:center; padding-right:10px;")
-        | Teacher
-        br
+      a(class='active-sidebar-item' style="background:#B3E5FC; padding-right:10px;")
         | #{fullName}
-      a(class='active-sidebar-item' style="background:#B3E5FC;")
+      a(class='active-sidebar-item' style="background:#B3E5FC; border-bottom: 1px solid rgba(0,0,0,.12);")
       +sidebar_item("/topics", "Insert daily topic")
     else if(user=="sysadmin")
       +sidebar_item("/sysadmin/register_officer", "Register officer")
@@ -64,16 +54,14 @@ else
       +sidebar_item("/sysadmin/register_principal", "Register principal")
     else if(user=="parent")
       a(class='active-sidebar-item' style="background:#B3E5FC;")
-      a(class='active-sidebar-item' style="background:#B3E5FC; text-align:center; padding-right:10px;")
-        | Parent
-        br
+      a(class='active-sidebar-item' style="background:#B3E5FC; padding-right:10px;")
         | #{fullName}
-      a(class='active-sidebar-item' style="background:#B3E5FC;")
+      a(class='active-sidebar-item' style="background:#B3E5FC; border-bottom: 1px solid rgba(0,0,0,.12);")
       +sidebar_item("/parent/parent_home", "Your home")
       +sidebar_item("/parent/"+childID+"/show_courses", "Show courses")
       +sidebar_item("/parent/"+childID+"/notes", "Notes and absences")
       +sidebar_item("/parent/"+childID+"/marks", "Show all marks")
-    +small_item("/logout", "Logout")
+    +small_item("/logout", "Log out")
 
 script
   include scripts.js
