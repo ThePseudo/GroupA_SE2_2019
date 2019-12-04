@@ -6,6 +6,7 @@ const mysql = require('mysql');
 const bodyParser = require('body-parser');
 const app = express();
 const session = require('express-session');
+const {check, validationResult} = require('express-validator/check');
 var router = express.Router();
 
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -175,9 +176,14 @@ router.route('/change_pwd').get((req, res) => {
     res.render("../pages/change_pwd.pug");
 }).post((req, res) => {
     var password = req.body.password;
+    var confirm_pwd = req.body.confirm_pwd;
+
     //Check if password field are filled
-    if (!password) {
-        res.render("../pages/change_pwd.pug", { err_msg: "Please enter a new password" });
+    if (!password || !confirm_pwd) {
+        res.render("../pages/change_pwd.pug", { err_msg: "Please, enter a new password and confirm it" });
+    }
+    else if(password!=confirm_pwd){
+        res.render("../pages/change_pwd.pug", { err_msg: "Please, the two passwords MUST be equal" });
     }
     else {
         console.log("TRY CONNECT");
@@ -199,7 +205,7 @@ router.route('/change_pwd').get((req, res) => {
                 //res.redirect("/"+ user_t + "/"+ user_t + "_home");
             }
         });
-    }
+    } 
 });
 
 
