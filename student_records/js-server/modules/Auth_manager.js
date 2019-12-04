@@ -6,7 +6,7 @@ const mysql = require('mysql');
 const bodyParser = require('body-parser');
 const app = express();
 const session = require('express-session');
-const {check, validationResult} = require('express-validator/check');
+const { body } = require('express-validator');
 var router = express.Router();
 
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -99,10 +99,16 @@ router.get('/login_collaborator', (req, res) => {
 });
 
 router.route('/login')
-    .post((req, res) => {
+    .post(
+        [body('cod_fisc')
+            .not().isEmpty()
+            .trim()
+            .escape()],
+        (req, res) => {
         //i valori del form sono individuati dal valore dell'attributo "name"!
         var user_type = req.body.user_type;
         var cod_fisc = req.body.cod_fisc;
+        console.log(cod_fisc);
         var password = req.body.password;
         var render_path = "../pages/login_" + user_type + ".pug";
 
