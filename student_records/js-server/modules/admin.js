@@ -2,7 +2,8 @@
 
 const express = require('express');
 const pug = require('pug');
-const ethereal = require("../modules/ethereal.js");
+//const ethereal = require("../modules/ethereal.js");
+const ethereal = require("../modules/nodemailer_gmail.js");
 const mysql = require('mysql');
 
 

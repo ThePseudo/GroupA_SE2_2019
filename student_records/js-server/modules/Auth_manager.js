@@ -8,16 +8,6 @@ const app = express();
 const session = require('express-session');
 var router = express.Router();
 
-//global.sessionObj = {};
-
-/* var sessionObj= session({
-    secret: 'keyboard cat',
-    resave: true,
-    saveUninitialized: true,
-    cookie: {   secure: true,
-                maxAge: 10000 } // maxAge is in milliseconds
-}); */
-
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
