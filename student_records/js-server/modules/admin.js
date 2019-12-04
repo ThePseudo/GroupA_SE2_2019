@@ -4,22 +4,30 @@ const express = require('express');
 const pug = require('pug');
 const ethereal = require("../modules/ethereal.js");
 const mysql = require('mysql');
+const session = require('express-session');
 
 
 var SESSION = require("./Auth_manager.js");
 
 var router = express.Router();
 
-router.use('/:id', function (req, res, next) {
-    console.log('Request URL:', req.originalUrl);
-    next();
-}, function (req, res, next) {
-    console.log('Request Type:', req.method);
-    next();
-});
+router.use(session({
+    secret: 'students',
+    saveUninitialized: false,
+    resave: true,
+    httpOnly: false
+  }));
+
+// router.use('/:id', function (req, res, next) {
+//     console.log('Request URL:', req.originalUrl);
+//     next();
+// }, function (req, res, next) {
+//     console.log('Request Type:', req.method);
+//     next();
+// });
 
 
-router.get("/officer/officer_home", (req, res) => {
+router.get("/admin/officer_home", (req, res) => {
     const compiledPage = pug.compileFile("../pages/officer/officer_home.pug");
     res.end(compiledPage());
 });
@@ -44,12 +52,12 @@ router.get("/admin/enroll_principal", (req, res) => {
     res.end(compiledPage());
 });
 
-router.get("/officer/enroll_student", (req, res) => {
+router.get("/admin/enroll_student", (req, res) => {
     const compiledPage = pug.compileFile("../pages/officer/officer_registerstudent.pug");
     res.end(compiledPage());
 });
 
-router.get("/officer/enroll_parent", (req, res) => {
+router.get("/admin/enroll_parent", (req, res) => {
     const compiledPage = pug.compileFile("../pages/officer/officer_registerparent.pug");
     res.end(compiledPage());
 });

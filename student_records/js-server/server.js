@@ -23,7 +23,7 @@ app.use(session({
 
 const adminPages = require('./modules/admin.js');
 const parentPages = require('./modules/parent.js');
-const auth_router = require("./modules/Auth_manager.js");
+const auth_router = require('./modules/Auth_manager.js');
 const teacherPages = require('./modules/teacher.js');
 
 // Constants
@@ -72,7 +72,8 @@ app.get("/topics", (req, res) => {
 app.get('/*', (req, res) => {
     fs.readFile(req.path, (err, data) => {
         if (err) {
-            console.log(req.path)
+            console.log(req.path);
+            console.log(err);
             const compiledPage = pug.compileFile("pages/base/404.pug");
             res.end(compiledPage());
         }
@@ -84,7 +85,8 @@ app.get('/*', (req, res) => {
 app.post('/*', (req, res) => {
     fs.readFile(req.path, (err, data) => {
         if (err) {
-            console.log(req.path)
+            console.log(req.path);
+            console.log(err);
             const compiledPage = pug.compileFile("pages/base/404.pug");
             res.end(compiledPage());
         }
