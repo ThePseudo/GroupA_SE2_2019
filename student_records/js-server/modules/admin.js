@@ -26,49 +26,49 @@ router.use(session({
 //     next();
 // });
 
-
-router.get("/admin/officer_home", (req, res) => {
+// TODO: make this and fix it
+/////////////////////////////////
+//ricambiare tutte le app in route
+router.get("/officer_home", (req, res) => {
     const compiledPage = pug.compileFile("../pages/officer/officer_home.pug");
     res.end(compiledPage());
 });
 
-router.get("/admin/admin_home", (req, res) => {
+router.get("/admin_home", (req, res) => {
     const compiledPage = pug.compileFile("../pages/sysadmin/systemad_home.pug");
     res.end(compiledPage());
 });
 
-router.get("/admin/enroll_teacher", (req, res) => {
+router.get("/enroll_teacher", (req, res) => {
     const compiledPage = pug.compileFile("../pages/sysadmin/systemad_registerteacher.pug");
     res.end(compiledPage());
 });
 
-router.get("/admin/enroll_officer", (req, res) => {
+router.get("/enroll_officer", (req, res) => {
     const compiledPage = pug.compileFile("../pages/sysadmin/systemad_registerofficer.pug");
     res.end(compiledPage());
 });
 
-router.get("/admin/enroll_principal", (req, res) => {
+router.get("/enroll_principal", (req, res) => {
     const compiledPage = pug.compileFile("../pages/sysadmin/systemad_registerprincipal.pug");
     res.end(compiledPage());
 });
 
-router.get("/admin/enroll_student", (req, res) => {
+router.get("/enroll_student", (req, res) => {
     const compiledPage = pug.compileFile("../pages/officer/officer_registerstudent.pug");
     res.end(compiledPage());
 });
 
-router.get("/admin/enroll_parent", (req, res) => {
+router.get("/enroll_parent", (req, res) => {
     const compiledPage = pug.compileFile("../pages/officer/officer_registerparent.pug");
     res.end(compiledPage());
 });
 
-router.get("/admin/insert_communication", (req, res) => {
+router.get("/insert_communication", (req, res) => {
     const compiledPage = pug.compileFile("../pages/officer/officer_communication.pug");
     res.end(compiledPage());
 });
-
-// TODO: make this and fix it
-
+////////////////////////
 router.post("/insert_comm", (req, res) => {
     let desc = req.body.desc;
 

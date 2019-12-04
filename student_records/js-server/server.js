@@ -58,6 +58,7 @@ app.get("/teacher/teacher_home", (req, res) => {
     res.redirect("/topics");
 });
 
+
 app.get("/style", (req, res) => {
     const page = fs.readFileSync("pages/base/style.css");
     res.end(page);
