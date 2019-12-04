@@ -19,6 +19,16 @@ router.use('/:id', function (req, res, next) {
 });
 
 
+router.get("/officer/officer_home", (req, res) => {
+    const compiledPage = pug.compileFile("../pages/officer/officer_home.pug");
+    res.end(compiledPage());
+});
+
+router.get("/admin/admin_home", (req, res) => {
+    const compiledPage = pug.compileFile("../pages/sysadmin/systemad_home.pug");
+    res.end(compiledPage());
+});
+
 router.get("/enroll_teacher", (req, res) => {
     const compiledPage = pug.compileFile("../pages/sysadmin/systemad_registerteacher.pug");
     res.end(compiledPage());
