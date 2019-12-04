@@ -1,6 +1,10 @@
+* {
+    transition-duration: 0.2s;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
 body {
     background: #E1F5FE;
-    font-family: Arial, Helvetica, sans-serif;
 }
 
 .container-fluid {
@@ -30,6 +34,7 @@ body {
 .navbar-brand {
     color: rgb(56, 56, 56) !important; 
     font-size:24px;
+    transition-duration: 0.2s;
 }
 
 .noLinkTitle {
