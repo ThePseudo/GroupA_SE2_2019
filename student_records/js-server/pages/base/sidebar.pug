@@ -9,7 +9,8 @@ mixin sidebar_item(link, text)
 
 mixin small_item(link, text)
   a(class='sidebar-item smallLogout hidden-sm hidden-md hidden-lg ' href=link)
-    span(class= 'glyphicon glyphicon-log-out')= ' ' + text
+    span(class= 'glyphicon glyphicon-log-out')
+    = ' ' + text
 
 if sidebarForceHidden
   div(class='sidebar' id='sidebar' style="margin-left: -100%;")
