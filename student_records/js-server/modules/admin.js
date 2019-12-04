@@ -89,14 +89,14 @@ router.post("/insert_comm", (req, res) => {
             res.end("Count impossible to compute");
             return;
         }
-        con.query("INSERT INTO teacher(id, communication, comm_date) VALUES(?, ?, ?)", [rows[0].c + 1, desc, date], (err, result) => {
+        con.query("INSERT INTO General_Communication(id, communication, comm_date) VALUES(?, ?, ?)", [rows[0].c + 1, desc, date], (err, result) => {
             if (err) {
                 res.end("There is a problem in the DB connection. Please, try again later " + err);
                 return;
             }
             console.log("Data successfully uploaded! " + result.insertId);
             con.end();
-            res.redirect("/teachers");
+            res.redirect("/officer_home");
         });
     });
 });
@@ -140,7 +140,7 @@ router.post("/reg_parent", (req, res) => {
                 ethereal.mail_handler(name, surname, SSN, email, password, "parent");
                 console.log("Data successfully uploaded! " + result.insertId);
                 con.end();
-                res.redirect("/admin/enroll_parent");
+                res.redirect("/enroll_parent");
             });
     });
 });
@@ -176,7 +176,7 @@ router.post("/reg_teacher", (req, res) => {
             }
             console.log("Data successfully uploaded! " + result.insertId);
             con.end();
-            res.redirect("/teachers");
+            res.redirect("/enroll_teacher");
         });
     });
 });
@@ -212,7 +212,7 @@ router.post("/reg_officer", (req, res) => {
             }
             console.log("Data successfully uploaded! " + result.insertId);
             con.end();
-            res.redirect("/officers");
+            res.redirect("/enroll_officer");
         });
     });
 });
@@ -248,7 +248,7 @@ router.post("/reg_principal", (req, res) => {
             }
             console.log("Data successfully uploaded! " + result.insertId);
             con.end();
-            res.redirect("/principal");
+            res.redirect("/enroll_principal");
         });
     });
 });
@@ -301,7 +301,7 @@ router.post("/reg_student", (req, res) => {
                         }
                         console.log("Data successfully uploaded! " + result.insertId);
                         con.end();
-                        res.redirect("/admin/enroll_student");
+                        res.redirect("/enroll_student");
                     });
                 });
                 return;
@@ -320,7 +320,7 @@ router.post("/reg_student", (req, res) => {
                         }
                         console.log("Data successfully uploaded! " + result.insertId);
                         con.end();
-                        res.redirect("/admin/enroll_student");
+                        res.redirect("/enroll_student");
                     });
                     return;
                 }
@@ -332,7 +332,7 @@ router.post("/reg_student", (req, res) => {
                     }
                     console.log("Data successfully uploaded! " + result.insertId);
                     con.end();
-                    res.redirect("/admin/enroll_student");
+                    res.redirect("/enroll_student");
                 });
             });
         });
