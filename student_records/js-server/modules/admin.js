@@ -107,8 +107,8 @@ router.post("/reg_parent", (req, res) => {
     let surname = req.body.surname;
     let SSN = req.body.SSN;
     let email = req.body.email;
-    //Random string of 16 chars
-    let password = Math.random().toString(36).substring(2, 10) + Math.random().toString(36).substring(2, 10)
+    //Random string of 16 chars ; isa:ho aggiunto il punto e virgola mancante
+    let password = Math.random().toString(36).substring(2, 10) + Math.random().toString(36).substring(2, 10);
 
 
     var con = mysql.createConnection({
@@ -176,6 +176,7 @@ router.post("/reg_teacher", (req, res) => {
                 return;
             }
             console.log("Data successfully uploaded! " + result.insertId);
+            console.log(result.insertId+ " " +name + " " + surname + " " + SSN + " " + email + " " + password); 
             con.end();
             res.redirect("/admin/enroll_teacher");
         });
