@@ -67,7 +67,7 @@ function manageCollaborator(con, user_info, response, req) {
             console.log("ok prima del setup");
             setup_session_var("officer", user_info, req.session);
             console.log("ok dopo setup");
-            response.redirect("/officer/officer_home");
+            response.redirect("/admin/officer_home");
         }
     });
 }

@@ -252,14 +252,28 @@ CREATE TABLE student_class
     PRIMARY KEY(student_id, class_id, year)
 );
 
+-- The year field refers to the starting year.
+-- EX: year starting sep 2019 (case considered), year = 2019
 CREATE TABLE teacher_course_class
 (
-    teacher_id INT,
-    course_id INT,
-    class_id INT,
-    year INT,
+    teacher_id INT NOT NULL,
+    course_id INT NOT NULL,
+    class_id INT NOT NULL,
+    year INT NOT NULL,
     PRIMARY KEY(teacher_id, course_id, class_id, year)
 );
+
+INSERT INTO teacher_course_class
+    (teacher_id, course_id, class_id, year)
+VALUES(1, 1, 1, 2019);
+
+INSERT INTO teacher_course_class
+    (teacher_id, course_id, class_id, year)
+VALUES(1, 3, 1, 2019);
+
+INSERT INTO teacher_course_class
+    (teacher_id, course_id, class_id, year)
+VALUES(1, 3, 2, 2019);
 
 CREATE TABLE General_Communication
 (
