@@ -34,6 +34,25 @@ router.use(/\/.*/, function (req, res, next) {
   }
 });
 
+// TEMP
+router.get("/teacher_home", (req, res) => {
+  res.redirect("/teacher/topics");
+});
+
+router.get("/topics", (req, res) => {
+  var fullName = req.session.user.first_name + " " + req.session.user.last_name;
+  const compiledPage = pug.compileFile("../pages/teacher/teacher_coursetopic.pug");
+  var today = new Date();
+  var dayString = today.getDate();
+  var monthString = today.getMonth() + 1;
+  if (dayString < 10) dayString = '0' + today.getDate();
+  if (monthString < 10) monthString = '0' + (today.getMonth() + 1);
+  var todayString = today.getFullYear() + "-" + monthString + "-" + dayString;
+  res.end(compiledPage({
+    fullName: fullName,
+    dateString: todayString
+  }));
+});
 
 
 module.exports = router;
