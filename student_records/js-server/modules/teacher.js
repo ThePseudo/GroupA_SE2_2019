@@ -81,6 +81,7 @@ router.get("/teacher_home", (req, res) => { // T3
 });
 
 // Note: from here on, routes should follow this format: "/class/:classid/course/:courseid/..."
+// We will worry about security later, when we will have this format completed, like in parent.js
 // We pass the classid and course id through the URLm and they are retrievable through the request like this:
 // req.params.classid
 // req.params.courseid
