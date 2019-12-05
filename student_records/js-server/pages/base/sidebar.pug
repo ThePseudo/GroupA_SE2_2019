@@ -37,6 +37,7 @@ else
       a(class='active-sidebar-item' style="background:#B3E5FC; padding-right:10px;")
         | #{fullName}
       a(class='active-sidebar-item' style="background:#B3E5FC; border-bottom: 1px solid rgba(0,0,0,.12);")
+      a(class='active-sidebar-item' style="background:#B3E5FC;")
       +sidebar_item("/admin/parents", "Manage parents")
       +sidebar_item("/admin/enroll_student", "Enroll student")
       +sidebar_item("/admin/enroll_parent", "Register parent")
@@ -48,6 +49,7 @@ else
       a(class='active-sidebar-item' style="background:#B3E5FC; padding-right:10px;")
         | #{fullName}
       a(class='active-sidebar-item' style="background:#B3E5FC; border-bottom: 1px solid rgba(0,0,0,.12);")
+      a(class='active-sidebar-item' style="background:#B3E5FC;")
       +sidebar_item("/topics", "Insert daily topic")
     else if(user=="sysadmin")
       +sidebar_item("/sysadmin/register_officer", "Register officer")
@@ -58,6 +60,7 @@ else
       a(class='active-sidebar-item' style="background:#B3E5FC; padding-right:10px;")
         | #{fullName}
       a(class='active-sidebar-item' style="background:#B3E5FC; border-bottom: 1px solid rgba(0,0,0,.12);")
+      a(class='active-sidebar-item' style="background:#B3E5FC;")
       +sidebar_item("/parent/parent_home", "Your home")
       +sidebar_item("/parent/"+childID+"/show_courses", "Show courses")
       +sidebar_item("/parent/"+childID+"/notes", "Notes and absences")
