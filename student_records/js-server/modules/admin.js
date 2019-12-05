@@ -16,7 +16,7 @@ router.use(session({
     saveUninitialized: false,
     resave: true,
     httpOnly: false
-  }));
+}));
 
 // router.use('/:id', function (req, res, next) {
 //     console.log('Request URL:', req.originalUrl);

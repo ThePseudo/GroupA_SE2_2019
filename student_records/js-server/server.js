@@ -40,7 +40,7 @@ module.exports = function (app) {
 app.use('/admin', adminPages);
 app.use('/parent', parentPages);
 app.use('/auth_router', auth_router);
-app.use('/teacher',teacherPages);
+app.use('/teacher', teacherPages);
 
 const options = {
     key: fs.readFileSync("./certs/localhost.key"),
@@ -53,20 +53,10 @@ app.get('/', (req, res) => {
     res.end(compiledPage());
 });
 
-// TEMP
-app.get("/teacher/teacher_home", (req, res) => {
-    res.redirect("/topics");
-});
-
 
 app.get("/style", (req, res) => {
     const page = fs.readFileSync("pages/base/style.css");
     res.end(page);
-});
-
-app.get("/topics", (req, res) => {
-    const compiledPage = pug.compileFile("pages/topics.pug");
-    res.end(compiledPage());
 });
 
 // Page not found

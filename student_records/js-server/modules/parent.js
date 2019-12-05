@@ -68,6 +68,7 @@ router.use('/:id/*', function (req, res, next) {
 
 router.get('/parent_home', (req, res) => {
   console.log(req.session);
+  var fullName = req.session.user.first_name + " " + req.session.user.last_name;
   var commlist = [];
   var studlist = [];
   var con = mysql.createConnection({
@@ -106,7 +107,7 @@ router.get('/parent_home', (req, res) => {
           var student = {
             id: rows[i].id,
             first_name: rows[i].first_name,
-            last_name: rows[i].last_name
+            last_name: rows[i].last_name,
           }
           studlist[i] = student;
         }
@@ -115,6 +116,7 @@ router.get('/parent_home', (req, res) => {
         res.end(compiledPage({
           communicationList: commlist,
           studentList: studlist,
+          fullName: fullName
         }));
 
       });
