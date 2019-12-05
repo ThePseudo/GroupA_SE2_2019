@@ -96,10 +96,11 @@ router.post("/insert_comm", (req, res) => {
             }
             console.log("Data successfully uploaded! " + result.insertId);
             con.end();
-            res.redirect("/officer_home");
+            res.redirect("/admin/officer_home");
         });
     });
 });
+
 
 router.post("/reg_parent", (req, res) => {
     let name = req.body.name;
@@ -140,7 +141,7 @@ router.post("/reg_parent", (req, res) => {
                 ethereal.mail_handler(name, surname, SSN, email, password, "parent");
                 console.log("Data successfully uploaded! " + result.insertId);
                 con.end();
-                res.redirect("/enroll_parent");
+                res.redirect("/admin/enroll_parent");
             });
     });
 });
@@ -176,7 +177,7 @@ router.post("/reg_teacher", (req, res) => {
             }
             console.log("Data successfully uploaded! " + result.insertId);
             con.end();
-            res.redirect("/enroll_teacher");
+            res.redirect("/admin/enroll_teacher");
         });
     });
 });
@@ -212,7 +213,7 @@ router.post("/reg_officer", (req, res) => {
             }
             console.log("Data successfully uploaded! " + result.insertId);
             con.end();
-            res.redirect("/enroll_officer");
+            res.redirect("/admin/enroll_officer");
         });
     });
 });
@@ -248,7 +249,7 @@ router.post("/reg_principal", (req, res) => {
             }
             console.log("Data successfully uploaded! " + result.insertId);
             con.end();
-            res.redirect("/enroll_principal");
+            res.redirect("/admin/enroll_principal");
         });
     });
 });
@@ -301,7 +302,7 @@ router.post("/reg_student", (req, res) => {
                         }
                         console.log("Data successfully uploaded! " + result.insertId);
                         con.end();
-                        res.redirect("/enroll_student");
+                        res.redirect("/admin/enroll_student");
                     });
                 });
                 return;
@@ -320,7 +321,7 @@ router.post("/reg_student", (req, res) => {
                         }
                         console.log("Data successfully uploaded! " + result.insertId);
                         con.end();
-                        res.redirect("/enroll_student");
+                        res.redirect("/admin/enroll_student");
                     });
                     return;
                 }
@@ -332,7 +333,7 @@ router.post("/reg_student", (req, res) => {
                     }
                     console.log("Data successfully uploaded! " + result.insertId);
                     con.end();
-                    res.redirect("/enroll_student");
+                    res.redirect("/admin/enroll_student");
                 });
             });
         });
