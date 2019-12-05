@@ -23,7 +23,8 @@ app.use(session({
 
 const adminPages = require('./modules/admin.js');
 const parentPages = require('./modules/parent.js');
-const auth_router = require("./modules/Auth_manager.js");
+const auth_router = require('./modules/Auth_manager.js');
+const teacherPages = require('./modules/teacher.js');
 
 // Constants
 const HTTPPORT = 8000;
@@ -39,6 +40,7 @@ module.exports = function (app) {
 app.use('/admin', adminPages);
 app.use('/parent', parentPages);
 app.use('/auth_router', auth_router);
+app.use('/teacher',teacherPages);
 
 const options = {
     key: fs.readFileSync("./certs/localhost.key"),
@@ -56,9 +58,6 @@ app.get("/teacher/teacher_home", (req, res) => {
     res.redirect("/topics");
 });
 
-app.get("/admin/admin_home", (req, res) => {
-    res.redirect("/admin/enroll_parent");
-});
 
 app.get("/style", (req, res) => {
     const page = fs.readFileSync("pages/base/style.css");
@@ -74,6 +73,8 @@ app.get("/topics", (req, res) => {
 app.get('/*', (req, res) => {
     fs.readFile(req.path, (err, data) => {
         if (err) {
+            console.log(req.path);
+            console.log(err);
             const compiledPage = pug.compileFile("pages/base/404.pug");
             res.end(compiledPage());
         }
@@ -85,6 +86,8 @@ app.get('/*', (req, res) => {
 app.post('/*', (req, res) => {
     fs.readFile(req.path, (err, data) => {
         if (err) {
+            console.log(req.path);
+            console.log(err);
             const compiledPage = pug.compileFile("pages/base/404.pug");
             res.end(compiledPage());
         }
