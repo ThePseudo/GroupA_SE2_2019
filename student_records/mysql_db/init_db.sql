@@ -253,7 +253,7 @@ CREATE TABLE student_class
 );
 
 -- The year field refers to the starting year.
--- EX: year starting sep 2019, year = 2019
+-- EX: year starting sep 2019 (case considered), year = 2019
 CREATE TABLE teacher_course_class
 (
     teacher_id INT NOT NULL,
@@ -265,8 +265,15 @@ CREATE TABLE teacher_course_class
 
 INSERT INTO teacher_course_class
     (teacher_id, course_id, class_id, year)
-VALUES(1, 1, 1, 2019)
+VALUES(1, 1, 1, 2019);
 
+INSERT INTO teacher_course_class
+    (teacher_id, course_id, class_id, year)
+VALUES(1, 3, 1, 2019);
+
+INSERT INTO teacher_course_class
+    (teacher_id, course_id, class_id, year)
+VALUES(1, 3, 2, 2019);
 
 CREATE TABLE General_Communication
 (

@@ -1,4 +1,4 @@
-//- Variables used: "user", "active", "childID", "fullName", "sidebarForceHidden"
+//- Variables used: "user", "active", "childID", "fullName", "sidebarForceHidden", "classid", "courseid"
 //- User can be admin, teacher, sysadmin or parent
 
 mixin sidebar_item(link, text)
@@ -51,6 +51,7 @@ else
       a(class='active-sidebar-item' style="background:#B3E5FC; border-bottom: 1px solid rgba(0,0,0,.12);")
       a(class='active-sidebar-item' style="background:#B3E5FC;")
       +sidebar_item("/topics", "Insert daily topic")
+      +sidebar_item("/teacher_home", "Teacher homepage")
     else if(user=="sysadmin")
       +sidebar_item("/sysadmin/register_officer", "Register officer")
       +sidebar_item("/sysadmin/register_teacher", "Register teacher")
@@ -61,7 +62,7 @@ else
         | #{fullName}
       a(class='active-sidebar-item' style="background:#B3E5FC; border-bottom: 1px solid rgba(0,0,0,.12);")
       a(class='active-sidebar-item' style="background:#B3E5FC;")
-      +sidebar_item("/parent/parent_home", "Your home")
+      +sidebar_item("/parent/parent_home", "Parent homepage")
       +sidebar_item("/parent/"+childID+"/show_courses", "Show courses")
       +sidebar_item("/parent/"+childID+"/notes", "Notes and absences")
       +sidebar_item("/parent/"+childID+"/marks", "Show all marks")

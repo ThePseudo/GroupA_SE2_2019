@@ -1,1 +1,33 @@
+//- Those variables should be in every page
+- var page = "Teacher homepage"
+- var loggedIn = true
+- var user = "parent"
+- var active = "Teacher homepage"
+- var sidebarForceHidden = true;
 
+//- Inputs: fullName (teacher), class_courses[] {classid, courseid, classname, coursename}
+
+mixin classButton(classid, courseid, classname, coursename)
+  div(class="row hidden-md hidden-lg")
+  div(class="col-xs-1 hidden-md hidden-lg")
+  div(class="col-md-4 col-xs-10")
+    a(class='noLinkTitle button smallMarginTop' href = "/class/"+classid+"/course/"+courseid+'/course_home')
+      button(class='btn blockButton')
+        div              
+          img(src= '../../images/student_hat.ico' style='width:50px;height:50px;')
+          text= " " + classname + " - " + coursename
+
+doctype html
+html
+  include ../base/head.pug
+  body
+    include ../base/navbar.pug
+    include ../base/sidebar.pug
+    div(class="container")
+      div(class='row')
+        h1(class='title') Teacher homepage
+      div(class='row')
+        h2(class = 'title2') Choose a class and a course
+      div(class='row')
+      for classcourse in class_courses
+        +classButton(classcourse.classid, classcourse.courseid, classcourse.classname, classcourse.coursename)
