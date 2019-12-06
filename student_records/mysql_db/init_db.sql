@@ -33,11 +33,6 @@ INSERT INTO officer
     (id,first_name,last_name,cod_fisc,email,password,first_access)
 VALUES
     (1, "Ciccio", "Pasticcio", "CP80X", "pasticcio80@gmail.com", "$2a$10$0tXRERd11hkw3zKQQmFeTOAuUcMiI6/ThiMNvfMUvKmYkWkL0BRkO", 1);
-INSERT INTO officer
-    (id,first_name,last_name,cod_fisc,email,password,first_access)
-VALUES
-    (2, "Giovanni", "Rossi", "GPS67", "Rossi@yahoo.com", "$2a$10$0tXRERd11hkw3zKQQmFeTOAuUcMiI6/ThiMNvfMUvKmYkWkL0BRkO", 1);
-
 
 CREATE TABLE parent
 (

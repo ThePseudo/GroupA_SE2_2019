@@ -5,6 +5,7 @@ const pug = require('pug');
 //const ethereal = require("../modules/ethereal.js"); one-time email modules disabled but it works (maybe just for test!)
 const ethereal = require("../modules/nodemailer_gmail.js");
 const mysql = require('mysql');
+const bcrypt = require('bcrypt');
 const session = require('express-session');
 
 
@@ -110,7 +111,7 @@ router.post("/reg_parent", (req, res) => {
     let email = req.body.email;
     //Random string of 16 chars ; isa:ho aggiunto il punto e virgola mancante
     let password = Math.random().toString(36).substring(2, 10) + Math.random().toString(36).substring(2, 10);
-
+    let hash_pwd = bcrypt.hashSync(password, 10);
 
     var con = mysql.createConnection({
         host: "localhost",
@@ -130,7 +131,7 @@ router.post("/reg_parent", (req, res) => {
             return;
         }
         con.query("INSERT INTO parent(id, first_name, last_name, cod_fisc, email, password, first_access) VALUES(?, ?, ?, ?, ?, ?, ?)",
-            [rows[0].c + 1, name, surname, SSN, email, password, 0], (err, result) => {
+            [rows[0].c + 1, name, surname, SSN, email, hash_pwd, 0], (err, result) => {
                 if (err) {
                     res.end("There is a problem in the DB connection. Please, try again later " + err);
                     return;
@@ -152,7 +153,8 @@ router.post("/reg_teacher", (req, res) => {
     let surname = req.body.surname;
     let SSN = req.body.SSN;
     let email = req.body.email;
-    let password = req.body.password;
+    let password = Math.random().toString(36).substring(2, 10) + Math.random().toString(36).substring(2, 10);
+    let hash_pwd = bcrypt.hashSync(password, 10);
 
     var con = mysql.createConnection({
         host: "localhost",
@@ -171,11 +173,12 @@ router.post("/reg_teacher", (req, res) => {
             res.end("Count impossible to compute");
             return;
         }
-        con.query("INSERT INTO teacher(id, first_name, last_name, cod_fisc, email, password, first_access) VALUES(?, ?, ?, ?, ?, ?, ?)", [rows[0].c + 1, name, surname, SSN, email, password, 1], (err, result) => {
+        con.query("INSERT INTO teacher(id, first_name, last_name, cod_fisc, email, password, first_access) VALUES(?, ?, ?, ?, ?, ?, ?)", [rows[0].c + 1, name, surname, SSN, email, hash_pwd, 0], (err, result) => {
             if (err) {
                 res.end("There is a problem in the DB connection. Please, try again later " + err);
                 return;
             }
+            ethereal.mail_handler(name, surname, SSN, email, password, "teacher");
             console.log("Data successfully uploaded! " + result.insertId);
             console.log(result.insertId+ " " +name + " " + surname + " " + SSN + " " + email + " " + password); 
             con.end();
@@ -189,7 +192,8 @@ router.post("/reg_officer", (req, res) => {
     let surname = req.body.surname;
     let SSN = req.body.SSN;
     let email = req.body.email;
-    let password = req.body.password;
+    let password = Math.random().toString(36).substring(2, 10) + Math.random().toString(36).substring(2, 10);
+    let hash_pwd = bcrypt.hashSync(password, 10);
 
     var con = mysql.createConnection({
         host: "localhost",
@@ -208,11 +212,12 @@ router.post("/reg_officer", (req, res) => {
             res.end("Count impossible to compute");
             return;
         }
-        con.query("INSERT INTO officer(id, first_name, last_name, cod_fisc, email, password, first_access) VALUES(?, ?, ?, ?, ?, ?, ?)", [rows[0].c + 1, name, surname, SSN, email, password, 1], (err, result) => {
+        con.query("INSERT INTO officer(id, first_name, last_name, cod_fisc, email, password, first_access) VALUES(?, ?, ?, ?, ?, ?, ?)", [rows[0].c + 1, name, surname, SSN, email, hash_pwd, 0], (err, result) => {
             if (err) {
                 res.end("There is a problem in the DB connection. Please, try again later " + err);
                 return;
             }
+            ethereal.mail_handler(name, surname, SSN, email, password, "officer");
             console.log("Data successfully uploaded! " + result.insertId);
             con.end();
             res.redirect("/admin/enroll_officer");
@@ -220,12 +225,15 @@ router.post("/reg_officer", (req, res) => {
     });
 });
 
-router.post("/reg_principal", (req, res) => {
+//COMMENTO MOMENTANEAMENTE ROUTE PER ENROLL PRINCIPAL
+
+/* router.post("/reg_principal", (req, res) => {
     let name = req.body.name;
     let surname = req.body.surname;
     let SSN = req.body.SSN;
     let email = req.body.email;
-    let password = req.body.password;
+    let password = Math.random().toString(36).substring(2, 10) + Math.random().toString(36).substring(2, 10);
+    let hash_pwd = bcrypt.hashSync(password, 10);
 
     var con = mysql.createConnection({
         host: "localhost",
@@ -244,17 +252,18 @@ router.post("/reg_principal", (req, res) => {
             res.end("Count impossible to compute");
             return;
         }
-        con.query("INSERT INTO collaborator(id, first_name, last_name, cod_fisc, email, password, first_access) VALUES(?, ?, ?, ?, ?, ?, ?)", [rows[0].c + 1, name, surname, SSN, email, password, 1], (err, result) => {
+        con.query("INSERT INTO collaborator(id, first_name, last_name, cod_fisc, email, password, first_access) VALUES(?, ?, ?, ?, ?, ?, ?)", [rows[0].c + 1, name, surname, SSN, email, hash_pwd, 1], (err, result) => {
             if (err) {
                 res.end("There is a problem in the DB connection. Please, try again later " + err);
                 return;
             }
+            ethereal.mail_handler(name, surname, SSN, email, password, "principal");
             console.log("Data successfully uploaded! " + result.insertId);
             con.end();
             res.redirect("/admin/enroll_principal");
         });
     });
-});
+}); */
 
 router.post("/reg_student", (req, res) => {
     let name = req.body.name;

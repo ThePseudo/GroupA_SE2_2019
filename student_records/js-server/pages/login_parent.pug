@@ -14,7 +14,7 @@ html
         h2(class = 'title2') Please, sign in
         h2(class = 'err_msg') &nbsp #{err_msg}
       //- Parametric form
-      form(action='/auth_router/login' method="POST") 
+      form(action='/auth_router/login_parent' method="POST") 
         div(class='row')
           div(class='col-lg-3')
           div(class='col-lg-6 col-xs-12')
@@ -30,4 +30,4 @@ html
         div(class='row')
           div(class='col-sm-8 col-lg-6')
           div(class='col-sm-4 col-lg-3 col-xs-10')
-            input(type='SUBMIT' value='parent' name='user_type' class='btn blockButton' style='margin-top: 24px; padding: 6px 10px; margin-left:25%; width: 75%;')
+            input(type='SUBMIT' value='LOGIN' name='login_parent' class='btn blockButton' style='margin-top: 24px; padding: 6px 10px; margin-left:25%; width: 75%;')
