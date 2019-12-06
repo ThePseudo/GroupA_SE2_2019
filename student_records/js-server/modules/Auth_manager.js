@@ -317,7 +317,7 @@ router.route('/change_pwd').get((req, res) => {
         var con = DB_open_connection();
         let hash_pwd = bcrypt.hashSync(password, 10);
         console.log(req.session.user.cod_fisc);
-        con.query('UPDATE parent SET password = ?, first_access = ? WHERE cod_fisc = ?', [hash_pwd, 1, req.session.user.cod_fisc], function (err, result) {
+        con.query('UPDATE ?? SET password = ?, first_access = ? WHERE cod_fisc = ?', [req.session.user.user_type,hash_pwd, 1, req.session.user.cod_fisc], function (err, result) {
             console.log(result);
             if (err) {
                 con.end();

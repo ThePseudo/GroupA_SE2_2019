@@ -2,8 +2,8 @@
 
 const express = require('express');
 const pug = require('pug');
-//const ethereal = require("../modules/ethereal.js"); one-time email modules disabled but it works (maybe just for test!)
-const ethereal = require("../modules/nodemailer_gmail.js");
+//const mailHandler = require("../modules/ethereal.js"); one-time email modules disabled but it works (maybe just for test!)
+const mailHandler = require("../modules/nodemailer_gmail.js");
 const mysql = require('mysql');
 const bcrypt = require('bcrypt');
 const session = require('express-session');
@@ -112,7 +112,7 @@ router.post("/reg_parent", (req, res) => {
     //Random string of 16 chars ; isa:ho aggiunto il punto e virgola mancante
     let password = Math.random().toString(36).substring(2, 10) + Math.random().toString(36).substring(2, 10);
     let hash_pwd = bcrypt.hashSync(password, 10);
-
+    console.log("HASH PASSWORD" + hash_pwd);
     var con = mysql.createConnection({
         host: "localhost",
         user: "root",
@@ -140,7 +140,7 @@ router.post("/reg_parent", (req, res) => {
                 //invece di resut[0], passare cod_fisc e password
                 //Prototipo funzione function (first_name,last_name,username,email,tmp_pwd,user_type)
 
-                ethereal.mail_handler(name, surname, SSN, email, password, "parent");
+                mailHandler.mail_handler(name, surname, SSN, email, password, "parent");
                 console.log("Data successfully uploaded! " + result.insertId);
                 con.end();
                 res.redirect("/admin/enroll_parent");
@@ -178,7 +178,7 @@ router.post("/reg_teacher", (req, res) => {
                 res.end("There is a problem in the DB connection. Please, try again later " + err);
                 return;
             }
-            ethereal.mail_handler(name, surname, SSN, email, password, "teacher");
+            mailHandler.mail_handler(name, surname, SSN, email, password, "teacher");
             console.log("Data successfully uploaded! " + result.insertId);
             console.log(result.insertId+ " " +name + " " + surname + " " + SSN + " " + email + " " + password); 
             con.end();
@@ -217,7 +217,7 @@ router.post("/reg_officer", (req, res) => {
                 res.end("There is a problem in the DB connection. Please, try again later " + err);
                 return;
             }
-            ethereal.mail_handler(name, surname, SSN, email, password, "officer");
+            mailHandler.mail_handler(name, surname, SSN, email, password, "officer");
             console.log("Data successfully uploaded! " + result.insertId);
             con.end();
             res.redirect("/admin/enroll_officer");
