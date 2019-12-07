@@ -5,7 +5,6 @@
 mixin loginBtn(text, image, href)
   div(class='hidden-sm hidden-md hidden-lg row')
   div(class='hidden-sm hidden-md hidden-lg col-xs-1')
-  div(class='hidden-xs col-sm-1')
   div(class='col-sm-5 col-xs-10' style="margin-bottom:32px")
     a(href = href)
       button(class='btn blockButton')
@@ -27,7 +26,10 @@ html
         h2(class = 'title2') Who are you?
       div(class='row')
         div(class='col-xs-12')
+          div(class='col-sm-1')
           +loginBtn('Parent', '../images/parent.png', '/auth_router/login_parent')
           +loginBtn('Teacher', '../images/teacher.png', '/auth_router/login_teacher')
+          div(class="row")
+          div(class='col-sm-1')
           +loginBtn('Administrative Officer', '../images/teacher.png', '/auth_router/login_officer')
           +loginBtn('System Administrator', '../images/teacher.png', '/auth_router/login_admin')
