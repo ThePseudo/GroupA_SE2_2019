@@ -56,6 +56,6 @@ html
             th Object
           each comm in communicationList
             tr
-              td #{comm.id}
-              td #{comm.date}
-              td #{comm.text}
+              td(class='table-row-base') #{comm.id}
+              td(class='table-row-base') #{comm.date}
+              td(class='table-row-base') #{comm.text}
