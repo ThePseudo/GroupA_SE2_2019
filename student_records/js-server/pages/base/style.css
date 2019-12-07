@@ -20,6 +20,14 @@ body {
     margin-left: 15%;
 }
 
+.navbar-item {
+    color: black;
+}
+
+.navbar-item:hover {
+    color: white !important;
+}
+
 .navbar-default {
     background-color: #00B0FF !important;
     border: 0px;

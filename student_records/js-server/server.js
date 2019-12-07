@@ -31,10 +31,8 @@ const HTTPPORT = 8000;
 const HTTPSPORT = 8080;
 const HOST = '0.0.0.0';
 
-// other routers
-module.exports = function (app) {
-    app.use('/action/*', require('./modules'));
-};
+//fix for favicon.ico request
+app.get('/favicon.ico', (req, res) => res.status(204));
 
 //mount external route, now I can access to external route via ex. /admin/routename inside adminPages module .js
 app.use('/admin', adminPages);

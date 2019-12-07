@@ -28,7 +28,7 @@ if sidebarForceHidden
       a(class='active-sidebar-item' style="background:#B3E5FC; text-align:center; padding-right:10px; border-bottom: 1px solid rgba(0,0,0,.12);")
         | #{fullName}
       a(class='active-sidebar-item' style="background:#B3E5FC;")
-    +small_item("/logout", "Log out")
+    +small_item("/auth_router/logout", "Log out")
 
 else
   div(class='sidebar' id='sidebar')
@@ -66,7 +66,7 @@ else
       +sidebar_item("/parent/"+childID+"/show_courses", "Show courses")
       +sidebar_item("/parent/"+childID+"/notes", "Notes and absences")
       +sidebar_item("/parent/"+childID+"/marks", "Show all marks")
-    +small_item("/logout", "Log out")
+    +small_item("/auth_router/logout", "Log out")
 
 script
   include scripts.js

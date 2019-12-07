@@ -9,16 +9,15 @@
 - var studentsLeft = numStudents
 
 mixin studentBtn(studentList)
-  div(class="row")
-    for student in studentList
-      div(class="row hidden-md hidden-lg")
-      div(class="col-xs-1 hidden-md hidden-lg")
-      div(class="col-md-4 col-xs-10")
-        a(class='noLinkTitle button smallMarginTop' href = student.id+'/show_courses')
-          button(class='btn blockButton')
-            div              
-              img(src= '../../images/child.png' style='width:50px;height:50px;')
-              text= student.first_name + " " + student.last_name
+  for student in studentList
+    div(class="row hidden-md hidden-lg")
+    div(class="col-xs-1 hidden-md hidden-lg")
+    div(class="col-md-4 col-xs-10")
+      a(class='noLinkTitle button smallMarginTop' href = student.id+'/show_courses')
+        button(class='btn blockButton')
+          div              
+            img(src= '../../images/child.png' style='width:50px;height:50px;')
+            text= student.first_name + " " + student.last_name
 
 
 
@@ -44,18 +43,19 @@ html
       div(class='row')
         h2(class = 'title2') Who do you want to know about?
       div(class='row')
-        +studentBtn(studentList)
-
-    div(class="container")
+        div(class='col-xs-12')
+          +studentBtn(studentList)
       div(class='row')
         h1(class='title') General Communication
-        table(class='table')
-          tr(class='table-row-base')
-            th Id Communication
-            th Date
-            th Object
-          each comm in communicationList
-            tr
-              td(class='table-row-base') #{comm.id}
-              td(class='table-row-base') #{comm.date}
-              td(class='table-row-base') #{comm.text}
+      div(class='row')
+        div(class="col-xs-12")
+          table(class='table')
+            tr(class='table-row-base')
+              th Id Communication
+              th Date
+              th Object
+            each comm in communicationList
+              tr
+                td(class='table-row-base') #{comm.id}
+                td(class='table-row-base') #{comm.date}
+                td(class='table-row-base') #{comm.text}

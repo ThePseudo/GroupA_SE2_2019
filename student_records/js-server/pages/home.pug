@@ -3,15 +3,17 @@
 - var loggedIn = false;
 
 mixin loginBtn(text, image, href)
+  div(class='hidden-sm hidden-md hidden-lg row')
   div(class='hidden-sm hidden-md hidden-lg col-xs-1')
-  div(class='hidden-xs col-md-1')
-  div(class='col-sm-5 col-xs-10' style="margin-top:18px")
+  div(class='hidden-xs col-sm-1')
+  div(class='col-sm-5 col-xs-10' style="margin-bottom:32px")
     a(href = href)
       button(class='btn blockButton')
         div(class='row')
           img(src= image style='width:100%;height:auto;')
         div(class='row')
-          a(class='noLinkTitle' style='margin-top: 20px;')= text
+          a(class='noLinkTitle' style='margin-top: 32px;')= text
+
 
 doctype html
 html
@@ -24,7 +26,8 @@ html
       div(class='row')
         h2(class = 'title2') Who are you?
       div(class='row')
-        +loginBtn('Parent', '../images/parent.png', '/auth_router/login_parent')
-        +loginBtn('Teacher', '../images/teacher.png', '/auth_router/login_teacher')
-        +loginBtn('Administrative Officer', '../images/teacher.png', '/auth_router/login_officer')
-        +loginBtn('System Administrator', '../images/teacher.png', '/auth_router/login_admin')
+        div(class='col-xs-12')
+          +loginBtn('Parent', '../images/parent.png', '/auth_router/login_parent')
+          +loginBtn('Teacher', '../images/teacher.png', '/auth_router/login_teacher')
+          +loginBtn('Administrative Officer', '../images/teacher.png', '/auth_router/login_officer')
+          +loginBtn('System Administrator', '../images/teacher.png', '/auth_router/login_admin')
