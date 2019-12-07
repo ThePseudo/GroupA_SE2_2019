@@ -45,17 +45,15 @@ html
       div(class='row')
         div(class='col-xs-12')
           +studentBtn(studentList)
-      div(class='row')
-        h1(class='title') General Communication
+      div(class='row' style="margin-top: 16px")
+        h1(class='title') General Communications
       div(class='row')
         div(class="col-xs-12")
           table(class='table')
             tr(class='table-row-base')
-              th Id Communication
-              th Date
-              th Object
+              th(style="text-align:left;") Date
+              th(style="text-align:left;") Object
             each comm in communicationList
-              tr
-                td(class='table-row-base') #{comm.id}
-                td(class='table-row-base') #{comm.date}
-                td(class='table-row-base') #{comm.text}
+              tr(class="table-row-base table-row" style="padding: 16px;")
+                td(style="text-align:left;") #{comm.date}
+                td(style="text-align:left;") #{comm.text}

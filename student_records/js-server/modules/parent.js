@@ -65,6 +65,7 @@ router.use('/:id/*', function (req, res, next) {
   }
 });
 
+// Routes
 
 router.get('/parent_home', (req, res) => {
   console.log(req.session);
@@ -80,18 +81,20 @@ router.get('/parent_home', (req, res) => {
   });
   const compiledPage = pug.compileFile('../pages/parent/parent_homepage.pug');
 
-  con.query('SELECT * FROM General_Communication', (err, rows, fields) => {
+  con.query('SELECT * FROM General_Communication ORDER BY comm_date DESC', (err, rows, fields) => {
 
     if (err) {
       res.end("There is a problem in the DB connection. Please, try again later\n" + err + "\n");
       return;
     }
-    console.log(rows);
+    //console.log(rows);
     for (var i = 0; i < rows.length; i++) {
+      var communication_date = rows[i].comm_date.getDate() + "/"
+        + (rows[i].comm_date.getMonth() + 1) + "/" + rows[i].comm_date.getFullYear();
       var communication = {
         id: rows[i].id,
         text: rows[i].communication,
-        date: rows[i].comm_date
+        date: communication_date
       }
       commlist[i] = communication;
     }
@@ -102,7 +105,7 @@ router.get('/parent_home', (req, res) => {
           res.end("There is a problem in the DB connection. Please, try again later\n" + err + "\n");
           return;
         }
-        console.log(rows);
+        //console.log(rows);
         for (var i = 0; i < rows.length; i++) {
           var student = {
             id: rows[i].id,
