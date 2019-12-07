@@ -112,7 +112,7 @@ router.post("/reg_parent", (req, res) => {
     //Random string of 16 chars ; isa:ho aggiunto il punto e virgola mancante
     let password = Math.random().toString(36).substring(2, 10) + Math.random().toString(36).substring(2, 10);
     let hash_pwd = bcrypt.hashSync(password, 10);
-    console.log("HASH PASSWORD" + hash_pwd);
+
     var con = mysql.createConnection({
         host: "localhost",
         user: "root",
