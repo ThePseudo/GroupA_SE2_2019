@@ -68,7 +68,7 @@ router.use('/:id/*', function (req, res, next) {
 // Routes
 
 router.get('/parent_home', (req, res) => {
-  console.log(req.session);
+  //console.log(req.session);
   var fullName = req.session.user.first_name + " " + req.session.user.last_name;
   var commlist = [];
   var studlist = [];
