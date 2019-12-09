@@ -3,7 +3,7 @@
 const express = require('express');
 const pug = require('pug');
 //const mailHandler = require("../modules/ethereal.js"); one-time email modules disabled but it works (maybe just for test!)
-const mailHandler = require("../modules/nodemailer_gmail.js");
+const mailHandler = require("./nodemailer.js");
 const mysql = require('mysql');
 const bcrypt = require('bcrypt');
 const session = require('express-session');

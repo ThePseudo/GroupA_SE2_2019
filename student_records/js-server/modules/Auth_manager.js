@@ -297,6 +297,66 @@ router.route('/login_admin').get((req, res) => {
     }
 });
 
+router.route('/login_principal').get((req, res) => {
+
+    if (req.session.user) {
+        res.redirect("/principal/principal_home");
+        return;
+    }
+    res.render("../pages/login_principal.pug");
+
+}).post(
+    [body('cod_fisc')
+        .not().isEmpty()
+        .trim()
+        .escape()],
+    (req, res) => {
+    //i valori del form sono individuati dal valore dell'attributo "name"!
+    var cod_fisc = req.body.cod_fisc;
+    var password = req.body.password;
+    
+    //Check if both cod_fisc and password field are filled
+    if (!cod_fisc || !password) {
+        res.render("../pages/login_principal.pug", { err_msg: "Please enter username and password" });
+    }
+    else { //If yes, try to connect to the DB and check cod_fisc and then password (string+salt hashed via bcrypt module)
+        console.log("TRY CONNECT");
+        var con = DB_open_connection();
+        
+        let sql = 'SELECT * FROM admin WHERE cod_fisc = ?'; ///////////////// decidere la tabella principal
+        con.query(sql,[cod_fisc], (err, result) => {
+            
+            if (err) {
+                console.log(err);
+                con.end();
+                return;
+            }
+
+            if (result.length > 0) {
+                console.log("OK USER");
+
+                //The cod_fisc exists in the DB, now check the hashed password ( a string + salt) via method "compareSync"
+                if (bcrypt.compareSync(password, result[0].password)) {
+                    console.log("OK PWD");
+
+                    setup_session_var("principal", result[0], req.session);
+                    con.end();
+                    res.redirect("/principal/principal_home");
+                    
+                } else {
+                    // Passwords don't match
+                    con.end();
+                    res.render("../pages/principal_admin.pug", { err_msg: 'Incorrect Username and/or Password!' });
+                }
+            } else {
+                // user don't match
+                res.render("../pages/login_principal.pug", { err_msg: 'Incorrect Username and/or Password!' });
+            }
+        });   
+    }
+});
+
+
 router.route('/change_pwd').get((req, res) => {
     res.render("../pages/change_pwd.pug");
 }).post(((req, res) => {
