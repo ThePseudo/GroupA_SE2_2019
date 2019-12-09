@@ -254,7 +254,7 @@ router.post("/reg_officer", (req, res) => {
                 res.end("There is a problem in the DB connection. Please, try again later " + err);
                 return;
             }
-            ethereal.mail_handler(name, surname, SSN, email, password, "principal");
+            mailHandler.mail_handler(name, surname, SSN, email, password, "principal");
             console.log("Data successfully uploaded! " + result.insertId);
             con.end();
             res.redirect("/admin/enroll_principal");

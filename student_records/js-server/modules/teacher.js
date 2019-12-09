@@ -101,6 +101,7 @@ router.get("/class/:classid/course/:courseid/course_home", (req, res) => {
 
   var classID = req.params.classid;
   var courseID = req.params.courseid;
+  var teacherID = req.session.user.id;
   
   let sql = "SELECT * FROM student WHERE class_id =? ORDER BY last_name"
   con.query(sql, [classID], (err, rows, fields) => {
@@ -136,7 +137,7 @@ router.get("/class/:classid/course/:courseid/course_home", (req, res) => {
       courseID: courseID,
       fullName: fullName,
       message : message,
-      courseName: "Math",
+      //courseName: "Math",
       student_array: student_array,
       n_students : n_students
     });

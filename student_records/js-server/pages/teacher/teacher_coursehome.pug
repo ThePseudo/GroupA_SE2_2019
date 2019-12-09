@@ -6,11 +6,11 @@
 
 //- Uses variable: courseName, childID
 
-mixin button(first, last, href)
+mixin button(first, last,id)
   div(class="row" margin-bottom="16px")
     div(class="col-xs-1 col-lg-4")
     div(class="col-xs-10 col-lg-4")
-      a(href= "/parent/"+childID+"/course/"+courseID+"/"+href class="noLinkTitle")
+      a(href= "/student/" + id + "course/"+courseID class="noLinkTitle") 
         button(class="btn blockButton noLinkTitle" ) #{last} #{first}
 
 doctype html
@@ -23,12 +23,10 @@ html
       a(href="/teacher/teacher_home" class="noLinkTitle backButton")
         span(class="glyphicon glyphicon-menu-left backButton")
       div(class="row")
-        h1(class='title') #{courseName}
-      div(class="row")
         h2(class = 'title') Student's List
         if n_students<=0
             h2(class = 'err_msg')=message
             
         else 
             for student in student_array
-                +button(student.first_name,student.last_name)
+                +button(student.first_name,student.last_name,student.id)
