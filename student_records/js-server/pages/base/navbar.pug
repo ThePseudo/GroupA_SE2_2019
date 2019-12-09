@@ -1,6 +1,6 @@
 mixin list(href, name, icon)
   li
-    a(href=href style="color:black; font-size:16px;")
+    a(href=href style="color:black; font-size:16px;" class="navbar-item")
       span(class= icon)
       = ' ' + name
       if block
@@ -11,7 +11,7 @@ nav(class='navbar navbar-default')
     button(class='glyphicon glyphicon-menu-hamburger menuButton btn menuButton hidden-lg' id='navtoggle' onClick="onMenuButtonClick()")
   div(class='container-fluid')
     div(class='navbar-header' style='margin-left:50px;')
-      a(href='/' class='navbar-brand') BB
+      a(href='/' class='navbar-brand navbar-item') BB
     ul(class='nav navbar-nav navbar-right hidden-xs')
       if loggedIn
         +list('/auth_router/logout', 'Log out', 'glyphicon glyphicon-log-out')
