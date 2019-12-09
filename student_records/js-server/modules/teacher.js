@@ -86,6 +86,33 @@ router.get("/teacher_home", (req, res) => { // T3
 // req.params.classid
 // req.params.courseid
 
+//------------------------------------------
+
+router.get("/class/:classid/course/:courseid/course_home", (req, res) => {
+  var fullName = req.session.user.first_name + " " + req.session.user.last_name;
+
+  var con = mysql.createConnection({
+    host: "localhost",
+    user: "root",
+    password: "pwd",
+    database: "students",
+    insecureAuth: true
+  });
+
+  var classID = req.params.classid;
+  var courseID = req.params.courseid;
+  
+  console.log("entro qui");
+  res.render('../pages/teacher/teacher_coursehome.pug', {
+    classID: classID,
+    courseID: courseID,
+    fullName: fullName,
+    courseName: "Math"
+  });
+});
+
+//------------------------------------------------------
+
 
 //TODO: change route and get parameters for future query
 router.get("/topics", (req, res) => {

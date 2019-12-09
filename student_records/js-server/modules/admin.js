@@ -8,9 +8,6 @@ const mysql = require('mysql');
 const bcrypt = require('bcrypt');
 const session = require('express-session');
 
-
-var SESSION = require("./Auth_manager.js");
-
 var router = express.Router();
 
 router.use(session({
