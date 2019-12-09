@@ -76,8 +76,6 @@ router.get("/teacher_home", (req, res) => { // T3
       class_courses: classCourses
     });
   });
-
-
 });
 
 // Note: from here on, routes should follow this format: "/class/:classid/course/:courseid/..."
@@ -103,5 +101,10 @@ router.get("/topics", (req, res) => {
   }));
 });
 
+router.get("/class/:classid/course/:courseid/class_mark", (req, res) => {
+  var fullName = req.session.user.first_name + " " + req.session.user.last_name;
+  const compiledPage = pug.compileFile("../pages/teacher/teacher_insertclassmark.pug");
+  res.end(compiledPage());
+});
 
 module.exports = router;
