@@ -131,4 +131,17 @@ router.get("/topics", (req, res) => {
 });
 
 
+//TODO
+router.get("/add_material", (req, res) => {
+});
+
+//TODO
+router.get("/class_marks", (req, res) => {
+});
+
+//TODO: nome provvisorio per presenze e note, cambiare anche il nome della route nel file "sidebar.pug" 
+//presenze e note stessa route? magari due route diverse e due tasti diversi nella sidebar?
+router.get("/insert_stuff", (req, res) => {
+});
+
 module.exports = router;

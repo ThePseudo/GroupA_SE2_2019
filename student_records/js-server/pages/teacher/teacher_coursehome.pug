@@ -19,14 +19,13 @@ html
   body
     include ../base/navbar.pug
     include ../base/sidebar.pug
-       div(class="container sidebarContainer")
-        a(href="../show_courses" class="noLinkTitle backButton")
+    div(class="container sidebarContainer")
+      a(href="/teacher/teacher_home" class="noLinkTitle backButton")
         span(class="glyphicon glyphicon-menu-left backButton")
       div(class="row")
         h1(class='title') #{courseName}
       div(class="row")
-        h2(class = 'title2') What do you want to see?
+        h2(class = 'title2') Student's List
       +button("Marks", "marks")
       +button("Topics", "topics")
       +button("Material and homeworks", "material_homework")
-
