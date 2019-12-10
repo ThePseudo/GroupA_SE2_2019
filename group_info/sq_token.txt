@@ -1,0 +1,2 @@
+token: 57402bf776203fdeea407c188ed24257fc43ce95
+sonar-scanner.bat -D"sonar.projectKey=students" -D"sonar.sources=." -D"sonar.host.url=http://localhost:9000" -D"sonar.login=57402bf776203fdeea407c188ed24257fc43ce95"

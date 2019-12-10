@@ -119,7 +119,7 @@ router.get("/class/:classid/course/:courseid/course_home", (req, res) => {
       }
       else {
         n_students = rows.length;
-        for (i = 0; i < n_students; i++) {
+        for (var i = 0; i < n_students; i++) {
           student_array[i] = {};
           student_array[i].id = rows[i].id;
           student_array[i].first_name = rows[i].first_name;
