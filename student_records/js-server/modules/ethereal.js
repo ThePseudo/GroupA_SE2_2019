@@ -49,5 +49,3 @@ module.exports.mail_handler = function (first_name, last_name, username, email, 
         });
     });
 }
-
-module.exports.mail_handler;
