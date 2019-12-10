@@ -205,7 +205,7 @@ router.route('/login_officer').get((req, res) => {
         console.log("TRY CONNECT");
         var con = DB_open_connection();
         
-        let sql = 'SELECT * FROM officer WHERE cod_fisc = ?';
+        let sql = 'SELECT * FROM officer WHERE cod_fisc = ? AND !principal';
         con.query(sql,[cod_fisc], (err, result) => {
             
             if (err) {
@@ -323,7 +323,7 @@ router.route('/login_principal').get((req, res) => {
         console.log("TRY CONNECT");
         var con = DB_open_connection();
         
-        let sql = 'SELECT * FROM admin WHERE cod_fisc = ?'; ///////////////// decidere la tabella principal
+        let sql = 'SELECT * FROM officer WHERE cod_fisc = ? AND principal';
         con.query(sql,[cod_fisc], (err, result) => {
             
             if (err) {

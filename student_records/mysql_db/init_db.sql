@@ -26,13 +26,14 @@ CREATE TABLE officer
     cod_fisc VARCHAR(20) UNIQUE NOT NULL,
     email VARCHAR(100) NOT NULL,
     password VARCHAR(255) NOT NULL,
-    first_access BOOLEAN NOT NULL
+    first_access BOOLEAN NOT NULL,
+    principal BOOLEAN NOT NULL
 );
 
 INSERT INTO officer
-    (id,first_name,last_name,cod_fisc,email,password,first_access)
+    (id,first_name,last_name,cod_fisc,email,password,first_access, principal)
 VALUES
-    (1, "Ciccio", "Pasticcio", "CP80X", "pasticcio80@gmail.com", "$2a$10$0tXRERd11hkw3zKQQmFeTOAuUcMiI6/ThiMNvfMUvKmYkWkL0BRkO", 1);
+    (1, "Ciccio", "Pasticcio", "CP80X", "pasticcio80@gmail.com", "$2a$10$0tXRERd11hkw3zKQQmFeTOAuUcMiI6/ThiMNvfMUvKmYkWkL0BRkO", 1,0);
 
 CREATE TABLE parent
 (
