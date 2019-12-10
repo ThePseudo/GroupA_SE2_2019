@@ -493,4 +493,25 @@ router.get('/:childID/course/:id/material_homework', (req, res) => {
     });
 });
 
+//show absences & notes
+
+router.get('/:childID/absences_notes', (req, res) => {
+  var fullName = req.session.user.first_name + " " + req.session.user.last_name;
+  var childID = req.params.childID;
+
+  var con = mysql.createConnection({
+    host: "localhost",
+    user: "root",
+    password: "pwd",
+    database: "students",
+    insecureAuth: true
+  });
+
+  
+
+  res.render('../pages/parent/parent_absences_notes.pug',{
+    fullName: fullName,
+    childID: childID
+  });
+});
 module.exports = router;
