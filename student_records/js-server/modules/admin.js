@@ -51,6 +51,80 @@ router.get("/enroll_principal", (req, res) => {
 });
 
 
+router.get("/insert_communication", (req, res) => {
+    const compiledPage = pug.compileFile("../pages/officer/officer_communication.pug");
+    res.end(compiledPage());
+});
+////////////////////////
+router.post("/insert_comm", (req, res) => {
+    let desc = req.body.desc;
+
+    var con = mysql.createConnection({
+        host: "student-db",
+        user: "root",
+        password: "pwd",
+        database: "students",
+        insecureAuth: true
+    });
+    let date = new Date();
+    con.query('SELECT COUNT(*) as c FROM General_Communication', (err, rows, fields) => { // because we have no AUTO_UPDATE available on the DB
+        if (err) {
+            res.end("There is a problem in the DB connection. Please, try again later " + err);
+            return;
+        }
+        if (rows.length <= 0) {
+            res.end("Count impossible to compute");
+            return;
+        }
+        con.query("INSERT INTO General_Communication(id, communication, comm_date) VALUES(?, ?, ?)", [rows[0].c + 1, desc, date], (err, result) => {
+            if (err) {
+                res.end("There is a problem in the DB connection. Please, try again later " + err);
+                return;
+            }
+            console.log("Data successfully uploaded! " + result.insertId);
+            con.end();
+            res.redirect("/admin/officer_home");
+        });
+    });
+});
+
+router.post("/reg_teacher", (req, res) => {
+    let name = req.body.name;
+    let surname = req.body.surname;
+    let SSN = req.body.SSN;
+    let email = req.body.email;
+    let password = req.body.password;
+
+    var con = mysql.createConnection({
+        host: "localhost",
+        user: "root",
+        password: "pwd",
+        database: "students",
+        insecureAuth: true
+    });
+
+    con.query('SELECT COUNT(*) as c FROM teacher', (err, rows, fields) => { // because we have no AUTO_UPDATE available on the DB
+        if (err) {
+            res.end("There is a problem in the DB connection. Please, try again later " + err);
+            return;
+        }
+        if (rows.length <= 0) {
+            res.end("Count impossible to compute");
+            return;
+        }
+        con.query("INSERT INTO teacher(id, first_name, last_name, cod_fisc, email, password, first_access) VALUES(?, ?, ?, ?, ?, ?, ?)", [rows[0].c + 1, name, surname, SSN, email, password, 1], (err, result) => {
+            if (err) {
+                res.end("There is a problem in the DB connection. Please, try again later " + err);
+                return;
+            }
+            console.log("Data successfully uploaded! " + result.insertId);
+            console.log(result.insertId + " " + name + " " + surname + " " + SSN + " " + email + " " + password);
+            con.end();
+            res.redirect("/admin/enroll_teacher");
+        });
+    });
+});
+
 router.post("/reg_officer", (req, res) => {
     let name = req.body.name;
     let surname = req.body.surname;
@@ -76,7 +150,7 @@ router.post("/reg_officer", (req, res) => {
             res.end("Count impossible to compute");
             return;
         }
-        con.query("INSERT INTO officer(id, first_name, last_name, cod_fisc, email, password, first_access) VALUES(?, ?, ?, ?, ?, ?, ?)", [rows[0].c + 1, name, surname, SSN, email, hash_pwd, 0], (err, result) => {
+        con.query("INSERT INTO officer(id, first_name, last_name, cod_fisc, email, password, first_access,principal) VALUES(?, ?, ?, ?, ?, ?, ?, ?)", [rows[0].c + 1, name, surname, SSN, email, hash_pwd, 0, 0], (err, result) => {
             if (err) {
                 res.end("There is a problem in the DB connection. Please, try again later " + err);
                 return;
@@ -91,7 +165,7 @@ router.post("/reg_officer", (req, res) => {
 
 //COMMENTO MOMENTANEAMENTE ROUTE PER ENROLL PRINCIPAL
 
-/* router.post("/reg_principal", (req, res) => {
+router.post("/reg_principal", (req, res) => {
     let name = req.body.name;
     let surname = req.body.surname;
     let SSN = req.body.SSN;
@@ -107,7 +181,7 @@ router.post("/reg_officer", (req, res) => {
         insecureAuth: true
     });
 
-    con.query('SELECT COUNT(*) as c FROM collaborator', (err, rows, fields) => { // because we have no AUTO_UPDATE available on the DB
+    con.query('SELECT COUNT(*) as c FROM officer', (err, rows, fields) => { // because we have no AUTO_UPDATE available on the DB
         if (err) {
             res.end("There is a problem in the DB connection. Please, try again later " + err);
             return;
@@ -116,7 +190,7 @@ router.post("/reg_officer", (req, res) => {
             res.end("Count impossible to compute");
             return;
         }
-        con.query("INSERT INTO collaborator(id, first_name, last_name, cod_fisc, email, password, first_access) VALUES(?, ?, ?, ?, ?, ?, ?)", [rows[0].c + 1, name, surname, SSN, email, hash_pwd, 1], (err, result) => {
+        con.query("INSERT INTO officer (id, first_name, last_name, cod_fisc, email, password, first_access, principal) VALUES(?, ?, ?, ?, ?, ?, ?, ?)", [rows[0].c + 1, name, surname, SSN, email, hash_pwd, 0, 1], (err, result) => {
             if (err) {
                 res.end("There is a problem in the DB connection. Please, try again later " + err);
                 return;
@@ -127,7 +201,8 @@ router.post("/reg_officer", (req, res) => {
             res.redirect("/admin/enroll_principal");
         });
     });
-}); */
+});
+
 
 router.post("/reg_teacher", (req, res) => {
     let name = req.body.name;
@@ -186,7 +261,7 @@ router.post("/reg_topic", (req, res) => {
     });
 
     let sql = 'SELECT id FROM class WHERE class_name = ?';
-    con.query(sql, [classroom], function (err, rows, fields) {
+    con.query(sql, [classroom], function(err, rows, fields) {
         if (err) {
             res.end("There is a problem in the DB connection. Please, try again later " + err);
             return;
@@ -225,7 +300,7 @@ router.post("/register", (req, res) => {
     var parent1 = req.body.parent1;
     var parent2 = req.body.parent2;
 
-    con.connect(function (err) {
+    con.connect(function(err) {
         if (err) {
             console.log("Error: " + err);
             return;
@@ -236,7 +311,7 @@ router.post("/register", (req, res) => {
 
     let sql = 'INSERT INTO student (first_name, second_name, cod_fisc, parent_1 , parent_2) VALUES (' + name + ',' + surname + ',' + fiscalcode + ',' + parent1 + ',' + parent2 + ')';
 
-    con.query(sql, function (err, rows, fields) {
+    con.query(sql, function(err, rows, fields) {
 
         if (err) {
             res.status(500).json({ "status_code": 500, "status_message": "internal server error" });
