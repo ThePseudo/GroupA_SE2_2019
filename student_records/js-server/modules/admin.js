@@ -54,16 +54,6 @@ router.get("/enroll_principal", (req, res) => {
     res.end(compiledPage());
 });
 
-router.get("/enroll_student", (req, res) => {
-    const compiledPage = pug.compileFile("../pages/officer/officer_registerstudent.pug");
-    res.end(compiledPage());
-});
-
-router.get("/enroll_parent", (req, res) => {
-    const compiledPage = pug.compileFile("../pages/officer/officer_registerparent.pug");
-    res.end(compiledPage());
-});
-
 router.get("/insert_communication", (req, res) => {
     const compiledPage = pug.compileFile("../pages/officer/officer_communication.pug");
     res.end(compiledPage());
@@ -101,51 +91,6 @@ router.post("/insert_comm", (req, res) => {
     });
 });
 
-
-router.post("/reg_parent", (req, res) => {
-    let name = req.body.name;
-    let surname = req.body.surname;
-    let SSN = req.body.SSN;
-    let email = req.body.email;
-    //Random string of 16 chars ; isa:ho aggiunto il punto e virgola mancante
-    let password = Math.random().toString(36).substring(2, 10) + Math.random().toString(36).substring(2, 10);
-
-
-    var con = mysql.createConnection({
-        host: "localhost",
-        user: "root",
-        password: "pwd",
-        database: "students",
-        insecureAuth: true
-    });
-
-    con.query('SELECT COUNT(*) as c FROM parent', (err, rows, fields) => { // because we have no AUTO_UPDATE available on the DB
-        if (err) {
-            res.end("There is a problem in the DB connection. Please, try again later " + err);
-            return;
-        }
-        if (rows.length <= 0) {
-            res.end("Count impossible to compute");
-            return;
-        }
-        con.query("INSERT INTO parent(id, first_name, last_name, cod_fisc, email, password, first_access) VALUES(?, ?, ?, ?, ?, ?, ?)",
-            [rows[0].c + 1, name, surname, SSN, email, password, 0], (err, result) => {
-                if (err) {
-                    res.end("There is a problem in the DB connection. Please, try again later " + err);
-                    return;
-                }
-                // Da mettere in enroll function ! (Fede) 
-                //invece di resut[0], passare cod_fisc e password
-                //Prototipo funzione function (first_name,last_name,username,email,tmp_pwd,user_type)
-
-                ethereal.mail_handler(name, surname, SSN, email, password, "parent");
-                console.log("Data successfully uploaded! " + result.insertId);
-                con.end();
-                res.redirect("/admin/enroll_parent");
-            });
-    });
-});
-
 router.post("/reg_teacher", (req, res) => {
     let name = req.body.name;
     let surname = req.body.surname;
@@ -176,7 +121,7 @@ router.post("/reg_teacher", (req, res) => {
                 return;
             }
             console.log("Data successfully uploaded! " + result.insertId);
-            console.log(result.insertId+ " " +name + " " + surname + " " + SSN + " " + email + " " + password); 
+            console.log(result.insertId + " " + name + " " + surname + " " + SSN + " " + email + " " + password);
             con.end();
             res.redirect("/admin/enroll_teacher");
         });
@@ -255,92 +200,6 @@ router.post("/reg_principal", (req, res) => {
     });
 });
 
-router.post("/reg_student", (req, res) => {
-    let name = req.body.name;
-    let surname = req.body.surname;
-    let SSN = req.body.SSN;
-    let SSN1 = req.body.SSN1;
-    let SSN2 = req.body.SSN2;
-
-    var con = mysql.createConnection({
-        host: "localhost",
-        user: "root",
-        password: "pwd",
-        database: "students",
-        insecureAuth: true
-    });
-
-    con.query('SELECT COUNT(*) as c FROM student', (err, rows, fields) => { // because we have no AUTO_UPDATE available on the DB
-        if (err) {
-            res.end("There is a problem in the DB connection. Please, try again later " + err);
-            return;
-        }
-        if (rows.length <= 0) {
-            res.end("Count impossible to compute");
-            return;
-        }
-        let c = rows[0].c + 1;
-        con.query('SELECT ID FROM parent WHERE cod_fisc = ?', [SSN1], (err, rows, fields) => { // because we have no AUTO_UPDATE available on the DB
-            if (err) {
-                res.end("There is a problem in the DB connection. Please, try again later " + err);
-                return;
-            }
-            if (rows.length <= 0) {
-                con.query('SELECT ID FROM parent WHERE cod_fisc = ?', [SSN2], (err, rows, fields) => { // because we have no AUTO_UPDATE available on the DB
-                    if (err) {
-                        res.end("There is a problem in the DB connection. Please, try again later " + err);
-                        return;
-                    }
-                    if (rows.length <= 0) {
-                        res.end("Parent/s ID/s not found");
-                        return;
-                    }
-                    let ID2 = rows[0].ID;
-                    con.query("INSERT INTO student(id, first_name, last_name, cod_fisc, class_id, parent_1, parent_2) VALUES(?, ?, ?, ?, ?, ?, ?)", [c, name, surname, SSN, 0, ID2, ""], (err, result) => {
-                        if (err) {
-                            res.end("There is a problem in the DB connection. Please, try again later " + err);
-                            return;
-                        }
-                        console.log("Data successfully uploaded! " + result.insertId);
-                        con.end();
-                        res.redirect("/admin/enroll_student");
-                    });
-                });
-                return;
-            }
-            let ID1 = rows[0].ID;
-            con.query('SELECT ID FROM parent WHERE cod_fisc = ?', [SSN2], (err, rows, fields) => { // because we have no AUTO_UPDATE available on the DB
-                if (err) {
-                    res.end("There is a problem in the DB connection. Please, try again later " + err);
-                    return;
-                }
-                if (rows.length <= 0) {
-                    con.query("INSERT INTO student(id, first_name, last_name, cod_fisc, class_id, parent_1, parent_2) VALUES(?, ?, ?, ?, ?, ?, ?)", [c, name, surname, SSN, 0, ID1, ""], (err, result) => {
-                        if (err) {
-                            res.end("There is a problem in the DB connection. Please, try again later " + err);
-                            return;
-                        }
-                        console.log("Data successfully uploaded! " + result.insertId);
-                        con.end();
-                        res.redirect("/admin/enroll_student");
-                    });
-                    return;
-                }
-                let ID2 = rows[0].ID;
-                con.query("INSERT INTO student(id, first_name, last_name, cod_fisc, class_id, parent_1, parent_2) VALUES(?, ?, ?, ?, ?, ?, ?)", [c, name, surname, SSN, 0, ID1, ID2], (err, result) => {
-                    if (err) {
-                        res.end("There is a problem in the DB connection. Please, try again later " + err);
-                        return;
-                    }
-                    console.log("Data successfully uploaded! " + result.insertId);
-                    con.end();
-                    res.redirect("/admin/enroll_student");
-                });
-            });
-        });
-    });
-});
-
 router.post("/reg_topic", (req, res) => {
     let course = req.body.course;
     let date = req.body.date;
@@ -358,7 +217,7 @@ router.post("/reg_topic", (req, res) => {
     });
 
     let sql = 'SELECT id FROM class WHERE class_name = ?';
-    con.query(sql, [classroom], function (err, rows, fields) {
+    con.query(sql, [classroom], function(err, rows, fields) {
         if (err) {
             res.end("There is a problem in the DB connection. Please, try again later " + err);
             return;
@@ -397,7 +256,7 @@ router.post("/register", (req, res) => {
     var parent1 = req.body.parent1;
     var parent2 = req.body.parent2;
 
-    con.connect(function (err) {
+    con.connect(function(err) {
         if (err) {
             console.log("Error: " + err);
             return;
@@ -408,7 +267,7 @@ router.post("/register", (req, res) => {
 
     let sql = 'INSERT INTO student (first_name, second_name, cod_fisc, parent_1 , parent_2) VALUES (' + name + ',' + surname + ',' + fiscalcode + ',' + parent1 + ',' + parent2 + ')';
 
-    con.query(sql, function (err, rows, fields) {
+    con.query(sql, function(err, rows, fields) {
 
         if (err) {
             res.status(500).json({ "status_code": 500, "status_message": "internal server error" });
