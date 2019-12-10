@@ -150,16 +150,6 @@ INSERT INTO admin
 VALUES
     (1, "Giovanni", "Rossi", "GPS67", "Rossi@yahoo.com", "$2a$10$0tXRERd11hkw3zKQQmFeTOAuUcMiI6/ThiMNvfMUvKmYkWkL0BRkO");
 
-CREATE TABLE note
-(
-    id INT,
-    student_id INT NOT NULL,
-    teacher_id INT NOT NULL,
-    note_date DATE NOT NULL,
-    motivation TEXT NOT NULL,
-    PRIMARY KEY(id)
-);
-
 CREATE TABLE topic
 (
     id INT UNIQUE NOT NULL,
@@ -181,6 +171,18 @@ VALUES(2, "2019-09-29", 2, 1, "Monoms");
 INSERT INTO topic
     (id, topic_date, id_class, id_course, description)
 VALUES(3, "2019-09-30", 2, 1, "Polynoms");
+
+
+CREATE TABLE note
+(
+    id INT,
+    student_id INT NOT NULL,
+    teacher_id INT NOT NULL,
+    note_date DATE NOT NULL,
+    motivation TEXT NOT NULL,
+    PRIMARY KEY(id)
+);
+
 
 CREATE TABLE absence
 (

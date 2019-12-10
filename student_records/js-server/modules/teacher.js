@@ -179,6 +179,7 @@ router.get("/class/:classid/course/:courseid/add_material", (req, res) => {
 
 //TODO
 router.get("/class/:classid/course/:courseid/class_marks", (req, res) => {
+  
 });
 
 //TODO: nome provvisorio per presenze e note, cambiare anche il nome della route nel file "sidebar.pug" 
