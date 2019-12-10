@@ -66,22 +66,7 @@ router.use('/:id/*', function(req, res, next) {
 // Routes
 
 router.get('/parent_home', (req, res) => {
-    console.log(req.session);
-    var fullName = req.session.user.first_name + " " + req.session.user.last_name;
-    var commlist = [];
-    var studlist = [];
-    var con = mysql.createConnection({
-        host: "localhost",
-        user: "root",
-        password: "pwd",
-        database: "students",
-        insecureAuth: true
-    });
-    const compiledPage = pug.compileFile('../pages/parent/parent_homepage.pug');
-
-    con.query('SELECT * FROM General_Communication', (err, rows, fields) => {
-
-  //console.log(req.session);
+   //console.log(req.session);
   var fullName = req.session.user.first_name + " " + req.session.user.last_name;
   var commlist = [];
   var studlist = [];
@@ -149,7 +134,7 @@ router.get('/parent_home', (req, res) => {
                 studentList: studlist,
                 fullName: fullName
             }));
-
+        });
         });
     });
 });
