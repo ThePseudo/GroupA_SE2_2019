@@ -23,10 +23,9 @@ html
       a(href="/teacher/teacher_home" class="noLinkTitle backButton")
         span(class="glyphicon glyphicon-menu-left backButton")
       div(class="row")
-        h2(class = 'title') Student's List
+        h1(class = 'title') Student List
         if n_students<=0
-            h2(class = 'err_msg')=message
-            
+          h2(class = 'err_msg')=message
         else 
-            for student in student_array
-                +button(student.first_name,student.last_name,student.id)
+          for student in student_array
+            +button(student.first_name,student.last_name,student.id)

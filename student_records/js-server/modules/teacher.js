@@ -100,7 +100,7 @@ router.get("/class/:classid/course/:courseid/course_home", (req, res) => {
   var classID = req.params.classid;
   var courseID = req.params.courseid;
   var teacherID = req.session.user.id;
-  
+
   let sql = "SELECT * FROM student WHERE class_id =? ORDER BY last_name"
   con.query(sql, [classID], (err, rows, fields) => {
     if (err) {
@@ -108,36 +108,36 @@ router.get("/class/:classid/course/:courseid/course_home", (req, res) => {
       con.end();
       return;
     }
-    else{
+    else {
       var message = "";
       var n_students = 0;
-      var student_array=[];
+      var student_array = [];
 
-      if(rows.length<=0){
-        message = "No Student enroll yet";
-      } 
-      else{
+      if (rows.length <= 0) {
+        message = "No Student enrolled yet";
+      }
+      else {
         n_students = rows.length;
-        for(i=0;i<n_students;i++){
-            student_array[i] = {};
-            student_array[i].id = rows[i].id;
-            student_array[i].first_name = rows[i].first_name;
-            student_array[i].last_name = rows[i].last_name;
-            student_array[i].cod_fisc = rows[i].cod_fisc;
-            student_array[i].parent_1 = rows[i].parent_1;
-            student_array[i].parent_2 = rows[i].parent_1;
+        for (i = 0; i < n_students; i++) {
+          student_array[i] = {};
+          student_array[i].id = rows[i].id;
+          student_array[i].first_name = rows[i].first_name;
+          student_array[i].last_name = rows[i].last_name;
+          student_array[i].cod_fisc = rows[i].cod_fisc;
+          student_array[i].parent_1 = rows[i].parent_1;
+          student_array[i].parent_2 = rows[i].parent_1;
         }
       }
       con.end();
     }
     res.render('../pages/teacher/teacher_coursehome.pug', {
-      classID: classID,
-      courseID: courseID,
+      classid: classID,
+      courseid: courseID,
       fullName: fullName,
-      message : message,
+      message: message,
       //courseName: "Math",
       student_array: student_array,
-      n_students : n_students
+      n_students: n_students
     });
   });
 });
@@ -164,7 +164,11 @@ router.get("/topics", (req, res) => {
 router.get("/class/:classid/course/:courseid/class_mark", (req, res) => {
   var fullName = req.session.user.first_name + " " + req.session.user.last_name;
   const compiledPage = pug.compileFile("../pages/teacher/teacher_insertclassmark.pug");
-  res.end(compiledPage());
+  res.end(compiledPage({
+    classid: req.params.classid,
+    courseid: req.params.courseid,
+    fullName: fullName
+  }));
 });
 
 //TODO
