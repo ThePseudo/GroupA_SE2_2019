@@ -4,18 +4,10 @@ const express = require('express');
 const pug = require('pug');
 //const mailHandler = require("../modules/ethereal.js"); one-time email modules disabled but it works (maybe just for test!)
 const mailHandler = require("./nodemailer.js");
-const mysql = require('mysql');
+const db = require('../modules/functions.js');
 const bcrypt = require('bcrypt');
-const session = require('express-session');
 
 var router = express.Router();
-
-router.use(session({
-    secret: 'students',
-    saveUninitialized: false,
-    resave: true,
-    httpOnly: false
-}));
 
 // router.use('/:id', function (req, res, next) {
 //     console.log('Request URL:', req.originalUrl);
@@ -59,13 +51,8 @@ router.get("/insert_communication", (req, res) => {
 router.post("/insert_comm", (req, res) => {
     let desc = req.body.desc;
 
-    var con = mysql.createConnection({
-        host: "student-db",
-        user: "root",
-        password: "pwd",
-        database: "students",
-        insecureAuth: true
-    });
+    var con = db.DBconnect();
+
     let date = new Date();
     con.query('SELECT COUNT(*) as c FROM General_Communication', (err, rows, fields) => { // because we have no AUTO_UPDATE available on the DB
         if (err) {
@@ -95,13 +82,8 @@ router.post("/reg_teacher", (req, res) => {
     let email = req.body.email;
     let password = req.body.password;
 
-    var con = mysql.createConnection({
-        host: "localhost",
-        user: "root",
-        password: "pwd",
-        database: "students",
-        insecureAuth: true
-    });
+    var con = db.DBconnect();
+
 
     con.query('SELECT COUNT(*) as c FROM teacher', (err, rows, fields) => { // because we have no AUTO_UPDATE available on the DB
         if (err) {
@@ -133,13 +115,7 @@ router.post("/reg_officer", (req, res) => {
     let password = Math.random().toString(36).substring(2, 10) + Math.random().toString(36).substring(2, 10);
     let hash_pwd = bcrypt.hashSync(password, 10);
 
-    var con = mysql.createConnection({
-        host: "localhost",
-        user: "root",
-        password: "pwd",
-        database: "students",
-        insecureAuth: true
-    });
+    var con = db.DBconnect();
 
     con.query('SELECT COUNT(*) as c FROM officer', (err, rows, fields) => { // because we have no AUTO_UPDATE available on the DB
         if (err) {
@@ -173,13 +149,7 @@ router.post("/reg_principal", (req, res) => {
     let password = Math.random().toString(36).substring(2, 10) + Math.random().toString(36).substring(2, 10);
     let hash_pwd = bcrypt.hashSync(password, 10);
 
-    var con = mysql.createConnection({
-        host: "localhost",
-        user: "root",
-        password: "pwd",
-        database: "students",
-        insecureAuth: true
-    });
+    var con = db.DBconnect();
 
     con.query('SELECT COUNT(*) as c FROM officer', (err, rows, fields) => { // because we have no AUTO_UPDATE available on the DB
         if (err) {
@@ -211,14 +181,8 @@ router.post("/reg_teacher", (req, res) => {
     let email = req.body.email;
     let password = Math.random().toString(36).substring(2, 10) + Math.random().toString(36).substring(2, 10);
     let hash_pwd = bcrypt.hashSync(password, 10);
+    var con = db.DBconnect();
 
-    var con = mysql.createConnection({
-        host: "localhost",
-        user: "root",
-        password: "pwd",
-        database: "students",
-        insecureAuth: true
-    });
 
     con.query('SELECT COUNT(*) as c FROM teacher', (err, rows, fields) => { // because we have no AUTO_UPDATE available on the DB
         if (err) {
@@ -236,7 +200,7 @@ router.post("/reg_teacher", (req, res) => {
             }
             mailHandler.mail_handler(name, surname, SSN, email, password, "teacher");
             console.log("Data successfully uploaded! " + result.insertId);
-            console.log(result.insertId+ " " +name + " " + surname + " " + SSN + " " + email + " " + password); 
+            console.log(result.insertId + " " + name + " " + surname + " " + SSN + " " + email + " " + password);
             con.end();
             res.redirect("/admin/enroll_teacher");
         });
@@ -250,18 +214,11 @@ router.post("/reg_topic", (req, res) => {
     let classroom = req.body.class;
     let desc = req.body.desc;
 
-    const compiledPage = pug.compileFile("pages/topics.pug");
+    var con = db.DBconnect();
 
-    var con = mysql.createConnection({
-        host: "localhost",
-        user: "root",
-        password: "pwd",
-        database: "students",
-        insecureAuth: true
-    });
 
     let sql = 'SELECT id FROM class WHERE class_name = ?';
-    con.query(sql, [classroom], function(err, rows, fields) {
+    con.query(sql, [classroom], function (err, rows, fields) {
         if (err) {
             res.end("There is a problem in the DB connection. Please, try again later " + err);
             return;
@@ -300,7 +257,7 @@ router.post("/register", (req, res) => {
     var parent1 = req.body.parent1;
     var parent2 = req.body.parent2;
 
-    con.connect(function(err) {
+    con.connect(function (err) {
         if (err) {
             console.log("Error: " + err);
             return;
@@ -311,7 +268,7 @@ router.post("/register", (req, res) => {
 
     let sql = 'INSERT INTO student (first_name, second_name, cod_fisc, parent_1 , parent_2) VALUES (' + name + ',' + surname + ',' + fiscalcode + ',' + parent1 + ',' + parent2 + ')';
 
-    con.query(sql, function(err, rows, fields) {
+    con.query(sql, function (err, rows, fields) {
 
         if (err) {
             res.status(500).json({ "status_code": 500, "status_message": "internal server error" });

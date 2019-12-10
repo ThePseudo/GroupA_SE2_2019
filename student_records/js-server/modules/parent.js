@@ -2,8 +2,7 @@
 
 const express = require('express');
 const pug = require('pug');
-const mysql = require('mysql');
-const session = require('express-session');
+const db = require('../modules/functions.js');
 
 //IMPORTO oggetto rappresentante la sessione.
 //Per accedere ->  req.session
@@ -13,13 +12,6 @@ const session = require('express-session');
 //Per aggiungere campo a sessione -> req.session.nomecampo = valore
 
 var router = express.Router();
-
-router.use(session({
-    secret: 'students',
-    saveUninitialized: false,
-    resave: true,
-    httpOnly: false
-}));
 
 router.use(/\/.*/, function (req, res, next) {
     try {
@@ -38,13 +30,7 @@ router.use(/\/.*/, function (req, res, next) {
 router.use('/:id/*', function (req, res, next) {
     var parentID = req.session.user.id;
     var childID = req.params.id;
-    var con = mysql.createConnection({
-        host: "localhost",
-        user: "root",
-        password: "pwd",
-        database: "students",
-        insecureAuth: true
-    });
+    var con = db.DBconnect();
 
     if (!isNaN(childID)) {
         let sql = "SELECT id FROM student WHERE id = ? AND (parent_1 = ? OR parent_2 = ?)"
@@ -69,13 +55,8 @@ router.use('/:id/*', function (req, res, next) {
 router.get('/parent_home', (req, res) => {
     var commlist = [];
     var studlist = [];
-    var con = mysql.createConnection({
-        host: "localhost",
-        user: "root",
-        password: "pwd",
-        database: "students",
-        insecureAuth: true
-    });
+    var con = db.DBconnect();
+
     const compiledPage = pug.compileFile('../pages/parent/parent_homepage.pug');
 
     con.query('SELECT * FROM General_Communication ORDER BY comm_date DESC', (err, rows, fields) => {
@@ -129,13 +110,7 @@ router.get("/:childID/marks", (req, res) => {
     var fullName = req.session.user.first_name + " " + req.session.user.last_name;
     var childID = req.params.childID;
     var marks = [];
-    var con = mysql.createConnection({
-        host: "127.0.0.1",
-        user: "root",
-        password: "pwd",
-        database: "students",
-        insecureAuth: true
-    });
+    var con = db.DBconnect();
 
     let sql = 'SELECT * FROM mark, course ' +
         'WHERE mark.course_id = course.id ' +
@@ -187,13 +162,8 @@ router.get("/:childID/marks", (req, res) => {
 router.get('/:childID/show_courses', (req, res) => {
     var courses = [];
     var fullName = req.session.user.first_name + " " + req.session.user.last_name;
-    var con = mysql.createConnection({
-        host: "localhost",
-        user: "root",
-        password: "pwd",
-        database: "students",
-        insecureAuth: true
-    });
+    var con = db.DBconnect();
+
 
     var sql = "SELECT * FROM course ORDER BY id";
     con.query(sql, (err, rows, fields) => {
@@ -241,13 +211,8 @@ router.get('/:childID/show_courses', (req, res) => {
 
 router.get('/:childID/course/:id', (req, res) => {
     var fullName = req.session.user.first_name + " " + req.session.user.last_name;
-    var con = mysql.createConnection({
-        host: "localhost",
-        user: "root",
-        password: "pwd",
-        database: "students",
-        insecureAuth: true
-    });
+    var con = db.DBconnect();
+
 
     var sql = 'SELECT course_name FROM course WHERE id = ?';
 
@@ -269,13 +234,8 @@ router.get('/:childID/course/:id', (req, res) => {
 
 router.get('/:childID/course/:id/marks', (req, res) => {
     var fullName = req.session.user.first_name + " " + req.session.user.last_name;
-    var con = mysql.createConnection({
-        host: "localhost",
-        user: "root",
-        password: "pwd",
-        database: "students",
-        insecureAuth: true
-    });
+    var con = db.DBconnect();
+
 
     var sql = 'SELECT course_name FROM course WHERE course.id = ?';
 
@@ -327,13 +287,8 @@ router.get('/:childID/course/:id/marks', (req, res) => {
 
 router.get('/:childID/course/:id/topics', (req, res) => {
     var fullName = req.session.user.first_name + " " + req.session.user.last_name;
-    var con = mysql.createConnection({
-        host: "localhost",
-        user: "root",
-        password: "pwd",
-        database: "students",
-        insecureAuth: true
-    });
+    var con = db.DBconnect();
+
 
     var sql = 'SELECT course_name FROM course WHERE course.id = ?';
 
@@ -386,13 +341,8 @@ router.get('/:childID/course/:id/topics', (req, res) => {
 
 router.get('/:childID/course/:id/material_homework', (req, res) => {
     var fullName = req.session.user.first_name + " " + req.session.user.last_name;
-    var con = mysql.createConnection({
-        host: "localhost",
-        user: "root",
-        password: "pwd",
-        database: "students",
-        insecureAuth: true
-    });
+    var con = db.DBconnect();
+
 
     var sql = 'SELECT course_name FROM course WHERE course.id = ?';
 
@@ -466,13 +416,8 @@ router.get('/:childID/absences_notes', (req, res) => {
     var fullName = req.session.user.first_name + " " + req.session.user.last_name;
     var childID = req.params.childID;
 
-    var con = mysql.createConnection({
-        host: "localhost",
-        user: "root",
-        password: "pwd",
-        database: "students",
-        insecureAuth: true
-    });
+    var con = db.DBconnect();
+
 
 
 
