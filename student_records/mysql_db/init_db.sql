@@ -208,6 +208,20 @@ CREATE TABLE homework
     PRIMARY KEY(id)
 );
 
+-- Materials
+
+CREATE TABLE material
+(
+    id INT UNIQUE NOT NULL,
+    course_id INT NOT NULL,
+    class_id INT NOT NULL,
+    description TEXT NOT NULL,
+    link TEXT NOT NULL,
+    date_mt DATE NOT NULL,
+    PRIMARY KEY
+    (id)
+);
+
 -- Marks
 
 CREATE TABLE mark
