@@ -236,7 +236,7 @@ router.post("/reg_teacher", (req, res) => {
             }
             mailHandler.mail_handler(name, surname, SSN, email, password, "teacher");
             console.log("Data successfully uploaded! " + result.insertId);
-            console.log(result.insertId+ " " +name + " " + surname + " " + SSN + " " + email + " " + password); 
+            console.log(result.insertId + " " + name + " " + surname + " " + SSN + " " + email + " " + password);
             con.end();
             res.redirect("/admin/enroll_teacher");
         });
@@ -250,8 +250,6 @@ router.post("/reg_topic", (req, res) => {
     let classroom = req.body.class;
     let desc = req.body.desc;
 
-    const compiledPage = pug.compileFile("pages/topics.pug");
-
     var con = mysql.createConnection({
         host: "localhost",
         user: "root",
@@ -261,7 +259,7 @@ router.post("/reg_topic", (req, res) => {
     });
 
     let sql = 'SELECT id FROM class WHERE class_name = ?';
-    con.query(sql, [classroom], function(err, rows, fields) {
+    con.query(sql, [classroom], function (err, rows, fields) {
         if (err) {
             res.end("There is a problem in the DB connection. Please, try again later " + err);
             return;
@@ -300,7 +298,7 @@ router.post("/register", (req, res) => {
     var parent1 = req.body.parent1;
     var parent2 = req.body.parent2;
 
-    con.connect(function(err) {
+    con.connect(function (err) {
         if (err) {
             console.log("Error: " + err);
             return;
@@ -311,7 +309,7 @@ router.post("/register", (req, res) => {
 
     let sql = 'INSERT INTO student (first_name, second_name, cod_fisc, parent_1 , parent_2) VALUES (' + name + ',' + surname + ',' + fiscalcode + ',' + parent1 + ',' + parent2 + ')';
 
-    con.query(sql, function(err, rows, fields) {
+    con.query(sql, function (err, rows, fields) {
 
         if (err) {
             res.status(500).json({ "status_code": 500, "status_message": "internal server error" });
