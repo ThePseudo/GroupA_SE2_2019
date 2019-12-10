@@ -78,7 +78,7 @@ router.get('/parent_home', (req, res) => {
     });
     const compiledPage = pug.compileFile('../pages/parent/parent_homepage.pug');
 
-    con.query('SELECT * FROM General_Communication ORDER BY comm_date', (err, rows, fields) => {
+    con.query('SELECT * FROM General_Communication ORDER BY comm_date DESC', (err, rows, fields) => {
 
         if (err) {
             res.end("There is a problem in the DB connection. Please, try again later\n" + err + "\n");
