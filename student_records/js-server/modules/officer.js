@@ -93,7 +93,7 @@ router.post("/reg_parent", (req, res) => {
             return;
         }
         if (rows.length <= 0) {
-            res.end("Count impossible to compute");
+            res.end("There is a problem in the DB connection. Please, try again later " + err);
             return;
         }
         con.query("INSERT INTO parent(id, first_name, last_name, cod_fisc, email, password, first_access) VALUES(?, ?, ?, ?, ?, ?, ?)",
@@ -109,7 +109,7 @@ router.post("/reg_parent", (req, res) => {
                 mailHandler.mail_handler(name, surname, SSN, email, password, "parent");
                 console.log("Data successfully uploaded! " + result.insertId);
                 con.end();
-                res.redirect("/officer/enroll_parent");
+                res.render("../pages/officer/officer_registerparent.pug", { flag_ok: "1", message: "New parent inserted correctly"});
             });
     });
 });
@@ -135,10 +135,12 @@ router.post("/reg_student", (req, res) => {
             res.end("There is a problem in the DB connection. Please, try again later " + err);
             return;
         }
+        //Probabile ridondanza a check con err ma per sicurezza lasciamo (dobbiamo avere una entry che ci dica valore di count, che esso sia 0 minore o maggiore di zero)
         if (rows.length <= 0) {
-            res.end("Count impossible to compute");
+            res.end("There is a problem in the DB connection. Please, try again later " + err);
             return;
         }
+
         let c = rows[0].c + 1;
         con.query('SELECT ID FROM parent WHERE cod_fisc = ?', [SSN1], (err, rows, fields) => { // because we have no AUTO_UPDATE available on the DB
             if (err) {
@@ -152,7 +154,7 @@ router.post("/reg_student", (req, res) => {
                         return;
                     }
                     if (rows.length <= 0) {
-                        res.end("Parent/s ID/s not found");
+                        res.render("../pages/officer/officer_registerstudent.pug", { flag_ok: "0", message: "Parent/s ID/s not found" });
                         return;
                     }
                     let ID2 = rows[0].ID;
@@ -163,7 +165,8 @@ router.post("/reg_student", (req, res) => {
                         }
                         console.log("Data successfully uploaded! " + result.insertId);
                         con.end();
-                        res.redirect("/officer/enroll_student");
+                        res.render("../pages/officer/officer_registerstudent.pug", { flag_ok: "1", message: "Student inserted correctly" });
+                        return;
                     });
                 });
                 return;
@@ -182,7 +185,7 @@ router.post("/reg_student", (req, res) => {
                         }
                         console.log("Data successfully uploaded! " + result.insertId);
                         con.end();
-                        res.redirect("/officer/enroll_student");
+                        res.render("../pages/officer/officer_registerstudent.pug", { flag_ok: "1", err_msg: "Student inserted correctly" });
                     });
                     return;
                 }
@@ -194,7 +197,7 @@ router.post("/reg_student", (req, res) => {
                     }
                     console.log("Data successfully uploaded! " + result.insertId);
                     con.end();
-                    res.redirect("/officer/enroll_student");
+                    res.render("../pages/officer/officer_registerstudent.pug", { flag_ok: "1", message: "New student inserted correctly" });
                 });
             });
         });

@@ -122,6 +122,13 @@ body {
     margin-bottom: 20px;
 }
 
+.ok_msg{
+    margin-top: 20px;
+    text-align: center;
+    color: rgb(24, 143, 13);
+    /*font-size: medium;*/
+    margin-bottom: 20px;
+}
 .title2 {
     margin-bottom: 40px;
     text-align: center;
