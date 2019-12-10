@@ -79,61 +79,60 @@ router.get('/parent_home', (req, res) => {
     });
     const compiledPage = pug.compileFile('../pages/parent/parent_homepage.pug');
     con.query('SELECT * FROM General_Communication ORDER BY comm_date DESC', (err, rows, fields) => {
-
-    if (err) {
-      res.end("There is a problem in the DB connection. Please, try again later\n" + err + "\n");
-      return;
-    }
-    //console.log(rows);
-    for (var i = 0; i < rows.length; i++) {
-      var communication_date = rows[i].comm_date.getDate() + "/"
-        + (rows[i].comm_date.getMonth() + 1) + "/" + rows[i].comm_date.getFullYear();
-      var communication = {
-        id: rows[i].id,
-        text: rows[i].communication,
-        date: communication_date
-      }
-      commlist[i] = communication;
-    }
-    //let sql = 'SELECT id,first_name,last_name FROM student';
-    con.query('SELECT id,first_name,last_name FROM student WHERE parent_1= ? OR parent_2 = ?',
-      [req.session.user.id, req.session.user.id], (err, rows, fields) => {
         if (err) {
             res.end("There is a problem in the DB connection. Please, try again later\n" + err + "\n");
             return;
         }
         //console.log(rows);
         for (var i = 0; i < rows.length; i++) {
+            var communication_date = rows[i].comm_date.getDate() + "/"
+                + (rows[i].comm_date.getMonth() + 1) + "/" + rows[i].comm_date.getFullYear();
             var communication = {
                 id: rows[i].id,
                 text: rows[i].communication,
-                date: rows[i].comm_date
+                date: communication_date
             }
             commlist[i] = communication;
         }
         //let sql = 'SELECT id,first_name,last_name FROM student';
-        con.query('SELECT id,first_name,last_name FROM student WHERE parent_1= ? OR parent_2 = ?', [req.session.user.id, req.session.user.id], (err, rows, fields) => {
+        con.query('SELECT id,first_name,last_name FROM student WHERE parent_1= ? OR parent_2 = ?',
+        [req.session.user.id, req.session.user.id], (err, rows, fields) => {
             if (err) {
                 res.end("There is a problem in the DB connection. Please, try again later\n" + err + "\n");
                 return;
             }
-            console.log(rows);
+            //console.log(rows);
             for (var i = 0; i < rows.length; i++) {
-                var student = {
+                var communication = {
                     id: rows[i].id,
-                    first_name: rows[i].first_name,
-                    last_name: rows[i].last_name,
+                    text: rows[i].communication,
+                    date: rows[i].comm_date
                 }
-                studlist[i] = student;
+                commlist[i] = communication;
             }
-            //console.log("Data successfully uploaded! " + result.insertId);
-            con.end();
-            res.end(compiledPage({
-                communicationList: commlist,
-                studentList: studlist,
-                fullName: fullName
-            }));
-
+            //let sql = 'SELECT id,first_name,last_name FROM student';
+            con.query('SELECT id,first_name,last_name FROM student WHERE parent_1= ? OR parent_2 = ?', [req.session.user.id, req.session.user.id], (err, rows, fields) => {
+                if (err) {
+                    res.end("There is a problem in the DB connection. Please, try again later\n" + err + "\n");
+                    return;
+                }
+                console.log(rows);
+                for (var i = 0; i < rows.length; i++) {
+                    var student = {
+                        id: rows[i].id,
+                        first_name: rows[i].first_name,
+                        last_name: rows[i].last_name,
+                    }
+                    studlist[i] = student;
+                }
+                //console.log("Data successfully uploaded! " + result.insertId);
+                con.end();
+                res.end(compiledPage({
+                    communicationList: commlist,
+                    studentList: studlist,
+                    fullName: fullName
+                }));
+            }); 
         });
     });
 });
