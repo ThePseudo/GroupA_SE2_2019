@@ -5,17 +5,9 @@ const pug = require('pug');
 //const mailHandler = require("../modules/ethereal.js"); one-time email modules disabled but it works (maybe just for test!)
 const mailHandler = require("./nodemailer.js");
 const bcrypt = require('bcrypt');
-const session = require('express-session');
 const db = require('../modules/functions.js');
 
 var router = express.Router();
-
-router.use(session({
-    secret: 'students',
-    saveUninitialized: false,
-    resave: true,
-    httpOnly: false
-}));
 
 router.get("/officer_home", (req, res) => {
     const compiledPage = pug.compileFile("../pages/officer/officer_home.pug");

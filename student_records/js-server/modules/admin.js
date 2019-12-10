@@ -6,16 +6,8 @@ const pug = require('pug');
 const mailHandler = require("./nodemailer.js");
 const db = require('../modules/functions.js');
 const bcrypt = require('bcrypt');
-const session = require('express-session');
 
 var router = express.Router();
-
-router.use(session({
-    secret: 'students',
-    saveUninitialized: false,
-    resave: true,
-    httpOnly: false
-}));
 
 // router.use('/:id', function (req, res, next) {
 //     console.log('Request URL:', req.originalUrl);

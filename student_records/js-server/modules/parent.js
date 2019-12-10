@@ -3,7 +3,6 @@
 const express = require('express');
 const pug = require('pug');
 const db = require('../modules/functions.js');
-const session = require('express-session');
 
 //IMPORTO oggetto rappresentante la sessione.
 //Per accedere ->  req.session
@@ -13,13 +12,6 @@ const session = require('express-session');
 //Per aggiungere campo a sessione -> req.session.nomecampo = valore
 
 var router = express.Router();
-
-router.use(session({
-    secret: 'students',
-    saveUninitialized: false,
-    resave: true,
-    httpOnly: false
-}));
 
 router.use(/\/.*/, function (req, res, next) {
     try {
