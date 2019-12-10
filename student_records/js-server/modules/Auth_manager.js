@@ -2,26 +2,15 @@
 
 const express = require('express');
 const bcrypt = require('bcrypt');
-const mysql = require('mysql');
 const bodyParser = require('body-parser');
 const app = express();
 const session = require('express-session');
 const { body } = require('express-validator');
 var router = express.Router();
+const db = require('./functions');
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
-
-//functions
-function DB_open_connection() {
-    return mysql.createConnection({
-        host: "localhost",
-        user: "root",
-        password: "pwd",
-        database: "students",
-        insecureAuth: true
-    });
-}
 
 //Inizializzazione oggetto globale rappresentante la sessione. Contiene tutte le info dell'user loggato.
 //Possibile aggiungere, eliminare, modificare le info salvate dopo il login
@@ -85,7 +74,7 @@ router.route('/login_parent').get((req, res) => {
         }
         else { //If yes, try to connect to the DB and check cod_fisc and then password (string+salt hashed via bcrypt module)
             console.log("TRY CONNECT");
-            var con = DB_open_connection();
+            var con = db.DBconnect();
 
             let sql = 'SELECT * FROM parent WHERE cod_fisc = ?';
             con.query(sql, [cod_fisc], (err, result) => {
@@ -144,7 +133,7 @@ router.route('/login_teacher').get((req, res) => {
         }
         else { //If yes, try to connect to the DB and check cod_fisc and then password (string+salt hashed via bcrypt module)
             console.log("TRY CONNECT");
-            var con = DB_open_connection();
+            var con = db.DBconnect();
 
             let sql = 'SELECT * FROM teacher WHERE cod_fisc = ?';
             con.query(sql, [cod_fisc], (err, result) => {
@@ -203,7 +192,7 @@ router.route('/login_officer').get((req, res) => {
         }
         else { //If yes, try to connect to the DB and check cod_fisc and then password (string+salt hashed via bcrypt module)
             console.log("TRY CONNECT");
-            var con = DB_open_connection();
+            var con = db.DBconnect();
 
             let sql = 'SELECT * FROM officer WHERE cod_fisc = ? AND !principal';
             con.query(sql, [cod_fisc], (err, result) => {
@@ -262,7 +251,7 @@ router.route('/login_admin').get((req, res) => {
         }
         else { //If yes, try to connect to the DB and check cod_fisc and then password (string+salt hashed via bcrypt module)
             console.log("TRY CONNECT");
-            var con = DB_open_connection();
+            var con = db.DBconnect();
 
             let sql = 'SELECT * FROM admin WHERE cod_fisc = ?';
             con.query(sql, [cod_fisc], (err, result) => {
@@ -321,7 +310,7 @@ router.route('/login_principal').get((req, res) => {
         }
         else { //If yes, try to connect to the DB and check cod_fisc and then password (string+salt hashed via bcrypt module)
             console.log("TRY CONNECT");
-            var con = DB_open_connection();
+            var con = db.DBconnect();
 
             let sql = 'SELECT * FROM officer WHERE cod_fisc = ? AND principal';
             con.query(sql, [cod_fisc], (err, result) => {
@@ -373,7 +362,7 @@ router.route('/change_pwd').get((req, res) => {
     }
     else {
         console.log("TRY CONNECT");
-        var con = DB_open_connection();
+        var con = db.DBconnect();
         let hash_pwd = bcrypt.hashSync(password, 10);
         console.log(req.session.user.cod_fisc);
         con.query('UPDATE ?? SET password = ?, first_access = ? WHERE cod_fisc = ?', [req.session.user.user_type, hash_pwd, 1, req.session.user.cod_fisc], function (err, result) {
