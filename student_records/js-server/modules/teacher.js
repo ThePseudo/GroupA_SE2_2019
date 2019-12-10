@@ -165,12 +165,48 @@ router.get("/topics", (req, res) => {
 router.get("/class/:classid/course/:courseid/class_mark", (req, res) => {
   var fullName = req.session.user.first_name + " " + req.session.user.last_name;
   const compiledPage = pug.compileFile("../pages/teacher/teacher_insertclassmark.pug");
+  
+  var con = mysql.createConnection({
+    host: "localhost",
+    user: "root",
+    password: "pwd",
+    database: "students",
+    insecureAuth: true
+  });
+
+  var classID = req.params.classid;
+  var courseID = req.params.courseid;
+  var teacherID = req.session.user.id;
+
+  var sql = "SELECT first_name, last_name FROM student AS St, teacher_course_class AS Tcc " +
+    "WHERE Tcc.course_id = ? "+
+    "AND St.class_id = ? AND Tcc.class_id = ? "+
+    "AND Tcc.teacher_id = ? ";
+
+  con.query(sql, [courseID,classID,classID,teacherID], (err, rows, fields) => {
+    if (err) {
+      res.end("Database problem: " + err);
+      return;
+    }
+    con.end();
+    var studlist = [];
+    for (var i = 0; i < rows.length; ++i) {
+      var stud = {
+        first_name: rows[i].first_name,
+        last_name: rows[i].last_name,
+      }
+      studlist[i] = stud;
+    }
+ 
   res.end(compiledPage({
+    studlist: studlist,
     classid: req.params.classid,
     courseid: req.params.courseid,
     fullName: fullName
   }));
 });
+});
+
 
 //TODO
 router.get("/class/:classid/course/:courseid/add_material", (req, res) => {
@@ -178,6 +214,7 @@ router.get("/class/:classid/course/:courseid/add_material", (req, res) => {
 
 //TODO
 router.get("/class/:classid/course/:courseid/class_marks", (req, res) => {
+  
 });
 
 //TODO: nome provvisorio per presenze e note, cambiare anche il nome della route nel file "sidebar.pug" 
