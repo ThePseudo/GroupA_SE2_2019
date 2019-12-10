@@ -4,22 +4,12 @@ const express = require('express');
 const bcrypt = require('bcrypt');
 const bodyParser = require('body-parser');
 const app = express();
-const session = require('express-session');
 const { body } = require('express-validator');
 var router = express.Router();
 const db = require('./functions');
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
-
-//Inizializzazione oggetto globale rappresentante la sessione. Contiene tutte le info dell'user loggato.
-//Possibile aggiungere, eliminare, modificare le info salvate dopo il login
-router.use(session({
-    secret: 'students',
-    saveUninitialized: false,
-    resave: true,
-    httpOnly: false
-}));
 
 //Funzione chiamata dopo il check user e pwd e serve per caricare tutte le info utili relative all'user loggato
 function setup_session_var(user_type, user_info, sess) {
