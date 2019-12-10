@@ -180,6 +180,7 @@ CREATE TABLE note
     teacher_id INT NOT NULL,
     note_date DATE NOT NULL,
     motivation TEXT NOT NULL,
+    justified BOOLEAN NOT NULL,
     PRIMARY KEY(id)
 );
 
@@ -191,7 +192,8 @@ CREATE TABLE absence
     date_ab DATE NOT NULL,
     start_h INT NOT NULL,
     end_h INT NOT NULL,
-    justified BOOLEAN NOT NULL
+    justified BOOLEAN NOT NULL,
+    PRIMARY KEY(id)
 );
 
 -- Homework
@@ -203,8 +205,7 @@ CREATE TABLE homework
     class_id INT NOT NULL,
     description TEXT NOT NULL,
     date_hw DATE NOT NULL,
-    PRIMARY KEY
-    (id)
+    PRIMARY KEY(id)
 );
 
 -- Marks
