@@ -1,28 +1,42 @@
 // Those variables should be in every page
 - var page = ""
-- var loggedIn = false;
-
-mixin loginBtn(text, image, href)
-  div(class='hidden-sm hidden-md hidden-lg col-xs-1')
-  div(class='col-sm-4 col-xs-10 smallMarginTop')
-    a(href = href)
-      button(class='btn blockButton')
-        div(class='row')
-          img(src= image style='width:100%;height:auto;')
-        div(class='row')
-          a(class='noLinkTitle' style='margin-top: 20px;')= text
+- var loggedIn = false
 
 doctype html
-html
-  include base/head.pug
-  body
-    include base/navbar.pug
-    div(class='container')
-      div(class='row')
-        h1(class='title') Welcome to BB
-      div(class='row')
-        h2(class = 'title2') Who are you?
-      div(class='row')
-        +loginBtn('Parent', '../images/parent.png', '/auth_router/login_parent')
-        +loginBtn('Teacher', '../images/teacher.png', '/auth_router/login_teacher')
-        +loginBtn('Collaborator', '../images/teacher.png', '/auth_router/login_collaborator')
+script(src='https://kit.fontawesome.com/a076d05399.js')
+head
+  title BB
+  meta(charset='utf-8')
+  meta(name='viewport' content='width=device-width, initial-scale=1, user-scalable=no')
+  meta(name='description' content='')
+  meta(name='keywords' content='')
+  link(rel='stylesheet', href='/assets')
+header#header
+  a.logo(href='home') BB
+// Banner
+section#banner
+  .inner
+    h1 Welcome to BB
+    p
+      | Who are you?
+.highlights
+  section
+    .content
+      header
+        a.icon.fa-users(href="/auth_router/login_parent")
+          span.label Icon
+        h3 Parent
+      
+  section
+    .content
+      header
+        a.icon.fa-university(href="/auth_router/login_teacher")
+          span.label Icon
+        h3 Teacher
+      
+  section
+    .content
+      header
+        a.icon.fa-address-book(href='/auth_router/login_collaborator')
+          span.label Icon
+        h3 Collaborator

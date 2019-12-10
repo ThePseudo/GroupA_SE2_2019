@@ -68,6 +68,12 @@ app.get("/style", (req, res) => {
     res.end(page);
 });
 
+app.get("/assets", (req, res) => {
+    const page = fs.readFileSync("pages/assets/css/main.css");
+    res.end(page);
+});
+
+
 app.get("/topics", (req, res) => {
     const compiledPage = pug.compileFile("pages/topics.pug");
     res.end(compiledPage());
