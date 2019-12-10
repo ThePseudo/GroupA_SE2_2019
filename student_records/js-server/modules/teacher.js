@@ -83,6 +83,7 @@ router.get("/teacher_home", (req, res) => { // T3
 // We pass the classid and course id through the URLm and they are retrievable through the request like this:
 // req.params.classid
 // req.params.courseid
+// ALWAYS pass classid and courseid to pages, used for sidebar
 
 //------------------------------------------
 
