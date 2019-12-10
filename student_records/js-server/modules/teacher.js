@@ -76,8 +76,6 @@ router.get("/teacher_home", (req, res) => { // T3
       class_courses: classCourses
     });
   });
-
-
 });
 
 // Note: from here on, routes should follow this format: "/class/:classid/course/:courseid/..."
@@ -85,6 +83,67 @@ router.get("/teacher_home", (req, res) => { // T3
 // We pass the classid and course id through the URLm and they are retrievable through the request like this:
 // req.params.classid
 // req.params.courseid
+// ALWAYS pass classid and courseid to pages, used for sidebar
+
+//------------------------------------------
+
+router.get("/class/:classid/course/:courseid/course_home", (req, res) => {
+  var fullName = req.session.user.first_name + " " + req.session.user.last_name;
+
+  var con = mysql.createConnection({
+    host: "localhost",
+    user: "root",
+    password: "pwd",
+    database: "students",
+    insecureAuth: true
+  });
+
+  var classID = req.params.classid;
+  var courseID = req.params.courseid;
+  var teacherID = req.session.user.id;
+
+  let sql = "SELECT * FROM student WHERE class_id =? ORDER BY last_name"
+  con.query(sql, [classID], (err, rows, fields) => {
+    if (err) {
+      console.log(err);
+      con.end();
+      return;
+    }
+    else {
+      var message = "";
+      var n_students = 0;
+      var student_array = [];
+
+      if (rows.length <= 0) {
+        message = "No Student enrolled yet";
+      }
+      else {
+        n_students = rows.length;
+        for (i = 0; i < n_students; i++) {
+          student_array[i] = {};
+          student_array[i].id = rows[i].id;
+          student_array[i].first_name = rows[i].first_name;
+          student_array[i].last_name = rows[i].last_name;
+          student_array[i].cod_fisc = rows[i].cod_fisc;
+          student_array[i].parent_1 = rows[i].parent_1;
+          student_array[i].parent_2 = rows[i].parent_1;
+        }
+      }
+      con.end();
+    }
+    res.render('../pages/teacher/teacher_coursehome.pug', {
+      classid: classID,
+      courseid: courseID,
+      fullName: fullName,
+      message: message,
+      //courseName: "Math",
+      student_array: student_array,
+      n_students: n_students
+    });
+  });
+});
+
+//------------------------------------------------------
 
 
 //TODO: change route and get parameters for future query
@@ -103,5 +162,32 @@ router.get("/topics", (req, res) => {
   }));
 });
 
+router.get("/class/:classid/course/:courseid/class_mark", (req, res) => {
+  var fullName = req.session.user.first_name + " " + req.session.user.last_name;
+  const compiledPage = pug.compileFile("../pages/teacher/teacher_insertclassmark.pug");
+  res.end(compiledPage({
+    classid: req.params.classid,
+    courseid: req.params.courseid,
+    fullName: fullName
+  }));
+});
+
+
+//TODO
+router.get("/class/:classid/course/:courseid/add_material", (req, res) => {
+});
+
+//TODO
+router.get("/class/:classid/course/:courseid/class_marks", (req, res) => {
+});
+
+//TODO: nome provvisorio per presenze e note, cambiare anche il nome della route nel file "sidebar.pug" 
+//presenze e note stessa route? magari due route diverse e due tasti diversi nella sidebar?
+router.get("/class/:classid/course/:courseid/insert_stuff", (req, res) => {
+});
+
+//TODO
+router.get("/class/:classid/course/:courseid/insert_homework", (req, res) => {
+});
 
 module.exports = router;

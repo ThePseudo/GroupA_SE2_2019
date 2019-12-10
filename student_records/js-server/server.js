@@ -25,22 +25,22 @@ const adminPages = require('./modules/admin.js');
 const parentPages = require('./modules/parent.js');
 const auth_router = require('./modules/Auth_manager.js');
 const teacherPages = require('./modules/teacher.js');
+const officerPage = require('./modules/officer.js');
 
 // Constants
 const HTTPPORT = 8000;
 const HTTPSPORT = 8080;
 const HOST = '0.0.0.0';
 
-// other routers
-module.exports = function (app) {
-    app.use('/action/*', require('./modules'));
-};
+//fix for favicon.ico request
+app.get('/favicon.ico', (req, res) => res.status(204));
 
 //mount external route, now I can access to external route via ex. /admin/routename inside adminPages module .js
 app.use('/admin', adminPages);
 app.use('/parent', parentPages);
 app.use('/auth_router', auth_router);
 app.use('/teacher', teacherPages);
+app.use('/officer',officerPage);
 
 const options = {
     key: fs.readFileSync("./certs/localhost.key"),

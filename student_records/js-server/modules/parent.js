@@ -63,6 +63,7 @@ router.use('/:id/*', function(req, res, next) {
     }
 });
 
+// Routes
 
 router.get('/parent_home', (req, res) => {
     console.log(req.session);
@@ -80,11 +81,45 @@ router.get('/parent_home', (req, res) => {
 
     con.query('SELECT * FROM General_Communication', (err, rows, fields) => {
 
+=======
+  //console.log(req.session);
+  var fullName = req.session.user.first_name + " " + req.session.user.last_name;
+  var commlist = [];
+  var studlist = [];
+  var con = mysql.createConnection({
+    host: "localhost",
+    user: "root",
+    password: "pwd",
+    database: "students",
+    insecureAuth: true
+  });
+  const compiledPage = pug.compileFile('../pages/parent/parent_homepage.pug');
+
+  con.query('SELECT * FROM General_Communication ORDER BY comm_date DESC', (err, rows, fields) => {
+
+    if (err) {
+      res.end("There is a problem in the DB connection. Please, try again later\n" + err + "\n");
+      return;
+    }
+    //console.log(rows);
+    for (var i = 0; i < rows.length; i++) {
+      var communication_date = rows[i].comm_date.getDate() + "/"
+        + (rows[i].comm_date.getMonth() + 1) + "/" + rows[i].comm_date.getFullYear();
+      var communication = {
+        id: rows[i].id,
+        text: rows[i].communication,
+        date: communication_date
+      }
+      commlist[i] = communication;
+    }
+    //let sql = 'SELECT id,first_name,last_name FROM student';
+    con.query('SELECT id,first_name,last_name FROM student WHERE parent_1= ? OR parent_2 = ?',
+      [req.session.user.id, req.session.user.id], (err, rows, fields) => {
         if (err) {
             res.end("There is a problem in the DB connection. Please, try again later\n" + err + "\n");
             return;
         }
-        console.log(rows);
+        //console.log(rows);
         for (var i = 0; i < rows.length; i++) {
             var communication = {
                 id: rows[i].id,

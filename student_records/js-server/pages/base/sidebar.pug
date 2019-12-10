@@ -28,7 +28,7 @@ if sidebarForceHidden
       a(class='active-sidebar-item' style="background:#B3E5FC; text-align:center; padding-right:10px; border-bottom: 1px solid rgba(0,0,0,.12);")
         | #{fullName}
       a(class='active-sidebar-item' style="background:#B3E5FC;")
-    +small_item("/logout", "Log out")
+    +small_item("/auth_router/logout", "Log out")
 
 else
   div(class='sidebar' id='sidebar')
@@ -38,20 +38,23 @@ else
         | #{fullName}
       a(class='active-sidebar-item' style="background:#B3E5FC; border-bottom: 1px solid rgba(0,0,0,.12);")
       a(class='active-sidebar-item' style="background:#B3E5FC;")
-      +sidebar_item("/admin/parents", "Manage parents")
-      +sidebar_item("/admin/enroll_student", "Enroll student")
-      +sidebar_item("/admin/enroll_parent", "Register parent")
-      +sidebar_item("/admin/insert_communication", "Insert communication")
-      +sidebar_item("/admin/time_table", "Time table composition")
-      +sidebar_item("/admin/class", "Class composition")
+      +sidebar_item("/officer/parents", "Manage parents")
+      +sidebar_item("/officer/enroll_student", "Enroll student")
+      +sidebar_item("/officer/enroll_parent", "Register parent")
+      +sidebar_item("/officer/insert_communication", "Insert communication")
+      +sidebar_item("/officer/time_table", "Time table composition")
+      +sidebar_item("/officer/class", "Class composition")
     else if(user=="teacher")
       a(class='active-sidebar-item' style="background:#B3E5FC;")
       a(class='active-sidebar-item' style="background:#B3E5FC; padding-right:10px;")
         | #{fullName}
       a(class='active-sidebar-item' style="background:#B3E5FC; border-bottom: 1px solid rgba(0,0,0,.12);")
       a(class='active-sidebar-item' style="background:#B3E5FC;")
-      +sidebar_item("/topics", "Insert daily topic")
-      +sidebar_item("/teacher_home", "Teacher homepage")
+      +sidebar_item("/teacher/topics", "Insert daily topic")
+      +sidebar_item("/teacher/class/" + classid +"/course/" + courseid + "/add_material", "Add Material")
+      +sidebar_item("/teacher/class/" + classid +"/course/" + courseid + "/class_marks", "Insert class_marks")
+      +sidebar_item("/teacher/class/" + classid +"/course/" + courseid + "/insert_stuff", "Insert School attendance & notes")
+      +sidebar_item("/teacher/class/" + classid +"/course/" + courseid + "/insert_homework", "Add Homework")
     else if(user=="sysadmin")
       +sidebar_item("/admin/enroll_officer", "Register officer")
       +sidebar_item("/admin/enroll_teacher", "Register teacher")
@@ -66,7 +69,7 @@ else
       +sidebar_item("/parent/"+childID+"/show_courses", "Show courses")
       +sidebar_item("/parent/"+childID+"/notes", "Notes and absences")
       +sidebar_item("/parent/"+childID+"/marks", "Show all marks")
-    +small_item("/logout", "Log out")
+    +small_item("/auth_router/logout", "Log out")
 
 script
   include scripts.js

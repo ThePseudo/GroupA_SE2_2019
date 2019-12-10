@@ -9,16 +9,15 @@
 - var studentsLeft = numStudents
 
 mixin studentBtn(studentList)
-  div(class="row")
-    for student in studentList
-      div(class="row hidden-md hidden-lg")
-      div(class="col-xs-1 hidden-md hidden-lg")
-      div(class="col-md-4 col-xs-10")
-        a(class='noLinkTitle button smallMarginTop' href = student.id+'/show_courses')
-          button(class='btn blockButton')
-            div              
-              img(src= '../../images/child.png' style='width:50px;height:50px;')
-              text= student.first_name + " " + student.last_name
+  for student in studentList
+    div(class="row hidden-md hidden-lg")
+    div(class="col-xs-1 hidden-md hidden-lg")
+    div(class="col-md-4 col-xs-10" style="margin-top:16px")
+      a(class='noLinkTitle button' href = student.id+'/show_courses')
+        button(class='btn blockButton')
+          div              
+            img(src= '../../images/child.png' style='width:50px;height:50px;')
+            text= student.first_name + " " + student.last_name
 
 
 
@@ -44,18 +43,17 @@ html
       div(class='row')
         h2(class = 'title2') Who do you want to know about?
       div(class='row')
-        +studentBtn(studentList)
-
-    div(class="container")
+        div(class='col-xs-12')
+          +studentBtn(studentList)
+      div(class='row' style="margin-top: 16px")
+        h1(class='title') General Communications
       div(class='row')
-        h1(class='title') General Communication
-        table(class='table')
-          tr(class='table-row-base')
-            th Id Communication
-            th Date
-            th Object
-          each comm in communicationList
-            tr
-              td #{comm.id}
-              td #{comm.date}
-              td #{comm.text}
+        div(class="col-xs-12")
+          table(class='table')
+            tr(class='table-row-base')
+              th(style="text-align:left;") Date
+              th(style="text-align:left;") Object
+            each comm in communicationList
+              tr(class="table-row-base table-row" style="padding: 16px;")
+                td(style="text-align:left;") #{comm.date}
+                td(style="text-align:left;") #{comm.text}

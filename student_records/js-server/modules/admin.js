@@ -2,12 +2,11 @@
 
 const express = require('express');
 const pug = require('pug');
-const ethereal = require("../modules/ethereal.js");
+//const mailHandler = require("../modules/ethereal.js"); one-time email modules disabled but it works (maybe just for test!)
+const mailHandler = require("./nodemailer.js");
 const mysql = require('mysql');
+const bcrypt = require('bcrypt');
 const session = require('express-session');
-
-
-var SESSION = require("./Auth_manager.js");
 
 var router = express.Router();
 
@@ -29,10 +28,7 @@ router.use(session({
 // TODO: make this and fix it
 /////////////////////////////////
 //ricambiare tutte le app in route
-router.get("/officer_home", (req, res) => {
-    const compiledPage = pug.compileFile("../pages/officer/officer_home.pug");
-    res.end(compiledPage());
-});
+
 
 router.get("/admin_home", (req, res) => {
     const compiledPage = pug.compileFile("../pages/sysadmin/systemad_home.pug");
@@ -53,6 +49,7 @@ router.get("/enroll_principal", (req, res) => {
     const compiledPage = pug.compileFile("../pages/sysadmin/systemad_registerprincipal.pug");
     res.end(compiledPage());
 });
+
 
 router.get("/insert_communication", (req, res) => {
     const compiledPage = pug.compileFile("../pages/officer/officer_communication.pug");
@@ -133,7 +130,8 @@ router.post("/reg_officer", (req, res) => {
     let surname = req.body.surname;
     let SSN = req.body.SSN;
     let email = req.body.email;
-    let password = req.body.password;
+    let password = Math.random().toString(36).substring(2, 10) + Math.random().toString(36).substring(2, 10);
+    let hash_pwd = bcrypt.hashSync(password, 10);
 
     var con = mysql.createConnection({
         host: "localhost",
@@ -152,11 +150,12 @@ router.post("/reg_officer", (req, res) => {
             res.end("Count impossible to compute");
             return;
         }
-        con.query("INSERT INTO officer(id, first_name, last_name, cod_fisc, email, password, first_access) VALUES(?, ?, ?, ?, ?, ?, ?)", [rows[0].c + 1, name, surname, SSN, email, password, 1], (err, result) => {
+        con.query("INSERT INTO officer(id, first_name, last_name, cod_fisc, email, password, first_access) VALUES(?, ?, ?, ?, ?, ?, ?)", [rows[0].c + 1, name, surname, SSN, email, hash_pwd, 0], (err, result) => {
             if (err) {
                 res.end("There is a problem in the DB connection. Please, try again later " + err);
                 return;
             }
+            mailHandler.mail_handler(name, surname, SSN, email, password, "officer");
             console.log("Data successfully uploaded! " + result.insertId);
             con.end();
             res.redirect("/admin/enroll_officer");
@@ -164,12 +163,15 @@ router.post("/reg_officer", (req, res) => {
     });
 });
 
-router.post("/reg_principal", (req, res) => {
+//COMMENTO MOMENTANEAMENTE ROUTE PER ENROLL PRINCIPAL
+
+/* router.post("/reg_principal", (req, res) => {
     let name = req.body.name;
     let surname = req.body.surname;
     let SSN = req.body.SSN;
     let email = req.body.email;
-    let password = req.body.password;
+    let password = Math.random().toString(36).substring(2, 10) + Math.random().toString(36).substring(2, 10);
+    let hash_pwd = bcrypt.hashSync(password, 10);
 
     var con = mysql.createConnection({
         host: "localhost",
@@ -188,17 +190,59 @@ router.post("/reg_principal", (req, res) => {
             res.end("Count impossible to compute");
             return;
         }
-        con.query("INSERT INTO collaborator(id, first_name, last_name, cod_fisc, email, password, first_access) VALUES(?, ?, ?, ?, ?, ?, ?)", [rows[0].c + 1, name, surname, SSN, email, password, 1], (err, result) => {
+        con.query("INSERT INTO collaborator(id, first_name, last_name, cod_fisc, email, password, first_access) VALUES(?, ?, ?, ?, ?, ?, ?)", [rows[0].c + 1, name, surname, SSN, email, hash_pwd, 1], (err, result) => {
             if (err) {
                 res.end("There is a problem in the DB connection. Please, try again later " + err);
                 return;
             }
+            mailHandler.mail_handler(name, surname, SSN, email, password, "principal");
             console.log("Data successfully uploaded! " + result.insertId);
             con.end();
             res.redirect("/admin/enroll_principal");
         });
     });
+}); */
+
+
+router.post("/reg_teacher", (req, res) => {
+    let name = req.body.name;
+    let surname = req.body.surname;
+    let SSN = req.body.SSN;
+    let email = req.body.email;
+    let password = Math.random().toString(36).substring(2, 10) + Math.random().toString(36).substring(2, 10);
+    let hash_pwd = bcrypt.hashSync(password, 10);
+
+    var con = mysql.createConnection({
+        host: "localhost",
+        user: "root",
+        password: "pwd",
+        database: "students",
+        insecureAuth: true
+    });
+
+    con.query('SELECT COUNT(*) as c FROM teacher', (err, rows, fields) => { // because we have no AUTO_UPDATE available on the DB
+        if (err) {
+            res.end("There is a problem in the DB connection. Please, try again later " + err);
+            return;
+        }
+        if (rows.length <= 0) {
+            res.end("Count impossible to compute");
+            return;
+        }
+        con.query("INSERT INTO teacher(id, first_name, last_name, cod_fisc, email, password, first_access) VALUES(?, ?, ?, ?, ?, ?, ?)", [rows[0].c + 1, name, surname, SSN, email, hash_pwd, 0], (err, result) => {
+            if (err) {
+                res.end("There is a problem in the DB connection. Please, try again later " + err);
+                return;
+            }
+            mailHandler.mail_handler(name, surname, SSN, email, password, "teacher");
+            console.log("Data successfully uploaded! " + result.insertId);
+            console.log(result.insertId+ " " +name + " " + surname + " " + SSN + " " + email + " " + password); 
+            con.end();
+            res.redirect("/admin/enroll_teacher");
+        });
+    });
 });
+
 
 router.post("/reg_topic", (req, res) => {
     let course = req.body.course;
