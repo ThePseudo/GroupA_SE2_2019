@@ -81,7 +81,6 @@ router.get('/parent_home', (req, res) => {
 
     con.query('SELECT * FROM General_Communication', (err, rows, fields) => {
 
-=======
   //console.log(req.session);
   var fullName = req.session.user.first_name + " " + req.session.user.last_name;
   var commlist = [];
