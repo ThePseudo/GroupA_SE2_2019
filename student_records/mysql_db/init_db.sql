@@ -33,7 +33,7 @@ CREATE TABLE officer
 INSERT INTO officer
     (id,first_name,last_name,cod_fisc,email,password,first_access, principal)
 VALUES
-    (1, "Ciccio", "Pasticcio", "CP80X", "pasticcio80@gmail.com", "$2a$10$0tXRERd11hkw3zKQQmFeTOAuUcMiI6/ThiMNvfMUvKmYkWkL0BRkO", 1,0);
+    (1, "Ciccio", "Pasticcio", "CP80X", "pasticcio80@gmail.com", "$2a$10$0tXRERd11hkw3zKQQmFeTOAuUcMiI6/ThiMNvfMUvKmYkWkL0BRkO", 1, 0);
 
 CREATE TABLE parent
 (
@@ -187,7 +187,7 @@ CREATE TABLE note
 
 CREATE TABLE absence
 (
-    id INT PRIMARY KEY,
+    id INT ,
     student_id INT NOT NULL,
     date_ab DATE NOT NULL,
     start_h INT NOT NULL,
