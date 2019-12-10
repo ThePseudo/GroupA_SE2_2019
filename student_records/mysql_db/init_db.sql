@@ -33,7 +33,7 @@ CREATE TABLE officer
 INSERT INTO officer
     (id,first_name,last_name,cod_fisc,email,password,first_access, principal)
 VALUES
-    (1, "Ciccio", "Pasticcio", "CP80X", "pasticcio80@gmail.com", "$2a$10$0tXRERd11hkw3zKQQmFeTOAuUcMiI6/ThiMNvfMUvKmYkWkL0BRkO", 1,0);
+    (1, "Ciccio", "Pasticcio", "CP80X", "pasticcio80@gmail.com", "$2a$10$0tXRERd11hkw3zKQQmFeTOAuUcMiI6/ThiMNvfMUvKmYkWkL0BRkO", 1, 0);
 
 CREATE TABLE parent
 (
@@ -150,16 +150,6 @@ INSERT INTO admin
 VALUES
     (1, "Giovanni", "Rossi", "GPS67", "Rossi@yahoo.com", "$2a$10$0tXRERd11hkw3zKQQmFeTOAuUcMiI6/ThiMNvfMUvKmYkWkL0BRkO");
 
-CREATE TABLE note
-(
-    id INT,
-    student_id INT NOT NULL,
-    teacher_id INT NOT NULL,
-    note_date DATE NOT NULL,
-    motivation TEXT NOT NULL,
-    PRIMARY KEY(id)
-);
-
 CREATE TABLE topic
 (
     id INT UNIQUE NOT NULL,
@@ -182,14 +172,28 @@ INSERT INTO topic
     (id, topic_date, id_class, id_course, description)
 VALUES(3, "2019-09-30", 2, 1, "Polynoms");
 
+
+CREATE TABLE note
+(
+    id INT,
+    student_id INT NOT NULL,
+    teacher_id INT NOT NULL,
+    note_date DATE NOT NULL,
+    motivation TEXT NOT NULL,
+    justified BOOLEAN NOT NULL,
+    PRIMARY KEY(id)
+);
+
+
 CREATE TABLE absence
 (
-    id INT PRIMARY KEY,
+    id INT ,
     student_id INT NOT NULL,
     date_ab DATE NOT NULL,
     start_h INT NOT NULL,
     end_h INT NOT NULL,
-    justified BOOLEAN NOT NULL
+    justified BOOLEAN NOT NULL,
+    PRIMARY KEY(id)
 );
 
 -- Homework
@@ -201,8 +205,7 @@ CREATE TABLE homework
     class_id INT NOT NULL,
     description TEXT NOT NULL,
     date_hw DATE NOT NULL,
-    PRIMARY KEY
-    (id)
+    PRIMARY KEY(id)
 );
 
 -- Materials

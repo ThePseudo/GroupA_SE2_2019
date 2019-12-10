@@ -2,8 +2,7 @@
 
 const express = require('express');
 const pug = require('pug');
-const mysql = require('mysql');
-const session = require('express-session');
+const db = require('../modules/functions.js');
 
 //IMPORTO oggetto rappresentante la sessione.
 //Per accedere ->  req.session
@@ -13,13 +12,6 @@ const session = require('express-session');
 //Per aggiungere campo a sessione -> req.session.nomecampo = valore
 
 var router = express.Router();
-
-router.use(session({
-  secret: 'students', //??
-  saveUninitialized: false,
-  resave: true,
-  httpOnly: false
-}));
 
 router.use(/\/.*/, function (req, res, next) {
   try {
@@ -43,13 +35,8 @@ router.get("/teacher_home", (req, res) => { // T3
     year--;
   }
 
-  var con = mysql.createConnection({
-    host: "localhost",
-    user: "root",
-    password: "pwd",
-    database: "students",
-    insecureAuth: true
-  });
+  var con = db.DBconnect();
+
 
   var sql = "SELECT course_id, class_id, course_name, class_name FROM class, course, teacher_course_class " +
     "WHERE course_id = course.id AND class_id = class.id " +
@@ -90,13 +77,7 @@ router.get("/teacher_home", (req, res) => { // T3
 router.get("/class/:classid/course/:courseid/course_home", (req, res) => {
   var fullName = req.session.user.first_name + " " + req.session.user.last_name;
 
-  var con = mysql.createConnection({
-    host: "localhost",
-    user: "root",
-    password: "pwd",
-    database: "students",
-    insecureAuth: true
-  });
+  var con = db.DBconnect();
 
   var classID = req.params.classid;
   var courseID = req.params.courseid;
@@ -119,7 +100,7 @@ router.get("/class/:classid/course/:courseid/course_home", (req, res) => {
       }
       else {
         n_students = rows.length;
-        for (i = 0; i < n_students; i++) {
+        for (var i = 0; i < n_students; i++) {
           student_array[i] = {};
           student_array[i].id = rows[i].id;
           student_array[i].first_name = rows[i].first_name;
@@ -165,11 +146,40 @@ router.get("/topics", (req, res) => {
 router.get("/class/:classid/course/:courseid/class_mark", (req, res) => {
   var fullName = req.session.user.first_name + " " + req.session.user.last_name;
   const compiledPage = pug.compileFile("../pages/teacher/teacher_insertclassmark.pug");
-  res.end(compiledPage({
-    classid: req.params.classid,
-    courseid: req.params.courseid,
-    fullName: fullName
-  }));
+  var con = db.DBconnect();
+
+
+  var classID = req.params.classid;
+  var courseID = req.params.courseid;
+  var teacherID = req.session.user.id;
+
+  var sql = "SELECT first_name, last_name FROM student AS St, teacher_course_class AS Tcc " +
+    "WHERE Tcc.course_id = ? " +
+    "AND St.class_id = ? AND Tcc.class_id = ? " +
+    "AND Tcc.teacher_id = ? ";
+
+  con.query(sql, [courseID, classID, classID, teacherID], (err, rows, fields) => {
+    if (err) {
+      res.end("Database problem: " + err);
+      return;
+    }
+    con.end();
+    var studlist = [];
+    for (var i = 0; i < rows.length; ++i) {
+      var stud = {
+        first_name: rows[i].first_name,
+        last_name: rows[i].last_name,
+      }
+      studlist[i] = stud;
+    }
+
+    res.end(compiledPage({
+      studlist: studlist,
+      classid: req.params.classid,
+      courseid: req.params.courseid,
+      fullName: fullName
+    }));
+  });
 });
 
 
@@ -179,6 +189,7 @@ router.get("/class/:classid/course/:courseid/add_material", (req, res) => {
 
 //TODO
 router.get("/class/:classid/course/:courseid/class_marks", (req, res) => {
+
 });
 
 //TODO: nome provvisorio per presenze e note, cambiare anche il nome della route nel file "sidebar.pug" 
