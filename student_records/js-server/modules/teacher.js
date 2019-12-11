@@ -201,4 +201,19 @@ router.get("/class/:classid/course/:courseid/insert_stuff", (req, res) => {
 router.get("/class/:classid/course/:courseid/insert_homework", (req, res) => {
 });
 
+router.get("/class/:classid/course/:courseid/student/:studentid", (req, res) => {
+
+});
+
+router.get("/tryStudent", (req, res) => {
+  var fullName = req.session.user.first_name + " " + req.session.user.last_name;
+  res.render("../pages/teacher/teacher_singlestudent.pug", {
+    studentName: "Marco Pecoraro",
+    classid: req.params.classid,
+    courseid: req.params.courseid,
+    fullName: fullName
+
+  });
+});
+
 module.exports = router;
