@@ -15,14 +15,14 @@ html
       div(class='row')
         h1(class='title') Class #{classid} Course #{courseid} 
         div(class='row' style='margin-top: 40px;')
-        form(method='POST' action='/reg_topic' id="regform")
+        form(method='POST' action="/teacher/class/"+classid+"/course/"+courseid+"/reg_mark" id="regform")
           div(class='col-sm-6')
             div(class='row')
               div(class='col-sm-3')
               div(class='col-sm-6')
                 div.form-group
                   label(for='course') Subject:
-                  input(type='text' placeholder='Subject' name='course' class='form-control')
+                  input(type='text' placeholder='Subject' name='subject' class='form-control')
             div(class='row')
               div(class='col-sm-3')
               div(class='col-sm-6')
@@ -40,7 +40,7 @@ html
               div(class='col-sm-6')
                 div.form-group
                   label(for='desc') Type:
-                  input(type='text' placeholder='Type' name='course' class='form-control')
+                  input(type='text' placeholder='Type' name='type' class='form-control')
             div(class='row')
               div(class='col-sm-3')
               div(class='col-sm-6')
@@ -58,7 +58,7 @@ html
                     th(style="text-align:left;") Mark
                   each student in studlist
                     tr
-                      th(style="text-align:left;") #{student.first_name + " " + student.last_name}
+                      th(name="studentname" style="text-align:left;") #{student.first_name + " " + student.last_name}
                       th 
                         input(type='number' min='1' max='10' name="mark" form="regform" class="form-control")
           

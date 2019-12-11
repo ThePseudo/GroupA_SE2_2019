@@ -160,7 +160,7 @@ router.get("/class/:classid/course/:courseid/class_mark", (req, res) => {
 
   con.query(sql, [courseID, classID, classID, teacherID], (err, rows, fields) => {
     if (err) {
-      res.end("Database problem: " + err);
+      res.end("Database problem class mark: " + err);
       return;
     }
     con.end();
@@ -182,15 +182,75 @@ router.get("/class/:classid/course/:courseid/class_mark", (req, res) => {
   });
 });
 
+//TODO
+router.post("/class/:classid/course/:courseid/reg_mark", (req, res) => {
+  
+  var fullName = req.session.user.first_name + " " + req.session.user.last_name;
+  const compiledPage = pug.compileFile("../pages/teacher/teacher_insertclassmark.pug");
+  var con = db.DBconnect();
+
+
+  var classID = req.params.classid;
+  var courseID = req.params.courseid;
+  var teacherID = req.session.user.id;
+  var date_mark = req.body.date;
+  var period_mark = 0;
+  var mark_subj = req.body.subject;
+  var descr_mark_subj = req.body.desc;
+  var type_mark_subj = req.body.type;
+
+  var sql = "SELECT St.id, first_name, last_name FROM student AS St, teacher_course_class AS Tcc " +
+    "WHERE Tcc.course_id = ? " +
+    "AND St.class_id = ? AND Tcc.class_id = ? " +
+    "AND Tcc.teacher_id = ? ";
+
+  con.query(sql, [courseID, classID, classID, teacherID], (err, rows, fields) => {
+    if (err) {
+      res.end("Database problem reg_mark: " + err);
+      return;
+    }
+    else{
+      var marks= req.body.mark;
+      
+      var studlist = [];
+      let c =  rows.length + 1;
+      var sql2 = "INSERT INTO mark(id,student_id,course_id,score,date_mark,period_mark,mark_subj,descr_mark_subj,type_mark_subj) VALUES ";
+        
+      for (var i = 0; i < rows.length; ++i) {
+        if(i>0){
+          sql2 = sql2 + " , ";
+        }
+        var stud = {
+          id_stud: rows[i].id,
+          first_name: rows[i].first_name,
+          last_name: rows[i].last_name,
+        }
+        mark=marks[i];
+        studlist[i] = stud;
+        sql2 = sql2 + "("+ c +","+ stud.id_stud +","+ courseID +","+ mark +","+ date_mark +","+ period_mark +",'"+ mark_subj +"','"+ descr_mark_subj  +"','"+ type_mark_subj +"')";
+        c = c + 1;
+      }
+      console.log(sql2);
+      con.query(sql2, (err, rows, fields) => {
+        if (err) {
+          res.end("Database problem errore qui: " + err);
+          return;
+        }
+        else{
+          con.end();
+          console.log("Data successfully uploaded! ");
+          res.render("../pages/teacher/teacher_insertclassmark.pug",{studlist:studlist, flag_ok: "1", message: "New class marks inserted correctly"});
+          return;
+        }
+      });
+    }
+  });
+});
 
 //TODO
 router.get("/class/:classid/course/:courseid/add_material", (req, res) => {
 });
 
-//TODO
-router.get("/class/:classid/course/:courseid/class_marks", (req, res) => {
-
-});
 
 //TODO: nome provvisorio per presenze e note, cambiare anche il nome della route nel file "sidebar.pug" 
 //presenze e note stessa route? magari due route diverse e due tasti diversi nella sidebar?

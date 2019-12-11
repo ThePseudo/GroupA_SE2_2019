@@ -53,14 +53,14 @@ router.use('/:id/*', function (req, res, next) {
 
 
 router.get('/parent_home', (req, res) => {
-    console.log(req.session);
-    var fullName = req.session.user.first_name + " " + req.session.user.last_name;
     var commlist = [];
     var studlist = [];
     var con = db.DBconnect();
 
     const compiledPage = pug.compileFile('../pages/parent/parent_homepage.pug');
+
     con.query('SELECT * FROM General_Communication ORDER BY comm_date DESC', (err, rows, fields) => {
+
         if (err) {
             res.end("There is a problem in the DB connection. Please, try again later\n" + err + "\n");
             return;
@@ -77,20 +77,19 @@ router.get('/parent_home', (req, res) => {
             commlist[i] = communication;
         }
         //let sql = 'SELECT id,first_name,last_name FROM student';
-        con.query('SELECT id,first_name,last_name FROM student WHERE parent_1= ? OR parent_2 = ?',
-        [req.session.user.id, req.session.user.id], (err, rows, fields) => {
+        con.query('SELECT id,first_name,last_name FROM student WHERE parent_1=1 OR parent_2=1', (err, rows, fields) => {
             if (err) {
                 res.end("There is a problem in the DB connection. Please, try again later\n" + err + "\n");
                 return;
             }
-            //console.log(rows);
+            console.log(rows);
             for (var i = 0; i < rows.length; i++) {
-                var communication = {
+                var student = {
                     id: rows[i].id,
-                    text: rows[i].communication,
-                    date: rows[i].comm_date
+                    first_name: rows[i].first_name,
+                    last_name: rows[i].last_name
                 }
-                commlist[i] = communication;
+                studlist[i] = student;
             }
             //console.log("Data successfully uploaded! " + result.insertId);
             con.end();
