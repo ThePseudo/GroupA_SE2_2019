@@ -14,8 +14,8 @@ const { body } = require('express-validator');
 
 var router = express.Router();
 
-//router.use(/\/.*/, function(req, res, next) {
-/*try {
+router.use(/\/.*/, function(req, res, next) {
+   try {
         if (req.session.user.user_type != 'teacher') {
             res.redirect("/");
             return;
@@ -25,7 +25,7 @@ var router = express.Router();
     } catch (err) {
         res.redirect("/");
     }
-});*/
+});
 
 router.get("/upload_file", (req, res) => {
     var con = db.DBconnect();
