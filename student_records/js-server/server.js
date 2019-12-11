@@ -40,7 +40,7 @@ app.use('/admin', adminPages);
 app.use('/parent', parentPages);
 app.use('/auth_router', auth_router);
 app.use('/teacher', teacherPages);
-app.use('/officer',officerPage);
+app.use('/officer', officerPage);
 
 const options = {
     key: fs.readFileSync("./certs/localhost.key"),
@@ -49,8 +49,28 @@ const options = {
 
 // Main page
 app.get('/', (req, res) => {
-    const compiledPage = pug.compileFile("pages/home.pug");
-    res.end(compiledPage());
+    try {
+        switch (req.session.user.user_type) {
+            case "parent":
+                res.redirect("/parent/parent_home");
+                break;
+            case "teacher":
+                res.redirect("/teacher/teacher_home");
+                break;
+            case "admin":
+                res.redirect("/admin/admin_home");
+                break;
+            case "officer":
+                res.redirect("/officer/officer_home");
+                break;
+            default:
+                res.redirect("/auth_router/logout");
+                break;
+        }
+    } catch (err) {
+        const compiledPage = pug.compileFile("pages/home.pug");
+        res.end(compiledPage());
+    }
 });
 
 
@@ -63,10 +83,9 @@ app.get("/style", (req, res) => {
 app.get('/*', (req, res) => {
     fs.readFile(req.path, (err, data) => {
         if (err) {
-            console.log(req.path);
             console.log(err);
-            const compiledPage = pug.compileFile("pages/base/404.pug");
-            res.end(compiledPage());
+            res.render("pages/base/404.pug");
+            return;
         }
         res.end(data);
 
@@ -76,10 +95,9 @@ app.get('/*', (req, res) => {
 app.post('/*', (req, res) => {
     fs.readFile(req.path, (err, data) => {
         if (err) {
-            console.log(req.path);
             console.log(err);
-            const compiledPage = pug.compileFile("pages/base/404.pug");
-            res.end(compiledPage());
+            res.end("pages/base/404.pug");
+            return;
         }
         res.end(data);
 
