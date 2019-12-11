@@ -13,6 +13,11 @@ html
     div(class='container sidebarContainer')
       div(class='row')
         h1(class='title') Register parent
+      div(class='row')
+        if flag_ok == 1
+          h2(class = 'ok_msg') &nbsp #{message} &nbsp
+        else
+          h2(class = 'err_msg') &nbsp #{message} &nbsp
       form(method='POST' action='/officer/reg_parent')
         div(class='row' style='margin-top: 40px;')
           div(class='col-lg-3')
@@ -37,7 +42,7 @@ html
           div(class='col-lg-6 col-xs-12')
             div.form-group
               label(for='Email') Email:
-              input(type='text' placeholder='Email' name='email' class="form-control")
+              input(type='email' placeholder='Email' name='email' class="form-control")
         div(class='row')
           div(class='col-sm-8 col-lg-6')
           div(class='col-sm-4 col-lg-3 col-xs-10')

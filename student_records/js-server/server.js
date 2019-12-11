@@ -40,7 +40,7 @@ app.use('/admin', adminPages);
 app.use('/parent', parentPages);
 app.use('/auth_router', auth_router);
 app.use('/teacher', teacherPages);
-app.use('/officer',officerPage);
+app.use('/officer', officerPage);
 
 const options = {
     key: fs.readFileSync("./certs/localhost.key"),

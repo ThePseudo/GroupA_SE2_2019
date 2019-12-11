@@ -16,6 +16,11 @@ html
     div(class='container sidebarContainer')
       div(class='row')
         h1(class='title') Insert communication
+      div(class='row')
+        if flag_ok == 1
+          h2(class = 'ok_msg') &nbsp #{message} &nbsp
+        else
+          h2(class = 'err_msg') &nbsp #{message} &nbsp
       form(method='POST' action='/officer/insert_comm' id="regform")
         div(class='row' style='margin-top: 40px;')
           div(class='col-lg-3 col-sm-1')
