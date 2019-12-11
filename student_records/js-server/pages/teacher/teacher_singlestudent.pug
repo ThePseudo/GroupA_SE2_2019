@@ -23,10 +23,11 @@ html
       div(class="row")
         h1(class = 'title') #{studentName}
       div(class="row")
+        //- Marks
         h2(class="title2") New mark
       div(class="row")
         div(class="col-xs-12")
-          form(action='./' method="POST") 
+          form(action='./insert_mark' method="POST") 
             div(class='row')
               div(class='col-lg-2 col-md-2')
               div(class='form-group')
@@ -43,4 +44,22 @@ html
                   select(class='form-control', id='modifier', name='modifier')
                     for modifier in modifiers
                       option(value=modifier) #{modifier}
-
+            div(class="row")
+              div(class='col-sm-8 col-md-6 col-lg-7')
+              div(class='col-sm-4 col-lg-3 col-xs-10')
+                input(type='SUBMIT' value='Insert mark' name='insert_mark' class='btn blockButton' style='margin-top: 24px; padding: 6px 10px; margin-left:25%; width: 75%;')
+      div(class="row")
+        h2(class="title2") New note
+      div(class="row")
+        div(class="col-xs-12")
+          form(action='./insert_note' method="POST" id="noteform")
+            div(class='row')
+              div(class='col-lg-2 col-md-2')
+              div(class='col-xs-12 col-md-8')
+                div.form-group
+                  label(for='note') Note:
+                  textarea(name="note" form="noteform" class="form-control" style="resize:none" rows="5")
+            div(class="row")
+              div(class='col-sm-8 col-md-6 col-lg-7')
+              div(class='col-sm-4 col-lg-3 col-xs-10')
+                input(type='SUBMIT' value='Insert note' name='insert_note' class='btn blockButton' style='margin-top: 24px; padding: 6px 10px; margin-left:25%; width: 75%;')
