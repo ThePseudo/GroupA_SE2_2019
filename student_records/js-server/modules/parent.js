@@ -13,7 +13,7 @@ const db = require('../modules/functions.js');
 
 var router = express.Router();
 
-router.use(/\/.*/, function (req, res, next) {
+router.use(/\/.*/, function(req, res, next) {
     try {
         if (req.session.user.user_type != 'parent') {
             res.redirect("/");
@@ -27,7 +27,7 @@ router.use(/\/.*/, function (req, res, next) {
 });
 
 
-router.use('/:id/*', function (req, res, next) {
+router.use('/:id/*', function(req, res, next) {
     var parentID = req.session.user.id;
     var childID = req.params.id;
     var con = db.DBconnect();
@@ -67,8 +67,8 @@ router.get('/parent_home', (req, res) => {
         }
         console.log(rows);
         for (var i = 0; i < rows.length; i++) {
-            var communication_date = rows[i].comm_date.getDate() + "/"
-                + (rows[i].comm_date.getMonth() + 1) + "/" + rows[i].comm_date.getFullYear();
+            var communication_date = rows[i].comm_date.getDate() + "/" +
+                (rows[i].comm_date.getMonth() + 1) + "/" + rows[i].comm_date.getFullYear();
             var communication = {
                 id: rows[i].id,
                 text: rows[i].communication,
@@ -117,7 +117,7 @@ router.get("/:childID/marks", (req, res) => {
         'AND mark.student_id = ? ' +
         'ORDER BY mark.date_mark DESC';
 
-    con.query(sql, [childID], function (err, rows, fields) {
+    con.query(sql, [childID], function(err, rows, fields) {
         if (err) {
             res.end("DB error: " + err);
         } else {
@@ -136,7 +136,7 @@ router.get("/:childID/marks", (req, res) => {
 
             sql = "SELECT first_name, last_name FROM student WHERE id = ?"
 
-            con.query(sql, [1], function (err, rows, fields) {
+            con.query(sql, [1], function(err, rows, fields) {
                 if (err) {
                     res.end("DB error: " + err);
                 } else {
