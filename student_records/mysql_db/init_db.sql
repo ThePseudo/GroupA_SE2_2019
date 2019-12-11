@@ -184,6 +184,13 @@ CREATE TABLE note
     PRIMARY KEY(id)
 );
 
+INSERT INTO note
+    (id, student_id, teacher_id, note_date, motivation, justified)
+VALUES(1, 1, 1, "2019-09-30", "L'alunno fa rumore in classe", 0);
+
+INSERT INTO note
+    (id, student_id, teacher_id, note_date, motivation, justified)
+VALUES(2, 1, 2, "2019-09-29", "L'alunno fa ANCORA rumore in classe", 0);
 
 CREATE TABLE absence
 (
@@ -195,6 +202,14 @@ CREATE TABLE absence
     justified BOOLEAN NOT NULL,
     PRIMARY KEY(id)
 );
+
+INSERT INTO absence
+    (id, student_id, date_ab, start_h, end_h, justified)
+VALUES(1, 1, "2019-09-30", 8, 13, 1);
+
+INSERT INTO absence
+    (id, student_id, date_ab, start_h, end_h, justified)
+VALUES(2, 1, "2019-09-29", 8, 13, 0);
 
 -- Homework
 

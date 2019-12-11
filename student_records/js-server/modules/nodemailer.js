@@ -21,7 +21,7 @@ module.exports.mail_handler = function (first_name, last_name, username, email, 
   });
 
   const mailOptions = {
-    from: 'mr.Principal@email.com', // sender address
+    from: 'sysAdmin@gmail.com', // sender address
     to: email, // list of receivers
     subject: 'Credentialial new user', // Subject line
     html: `<p>Dear ${first_name} ${last_name},</p>

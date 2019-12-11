@@ -413,17 +413,54 @@ router.get('/:childID/course/:id/material_homework', (req, res) => {
 //show absences & notes
 
 router.get('/:childID/absences_notes', (req, res) => {
-    var fullName = req.session.user.first_name + " " + req.session.user.last_name;
     var childID = req.params.childID;
+    var fullName = req.session.user.first_name + " " + req.session.user.last_name;
+    var absence_array=[];
+    var note_array = [];
 
     var con = db.DBconnect();
 
+    var sql = "SELECT n.note_date, n.motivation, n.justified, t.first_name, t.last_name, t.email,t.id FROM note AS n,teacher AS t WHERE n.teacher_id = t.id AND n.student_id = ?";
 
-
-
-    res.render('../pages/parent/parent_absences_notes.pug', {
-        fullName: fullName,
-        childID: childID
-    });
+    con.query(sql, [childID], (err, rows) => {
+        if (err) {
+            res.end("DB error: " + err);
+            return;
+        }
+       
+        for (var i = 0; i < rows.length; i++){
+            note_array[i]={};
+            note_array[i].teacherFullName = rows[i].first_name + " " + rows[i].last_name;
+            note_array[i].teacherEmail = rows[i].email;
+            note_array[i].date = rows[i].note_date.getDate() + "/" + (rows[i].note_date.getMonth() + 1) + "/" + rows[i].note_date.getFullYear();
+            note_array[i].motivation = rows[i].motivation;
+            note_array[i].justified = rows[i].justified;
+            note_array[i].teacherID = rows[i].id;
+        }
+        
+        sql = "SELECT date_ab, start_h, end_h, justified FROM absence WHERE student_id = ?";
+        con.query(sql, [childID], (err, rows) => {
+            if (err) {
+                res.end("DB error: " + err);
+                return;
+            }
+            for (var i = 0; i < rows.length; i++){
+                absence_array[i]={};
+                absence_array[i].date = rows[i].date_ab.getDate() + "/" + (rows[i].date_ab.getMonth() + 1) + "/" + rows[i].date_ab.getFullYear();
+                absence_array[i].start_h = rows[i].start_h;
+                absence_array[i].end_h = rows[i].end_h;
+                absence_array[i].justified = rows[i].justified;
+            }
+            res.render("../pages/parent/parent_absences_notes.pug", {fullName: fullName, note_array: note_array, absence_array: absence_array});
+        });
+    }); 
 });
+
+router.route("/:teacherID/contact").get((req,res) => {
+    console.log("qui");
+    res.render("../pages/parent/popup_email_send.pug");
+}).post((req,res)=>{
+    
+});
+
 module.exports = router;

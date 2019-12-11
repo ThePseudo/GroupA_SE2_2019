@@ -1,15 +1,105 @@
-//- Those variables should be in every page. ALWAYS PASS childID, fullName
-- var page = pageId
+- var page = "Absences&Notes"
 - var loggedIn = true
 - var user = "parent"
-- var active = ""
+- var active = "Show absences and notes"
 
+mixin rowNote(teacher, date, motivation,justified,teacherID,teacherEmail)
+  tr(class="table-row table-row-base")
+    td(style="text-align:left;")= teacher
+    td(style="text-align:left;")= date
+    td(style="text-align:left;")= motivation
+    if(justified)   
+      td(style="background: rgb(24, 143, 13)")
+    else
+      td(style="background: rgb(226, 45, 45)")
+    td(style="text-align:left;")
+        script.
+          $(document).ready(function(){
+              $("#emailModal").on("show.bs.modal", function(event){
+              var button = $(event.relatedTarget)
+              var email = button.data("email")
+              var modal = $(this)
+              modal.find(".modal-body #teacher_email").val(email)
+              modal.find(".modal-body #email_body").val("")
+            })
+          })
+            
+        button(class='btn blockButton' href="javascript:void(0)" data-toggle="modal" data-target="#emailModal" data-email = teacherEmail)
+
+            
+
+mixin rowAbsence(date, start_h, end_h,justified)
+  tr(class="table-row table-row-base")
+    td(style="text-align:left;")= date
+    td(style="text-align:left;")= start_h
+    td(style="text-align:left;")= end_h
+    if(justified)   
+      td(style="background: rgb(24, 143, 13)")
+    else
+      td(style="background: rgb(226, 45, 45)")
+    
 doctype html
 html
   include ../base/head.pug
   body
     include ../base/navbar.pug
     include ../base/sidebar.pug
-    div(class="container sidebarContainer")
-      a(href="/parent/parent_home" class="noLinkTitle backButton")
+    div(class='container sidebarContainer')
+      a(href="../../parent/parent_home" class="noLinkTitle backButton")
         span(class="glyphicon glyphicon-menu-left backButton")
+      div(class='row')
+        h1(class='title') Notes
+      div(class='row')
+        div(class="col-lg-3 col-sm-2 col-xs-1")
+        div(class="col-lg-6 col-sm-8 col-xs-10" style='align-content:center;')
+          table(style="width:100%; text-align:center; align-content:center" class="table table-bordered")
+            tr(class='table-row-base')
+              th(style="text-align:left;") Teacher
+              th(style="text-align:left;") Date
+              th(style="text-align:left;") Motivation
+              th(style="text-align:left;") justified
+              th(style="text-align:left;") Contact Teacher
+            for note in note_array
+              +rowNote(note.teacherFullName, note.date, note.motivation, note.justified, note.teacherID, note.teacherEmail)
+      
+      div(class='row')
+        h1(class='title') Absences
+      div(class='row')
+        div(class="col-lg-3 col-sm-2 col-xs-1")
+        div(class="col-lg-6 col-sm-8 col-xs-10" style='align-content:center;')
+          table(style="width:100%; text-align:center; align-content:center" class="table table-bordered")
+            tr(class='table-row-base')
+              th(style="text-align:left;") Date
+              th(style="text-align:left;") start
+              th(style="text-align:left;") end
+              th(style="text-align:left;") justified
+            for absence in absence_array
+              +rowAbsence(absence.date, absence.start_h, absence.end_h, absence.justified)
+
+//- Modal for PopUp email send
+
+#emailModal(class="modal fade" role = "dialog")
+  div(class="modal-dialog")
+    div(class="modal-content")
+      div(class="modal-header")
+        button.close(type="button", data-dismiss="modal") ×
+        h4(class="modal-title") Contacts teacher
+      div(class="modal-body")
+        div#msgdiv.alert.alert-danger(style="display:none")
+
+        form(method="post")
+          div(class='form-group')
+            label(for="email") teacher's email:
+            input(type="email" readonly class='form-control' id='teacher_email')
+        
+          div(class='form-group')
+            label(for="subject") Subject:
+            input(type="text" readonly class='form-control' id="subject" name="subject" value = "Contact Request")
+          
+          div(class='form-group')
+            label(for="text_msg") Body:
+            textarea(class = "form-control" rows="5" placeholder="Email body" id = "email_body" name = "email_body")   
+          
+          button#btnemail.btn.btn-default(type="button" ) Send Email
+      div(class="modal-footer")
+          button(class = "btn btn-default" data-dismiss="modal") Close
