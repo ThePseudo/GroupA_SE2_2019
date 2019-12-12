@@ -6,6 +6,7 @@ const pug = require('pug');
 const mailHandler = require("./nodemailer.js");
 const bcrypt = require('bcrypt');
 const db = require('../modules/functions.js');
+const { body } = require('express-validator');
 
 var router = express.Router();
 
@@ -15,32 +16,36 @@ router.get("/officer_home", (req, res) => {
 });
 
 router.get("/enroll_student", (req, res) => {
-    const compiledPage = pug.compileFile("../pages/officer/officer_registerstudent.pug");
+    const compiledPage = pug.compileFile("./pages/officer/officer_registerstudent.pug");
     res.end(compiledPage());
 });
 
 router.get("/enroll_parent", (req, res) => {
-    const compiledPage = pug.compileFile("../pages/officer/officer_registerparent.pug");
+    const compiledPage = pug.compileFile("./pages/officer/officer_registerparent.pug");
     res.end(compiledPage());
 });
 
 router.get("/insert_communication", (req, res) => {
-    const compiledPage = pug.compileFile("../pages/officer/officer_communication.pug");
+    const compiledPage = pug.compileFile("./pages/officer/officer_communication.pug");
     res.end(compiledPage());
 });
 ////////////////////////
-router.post("/insert_comm", (req, res) => {
+router.post("/insert_comm", [body('name')
+    .not().isEmpty()
+    .trim()
+    .escape()
+], (req, res) => {
     let desc = req.body.desc;
 
     var con = db.DBconnect();
     let date = new Date();
+    if (!desc) {
+        res.render("../pages/officer/officer_communication.pug", { flag_ok: "0", message: "Please fill the description" });
+        return;
+    }
     con.query('SELECT COUNT(*) as c FROM General_Communication', (err, rows, fields) => { // because we have no AUTO_UPDATE available on the DB
         if (err) {
             res.end("There is a problem in the DB connection. Please, try again later " + err);
-            return;
-        }
-        if (rows.length <= 0) {
-            res.end("Count impossible to compute");
             return;
         }
         con.query("INSERT INTO General_Communication(id, communication, comm_date) VALUES(?, ?, ?)", [rows[0].c + 1, desc, date], (err, result) => {
@@ -48,15 +53,28 @@ router.post("/insert_comm", (req, res) => {
                 res.end("There is a problem in the DB connection. Please, try again later " + err);
                 return;
             }
-            console.log("Data successfully uploaded! " + result.insertId);
             con.end();
-            res.redirect("/officer/officer_home");
+            res.render("../pages/officer/officer_communication.pug", { flag_ok: "1", message: "Message uploaded" });
+            return;
         });
     });
 });
 
 
-router.post("/reg_parent", (req, res) => {
+router.route("/reg_parent").post([body('name')
+    .not().isEmpty()
+    .trim()
+    .escape(), body('surname')
+    .not().isEmpty()
+    .trim()
+    .escape(), body('SSN')
+    .not().isEmpty()
+    .trim()
+    .escape(), body('email')
+    .not().isEmpty()
+    .trim()
+    .escape().isEmail()
+], (req, res) => {
     let name = req.body.name;
     let surname = req.body.surname;
     let SSN = req.body.SSN;
@@ -67,14 +85,19 @@ router.post("/reg_parent", (req, res) => {
 
     var con = db.DBconnect();
 
+    if (!name || !surname || !SSN || !email) {
+        res.render("../pages/officer/officer_registerstudent.pug", { flag_ok: "0", message: "Please fill the form correctly" });
+        return;
+    }
 
     con.query('SELECT COUNT(*) as c FROM parent', (err, rows, fields) => { // because we have no AUTO_UPDATE available on the DB
         if (err) {
             res.end("There is a problem in the DB connection. Please, try again later " + err);
             return;
         }
+<<<<<<< HEAD
         if (rows.length <= 0) {
-            res.end("Count impossible to compute");
+            res.end("There is a problem in the DB connection. Please, try again later " + err);
             return;
         }
         con.query("INSERT INTO parent(id, first_name, last_name, cod_fisc, email, password, first_access) VALUES(?, ?, ?, ?, ?, ?, ?)",
@@ -90,13 +113,53 @@ router.post("/reg_parent", (req, res) => {
                 mailHandler.mail_handler(name, surname, SSN, email, password, "parent");
                 console.log("Data successfully uploaded! " + result.insertId);
                 con.end();
-                res.redirect("/officer/enroll_parent");
+                res.render("../pages/officer/officer_registerparent.pug", { flag_ok: "1", message: "New parent inserted correctly"});
             });
+=======
+        let count = rows[0].c + 1;
+        con.query('SELECT COUNT(*) as c FROM parent WHERE cod_fisc = ?', [SSN], (err, rows, fields) => {
+            if (err) {
+                res.end("There is a problem in the DB connection. Please, try again later " + err);
+                return;
+            }
+            if (rows[0].c == 0) {
+                con.query("INSERT INTO parent(id, first_name, last_name, cod_fisc, email, password, first_access) VALUES(?, ?, ?, ?, ?, ?, ?)", [count, name, surname, SSN, email, hash_pwd, 0], (err, result) => {
+                    if (err) {
+                        res.end("There is a problem in the DB connection. Please, try again later " + err);
+                        return;
+                    }
+                    mailHandler.mail_handler(name, surname, SSN, email, password, "parent");
+                    res.render("../pages/officer/officer_registerparent.pug", { flag_ok: "1", message: "New parent insertly correctly" });
+                    con.end();
+                    return;
+                });
+            } else {
+                res.render("../pages/officer/officer_registerparent.pug", { flag_ok: "0", message: "Parent already exist" });
+                return;
+            }
+        });
+>>>>>>> master
     });
 });
 
 
-router.post("/reg_student", (req, res) => {
+router.route("/reg_student").post([body('name')
+    .not().isEmpty()
+    .trim()
+    .escape(), body('surname')
+    .not().isEmpty()
+    .trim()
+    .escape(), body('SSN')
+    .not().isEmpty()
+    .trim()
+    .escape(), body('SSN1')
+    .not().isEmpty()
+    .trim()
+    .escape(), body('SSN2')
+    .not().isEmpty()
+    .trim()
+    .escape()
+], (req, res) => {
     let name = req.body.name;
     let surname = req.body.surname;
     let SSN = req.body.SSN;
@@ -105,16 +168,23 @@ router.post("/reg_student", (req, res) => {
 
     var con = db.DBconnect();
 
+    if (!name || !surname || !SSN) {
+        res.render("../pages/officer/officer_registerstudent.pug", { flag_ok: "0", message: "Please fill the form correctly" });
+        return;
+    }
 
     con.query('SELECT COUNT(*) as c FROM student', (err, rows, fields) => { // because we have no AUTO_UPDATE available on the DB
         if (err) {
             res.end("There is a problem in the DB connection. Please, try again later " + err);
             return;
         }
+<<<<<<< HEAD
+        //Probabile ridondanza a check con err ma per sicurezza lasciamo (dobbiamo avere una entry che ci dica valore di count, che esso sia 0 minore o maggiore di zero)
         if (rows.length <= 0) {
-            res.end("Count impossible to compute");
+            res.end("There is a problem in the DB connection. Please, try again later " + err);
             return;
         }
+
         let c = rows[0].c + 1;
         con.query('SELECT ID FROM parent WHERE cod_fisc = ?', [SSN1], (err, rows, fields) => { // because we have no AUTO_UPDATE available on the DB
             if (err) {
@@ -123,33 +193,93 @@ router.post("/reg_student", (req, res) => {
             }
             if (rows.length <= 0) {
                 con.query('SELECT ID FROM parent WHERE cod_fisc = ?', [SSN2], (err, rows, fields) => { // because we have no AUTO_UPDATE available on the DB
+=======
+
+        let count = rows[0].c + 1;
+        if (SSN1 && SSN2) {
+            con.query('SELECT ID FROM parent WHERE cod_fisc = ? OR cod_fisc = ?', [SSN1, SSN2], (err, rows, fields) => { // because we have no AUTO_UPDATE available on the DB
+                if (err) {
+                    res.end("There is a problem in the DB connection. Please, try again later " + err);
+                    return;
+                }
+                if (rows.length != 2) {
+                    res.render("../pages/officer/officer_registerstudent.pug", { flag_ok: "0", message: "Please fill the form with correct parents IDs" });
+                    return;
+                }
+                con.query('SELECT COUNT(*) as c FROM student WHERE cod_fisc = ?', [SSN], (err, rows, fields) => {
+>>>>>>> master
                     if (err) {
                         res.end("There is a problem in the DB connection. Please, try again later " + err);
                         return;
                     }
+<<<<<<< HEAD
                     if (rows.length <= 0) {
-                        res.end("Parent/s ID/s not found");
+                        res.render("../pages/officer/officer_registerstudent.pug", { flag_ok: "0", message: "Parent/s ID/s not found" });
+=======
+                    if (rows[0].c == 0) {
+                        con.query("INSERT INTO student(id, first_name, last_name, cod_fisc, class_id, parent_1, parent_2) VALUES(?, ?, ?, ?, ?, ?, ?)", [count, name, surname, SSN, 0, SSN1, SSN2], (err, result) => {
+                            if (err) {
+                                res.end("There is a problem in the DB connection. Please, try again later " + err);
+                                return;
+                            }
+                            res.render("../pages/officer/officer_registerstudent.pug", { flag_ok: "1", message: "New student insertly correctly" });
+                            con.end();
+                            return;
+                        });
+                    } else {
+                        res.render("../pages/officer/officer_registerstudent.pug", { flag_ok: "0", message: "Student already exist" });
                         return;
                     }
-                    let ID2 = rows[0].ID;
-                    con.query("INSERT INTO student(id, first_name, last_name, cod_fisc, class_id, parent_1, parent_2) VALUES(?, ?, ?, ?, ?, ?, ?)", [c, name, surname, SSN, 0, ID2, ""], (err, result) => {
-                        if (err) {
-                            res.end("There is a problem in the DB connection. Please, try again later " + err);
+                });
+            });
+        } else if (SSN1) {
+            con.query('SELECT ID FROM parent WHERE cod_fisc = ?', [SSN1], (err, rows, fields) => { // because we have no AUTO_UPDATE available on the DB
+                if (err) {
+                    res.end("There is a problem in the DB connection. Please, try again later " + err);
+                    return;
+                }
+                if (rows.length != 1) {
+                    res.render("../pages/officer/officer_registerstudent.pug", { flag_ok: "0", message: "Please fill the form with correct parent ID" });
+                    return;
+                }
+                con.query('SELECT COUNT(*) as c FROM student WHERE cod_fisc = ?', [SSN], (err, rows, fields) => {
+                    if (err) {
+                        res.end("There is a problem in the DB connection. Please, try again later " + err);
+>>>>>>> master
+                        return;
+                    }
+                    if (rows[0].c == 0) {
+                        con.query("INSERT INTO student(id, first_name, last_name, cod_fisc, class_id, parent_1, parent_2) VALUES(?, ?, ?, ?, ?, ?, ?)", [count, name, surname, SSN, 0, SSN1, null], (err, result) => {
+                            if (err) {
+                                res.end("There is a problem in the DB connection. Please, try again later " + err);
+                                return;
+                            }
+                            res.render("../pages/officer/officer_registerstudent.pug", { flag_ok: "1", message: "New student insertly correctly" });
+                            con.end();
                             return;
+<<<<<<< HEAD
                         }
                         console.log("Data successfully uploaded! " + result.insertId);
                         con.end();
-                        res.redirect("/officer/enroll_student");
+                        res.render("../pages/officer/officer_registerstudent.pug", { flag_ok: "1", message: "Student inserted correctly" });
+                        return;
                     });
+=======
+                        });
+                    } else {
+                        res.render("../pages/officer/officer_registerstudent.pug", { flag_ok: "0", message: "Student already exist" });
+                        return;
+                    }
+>>>>>>> master
                 });
-                return;
-            }
-            let ID1 = rows[0].ID;
+            });
+        } else if (SSN2) {
             con.query('SELECT ID FROM parent WHERE cod_fisc = ?', [SSN2], (err, rows, fields) => { // because we have no AUTO_UPDATE available on the DB
                 if (err) {
                     res.end("There is a problem in the DB connection. Please, try again later " + err);
                     return;
                 }
+<<<<<<< HEAD
                 if (rows.length <= 0) {
                     con.query("INSERT INTO student(id, first_name, last_name, cod_fisc, class_id, parent_1, parent_2) VALUES(?, ?, ?, ?, ?, ?, ?)", [c, name, surname, SSN, 0, ID1, ""], (err, result) => {
                         if (err) {
@@ -158,22 +288,45 @@ router.post("/reg_student", (req, res) => {
                         }
                         console.log("Data successfully uploaded! " + result.insertId);
                         con.end();
-                        res.redirect("/officer/enroll_student");
+                        res.render("../pages/officer/officer_registerstudent.pug", { flag_ok: "1", err_msg: "Student inserted correctly" });
                     });
+=======
+                if (rows.length != 1) {
+                    res.render("../pages/officer/officer_registerstudent.pug", { flag_ok: "0", message: "Please fill the form with correct parent ID" });
+>>>>>>> master
                     return;
                 }
-                let ID2 = rows[0].ID;
-                con.query("INSERT INTO student(id, first_name, last_name, cod_fisc, class_id, parent_1, parent_2) VALUES(?, ?, ?, ?, ?, ?, ?)", [c, name, surname, SSN, 0, ID1, ID2], (err, result) => {
+                con.query('SELECT COUNT(*) as c FROM student WHERE cod_fisc = ?', [SSN], (err, rows, fields) => {
                     if (err) {
                         res.end("There is a problem in the DB connection. Please, try again later " + err);
                         return;
                     }
+<<<<<<< HEAD
                     console.log("Data successfully uploaded! " + result.insertId);
                     con.end();
-                    res.redirect("/officer/enroll_student");
+                    res.render("../pages/officer/officer_registerstudent.pug", { flag_ok: "1", message: "New student inserted correctly" });
+=======
+                    if (rows[0].c == 0) {
+                        con.query("INSERT INTO student(id, first_name, last_name, cod_fisc, class_id, parent_1, parent_2) VALUES(?, ?, ?, ?, ?, ?, ?)", [count, name, surname, SSN, 0, SSN2, null], (err, result) => {
+                            if (err) {
+                                res.end("There is a problem in the DB connection. Please, try again later " + err);
+                                return;
+                            }
+                            res.render("../pages/officer/officer_registerstudent.pug", { flag_ok: "1", message: "New student insertly correctly" });
+                            con.end();
+                            return;
+                        });
+                    } else {
+                        res.render("../pages/officer/officer_registerstudent.pug", { flag_ok: "0", message: "Student already exist" });
+                        return;
+                    }
+>>>>>>> master
                 });
             });
-        });
+        } else {
+            res.render("../pages/officer/officer_registerstudent.pug", { flag_ok: "0", message: "Please fill the form correctly with at least one parent ID" });
+            return;
+        }
     });
 });
 
