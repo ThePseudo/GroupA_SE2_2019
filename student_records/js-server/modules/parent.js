@@ -451,7 +451,7 @@ router.get('/:childID/absences_notes', (req, res) => {
                 absence_array[i].end_h = rows[i].end_h;
                 absence_array[i].justified = rows[i].justified;
             }
-            res.render("../pages/parent/parent_absences_notes.pug", {fullName: fullName, note_array: note_array, absence_array: absence_array});
+            res.render("../pages/parent/parent_absences_notes.pug", {fullName: fullName, note_array: note_array, absence_array: absence_array, childID:childID});
         });
     }); 
 });

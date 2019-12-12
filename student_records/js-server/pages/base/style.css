@@ -147,33 +147,18 @@ body {
     text-align: center;
     align-content: center;
 }
-.notes  tbody{
+.table-scroll  tbody{
     height:100px;
     overflow-y:auto;
     width: 100%;
     display:block;
 }
 
-.notes thead{
+.table-scroll thead{
     display:block;
 }
 
-.notes tbody{
-    display:block;
-}
-
-.absences  tbody{
-    height:200px;
-    overflow-y:auto;
-    width: 100%;
-    display:block;
-}
-
-.absences thead{
-    display:block;
-}
-
-.absences tbody{
+.table-scroll tbody{
     display:block;
 }
 
