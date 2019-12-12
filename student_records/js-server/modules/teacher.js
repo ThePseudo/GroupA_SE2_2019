@@ -35,7 +35,7 @@ router.get("/upload_file", (req, res) => {
       return;
     }
     var Course_list = [];
-    i = 0;
+    var i = 0;
     rows.forEach(element => {
       Course_list[i] = element.class_id + "-" + element.course_id;
       i++;
