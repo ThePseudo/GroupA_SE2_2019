@@ -10,13 +10,18 @@ CREATE TABLE teacher
     email VARCHAR(100) NOT NULL,
     password VARCHAR(255) NOT NULL,
     first_access BOOLEAN NOT NULL
-    /* 1 first_ccess already done; 0 not yet */
+    /* 1 first_access already done; 0 not yet */
 );
 
 INSERT INTO teacher
     (id,first_name,last_name,cod_fisc,email,password,first_access)
 VALUES
-    (1, "Afrodite", "Venere", "AV85T", "venere85@yahoo.com", "$2a$10$0tXRERd11hkw3zKQQmFeTOAuUcMiI6/ThiMNvfMUvKmYkWkL0BRkO", 1);
+    (1, "Elena", "Baralis", "AV85T", "venere85@yahoo.com", "$2a$10$0tXRERd11hkw3zKQQmFeTOAuUcMiI6/ThiMNvfMUvKmYkWkL0BRkO", 1);
+
+INSERT INTO teacher
+    (id,first_name,last_name,cod_fisc,email,password,first_access)
+VALUES
+    (2, "Marina", "Indri", "MR64Y", "marina64@yahoo.com", "$2a$10$0tXRERd11hkw3zKQQmFeTOAuUcMiI6/ThiMNvfMUvKmYkWkL0BRkO", 1);
 
 CREATE TABLE officer
 (
@@ -186,11 +191,19 @@ CREATE TABLE note
 
 INSERT INTO note
     (id, student_id, teacher_id, note_date, motivation, justified)
-VALUES(1, 1, 1, "2019-09-30", "L'alunno fa rumore in classe", 0);
+VALUES(1, 1, 1, "2019-09-30", "L'alunno fa rumore in classe", 1);
 
 INSERT INTO note
     (id, student_id, teacher_id, note_date, motivation, justified)
 VALUES(2, 1, 2, "2019-09-29", "L'alunno fa ANCORA rumore in classe", 0);
+
+INSERT INTO note
+    (id, student_id, teacher_id, note_date, motivation, justified)
+VALUES(3, 1, 1, "2019-09-29", "L'alunno fa ANCORA rumore 3", 0);
+
+INSERT INTO note
+    (id, student_id, teacher_id, note_date, motivation, justified)
+VALUES(4, 1, 2, "2019-09-29", "L'alunno fa ANCORA rumore 4", 0);
 
 CREATE TABLE absence
 (
@@ -210,6 +223,23 @@ VALUES(1, 1, "2019-09-30", 8, 13, 1);
 INSERT INTO absence
     (id, student_id, date_ab, start_h, end_h, justified)
 VALUES(2, 1, "2019-09-29", 8, 13, 0);
+
+INSERT INTO absence
+    (id, student_id, date_ab, start_h, end_h, justified)
+VALUES(3, 1, "2019-09-30", 8, 13, 1);
+
+INSERT INTO absence
+    (id, student_id, date_ab, start_h, end_h, justified)
+VALUES(4, 1, "2019-09-29", 8, 13, 0);
+
+INSERT INTO absence
+    (id, student_id, date_ab, start_h, end_h, justified)
+VALUES(5, 1, "2019-09-30", 8, 13, 1);
+
+INSERT INTO absence
+    (id, student_id, date_ab, start_h, end_h, justified)
+VALUES(6, 1, "2019-09-29", 8, 13, 0);
+
 
 -- Homework
 

@@ -1,7 +1,7 @@
 - var page = "Absences&Notes"
 - var loggedIn = true
 - var user = "parent"
-- var active = "Show absences and notes"
+- var active = "notes and absences"
 
 mixin rowNote(teacher, date, motivation,justified,teacherID,teacherEmail)
   tr(class="table-row table-row-base")
@@ -12,6 +12,10 @@ mixin rowNote(teacher, date, motivation,justified,teacherID,teacherEmail)
       td(style="background: rgb(24, 143, 13)")
     else
       td(style="background: rgb(226, 45, 45)")
+    //-Add route for page slot of the teacher
+    td(style="text-align:left;")
+      button(class='btn blockButton')
+
     td(style="text-align:left;")
         script.
           $(document).ready(function(){
@@ -22,8 +26,7 @@ mixin rowNote(teacher, date, motivation,justified,teacherID,teacherEmail)
               modal.find(".modal-body #teacher_email").val(email)
               modal.find(".modal-body #email_body").val("")
             })
-          })
-            
+          })     
         button(class='btn blockButton' href="javascript:void(0)" data-toggle="modal" data-target="#emailModal" data-email = teacherEmail)
 
             
@@ -52,32 +55,36 @@ html
       div(class='row')
         div(class="col-lg-3 col-sm-2 col-xs-1")
         div(class="col-lg-6 col-sm-8 col-xs-10" style='align-content:center;')
-          table(style="width:100%; text-align:center; align-content:center" class="table table-bordered")
-            tr(class='table-row-base')
-              th(style="text-align:left;") Teacher
-              th(style="text-align:left;") Date
-              th(style="text-align:left;") Motivation
-              th(style="text-align:left;") justified
-              th(style="text-align:left;") Contact Teacher
-            for note in note_array
-              +rowNote(note.teacherFullName, note.date, note.motivation, note.justified, note.teacherID, note.teacherEmail)
-      
+          table(style="width:100%; text-align:center; align-content:center" class="table notes")
+            thead
+              tr(class='table-row-base')
+                th Teacher
+                th Date
+                th Motivation
+                th justified
+                th Arrange an appointment
+                th Contact teacher
+            tbody
+              for note in note_array
+                +rowNote(note.teacherFullName, note.date, note.motivation, note.justified, note.teacherID, note.teacherEmail)
+        
       div(class='row')
         h1(class='title') Absences
       div(class='row')
         div(class="col-lg-3 col-sm-2 col-xs-1")
         div(class="col-lg-6 col-sm-8 col-xs-10" style='align-content:center;')
-          table(style="width:100%; text-align:center; align-content:center" class="table table-bordered")
-            tr(class='table-row-base')
-              th(style="text-align:left;") Date
-              th(style="text-align:left;") start
-              th(style="text-align:left;") end
-              th(style="text-align:left;") justified
-            for absence in absence_array
-              +rowAbsence(absence.date, absence.start_h, absence.end_h, absence.justified)
+          table(style="width:100%; text-align:center; align-content:center" class="table absences")
+            thead
+              tr(class='table-row-base')
+                th(style="text-align:left;") Date
+                th(style="text-align:left;") start
+                th(style="text-align:left;") end
+                th(style="text-align:left;") justified
+            tbody
+              for absence in absence_array
+                +rowAbsence(absence.date, absence.start_h, absence.end_h, absence.justified)
 
 //- Modal for PopUp email send
-
 #emailModal(class="modal fade" role = "dialog")
   div(class="modal-dialog")
     div(class="modal-content")
