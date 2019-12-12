@@ -14,10 +14,10 @@ mixin rowNote(teacher, date, motivation,justified,teacherID,teacherEmail)
     else
       td(style="background: rgb(226, 45, 45)" class="col-xs-2")
     //-Add route for page slot of the teacher
-    td(style="text-align:left;" class="col-xs-2")
+    td(style="text-align:left;" class="col-xs-3")
       button(class='btn blockButton')
 
-    td(style="text-align:left;" class="col-xs-2")
+    td(style="text-align:left;" class="col-xs-3")
         script.
           $(document).ready(function(){
               $("#emailModal").on("show.bs.modal", function(event){
@@ -58,13 +58,13 @@ html
         div(class="col-lg-8 col-sm-8 col-xs-10" style='align-content:center;')
           table(style="width:100%; text-align:center; align-content:center" class="table table-scroll")
             thead
-              tr(class='table-row-base')
+              tr(class='table-row-base' style="width:97%")
                 th(class="col-xs-2") Teacher
                 th(class="col-xs-2") Date
                 th(class="col-lg-10") Motivation
                 th(class="col-xs-2") justified
-                th(class="col-xs-2") Arrange appointment
-                th(class="col-xs-2") Contact 
+                th(class="col-xs-3") Arrange appointment
+                th(class="col-xs-3") Contact 
             tbody
               for note in note_array
                 +rowNote(note.teacherFullName, note.date, note.motivation, note.justified, note.teacherID, note.teacherEmail)
@@ -74,9 +74,9 @@ html
       div(class='row')
         div(class="col-lg-3 col-sm-2 col-xs-1")
         div(class="col-lg-6 col-sm-8 col-xs-10" style='align-content:center;')
-          table(style="width:100%; text-align:center; align-content:center" class="table table-scroll")
+          table(style="width:100%; text-align:center; align-content:center;  table-layout:fixed;" class="table table-scroll")
             thead
-              tr(class='table-row-base')
+              tr(class='table-row-base' style="width:97%")
                 th Date
                 th start
                 th end

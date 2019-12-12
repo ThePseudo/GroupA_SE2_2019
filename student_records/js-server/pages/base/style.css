@@ -156,8 +156,8 @@ body {
 }
 
 .table-scroll thead{
-    display:table;
-    width:100%;
+    display: table-header-group;
+    background-color: white;
     table-layout:fixed;
 }
 

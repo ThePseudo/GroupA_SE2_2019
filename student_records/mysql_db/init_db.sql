@@ -199,7 +199,7 @@ VALUES(2, 1, 2, "2019-09-29", "L'alunno fa ANCORA rumore in classe", 0);
 
 INSERT INTO note
     (id, student_id, teacher_id, note_date, motivation, justified)
-VALUES(3, 1, 1, "2019-09-29", "L'alunno fa ANCORA rumore 3", 0);
+VALUES(3, 1, 1, "2019-09-29", "L'alunno fa ANCORA rumore 3 ora provo a mettere una stringa lunga, ancora più lunga vediamo ora", 0);
 
 INSERT INTO note
     (id, student_id, teacher_id, note_date, motivation, justified)
