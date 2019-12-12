@@ -49,41 +49,43 @@ html
     include ../base/navbar.pug
     include ../base/sidebar.pug
     div(class='container sidebarContainer')
-      a(href="../../parent/parent_home" class="noLinkTitle backButton")
-        span(class="glyphicon glyphicon-menu-left backButton")
-      div(class='row')
-        h1(class='title') Notes
-      div(class='row')
-        div(class="col-lg-2 col-sm-2 col-xs-1")
-        div(class="col-lg-8 col-sm-8 col-xs-10" style='align-content:center;')
-          table(style="width:100%; text-align:center; align-content:center" class="table table-scroll")
-            thead
-              tr(class='table-row-base' style="width:97%")
-                th(class="col-xs-2") Teacher
-                th(class="col-xs-2") Date
-                th(class="col-lg-10") Motivation
-                th(class="col-xs-2") justified
-                th(class="col-xs-3") Arrange appointment
-                th(class="col-xs-3") Contact 
-            tbody
-              for note in note_array
-                +rowNote(note.teacherFullName, note.date, note.motivation, note.justified, note.teacherID, note.teacherEmail)
-        
-      div(class='row')
-        h1(class='title') Absences
-      div(class='row')
-        div(class="col-lg-3 col-sm-2 col-xs-1")
-        div(class="col-lg-6 col-sm-8 col-xs-10" style='align-content:center;')
-          table(style="width:100%; text-align:center; align-content:center;  table-layout:fixed;" class="table table-scroll")
-            thead
-              tr(class='table-row-base' style="width:97%")
-                th Date
-                th start
-                th end
-                th justified
-            tbody
-              for absence in absence_array
-                +rowAbsence(absence.date, absence.start_h, absence.end_h, absence.justified)
+      div(class="h-50 d-inline-block")
+        a(href="../../parent/parent_home" class="noLinkTitle backButton")
+          span(class="glyphicon glyphicon-menu-left backButton")
+        div(class='row')
+          h1(class='title') Notes
+        div(class='row')
+          div(class="col-lg-2 col-sm-2 col-xs-1")
+          div(class="col-lg-8 col-sm-8 col-xs-10" style='align-content:center;')
+            table(style="width:100%; text-align:center; align-content:center" class="table table-scroll")
+              thead
+                tr(class='table-row-base' style="width:97%")
+                  th(class="col-xs-2") Teacher
+                  th(class="col-xs-2") Date
+                  th(class="col-lg-10") Motivation
+                  th(class="col-xs-2") justified
+                  th(class="col-xs-3") Arrange appointment
+                  th(class="col-xs-3") Contact 
+              tbody
+                for note in note_array
+                  +rowNote(note.teacherFullName, note.date, note.motivation, note.justified, note.teacherID, note.teacherEmail)
+      
+      div(class="h-50 d-inline-block")    
+        div(class='row')
+          h1(class='title') Absences
+        div(class='row')
+          div(class="col-lg-3 col-sm-2 col-xs-1")
+          div(class="col-lg-6 col-sm-8 col-xs-10" style='align-content:center;')
+            table(style="width:100%; text-align:center; align-content:center;  table-layout:fixed;" class="table table-scroll")
+              thead
+                tr(class='table-row-base' style="width:97%")
+                  th Date
+                  th start
+                  th end
+                  th justified
+              tbody
+                for absence in absence_array
+                  +rowAbsence(absence.date, absence.start_h, absence.end_h, absence.justified)
 
 //- Modal for PopUp email send
 #emailModal(class="modal fade" role = "dialog")
