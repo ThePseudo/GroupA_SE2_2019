@@ -152,17 +152,20 @@ body {
     overflow:auto;
     max-height:200px;
     width:100%;
+    table-layout:fixed;
 }
 
 .table-scroll thead{
     display:table;
     width:100%;
+    table-layout:fixed;
 }
 
 .table-scroll tr {
     display: table; /* display purpose; th's border */
     width: 100%;
     box-sizing: border-box; /* because of the border (Chrome needs this line, but not FF) */
+    table-layout:fixed;
 }
 
 th,

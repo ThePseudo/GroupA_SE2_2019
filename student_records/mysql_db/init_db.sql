@@ -205,6 +205,10 @@ INSERT INTO note
     (id, student_id, teacher_id, note_date, motivation, justified)
 VALUES(4, 1, 2, "2019-09-29", "L'alunno fa ANCORA rumore 4", 0);
 
+INSERT INTO note
+    (id, student_id, teacher_id, note_date, motivation, justified)
+VALUES(5, 1, 2, "2019-09-29", "L'alunno fa ANCORA rumore 5", 1);
+
 CREATE TABLE absence
 (
     id INT ,
