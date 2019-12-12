@@ -15,10 +15,16 @@ html
         h1(class='title') Enroll student
       div(class='row')
         if flag_ok == 1
+<<<<<<< HEAD
           h2(class = 'ok_msg') &nbsp #{message}
         else
           h2(class = 'err_msg') &nbsp #{message}
 
+=======
+          h2(class = 'ok_msg') &nbsp #{message} &nbsp
+        else
+          h2(class = 'err_msg') &nbsp #{message} &nbsp
+>>>>>>> master
       form(method='POST' action='/officer/reg_student')
         div(class='row' style='margin-top: 40px;')
           div(class='col-lg-3')

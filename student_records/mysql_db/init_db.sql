@@ -277,24 +277,26 @@ CREATE TABLE mark
     score INT NOT NULL,
     date_mark DATE NOT NULL,
     period_mark INT NOT NULL,
+    mark_subj VARCHAR(50),
+    descr_mark_subj VARCHAR(500),
+    type_mark_subj ENUM ('Other','Written','Oral','Project'),
     PRIMARY KEY(id)
 );
 
+INSERT INTO mark
+    (id,student_id, course_id, score, date_mark, period_mark,mark_subj,descr_mark_subj,type_mark_subj)
+VALUES
+    (1, 1, 1, 6, '2019-9-10', 1,'Chim 1','3 domande','Other');
 
 INSERT INTO mark
-    (id,student_id, course_id, score, date_mark, period_mark)
+    (id,student_id, course_id, score, date_mark, period_mark,mark_subj,descr_mark_subj,type_mark_subj)
 VALUES
-    (1, 1, 1, 6, '2019-9-10', 1);
+    (2, 1, 2, 8, '2019-9-11', 2,'Chim 1','3 domande','Other');
 
 INSERT INTO mark
-    (id,student_id, course_id, score, date_mark, period_mark)
+    (id,student_id, course_id, score, date_mark, period_mark,mark_subj,descr_mark_subj,type_mark_subj)
 VALUES
-    (2, 1, 2, 8, '2019-9-11', 2);
-
-INSERT INTO mark
-    (id,student_id, course_id, score, date_mark, period_mark)
-VALUES
-    (3, 1, 3, 10, '2019-9-12', 1);
+    (3, 1, 3, 10, '2019-9-12', 1,'Chim 1','3 domande','Other');
 
 -- RELATIONS
 

@@ -1,1 +1,65 @@
+//- Those variables should be in every page. Always pass fullName
+- var page = "Student " + studentName
+- var loggedIn = true
+- var user = "teacher"
+- var active = ""
 
+//- Variables used: studentName
+
+- const marks = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+- const modifiers = [0, 0.25, 0.5, 0.75]
+
+doctype html
+html
+  include ../base/head.pug
+  body
+    include ../base/navbar.pug
+    include ../base/sidebar.pug
+    script
+      include ./teacher_singleStudent_scripts.js
+    div(class="container sidebarContainer")
+      a(href="/teacher/teacher_home" class="noLinkTitle backButton")
+        span(class="glyphicon glyphicon-menu-left backButton")
+      div(class="row")
+        h1(class = 'title') #{studentName}
+      div(class="row")
+        //- Marks
+        h2(class="title2") New mark
+      div(class="row")
+        div(class="col-xs-12")
+          form(action='./insert_mark' method="POST") 
+            div(class='row')
+              div(class='col-lg-2 col-md-2')
+              div(class='form-group')
+                div(class='col-sm-6 col-md-4 col-xs-12')
+                  label(for='mark') Mark:
+                  //- On click triggers function checkTen()
+                  select(class='form-control' id='mark' name="mark" onclick="checkTen()")
+                    for mark in marks
+                      option(value=mark) #{mark}
+                div(class="col-sm-2 col-md-1 col-xs-12")
+                  h2(class="noLinkTitle" style="display:block; text-align:center;") +
+                div(class="col-sm-4 col-md-3 col-xs-12")
+                  label(for='modifier') Modifier:
+                  select(class='form-control', id='modifier', name='modifier')
+                    for modifier in modifiers
+                      option(value=modifier) #{modifier}
+            div(class="row")
+              div(class='col-sm-8 col-md-6 col-lg-7')
+              div(class='col-sm-4 col-lg-3 col-xs-10')
+                input(type='SUBMIT' value='Insert mark' name='insert_mark' class='btn blockButton' style='margin-top: 24px; padding: 6px 10px; margin-left:25%; width: 75%;')
+      div(class="row")
+        h2(class="title2") New note
+      div(class="row")
+        div(class="col-xs-12")
+          form(action='./insert_note' method="POST" id="noteform")
+            div(class='row')
+              div(class='col-lg-2 col-md-2')
+              div(class='col-xs-12 col-md-8')
+                div.form-group
+                  label(for='note') Note:
+                  textarea(name="note" form="noteform" class="form-control" style="resize:none" rows="5")
+            div(class="row")
+              div(class='col-sm-8 col-md-6 col-lg-7')
+              div(class='col-sm-4 col-lg-3 col-xs-10')
+                input(type='SUBMIT' value='Insert note' name='insert_note' class='btn blockButton' style='margin-top: 24px; padding: 6px 10px; margin-left:25%; width: 75%;')
