@@ -260,40 +260,63 @@ router.post("/class/:classid/course/:courseid/reg_mark", (req, res) => {
     }
     else {
       var marks = req.body.mark;
-
       var studlist = [];
-      let c = rows.length + 1;
-      var sql2 = "INSERT INTO mark(id,student_id,course_id,score,date_mark,period_mark,mark_subj,descr_mark_subj,type_mark_subj) VALUES ";
 
-      for (var i = 0; i < rows.length; ++i) {
-        if (i > 0) {
-          sql2 = sql2 + " , ";
-        }
-        var stud = {
-          id_stud: rows[i].id,
-          first_name: rows[i].first_name,
-          last_name: rows[i].last_name,
-        }
-        mark = marks[i];
-        studlist[i] = stud;
-        sql2 = sql2 + "(" + c + "," + stud.id_stud + "," + courseID + "," + mark + "," + date_mark + "," + period_mark + ",'" + mark_subj + "','" + descr_mark_subj + "','" + type_mark_subj + "')";
-        c = c + 1;
-      }
-      console.log(sql2);
-      con.query(sql2, (err, rows, fields) => {
+      sql4 = "SELECT MAX(id) as last_id FROM mark";
+      con.query(sql4, (err, rows2, fields2) => {
         if (err) {
-          res.end("Database problem errore qui: " + err);
+          res.end("Database problem reg_mark: " + err);
           return;
         }
         else {
-          con.end();
-          console.log("Data successfully uploaded! ");
-          res.render("../pages/teacher/teacher_insertclassmark.pug", { studlist: studlist, flag_ok: "1", message: "New class marks inserted correctly" });
-          return;
-        }
+          let c = rows2[0].last_id + 1;
+          var sql2 = "INSERT INTO mark(id,student_id,course_id,score,date_mark,period_mark,mark_subj,descr_mark_subj,type_mark_subj) VALUES ";
+
+          for (var i = 0; i < rows.length; ++i) {
+            if (i > 0) {
+              sql2 = sql2 + " , ";
+            }
+            var stud = {
+              id_stud: rows[i].id,
+              first_name: rows[i].first_name,
+              last_name: rows[i].last_name,
+            }
+            mark = marks[i];
+            studlist[i] = stud;
+            sql2 = sql2 + "(" + c + "," + stud.id_stud + "," + courseID + "," + mark + ", '" + date_mark + "' ," + period_mark + ",'" + mark_subj + "','" + descr_mark_subj + "','" + type_mark_subj + "')";
+            c = c + 1;
+          }
+          console.log(sql2);
+          con.query(sql2, (err, rows, fields) => {
+            if (err) {
+              res.end("Database problem errore qui: " + err);
+              return;
+            }
+            else {
+              sql3 = "SELECT * FROM mark";
+              con.query(sql3, (err, rows, fields) => {
+                if (err) {
+                  res.end("Database problem errore sql3: " + err);
+                  return;
+                }
+                else {
+                  for (var j = 0; j < rows.length; j++) {
+                    console.log(rows[j].id+" "+rows[j].student_id+" "+rows[j].course_id+" "+rows[j].score+" "+
+                    rows[j].date_mark+" "+rows[j].period_mark+" "+
+                    rows[j].mark_subj+" "+rows[j].descr_mark_subj+" "+rows[j].type_mark_subj);
+                  }
+                  con.end();
+                  console.log("Data successfully uploaded! ");
+                  res.render("../pages/teacher/teacher_insertclassmark.pug", { studlist: studlist, flag_ok: "1", message: "New class marks inserted correctly" });
+                  return;
+                }
+            });
+            }
       });
     }
   });
+}});
+
 });
 
 //TODO
