@@ -333,18 +333,51 @@ router.get("/class/:classid/course/:courseid/insert_stuff", (req, res) => { });
 router.get("/class/:classid/course/:courseid/insert_homework", (req, res) => { });
 
 router.get("/class/:classid/course/:courseid/student/:studentid", (req, res) => {
-
-});
-
-router.get("/tryStudent", (req, res) => {
   var fullName = req.session.user.first_name + " " + req.session.user.last_name;
-  res.render("../pages/teacher/teacher_singlestudent.pug", {
-    studentName: "Marco Pecoraro",
-    classid: req.params.classid,
-    courseid: req.params.courseid,
-    fullName: fullName
+  var con = db.DBconnect();
 
+  var sql = "SELECT first_name, last_name FROM student WHERE id = ?";
+  con.query(sql, [req.params.studentid], (err, rows, fields) => {
+    if (err) {
+      res.end("Database error: " + err);
+      return;
+    }
+    var studentName = rows[0].first_name + " " + rows[0].last_name;
+    sql = "SELECT course_name FROM course WHERE id = ?";
+    con.query(sql, [req.params.courseid], (err, rows, fields) => {
+      if (err) {
+        res.end("Database error: " + err);
+        return;
+      }
+      var courseName = rows[0].course_name;
+      sql = "SELECT date_mark, score FROM mark WHERE student_id = ? AND course_id = ? ORDER BY date_mark DESC";
+      con.query(sql, [req.params.studentid, req.params.courseid], (err, rows, fields) => {
+        con.end();
+        if (err) {
+          res.end("Database error: " + err);
+          return;
+        }
+        var marks = [];
+        for (var i = 0; i < rows.length; ++i) {
+          var mark = {
+            score: rows[i].score,
+            date: rows[i].date_mark.getDate() + "/" +
+              (rows[i].date_mark.getMonth() + 1) + "/" + rows[i].date_mark.getFullYear()
+          }
+          marks[i] = mark;
+        }
+        res.render("../pages/teacher/teacher_singlestudent.pug", {
+          studentName: studentName,
+          courseName: courseName,
+          classid: req.params.classid,
+          courseid: req.params.courseid,
+          fullName: fullName,
+          st_marks: marks
+        });
+      });
+    });
   });
+  // test: https://localhost:8080/teacher/class/1/course/1/student/1
 });
 
 module.exports = router;

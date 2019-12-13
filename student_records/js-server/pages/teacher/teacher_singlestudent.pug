@@ -4,10 +4,15 @@
 - var user = "teacher"
 - var active = ""
 
-//- Variables used: studentName
+//- Variables used: studentName, courseName, marks[] {score, date}
 
 - const marks = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
 - const modifiers = [0, 0.25, 0.5, 0.75]
+
+mixin rowMark(date, mark)
+  tr(class="table-row table-row-base")
+    td(style="width:50%")= date
+    td(style="width:50%")= mark
 
 doctype html
 html
@@ -18,10 +23,11 @@ html
     script
       include ./teacher_singleStudent_scripts.js
     div(class="container sidebarContainer")
+      //- TODO: link back to backwards page
       a(href="/teacher/teacher_home" class="noLinkTitle backButton")
         span(class="glyphicon glyphicon-menu-left backButton")
       div(class="row")
-        h1(class = 'title') #{studentName}
+        h1(class = 'title') #{courseName} - #{studentName} overview
       div(class="row")
         //- Marks
         h2(class="title2") New mark
@@ -63,3 +69,15 @@ html
               div(class='col-sm-8 col-md-6 col-lg-7')
               div(class='col-sm-4 col-lg-3 col-xs-10')
                 input(type='SUBMIT' value='Insert note' name='insert_note' class='btn blockButton' style='margin-top: 24px; padding: 6px 10px; margin-left:25%; width: 75%;')
+      //- List of marks
+      div(class="row")
+        h2(class="title2") Marks
+      div(class="row")
+        div(class="col-lg-2 col-sm-2")
+        div(class="col-lg-8 col-sm-12 col-xs-12" style='align-content:center;')
+          table(style="width:100%; text-align:center; align-content:center" class="table table-bordered")
+            tr(class='table-row-base')
+              th Date
+              th Mark
+            for mark in st_marks
+              +rowMark(mark.date, mark.score)
