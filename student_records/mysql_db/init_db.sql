@@ -209,6 +209,16 @@ INSERT INTO note
     (id, student_id, teacher_id, note_date, motivation, justified)
 VALUES(5, 1, 2, "2019-09-29", "L'alunno fa ANCORA rumore 5", 1);
 
+
+INSERT INTO note
+    (id, student_id, teacher_id, note_date, motivation, justified)
+VALUES(6, 2, 1, "2019-09-29", "L'alunno fa ANCORA rumore 4", 0);
+
+INSERT INTO note
+    (id, student_id, teacher_id, note_date, motivation, justified)
+VALUES(7, 2, 2, "2019-09-29", "L'alunno fa ANCORA rumore 5", 1);
+
+
 CREATE TABLE absence
 (
     id INT ,
@@ -244,6 +254,17 @@ INSERT INTO absence
     (id, student_id, date_ab, start_h, end_h, justified)
 VALUES(6, 1, "2019-09-29", 8, 13, 0);
 
+INSERT INTO absence
+    (id, student_id, date_ab, start_h, end_h, justified)
+VALUES(7, 2, "2019-09-30", 8, 13, 1);
+
+INSERT INTO absence
+    (id, student_id, date_ab, start_h, end_h, justified)
+VALUES(8, 2, "2019-09-29", 8, 13, 0);
+
+INSERT INTO absence
+    (id, student_id, date_ab, start_h, end_h, justified)
+VALUES(9, 3, "2019-09-30", 8, 13, 1);
 
 -- Homework
 

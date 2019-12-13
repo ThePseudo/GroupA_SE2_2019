@@ -6,18 +6,18 @@
 
 mixin rowNote(teacher, date, motivation,justified,teacherID,teacherEmail)
   tr(class="table-row table-row-base")
-    td(class="col-xs-2")= teacher
-    td(class="col-xs-2")= date
-    td(class="col-lg-10")= motivation
+    td(class="col-xs-2" style="text-align:left;")= teacher
+    td(class="col-xs-2" style="text-align:left;")= date
+    td(class="col-lg-10" style="text-align:left;")= motivation
     if(justified)   
-      td(style="background: rgb(24, 143, 13)" class="col-xs-2")
+      td(style="background: rgb(24, 143, 13); text-align:left;" class="col-xs-2")
     else
-      td(style="background: rgb(226, 45, 45)" class="col-xs-2")
+      td(style="background: rgb(226, 45, 45); text-align:left;" class="col-xs-2")
     //-Add route for page slot of the teacher
     td(style="text-align:left;" class="col-xs-3")
       button(class='btn blockButton')
-
-    td(style="text-align:left;" class="col-xs-3")
+    
+    //-td(style="text-align:left;" class="col-xs-3")
         script.
           $(document).ready(function(){
               $("#emailModal").on("show.bs.modal", function(event){
@@ -38,9 +38,9 @@ mixin rowAbsence(date, start_h, end_h,justified)
     td= start_h
     td= end_h
     if(justified)   
-      td(style="background: rgb(24, 143, 13)")
+      td(style="background: rgb(24, 143, 13);")
     else
-      td(style="background: rgb(226, 45, 45)")
+      td(style="background: rgb(226, 45, 45);")
     
 doctype html
 html
@@ -59,13 +59,13 @@ html
           div(class="col-lg-8 col-sm-8 col-xs-10" style='align-content:center;')
             table(style="width:100%; text-align:center; align-content:center" class="table table-scroll")
               thead
-                tr(class='table-row-base' style="width:97%")
-                  th(class="col-xs-2") Teacher
-                  th(class="col-xs-2") Date
-                  th(class="col-lg-10") Motivation
-                  th(class="col-xs-2") justified
-                  th(class="col-xs-3") Arrange appointment
-                  th(class="col-xs-3") Contact 
+                tr(class='table-row-base' style="width:99%")
+                  th(class="col-xs-2" style="text-align:left;") Teacher
+                  th(class="col-xs-2" style="text-align:left;") Date
+                  th(class="col-lg-10" style="text-align:left;") Motivation
+                  th(class="col-xs-2" style="text-align:left;") justified
+                  th(class="col-xs-3" style="text-align:left;") Arrange appointment
+                  //-th(class="col-xs-3" style="text-align:left;") Contact 
               tbody
                 for note in note_array
                   +rowNote(note.teacherFullName, note.date, note.motivation, note.justified, note.teacherID, note.teacherEmail)
