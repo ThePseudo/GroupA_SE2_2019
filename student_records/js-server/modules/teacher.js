@@ -1,4 +1,4 @@
-//'use strict';
+'use strict';
 
 const express = require('express');
 const pug = require('pug');
@@ -61,7 +61,7 @@ router.post("/up_file", [body('desc')
       return;
     }
     var Course_list = [];
-    i = 0;
+    var i = 0;
     rows.forEach(element => {
       Course_list[i] = element.class_id + "-" + element.course_id;
       i++;
@@ -262,7 +262,7 @@ router.post("/class/:classid/course/:courseid/reg_mark", (req, res) => {
       var marks = req.body.mark;
       var studlist = [];
 
-      sql4 = "SELECT MAX(id) as last_id FROM mark";
+      var sql4 = "SELECT MAX(id) as last_id FROM mark";
       con.query(sql4, (err, rows2, fields2) => {
         if (err) {
           res.end("Database problem reg_mark: " + err);
@@ -281,7 +281,7 @@ router.post("/class/:classid/course/:courseid/reg_mark", (req, res) => {
               first_name: rows[i].first_name,
               last_name: rows[i].last_name,
             }
-            mark = marks[i];
+            var mark = marks[i];
             studlist[i] = stud;
             sql2 = sql2 + "(" + c + "," + stud.id_stud + "," + courseID + "," + mark + ", '" + date_mark + "' ," + period_mark + ",'" + mark_subj + "','" + descr_mark_subj + "','" + type_mark_subj + "')";
             c = c + 1;
@@ -293,7 +293,7 @@ router.post("/class/:classid/course/:courseid/reg_mark", (req, res) => {
               return;
             }
             else {
-              sql3 = "SELECT * FROM mark";
+              var sql3 = "SELECT * FROM mark";
               con.query(sql3, (err, rows, fields) => {
                 if (err) {
                   res.end("Database problem errore sql3: " + err);
@@ -301,21 +301,22 @@ router.post("/class/:classid/course/:courseid/reg_mark", (req, res) => {
                 }
                 else {
                   for (var j = 0; j < rows.length; j++) {
-                    console.log(rows[j].id+" "+rows[j].student_id+" "+rows[j].course_id+" "+rows[j].score+" "+
-                    rows[j].date_mark+" "+rows[j].period_mark+" "+
-                    rows[j].mark_subj+" "+rows[j].descr_mark_subj+" "+rows[j].type_mark_subj);
+                    console.log(rows[j].id + " " + rows[j].student_id + " " + rows[j].course_id + " " + rows[j].score + " " +
+                      rows[j].date_mark + " " + rows[j].period_mark + " " +
+                      rows[j].mark_subj + " " + rows[j].descr_mark_subj + " " + rows[j].type_mark_subj);
                   }
                   con.end();
                   console.log("Data successfully uploaded! ");
                   res.render("../pages/teacher/teacher_insertclassmark.pug", { studlist: studlist, flag_ok: "1", message: "New class marks inserted correctly" });
                   return;
                 }
-            });
+              });
             }
+          });
+        }
       });
     }
   });
-}});
 
 });
 
@@ -332,18 +333,51 @@ router.get("/class/:classid/course/:courseid/insert_stuff", (req, res) => { });
 router.get("/class/:classid/course/:courseid/insert_homework", (req, res) => { });
 
 router.get("/class/:classid/course/:courseid/student/:studentid", (req, res) => {
-
-});
-
-router.get("/tryStudent", (req, res) => {
   var fullName = req.session.user.first_name + " " + req.session.user.last_name;
-  res.render("../pages/teacher/teacher_singlestudent.pug", {
-    studentName: "Marco Pecoraro",
-    classid: req.params.classid,
-    courseid: req.params.courseid,
-    fullName: fullName
+  var con = db.DBconnect();
 
+  var sql = "SELECT first_name, last_name FROM student WHERE id = ?";
+  con.query(sql, [req.params.studentid], (err, rows, fields) => {
+    if (err) {
+      res.end("Database error: " + err);
+      return;
+    }
+    var studentName = rows[0].first_name + " " + rows[0].last_name;
+    sql = "SELECT course_name FROM course WHERE id = ?";
+    con.query(sql, [req.params.courseid], (err, rows, fields) => {
+      if (err) {
+        res.end("Database error: " + err);
+        return;
+      }
+      var courseName = rows[0].course_name;
+      sql = "SELECT date_mark, score FROM mark WHERE student_id = ? AND course_id = ? ORDER BY date_mark DESC";
+      con.query(sql, [req.params.studentid, req.params.courseid], (err, rows, fields) => {
+        con.end();
+        if (err) {
+          res.end("Database error: " + err);
+          return;
+        }
+        var marks = [];
+        for (var i = 0; i < rows.length; ++i) {
+          var mark = {
+            score: rows[i].score,
+            date: rows[i].date_mark.getDate() + "/" +
+              (rows[i].date_mark.getMonth() + 1) + "/" + rows[i].date_mark.getFullYear()
+          }
+          marks[i] = mark;
+        }
+        res.render("../pages/teacher/teacher_singlestudent.pug", {
+          studentName: studentName,
+          courseName: courseName,
+          classid: req.params.classid,
+          courseid: req.params.courseid,
+          fullName: fullName,
+          st_marks: marks
+        });
+      });
+    });
   });
+  // test: https://localhost:8080/teacher/class/1/course/1/student/1
 });
 
 module.exports = router;
