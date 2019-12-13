@@ -232,7 +232,10 @@ router.get("/class/:classid/course/:courseid/class_mark", (req, res) => {
 });
 
 //TODO
-router.post("/class/:classid/course/:courseid/reg_mark", (req, res) => {
+router.post("/class/:classid/course/:courseid/reg_mark", [body('subject')
+.not().isEmpty()
+.trim()
+.escape()], (req, res) => {
 
   var fullName = req.session.user.first_name + " " + req.session.user.last_name;
   const compiledPage = pug.compileFile("../pages/teacher/teacher_insertclassmark.pug");
@@ -287,6 +290,10 @@ router.post("/class/:classid/course/:courseid/reg_mark", (req, res) => {
             c = c + 1;
           }
           console.log(sql2);
+          if (!mark_subj || !date_mark || !descr_mark_subj || !type_mark_subj ) {
+            res.render("../pages/teacher/teacher_insertclassmark.pug", { studlist:studlist, flag_ok: "0", message: "Please fill the form correctly" });
+            return;
+          }
           con.query(sql2, (err, rows, fields) => {
             if (err) {
               res.end("Database problem errore qui: " + err);
