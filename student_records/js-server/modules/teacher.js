@@ -1,4 +1,4 @@
-//'use strict';
+'use strict';
 
 const express = require('express');
 const pug = require('pug');
@@ -61,7 +61,7 @@ router.post("/up_file", [body('desc')
       return;
     }
     var Course_list = [];
-    i = 0;
+    var i = 0;
     rows.forEach(element => {
       Course_list[i] = element.class_id + "-" + element.course_id;
       i++;
@@ -262,7 +262,7 @@ router.post("/class/:classid/course/:courseid/reg_mark", (req, res) => {
       var marks = req.body.mark;
       var studlist = [];
 
-      sql4 = "SELECT MAX(id) as last_id FROM mark";
+      var sql4 = "SELECT MAX(id) as last_id FROM mark";
       con.query(sql4, (err, rows2, fields2) => {
         if (err) {
           res.end("Database problem reg_mark: " + err);
@@ -281,7 +281,7 @@ router.post("/class/:classid/course/:courseid/reg_mark", (req, res) => {
               first_name: rows[i].first_name,
               last_name: rows[i].last_name,
             }
-            mark = marks[i];
+            var mark = marks[i];
             studlist[i] = stud;
             sql2 = sql2 + "(" + c + "," + stud.id_stud + "," + courseID + "," + mark + ", '" + date_mark + "' ," + period_mark + ",'" + mark_subj + "','" + descr_mark_subj + "','" + type_mark_subj + "')";
             c = c + 1;
@@ -293,7 +293,7 @@ router.post("/class/:classid/course/:courseid/reg_mark", (req, res) => {
               return;
             }
             else {
-              sql3 = "SELECT * FROM mark";
+              var sql3 = "SELECT * FROM mark";
               con.query(sql3, (err, rows, fields) => {
                 if (err) {
                   res.end("Database problem errore sql3: " + err);
@@ -301,21 +301,22 @@ router.post("/class/:classid/course/:courseid/reg_mark", (req, res) => {
                 }
                 else {
                   for (var j = 0; j < rows.length; j++) {
-                    console.log(rows[j].id+" "+rows[j].student_id+" "+rows[j].course_id+" "+rows[j].score+" "+
-                    rows[j].date_mark+" "+rows[j].period_mark+" "+
-                    rows[j].mark_subj+" "+rows[j].descr_mark_subj+" "+rows[j].type_mark_subj);
+                    console.log(rows[j].id + " " + rows[j].student_id + " " + rows[j].course_id + " " + rows[j].score + " " +
+                      rows[j].date_mark + " " + rows[j].period_mark + " " +
+                      rows[j].mark_subj + " " + rows[j].descr_mark_subj + " " + rows[j].type_mark_subj);
                   }
                   con.end();
                   console.log("Data successfully uploaded! ");
                   res.render("../pages/teacher/teacher_insertclassmark.pug", { studlist: studlist, flag_ok: "1", message: "New class marks inserted correctly" });
                   return;
                 }
-            });
+              });
             }
+          });
+        }
       });
     }
   });
-}});
 
 });
 
