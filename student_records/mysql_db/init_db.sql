@@ -224,47 +224,47 @@ CREATE TABLE absence
     id INT ,
     student_id INT NOT NULL,
     date_ab DATE NOT NULL,
-    start_h INT NOT NULL,
-    end_h INT NOT NULL,
+    start_h TIME NOT NULL,
+    end_h TIME NOT NULL,
     justified BOOLEAN NOT NULL,
     PRIMARY KEY(id)
 );
 
 INSERT INTO absence
     (id, student_id, date_ab, start_h, end_h, justified)
-VALUES(1, 1, "2019-09-30", 8, 13, 1);
+VALUES(1, 1, "2019-09-30", "08:00", "13:15", 1);
 
 INSERT INTO absence
     (id, student_id, date_ab, start_h, end_h, justified)
-VALUES(2, 1, "2019-09-29", 8, 13, 0);
+VALUES(2, 1, "2019-09-29", "08:00", "13:15", 0);
 
 INSERT INTO absence
     (id, student_id, date_ab, start_h, end_h, justified)
-VALUES(3, 1, "2019-09-30", 8, 13, 1);
+VALUES(3, 1, "2019-09-30", "08:00", "13:15", 1);
 
 INSERT INTO absence
     (id, student_id, date_ab, start_h, end_h, justified)
-VALUES(4, 1, "2019-09-29", 8, 13, 0);
+VALUES(4, 1, "2019-09-29", "08:00", "13:15", 0);
 
 INSERT INTO absence
     (id, student_id, date_ab, start_h, end_h, justified)
-VALUES(5, 1, "2019-09-30", 8, 13, 1);
+VALUES(5, 1, "2019-09-30", "08:00", "13:15", 1);
 
 INSERT INTO absence
     (id, student_id, date_ab, start_h, end_h, justified)
-VALUES(6, 1, "2019-09-29", 8, 13, 0);
+VALUES(6, 1, "2019-09-29", "08:00", "13:15", 0);
 
 INSERT INTO absence
     (id, student_id, date_ab, start_h, end_h, justified)
-VALUES(7, 2, "2019-09-30", 8, 13, 1);
+VALUES(7, 2, "2019-09-30", "08:00", "13:15", 1);
 
 INSERT INTO absence
     (id, student_id, date_ab, start_h, end_h, justified)
-VALUES(8, 2, "2019-09-29", 8, 13, 0);
+VALUES(8, 2, "2019-09-29", "08:00", "13:15", 0);
 
 INSERT INTO absence
     (id, student_id, date_ab, start_h, end_h, justified)
-VALUES(9, 3, "2019-09-30", 8, 13, 1);
+VALUES(9, 3, "2019-09-30", "08:00", "13:15", 1);
 
 -- Homework
 
