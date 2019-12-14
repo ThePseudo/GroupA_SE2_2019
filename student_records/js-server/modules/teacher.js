@@ -291,7 +291,7 @@ router.post("/class/:classid/course/:courseid/reg_mark", [body('subject')
           }
           console.log(sql2);
           if (!mark_subj || !date_mark || !descr_mark_subj || !type_mark_subj ) {
-            res.render("../pages/teacher/teacher_insertclassmark.pug", { studlist:studlist, flag_ok: "0", message: "Please fill the form correctly" });
+            res.render("../pages/teacher/teacher_insertclassmark.pug", { fullName:fullName, courseid:courseID, classid:classID, studlist:studlist, flag_ok: "0", message: "Please fill the form correctly" });
             return;
           }
           con.query(sql2, (err, rows, fields) => {
@@ -314,7 +314,7 @@ router.post("/class/:classid/course/:courseid/reg_mark", [body('subject')
                   }
                   con.end();
                   console.log("Data successfully uploaded! ");
-                  res.render("../pages/teacher/teacher_insertclassmark.pug", { studlist: studlist, flag_ok: "1", message: "New class marks inserted correctly" });
+                  res.render("../pages/teacher/teacher_insertclassmark.pug", {  fullName:fullName, courseid:courseID, classid:classID, studlist: studlist, flag_ok: "1", message: "New class marks inserted correctly" });
                   return;
                 }
               });

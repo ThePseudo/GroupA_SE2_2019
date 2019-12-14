@@ -18,7 +18,7 @@ html
           h2(class = 'ok_msg') &nbsp #{message} &nbsp
         else
           h2(class = 'err_msg') &nbsp #{message} &nbsp
-      form(method='POST' action='/teacher/up_file')
+      form(method='POST' action="/teacher/class/"+classid+"/course/"+courseid+"/up_file")
         div(class='row' style='margin-top: 40px;')
           div(class='col-lg-3')
           div(class='col-lg-6 col-xs-12')

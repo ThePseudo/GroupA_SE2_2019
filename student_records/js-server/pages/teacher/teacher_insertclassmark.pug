@@ -45,7 +45,11 @@ html
               div(class='col-sm-6')
                 div.form-group
                   label(for='desc') Type:
-                  input(type='text' placeholder='Type' name='type' class='form-control')
+                  select(placeholder='Type' name='type' class='form-control')
+                    option(value="Written") Written
+                    option(value="Oral") Oral
+                    option(value="Project") Project
+                    option(value="Other") Other
             div(class='row')
               div(class='col-sm-3')
               div(class='col-sm-6')
