@@ -86,7 +86,7 @@ router.route("/reg_parent").post([body('name')
     var con = db.DBconnect();
 
     if (!name || !surname || !SSN || !email) {
-        res.render("../pages/officer/officer_registerstudent.pug", { flag_ok: "0", message: "Please fill the form correctly" });
+        res.render("../pages/officer/officer_registerparent.pug", { flag_ok: "0", message: "Please fill the form correctly" });
         return;
     }
 

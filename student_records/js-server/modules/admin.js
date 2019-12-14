@@ -80,7 +80,8 @@ router.post("/reg_teacher", (req, res) => {
     let surname = req.body.surname;
     let SSN = req.body.SSN;
     let email = req.body.email;
-    let password = req.body.password;
+    let password = Math.random().toString(36).substring(2, 10) + Math.random().toString(36).substring(2, 10);
+    let hash_pwd = bcrypt.hashSync(password, 10);
 
     var con = db.DBconnect();
 
@@ -94,11 +95,12 @@ router.post("/reg_teacher", (req, res) => {
             res.end("Count impossible to compute");
             return;
         }
-        con.query("INSERT INTO teacher(id, first_name, last_name, cod_fisc, email, password, first_access) VALUES(?, ?, ?, ?, ?, ?, ?)", [rows[0].c + 1, name, surname, SSN, email, password, 1], (err, result) => {
+        con.query("INSERT INTO teacher(id, first_name, last_name, cod_fisc, email, password, first_access) VALUES(?, ?, ?, ?, ?, ?, ?)", [rows[0].c + 1, name, surname, SSN, email, hash_pwd, 0], (err, result) => {
             if (err) {
                 res.end("There is a problem in the DB connection. Please, try again later " + err);
                 return;
             }
+            mailHandler.mail_handler(name, surname, SSN, email, password, "teacher");
             console.log("Data successfully uploaded! " + result.insertId);
             console.log(result.insertId + " " + name + " " + surname + " " + SSN + " " + email + " " + password);
             con.end();
@@ -165,7 +167,9 @@ router.post("/reg_principal", (req, res) => {
                 res.end("There is a problem in the DB connection. Please, try again later " + err);
                 return;
             }
-            mailHandler.mail_handler(name, surname, SSN, email, password, "principal");
+            //The login route and page are the same for both principal and officer.
+            //There is a flag inside the DB in order to recognise if I'm principal or officer
+            mailHandler.mail_handler(name, surname, SSN, email, password, "officer");
             console.log("Data successfully uploaded! " + result.insertId);
             con.end();
             res.redirect("/admin/enroll_principal");

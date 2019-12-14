@@ -26,6 +26,7 @@ const parentPages = require('./modules/parent.js');
 const auth_router = require('./modules/Auth_manager.js');
 const teacherPages = require('./modules/teacher.js');
 const officerPage = require('./modules/officer.js');
+const principalPage = require('./modules/principal.js');
 
 // Constants
 const HTTPPORT = 8000;
@@ -41,6 +42,7 @@ app.use('/parent', parentPages);
 app.use('/auth_router', auth_router);
 app.use('/teacher', teacherPages);
 app.use('/officer', officerPage);
+app.use("/principal",principalPage);
 
 const options = {
     key: fs.readFileSync("./certs/localhost.key"),
