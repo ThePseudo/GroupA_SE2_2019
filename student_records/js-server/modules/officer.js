@@ -179,7 +179,7 @@ router.route("/reg_student").post([body('name')
                                 res.end("There is a problem in the DB connection. Please, try again later " + err);
                                 return;
                             }
-                            res.render("../pages/officer/officer_registerstudent.pug", { flag_ok: "1", message: "New student insertly correctly" });
+                            res.render("../pages/officer/officer_registerstudent.pug", { flag_ok: "1", message: "New student inserted correctly" });
                             con.end();
                             return;
                         });
