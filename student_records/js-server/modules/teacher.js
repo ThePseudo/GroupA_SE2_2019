@@ -179,17 +179,19 @@ router.get("/class/:classid/course/:courseid/course_home", (req, res) => {
 //TODO: change route and get parameters for future query
 router.get("/class/:classid/course/:courseid/topics", (req, res) => {
   var fullName = req.session.user.first_name + " " + req.session.user.last_name;
-  const compiledPage = pug.compileFile("../pages/teacher/teacher_coursetopic.pug");
   var today = new Date();
   var dayString = today.getDate();
   var monthString = today.getMonth() + 1;
   if (dayString < 10) dayString = '0' + today.getDate();
   if (monthString < 10) monthString = '0' + (today.getMonth() + 1);
   var todayString = today.getFullYear() + "-" + monthString + "-" + dayString;
-  res.end(compiledPage({
+
+  res.render("../pages/teacher/teacher_coursetopic.pug",{
     fullName: fullName,
-    dateString: todayString
-  }));
+    dateString: todayString,
+    courseid: req.params.courseid,
+    classid: req.params.classid
+  });
 });
 
 router.get("/class/:classid/course/:courseid/class_mark", (req, res) => {
