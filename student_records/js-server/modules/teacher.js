@@ -177,7 +177,7 @@ router.get("/class/:classid/course/:courseid/course_home", (req, res) => {
 
 
 //TODO: change route and get parameters for future query
-router.get("/topics", (req, res) => {
+router.get("/class/:classid/course/:courseid/topics", (req, res) => {
   var fullName = req.session.user.first_name + " " + req.session.user.last_name;
   const compiledPage = pug.compileFile("../pages/teacher/teacher_coursetopic.pug");
   var today = new Date();
