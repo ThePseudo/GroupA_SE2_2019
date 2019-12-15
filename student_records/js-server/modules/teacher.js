@@ -3,7 +3,7 @@
 const express = require('express');
 const pug = require('pug');
 const myInterface = require('../modules/functions.js');
-const { body  } = require('express-validator');
+const { body } = require('express-validator');
 
 //IMPORTO oggetto rappresentante la sessione.
 //Per accedere ->  req.session
