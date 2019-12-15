@@ -232,10 +232,7 @@ router.get("/class/:classid/course/:courseid/class_mark", (req, res) => {
 });
 
 //TODO
-router.post("/class/:classid/course/:courseid/reg_mark", [body('subject')
-.not().isEmpty()
-.trim()
-.escape()], (req, res) => {
+router.post("/class/:classid/course/:courseid/reg_mark", (req, res) => {
 
   var fullName = req.session.user.first_name + " " + req.session.user.last_name;
   const compiledPage = pug.compileFile("../pages/teacher/teacher_insertclassmark.pug");
@@ -274,9 +271,13 @@ router.post("/class/:classid/course/:courseid/reg_mark", [body('subject')
         else {
           let c = rows2[0].last_id + 1;
           var sql2 = "INSERT INTO mark(id,student_id,course_id,score,date_mark,period_mark,mark_subj,descr_mark_subj,type_mark_subj) VALUES ";
-
+          var j = 0;
           for (var i = 0; i < rows.length; ++i) {
-            if (i > 0) {
+            var mark = marks[i];
+            if(mark){
+              j = j + 1;
+            } 
+            if (i > 0 && mark) {
               sql2 = sql2 + " , ";
             }
             var stud = {
@@ -284,13 +285,16 @@ router.post("/class/:classid/course/:courseid/reg_mark", [body('subject')
               first_name: rows[i].first_name,
               last_name: rows[i].last_name,
             }
-            var mark = marks[i];
+            
             studlist[i] = stud;
-            sql2 = sql2 + "(" + c + "," + stud.id_stud + "," + courseID + "," + mark + ", '" + date_mark + "' ," + period_mark + ",'" + mark_subj + "','" + descr_mark_subj + "','" + type_mark_subj + "')";
-            c = c + 1;
+            if(mark){
+              sql2 = sql2 + "(" + c + "," + stud.id_stud + "," + courseID + "," + mark + ", '" + date_mark + "' ," + period_mark + ",'" + mark_subj + "','" + descr_mark_subj + "','" + type_mark_subj + "')";
+              c = c + 1;
+            }
+            
           }
           console.log(sql2);
-          if (!mark_subj || !date_mark || !descr_mark_subj || !type_mark_subj ) {
+          if (!mark_subj || !date_mark || !descr_mark_subj || !type_mark_subj || j<1 ) {
             res.render("../pages/teacher/teacher_insertclassmark.pug", { fullName:fullName, courseid:courseID, classid:classID, studlist:studlist, flag_ok: "0", message: "Please fill the form correctly" });
             return;
           }

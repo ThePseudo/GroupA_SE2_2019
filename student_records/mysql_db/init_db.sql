@@ -302,7 +302,7 @@ CREATE TABLE mark
     score INT NOT NULL,
     date_mark DATE NOT NULL,
     period_mark INT NOT NULL,
-    mark_subj VARCHAR(50),
+    mark_subj VARCHAR(50) NOT NULL,
     descr_mark_subj VARCHAR(500),
     type_mark_subj ENUM ('Other','Written','Oral','Project'),
     PRIMARY KEY(id)
