@@ -3,7 +3,7 @@
 const express = require('express');
 const pug = require('pug');
 const myInterface = require('../modules/functions.js');
-const { body } = require('express-validator');
+const { body  } = require('express-validator');
 
 //IMPORTO oggetto rappresentante la sessione.
 //Per accedere ->  req.session
@@ -175,71 +175,48 @@ router.get("/class/:classid/course/:courseid/course_home", (req, res) => {
 
 //------------------------------------------------------
 
-
-//TODO: change route and get parameters for future query
 router.route("/class/:classid/course/:courseid/reg_topic").get((req, res) => {
   var fullName = req.session.user.first_name + " " + req.session.user.last_name;
   var dateString = myInterface.dailyDate();
-  var subject_array = [];
-  var con = myInterface.DBconnect();
 
-  let sql = "Select course_name FROM course"
-  con.query(sql, (err, rows) => {
-    if (err) {
-        res.end("There is a problem in the DB connection. Please, try again later " + err);
-        return;
-    }
-    for(let i = 0;i<rows.length;i++)
-      subject_array[i] = rows[i].course_name;
-    con.end();
-    console.log(subject_array);
-
-    res.render("../pages/teacher/teacher_coursetopic.pug",{
-    subject_array: subject_array,
+  res.render("../pages/teacher/teacher_coursetopic.pug",{
     fullName: fullName,
     dateString: dateString,
     courseid: req.params.courseid,
     classid: req.params.classid
-    });
   });
 
-}).post((req,res)=>{
+}).post(
+  [
+    body('description').trim().escape(), 
+    body('date').trim().escape().toDate(),
+    body('topic_name').trim().escape()
+  ],
+  (req,res)=>{
   var fullName = req.session.user.first_name + " " + req.session.user.last_name;
   var dateString = myInterface.dailyDate();
   var description = req.body.description;
   var date = req.body.date;
-  var subject = req.body.subject;
-  var subject_array = [];
+  var topic_name = req.body.topic_name;
+  
   console.log(description);
-  console.log(subject);
-  console.log(dateString);
+  console.log(topic_name);
+  console.log(date);
+
+  if(!description || !date || !topic_name){
+    res.render("../pages/teacher/teacher_coursetopic.pug",{
+      ok_flag: 0,
+      message: "Please fill all the form fieds",
+      fullName: fullName,
+      dateString: dateString,
+      courseid: req.params.courseid,
+      classid: req.params.classid
+    });
+    return;
+  }
 
   var con = myInterface.DBconnect();
 
-  if(!body || !date || !subject){
-    let sql = "Select course_name FROM course"
-    con.query(sql, (err, rows) => {
-      if (err) {
-          res.end("There is a problem in the DB connection. Please, try again later " + err);
-          return;
-      }
-      for(let i = 0;i<rows.length;i++)
-        subject_array[i] = rows[i].course_name;
-      console.log(subject_array);
-
-      res.render("../pages/teacher/teacher_coursetopic.pug",{
-        subject_array: subject_array,
-        ok_flag: 0,
-        message: "Please fill all the form fieds",
-        fullName: fullName,
-        dateString: dateString,
-        courseid: req.params.courseid,
-        classid: req.params.classid
-      });
-    });
-    con.end();
-    return;
-  }
   con.query('SELECT COUNT(*) as c FROM topic', (err, rows) => { // because we have no AUTO_UPDATE available on the DB
     if (err) {
         res.end("There is a problem in the DB connection. Please, try again later " + err);
@@ -251,25 +228,14 @@ router.route("/class/:classid/course/:courseid/reg_topic").get((req, res) => {
           return;
       }
       
-      let sql = "Select course_name FROM course"
-      con.query(sql, (err, rows) => {
-        if (err) {
-            res.end("There is a problem in the DB connection. Please, try again later " + err);
-            return;
-        }
-        for(var i = 0;i<rows.length;i++)
-          subject_array[i] = rows[i].course_name;
-
-        con.end();
-        res.render("../pages/teacher/teacher_coursetopic.pug",{
-          subject_array: subject_array,
-          flag_ok: "1",
-          message: "New topic inserted correctly",
-          fullName: fullName,
-          dateString: dateString,
-          courseid: req.params.courseid,
-          classid: req.params.classid
-        });
+      con.end();
+      res.render("../pages/teacher/teacher_coursetopic.pug",{
+        flag_ok: "1",
+        message: "New topic inserted correctly",
+        fullName: fullName,
+        dateString: dateString,
+        courseid: req.params.courseid,
+        classid: req.params.classid
       });
     });
   });

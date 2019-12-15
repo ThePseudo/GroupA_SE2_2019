@@ -27,9 +27,7 @@ html
           div(class='col-sm-6')
             div.form-group
               label(for='course') Subject:
-              select(placeholder='Subject' name='subject' class='form-control' required)
-                for subject_name in subject_array
-                  option(value=subject_name) #{subject_name}
+              input(type = "text" placeholder="topic's name" name='topic_name' class='form-control' required)
         div(class='row')
           div(class='col-sm-3')
           div(class='col-sm-6')
