@@ -2,7 +2,7 @@
 
 const express = require('express');
 const pug = require('pug');
-const db = require('../modules/functions.js');
+const myInterface = require('../modules/functions.js');
 const { body } = require('express-validator');
 
 //IMPORTO oggetto rappresentante la sessione.
@@ -28,7 +28,7 @@ router.use(/\/.*/, function (req, res, next) {
 });
 
 router.get("/upload_file", (req, res) => {
-  var con = db.DBconnect();
+  var con = myInterface.DBconnect();
   con.query("SELECT course_id, class_id FROM teacher_course_class WHERE teacher_id=1", (err, rows) => {
     if (err) {
       res.end("There is a problem in the DB connection. Please, try again later " + err);
@@ -54,7 +54,7 @@ router.post("/up_file", [body('desc')
 ], (req, res) => {
   let desc = req.body.desc;
   let file = req.body.file;
-  var con = db.DBconnect();
+  var con = myInterface.DBconnect();
   con.query("SELECT course_id, class_id FROM teacher_course_class WHERE teacher_id=1", (err, rows) => {
     if (err) {
       res.end("There is a problem in the DB connection. Please, try again later " + err);
@@ -86,7 +86,7 @@ router.get("/teacher_home", (req, res) => { // T3
     year--;
   }
 
-  var con = db.DBconnect();
+  var con = myInterface.DBconnect();
 
 
   var sql = "SELECT course_id, class_id, course_name, class_name FROM class, course, teacher_course_class " +
@@ -128,7 +128,7 @@ router.get("/teacher_home", (req, res) => { // T3
 router.get("/class/:classid/course/:courseid/course_home", (req, res) => {
   var fullName = req.session.user.first_name + " " + req.session.user.last_name;
 
-  var con = db.DBconnect();
+  var con = myInterface.DBconnect();
 
   var classID = req.params.classid;
   var courseID = req.params.courseid;
@@ -177,27 +177,108 @@ router.get("/class/:classid/course/:courseid/course_home", (req, res) => {
 
 
 //TODO: change route and get parameters for future query
-router.get("/class/:classid/course/:courseid/topics", (req, res) => {
+router.route("/class/:classid/course/:courseid/reg_topic").get((req, res) => {
   var fullName = req.session.user.first_name + " " + req.session.user.last_name;
-  var today = new Date();
-  var dayString = today.getDate();
-  var monthString = today.getMonth() + 1;
-  if (dayString < 10) dayString = '0' + today.getDate();
-  if (monthString < 10) monthString = '0' + (today.getMonth() + 1);
-  var todayString = today.getFullYear() + "-" + monthString + "-" + dayString;
+  var dateString = myInterface.dailyDate();
+  var subject_array = [];
+  var con = myInterface.DBconnect();
 
-  res.render("../pages/teacher/teacher_coursetopic.pug",{
+  let sql = "Select course_name FROM course"
+  con.query(sql, (err, rows) => {
+    if (err) {
+        res.end("There is a problem in the DB connection. Please, try again later " + err);
+        return;
+    }
+    for(let i = 0;i<rows.length;i++)
+      subject_array[i] = rows[i].course_name;
+    con.end();
+    console.log(subject_array);
+
+    res.render("../pages/teacher/teacher_coursetopic.pug",{
+    subject_array: subject_array,
     fullName: fullName,
-    dateString: todayString,
+    dateString: dateString,
     courseid: req.params.courseid,
     classid: req.params.classid
+    });
+  });
+
+}).post((req,res)=>{
+  var fullName = req.session.user.first_name + " " + req.session.user.last_name;
+  var dateString = myInterface.dailyDate();
+  var description = req.body.description;
+  var date = req.body.date;
+  var subject = req.body.subject;
+  var subject_array = [];
+  console.log(description);
+  console.log(subject);
+  console.log(dateString);
+
+  var con = myInterface.DBconnect();
+
+  if(!body || !date || !subject){
+    let sql = "Select course_name FROM course"
+    con.query(sql, (err, rows) => {
+      if (err) {
+          res.end("There is a problem in the DB connection. Please, try again later " + err);
+          return;
+      }
+      for(let i = 0;i<rows.length;i++)
+        subject_array[i] = rows[i].course_name;
+      console.log(subject_array);
+
+      res.render("../pages/teacher/teacher_coursetopic.pug",{
+        subject_array: subject_array,
+        ok_flag: 0,
+        message: "Please fill all the form fieds",
+        fullName: fullName,
+        dateString: dateString,
+        courseid: req.params.courseid,
+        classid: req.params.classid
+      });
+    });
+    con.end();
+    return;
+  }
+  con.query('SELECT COUNT(*) as c FROM topic', (err, rows) => { // because we have no AUTO_UPDATE available on the DB
+    if (err) {
+        res.end("There is a problem in the DB connection. Please, try again later " + err);
+        return;
+    }
+    con.query("INSERT INTO topic(id, topic_date, id_class,id_course,description) VALUES(?, ?, ?, ?, ?)", [rows[0].c + 1,date,req.params.classid,req.params.courseid,description], (err, rows) => {
+      if (err) {
+          res.end("There is a problem in the DB connection. Please, try again later " + err);
+          return;
+      }
+      
+      let sql = "Select course_name FROM course"
+      con.query(sql, (err, rows) => {
+        if (err) {
+            res.end("There is a problem in the DB connection. Please, try again later " + err);
+            return;
+        }
+        for(var i = 0;i<rows.length;i++)
+          subject_array[i] = rows[i].course_name;
+
+        con.end();
+        res.render("../pages/teacher/teacher_coursetopic.pug",{
+          subject_array: subject_array,
+          flag_ok: "1",
+          message: "New topic inserted correctly",
+          fullName: fullName,
+          dateString: dateString,
+          courseid: req.params.courseid,
+          classid: req.params.classid
+        });
+      });
+    });
   });
 });
 
 router.get("/class/:classid/course/:courseid/class_mark", (req, res) => {
   var fullName = req.session.user.first_name + " " + req.session.user.last_name;
   const compiledPage = pug.compileFile("../pages/teacher/teacher_insertclassmark.pug");
-  var con = db.DBconnect();
+  var con = myInterface.DBconnect();
 
 
   var classID = req.params.classid;
@@ -241,7 +322,7 @@ router.post("/class/:classid/course/:courseid/reg_mark", [body('subject')
 
   var fullName = req.session.user.first_name + " " + req.session.user.last_name;
   const compiledPage = pug.compileFile("../pages/teacher/teacher_insertclassmark.pug");
-  var con = db.DBconnect();
+  var con = myInterface.DBconnect();
 
 
   var classID = req.params.classid;
@@ -343,7 +424,7 @@ router.get("/class/:classid/course/:courseid/insert_homework", (req, res) => { }
 
 router.get("/class/:classid/course/:courseid/student/:studentid", (req, res) => {
   var fullName = req.session.user.first_name + " " + req.session.user.last_name;
-  var con = db.DBconnect();
+  var con = myInterface.DBconnect();
 
   var sql = "SELECT first_name, last_name FROM student WHERE id = ?";
   con.query(sql, [req.params.studentid], (err, rows, fields) => {

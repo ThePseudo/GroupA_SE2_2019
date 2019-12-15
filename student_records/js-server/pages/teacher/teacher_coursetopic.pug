@@ -16,25 +16,32 @@ html
     div(class='container')
       div(class='row')
         h1(class='title') Record daily topic
-      form(method='POST' action='/reg_topic' id="regform")
+        div(class='row')
+        if flag_ok == 1
+          h2(class = 'ok_msg') &nbsp #{message} &nbsp
+        else
+          h2(class = 'err_msg') &nbsp #{message} &nbsp
+      form(method='POST' action="/teacher/class/" + classid +"/course/" + courseid + "/reg_topic" id="regform")
         div(class='row' style='margin-top: 40px;')
           div(class='col-sm-3')
           div(class='col-sm-6')
             div.form-group
               label(for='course') Subject:
-              input(type='text' placeholder='Subject' name='course' class='form-control')
+              select(placeholder='Subject' name='subject' class='form-control' required)
+                for subject_name in subject_array
+                  option(value=subject_name) #{subject_name}
         div(class='row')
           div(class='col-sm-3')
           div(class='col-sm-6')
             div.form-group
               label(for='date') Date:
-              input(type='date' name='date' value=dateString max=dateString class="form-control")    
+              input(type='date' name='date' value=dateString class="form-control" required)    
         div(class='row')
           div(class='col-sm-3')
           div(class='col-sm-6')
             div.form-group
               label(for='desc') Description:
-              textarea(name="desc" form="regform" class="form-control")
+              textarea(name="description" form="regform" class="form-control" required)
         div(class='row')
           div(class='col-sm-6')
           div(class='col-sm-3')
