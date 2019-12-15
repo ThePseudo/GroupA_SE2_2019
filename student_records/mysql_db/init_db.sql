@@ -140,6 +140,22 @@ INSERT INTO course
 VALUES
     (3, 'Science', '00FF00');
 
+INSERT INTO course
+    (id,course_name, color)
+VALUES
+    (4, 'Chemistry', "008080");
+
+INSERT INTO course
+    (id,course_name, color)
+VALUES
+    (5, 'Art', '008000');
+
+INSERT INTO course
+    (id,course_name, color)
+VALUES
+    (6, 'Geography', '00FFFF');
+
+
 CREATE TABLE admin
 (
     id INT PRIMARY KEY,
