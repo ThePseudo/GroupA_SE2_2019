@@ -114,5 +114,5 @@ httpApp.get("*", (req, res) => {
 http.createServer(httpApp).listen(HTTPPORT);
 https.createServer(options, app).listen(HTTPSPORT);
 
-console.log(`Running on http://${HOST}:${HTTPPORT}`);
-console.log(`Running on https://${HOST}:${HTTPSPORT}`);
+console.log(`Running on http://localhost:${HTTPPORT}`);
+console.log(`Running on https://localhost:${HTTPSPORT}`);
