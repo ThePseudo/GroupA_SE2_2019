@@ -8,13 +8,14 @@
 
 mixin rowHomeworks(date, desc)
   tr(class="table-row table-row-base")
-    td(style="width: 70%; text-align: left; padding-left: 20px;")= date
-    td(style="width: 70%; text-align: left; padding-left: 20px;")= desc
+    td(style="width: 70%; text-align: left; padding-left: 20px;") #{date}
+    td(style="width: 70%; text-align: left; padding-left: 20px;") #{desc}
 
 mixin rowMaterials(title, link)
   tr(class="table-row table-row-base")
-    td(style="width: 70%; text-align: left; padding-left: 20px;")= title
-    td(style="width: 70%; text-align: left; padding-left: 20px;")= a(href='/' + link) Link
+    td(style="width: 70%; text-align: left; padding-left: 20px;") #{title}
+    td(style="width: 70%; text-align: left; padding-left: 20px;")
+      a(href='/' + link) Link
 
 doctype html
 html
@@ -34,7 +35,7 @@ html
             tr(class='table-row-base')
               th Title
               th Link
-            for mt in materials
+            for mt in course_mtw
               +rowMaterial(mt.description, mt.link)
       div(class='row')
         h1(class='title') #{student_name}'s #{fullName} homeworks
