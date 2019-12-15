@@ -339,9 +339,11 @@ router.get("/class/:classid/course/:courseid/insert_stuff", (req, res) => { });
 //TODO
 router.get("/class/:classid/course/:courseid/insert_homework", (req, res) => { });
 
+//Student single page
 router.get("/class/:classid/course/:courseid/student/:studentid", (req, res) => {
   var fullName = req.session.user.first_name + " " + req.session.user.last_name;
   var con = db.DBconnect();
+  var msg = req.query.msg;
 
   var sql = "SELECT first_name, last_name FROM student WHERE id = ?";
   con.query(sql, [req.params.studentid], (err, rows, fields) => {
@@ -380,7 +382,8 @@ router.get("/class/:classid/course/:courseid/student/:studentid", (req, res) => 
           classid: req.params.classid,
           courseid: req.params.courseid,
           fullName: fullName,
-          st_marks: marks
+          st_marks: marks,
+          msg: msg
         });
       });
     });
@@ -391,18 +394,49 @@ router.get("/class/:classid/course/:courseid/student/:studentid", (req, res) => 
 router.post("/class/:classid/course/:courseid/student/:studentid/insert_mark", (req, res) => {
   var studentID = req.params.studentid;
   var courseID = req.params.courseid;
-  var classID = req.params.classid;
 
   var modifier = req.body.modifier;
   var mark = req.body.mark;
+  var type = req.body.type;
+  // Nullables
+  var subject = req.body.subject;
+  var description = req.body.desc;
 
+  var finalMark = Number(mark) + Number(modifier);
 
-  //TODO: insert mark
+  var dateMark = new Date();
+  var period = 1;
+  if (dateMark.getMonth() > 1) { // after March
+    period = 2;
+  }
 
-  var sql = "INSERT INTO mark " +
-    "(id, student_id, course_id, score, date_mark, period_mark, mark_subj, descr_mark_subj, type_mark_subj) " +
-    "VALUES(?,?,?,?,?,?,?,?);";
+  // Check on nullables
+  if (subject == "" || description == "") {
+    res.redirect("../" + studentID + "?msg=markerr");
+    return;
+  }
 
+  var sql = "SELECT COUNT(*) AS id FROM mark";
+  var con = db.DBconnect();
+  con.query(sql, (err, rows, fields) => {
+    if (err) {
+      res.end("Database error: " + err);
+      return;
+    }
+    var id = rows[0].id;
+    ++id;
+    sql = "INSERT INTO mark " +
+      "(id, student_id, course_id, score, date_mark, period_mark, mark_subj, descr_mark_subj, type_mark_subj) " +
+      "VALUES(?,?,?,?,?,?,?,?,?);";
+    con.query(sql, [id, studentID, courseID, finalMark, dateMark, period, subject, description, type],
+      (err, result) => {
+        if (err) {
+          res.end("Database error: " + err);
+          return;
+        }
+        res.redirect("../" + studentID + "?msg=markok");
+      });
+  });
 });
 
 module.exports = router;

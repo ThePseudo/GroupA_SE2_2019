@@ -4,7 +4,7 @@
 - var user = "teacher"
 - var active = ""
 
-//- Variables used: studentName, courseName, marks[] {score, date}, studentID
+//- Variables used: studentName, courseName, marks[] {score, date}, studentID, msg
 
 - const marks = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
 - const modifiers = [0, 0.25, 0.5, 0.75]
@@ -28,6 +28,19 @@ html
         span(class="glyphicon glyphicon-menu-left backButton")
       div(class="row")
         h1(class = 'title') #{courseName} - #{studentName} overview
+      //- If msg
+      if msg == "markok"
+        div(class="row")
+          h2(class="title2 ok_msg") Mark inserted correctly
+      else if msg == "noteok"
+        div(class="row")
+          h2(class="title2 ok_msg") Note inserted correctly
+      if msg == "markerr"
+        div(class="row")
+          h2(class="title2 err_msg") Mark: subject or description empty  
+      else if msg == "noteerr"
+        div(class="row")
+          h2(class="title2 err_msg") Note: empty note
       div(class="row")
         //- Marks
         h2(class="title2") New mark
@@ -45,7 +58,7 @@ html
               div(class='col-sm-6')
                 div.form-group
                   label(for='desc') Description:
-                  textarea(name="desc" value='Description' form="markform" class="form-control" style="resize:none" rows="5")
+                  textarea(name="desc" form="markform" class="form-control" style="resize:none" rows="5")
             div(class='row')
               div(class='col-sm-3')
               div(class='col-sm-6')
