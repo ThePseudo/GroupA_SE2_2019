@@ -83,8 +83,8 @@ app.get("/style", (req, res) => {
 app.get('/*', (req, res) => {
     fs.readFile(req.path, (err, data) => {
         if (err) {
-            console.log(err);
-            res.render("pages/base/404.pug");
+            //console.log(err);
+            res.render("/pages/base/404.pug");
             return;
         }
         res.end(data);
@@ -96,7 +96,7 @@ app.post('/*', (req, res) => {
     fs.readFile(req.path, (err, data) => {
         if (err) {
             console.log(err);
-            res.end("pages/base/404.pug");
+            res.render("/pages/base/404.pug");
             return;
         }
         res.end(data);
@@ -114,5 +114,5 @@ httpApp.get("*", (req, res) => {
 http.createServer(httpApp).listen(HTTPPORT);
 https.createServer(options, app).listen(HTTPSPORT);
 
-console.log(`Running on http://${HOST}:${HTTPPORT}`);
-console.log(`Running on https://${HOST}:${HTTPSPORT}`);
+console.log(`Running on http://localhost:${HTTPPORT}`);
+console.log(`Running on https://localhost:${HTTPSPORT}`);
