@@ -367,6 +367,7 @@ router.get("/class/:classid/course/:courseid/student/:studentid", (req, res) => 
           marks[i] = mark;
         }
         res.render("../pages/teacher/teacher_singlestudent.pug", {
+          studentID: req.params.studentid,
           studentName: studentName,
           courseName: courseName,
           classid: req.params.classid,
@@ -378,6 +379,18 @@ router.get("/class/:classid/course/:courseid/student/:studentid", (req, res) => 
     });
   });
   // test: https://localhost:8080/teacher/class/1/course/1/student/1
+});
+
+router.post("/class/:classid/course/:courseid/student/:studentid/insert_mark", (req, res) => {
+  var studentID = req.params.studentid;
+  var courseID = req.params.courseid;
+  var classID = req.params.classid;
+
+  var modifier = req.body.modifier;
+  var mark = req.body.mark;
+
+
+  //TODO: insert mark
 });
 
 module.exports = router;

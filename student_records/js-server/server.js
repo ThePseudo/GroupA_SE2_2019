@@ -83,7 +83,7 @@ app.get("/style", (req, res) => {
 app.get('/*', (req, res) => {
     fs.readFile(req.path, (err, data) => {
         if (err) {
-            console.log(err);
+            //console.log(err);
             res.render("pages/base/404.pug");
             return;
         }
@@ -96,7 +96,7 @@ app.post('/*', (req, res) => {
     fs.readFile(req.path, (err, data) => {
         if (err) {
             console.log(err);
-            res.end("pages/base/404.pug");
+            res.render("pages/base/404.pug");
             return;
         }
         res.end(data);
