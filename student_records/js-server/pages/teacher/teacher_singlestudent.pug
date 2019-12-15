@@ -33,25 +33,47 @@ html
         h2(class="title2") New mark
       div(class="row")
         div(class="col-xs-12")
-          form(action='./'+studentID+'/insert_mark' method="POST") 
+          form(action='./'+studentID+'/insert_mark' method="POST" id="markform") 
             div(class='row')
-              div(class='col-lg-2 col-md-2')
+              div(class='col-sm-3')
+              div(class='col-sm-6')
+                div.form-group
+                  label(for='course') Subject:
+                  input(type='text' placeholder='Subject' name='subject' class='form-control')
+            div(class='row')
+              div(class='col-sm-3')
+              div(class='col-sm-6')
+                div.form-group
+                  label(for='desc') Description:
+                  textarea(name="desc" value='Description' form="markform" class="form-control" style="resize:none" rows="5")
+            div(class='row')
+              div(class='col-sm-3')
+              div(class='col-sm-6')
+                div.form-group
+                  label(for='desc') Type:
+                  select(placeholder='Type' name='type' class='form-control')
+                    option(value="Written") Written
+                    option(value="Oral") Oral
+                    option(value="Project") Project
+                    option(value="Other") Other
+            div(class='row')
+              div(class='col-sm-3')
               div(class='form-group')
-                div(class='col-sm-6 col-md-4 col-xs-12')
+                div(class='col-sm-3 col-md-3 col-xs-12')
                   label(for='mark') Mark:
                   //- On click triggers function checkTen()
                   select(class='form-control' id='mark' name="mark" onclick="checkTen()")
                     for mark in marks
                       option(value=mark) #{mark}
-                div(class="col-sm-2 col-md-1 col-xs-12")
+                div(class="col-sm-1 col-xs-12")
                   h2(class="noLinkTitle" style="display:block; text-align:center;") +
-                div(class="col-sm-4 col-md-3 col-xs-12")
+                div(class="col-sm-2 col-xs-12")
                   label(for='modifier') Modifier:
                   select(class='form-control', id='modifier', name='modifier')
                     for modifier in modifiers
                       option(value=modifier) #{modifier}
             div(class="row")
-              div(class='col-sm-8 col-md-6 col-lg-7')
+              div(class='col-sm-5 col-lg-6')
               div(class='col-sm-4 col-lg-3 col-xs-10')
                 input(type='SUBMIT' value='Insert mark' name='insert_mark' class='btn blockButton' style='margin-top: 24px; padding: 6px 10px; margin-left:25%; width: 75%;')
       div(class="row")
@@ -60,21 +82,21 @@ html
         div(class="col-xs-12")
           form(action='./'+studentID+'/insert_note' method="POST" id="noteform")
             div(class='row')
-              div(class='col-lg-2 col-md-2')
-              div(class='col-xs-12 col-md-8')
+              div(class='col-sm-3')
+              div(class='col-xs-12 col-sm-6')
                 div.form-group
                   label(for='note') Note:
                   textarea(name="note" form="noteform" class="form-control" style="resize:none" rows="5")
             div(class="row")
-              div(class='col-sm-8 col-md-6 col-lg-7')
+              div(class='col-sm-5 col-lg-6')
               div(class='col-sm-4 col-lg-3 col-xs-10')
                 input(type='SUBMIT' value='Insert note' name='insert_note' class='btn blockButton' style='margin-top: 24px; padding: 6px 10px; margin-left:25%; width: 75%;')
       //- List of marks
       div(class="row")
         h2(class="title2") Marks
       div(class="row")
-        div(class="col-lg-2 col-sm-2")
-        div(class="col-lg-8 col-sm-12 col-xs-12" style='align-content:center;')
+        div(class="col-sm-3")
+        div(class="col-sm-6 col-xs-12" style='align-content:center;')
           table(style="width:100%; text-align:center; align-content:center" class="table table-bordered")
             tr(class='table-row-base')
               th Date
