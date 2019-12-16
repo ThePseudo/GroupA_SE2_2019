@@ -49,10 +49,12 @@ router.route('/login_parent').get((req, res) => {
     res.render("../pages/login_parent.pug");
 
 }).post(
-    [body('cod_fisc')
+    [
+        body('cod_fisc')
         .not().isEmpty()
         .trim()
-        .escape()],
+        .escape()
+    ],
     (req, res) => {
         //i valori del form sono individuati dal valore dell'attributo "name"!
         var cod_fisc = req.body.cod_fisc;
@@ -108,10 +110,12 @@ router.route('/login_teacher').get((req, res) => {
     res.render("../pages/login_teacher.pug");
 
 }).post(
-    [body('cod_fisc')
+    [
+        body('cod_fisc')
         .not().isEmpty()
         .trim()
-        .escape()],
+        .escape()
+    ],
     (req, res) => {
         //i valori del form sono individuati dal valore dell'attributo "name"!
         var cod_fisc = req.body.cod_fisc;
@@ -168,10 +172,12 @@ router.route('/login_officer').get((req, res) => {
     res.render("../pages/login_officer.pug");
 
 }).post(
-    [body('cod_fisc')
+    [
+        body('cod_fisc')
         .not().isEmpty()
         .trim()
-        .escape()],
+        .escape()
+    ],
     (req, res) => {
         //i valori del form sono individuati dal valore dell'attributo "name"!
         var cod_fisc = req.body.cod_fisc;
@@ -231,10 +237,12 @@ router.route('/login_admin').get((req, res) => {
     res.render("../pages/login_admin.pug");
 
 }).post(
-    [body('cod_fisc')
+    [
+        body('cod_fisc')
         .not().isEmpty()
         .trim()
-        .escape()],
+        .escape()
+    ],
     (req, res) => {
         //i valori del form sono individuati dal valore dell'attributo "name"!
         var cod_fisc = req.body.cod_fisc;
