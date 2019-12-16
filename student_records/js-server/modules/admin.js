@@ -4,7 +4,7 @@ const express = require('express');
 const pug = require('pug');
 //const mailHandler = require("../modules/ethereal.js"); one-time email modules disabled but it works (maybe just for test!)
 const mailHandler = require("./nodemailer.js");
-const db = require('../modules/functions.js');
+const myInterface = require('../modules/functions.js');
 const bcrypt = require('bcrypt');
 const { body } = require('express-validator');
 var router = express.Router();
@@ -21,6 +21,19 @@ var router = express.Router();
 /////////////////////////////////
 //ricambiare tutte le app in route
 
+router.use(/\/.*/, function (req, res, next) {
+    try {
+        if (req.session.user.user_type != 'admin') {
+            res.redirect("/");
+            return;
+        } else {
+            next();
+        }
+    } catch (err) {
+        res.redirect("/");
+    }
+});
+
 
 router.get("/admin_home", (req, res) => {
     const compiledPage = pug.compileFile("../pages/sysadmin/systemad_home.pug");
@@ -36,7 +49,7 @@ router.get("/insert_communication", (req, res) => {
 router.post("/insert_comm", (req, res) => {
     let desc = req.body.desc;
 
-    var con = db.DBconnect();
+    var con = myInterface.DBconnect();
 
     let date = new Date();
     con.query('SELECT COUNT(*) as c FROM General_Communication', (err, rows, fields) => { // because we have no AUTO_UPDATE available on the DB
@@ -76,7 +89,7 @@ router.route("/enroll_teacher").get((req, res) => {
     let email = req.body.email;
     let password = Math.random().toString(36).substring(2, 10) + Math.random().toString(36).substring(2, 10);
     let hash_pwd = bcrypt.hashSync(password, 10);
-    var con = db.DBconnect();
+    var con = myInterface.DBconnect();
 
     if(!name || !surname || !SSN || !email){
         res.render("../pages/sysadmin/systemad_registerteacher.pug", {ok_flag: 0, message: "Please, fill all the form fields"});
@@ -88,8 +101,6 @@ router.route("/enroll_teacher").get((req, res) => {
         return;
     }
     //TODO:check valid email format server side
-    
-
 
     //Check if SSN already inserted (so the new teacher's data is expected to be already inside the db)
     con.query('SELECT * FROM teacher WHERE cod_fisc = ?',[SSN], (err, rows) => {
@@ -144,7 +155,7 @@ router.route("/enroll_officer").get((req, res) => {
     let email = req.body.email;
     let password = Math.random().toString(36).substring(2, 10) + Math.random().toString(36).substring(2, 10);
     let hash_pwd = bcrypt.hashSync(password, 10);
-    var con = db.DBconnect();
+    var con = myInterface.DBconnect();
 
     if(!name || !surname || !SSN || !email){
         res.render("../pages/sysadmin/systemad_registerofficer.pug", {ok_flag: 0, message: "Please, fill all the form fields"});
@@ -209,7 +220,7 @@ router.route("/enroll_principal").get((req, res) => {
     let email = req.body.email;
     let password = Math.random().toString(36).substring(2, 10) + Math.random().toString(36).substring(2, 10);
     let hash_pwd = bcrypt.hashSync(password, 10);
-    var con = db.DBconnect();
+    var con = myInterface.DBconnect();
     
     if(!name || !surname || !SSN || !email){
         res.render("../pages/sysadmin/systemad_registerprincipal.pug", {ok_flag: 0, message: "Please, fill all the form fields"});
