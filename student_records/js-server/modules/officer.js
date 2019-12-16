@@ -159,7 +159,7 @@ router.route("/enroll_student").get((req, res) => {
 
         let count = rows[0].c + 1;
         if (SSN1 && SSN2) {
-            con.query('SELECT ID FROM parent WHERE cod_fisc = ? OR cod_fisc = ?', [SSN1, SSN2], (err, rows, fields) => { // because we have no AUTO_UPDATE available on the DB
+            con.query('SELECT ID FROM parent WHERE cod_fisc = ? OR cod_fisc = ?', [SSN1, SSN2], (err, rows, fields) => {
                 if (err) {
                     res.end("There is a problem in the DB connection. Please, try again later " + err);
                     return;
@@ -168,6 +168,9 @@ router.route("/enroll_student").get((req, res) => {
                     res.render("../pages/officer/officer_registerstudent.pug", { flag_ok: "0", message: "Please, fill the form with correct parents SSNs" });
                     return;
                 }
+                var ID1 = rows[0].ID;
+                var ID2 = rows[1].ID;
+
                 con.query('SELECT COUNT(*) as c FROM student WHERE cod_fisc = ?', [SSN], (err, rows, fields) => {
                     if (err) {
                         res.end("There is a problem in the DB connection. Please, try again later " + err);
@@ -199,6 +202,8 @@ router.route("/enroll_student").get((req, res) => {
                     res.render("../pages/officer/officer_registerstudent.pug", { flag_ok: "0", message: "Please, fill the form with correct parent SSN" });
                     return;
                 }
+                var ID = rows[0].ID;
+
                 con.query('SELECT COUNT(*) as c FROM student WHERE cod_fisc = ?', [SSN], (err, rows, fields) => {
                     if (err) {
                         res.end("There is a problem in the DB connection. Please, try again later " + err);
@@ -230,6 +235,8 @@ router.route("/enroll_student").get((req, res) => {
                     res.render("../pages/officer/officer_registerstudent.pug", { flag_ok: "0", message: "Please fill the form with correct parent ID" });
                     return;
                 }
+                var ID = rows[0].id;
+
                 con.query('SELECT COUNT(*) as c FROM student WHERE cod_fisc = ?', [SSN], (err, rows, fields) => {
                     if (err) {
                         res.end("There is a problem in the DB connection. Please, try again later " + err);

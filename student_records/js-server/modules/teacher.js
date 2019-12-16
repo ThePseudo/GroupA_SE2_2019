@@ -179,7 +179,7 @@ router.route("/class/:classid/course/:courseid/reg_topic").get((req, res) => {
   var fullName = req.session.user.first_name + " " + req.session.user.last_name;
   var dateString = myInterface.dailyDate();
 
-  res.render("../pages/teacher/teacher_coursetopic.pug",{
+  res.render("../pages/teacher/teacher_coursetopic.pug", {
     fullName: fullName,
     dateString: dateString,
     courseid: req.params.courseid,
@@ -188,58 +188,58 @@ router.route("/class/:classid/course/:courseid/reg_topic").get((req, res) => {
 
 }).post(
   [
-    body('description').trim().escape(), 
+    body('description').trim().escape(),
     body('date').trim().escape().toDate(),
     body('topic_name').trim().escape()
   ],
-  (req,res)=>{
-  var fullName = req.session.user.first_name + " " + req.session.user.last_name;
-  var dateString = myInterface.dailyDate();
-  var description = req.body.description;
-  var date = req.body.date;
-  var topic_name = req.body.topic_name;
-  
-  console.log(description);
-  console.log(topic_name);
-  console.log(date);
+  (req, res) => {
+    var fullName = req.session.user.first_name + " " + req.session.user.last_name;
+    var dateString = myInterface.dailyDate();
+    var description = req.body.description;
+    var date = req.body.date;
+    var topic_name = req.body.topic_name;
 
-  if(!description || !date || !topic_name){
-    res.render("../pages/teacher/teacher_coursetopic.pug",{
-      ok_flag: 0,
-      message: "Please, fill all the form fieds",
-      fullName: fullName,
-      dateString: dateString,
-      courseid: req.params.courseid,
-      classid: req.params.classid
-    });
-    return;
-  }
+    console.log(description);
+    console.log(topic_name);
+    console.log(date);
 
-  var con = myInterface.DBconnect();
-
-  con.query('SELECT COUNT(*) as c FROM topic', (err, rows) => { // because we have no AUTO_UPDATE available on the DB
-    if (err) {
-        res.end("There is a problem in the DB connection. Please, try again later " + err);
-        return;
-    }
-    con.query("INSERT INTO topic(id, topic_date, id_class,id_course,description) VALUES(?, ?, ?, ?, ?)", [rows[0].c + 1,date,req.params.classid,req.params.courseid,description], (err, rows) => {
-      if (err) {
-          res.end("There is a problem in the DB connection. Please, try again later " + err);
-          return;
-      }
-      
-      con.end();
-      res.render("../pages/teacher/teacher_coursetopic.pug",{
-        flag_ok: "1",
-        message: "New topic inserted correctly",
+    if (!description || !date || !topic_name) {
+      res.render("../pages/teacher/teacher_coursetopic.pug", {
+        ok_flag: 0,
+        message: "Please, fill all the form fieds",
         fullName: fullName,
         dateString: dateString,
         courseid: req.params.courseid,
         classid: req.params.classid
       });
+      return;
+    }
+
+    var con = myInterface.DBconnect();
+
+    con.query('SELECT COUNT(*) as c FROM topic', (err, rows) => { // because we have no AUTO_UPDATE available on the DB
+      if (err) {
+        res.end("There is a problem in the DB connection. Please, try again later " + err);
+        return;
+      }
+      con.query("INSERT INTO topic(id, topic_date, id_class,id_course,description) VALUES(?, ?, ?, ?, ?)", [rows[0].c + 1, date, req.params.classid, req.params.courseid, description], (err, rows) => {
+        if (err) {
+          res.end("There is a problem in the DB connection. Please, try again later " + err);
+          return;
+        }
+
+        con.end();
+        res.render("../pages/teacher/teacher_coursetopic.pug", {
+          flag_ok: "1",
+          message: "New topic inserted correctly",
+          fullName: fullName,
+          dateString: dateString,
+          courseid: req.params.courseid,
+          classid: req.params.classid
+        });
+      });
     });
   });
-});
 
 router.get("/class/:classid/course/:courseid/class_mark", (req, res) => {
   var fullName = req.session.user.first_name + " " + req.session.user.last_name;
@@ -319,26 +319,28 @@ router.post("/class/:classid/course/:courseid/reg_mark", (req, res) => {
           let c = rows2[0].last_id + 1;
           var sql2 = "INSERT INTO mark(id,student_id,course_id,score,date_mark,period_mark,mark_subj,descr_mark_subj,type_mark_subj) VALUES ";
           var j = 0;
+          var pre_insert = 0;
           for (var i = 0; i < rows.length; ++i) {
             var mark = marks[i];
-            if (mark) {
-              j = j + 1;
-            }
-            if (i > 0 && mark) {
-              sql2 = sql2 + " , ";
-            }
             var stud = {
               id_stud: rows[i].id,
               first_name: rows[i].first_name,
               last_name: rows[i].last_name,
             }
-
             studlist[i] = stud;
-            if (mark) {
+
+            if(mark){
+              j = j + 1; 
+              if(i>0 && pre_insert){
+                sql2 = sql2 + " , ";
+                pre_insert = 0;
+              }
               sql2 = sql2 + "(" + c + "," + stud.id_stud + "," + courseID + "," + mark + ", '" + date_mark + "' ," + period_mark + ",'" + mark_subj + "','" + descr_mark_subj + "','" + type_mark_subj + "')";
               c = c + 1;
+              pre_insert = 1;
             }
-
+            
+            
           }
           console.log(sql2);
           if (!mark_subj || !date_mark || !descr_mark_subj || !type_mark_subj || j < 1) {
