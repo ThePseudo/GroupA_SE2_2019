@@ -1,5 +1,5 @@
 //- Variables used: "user", "active", "childID", "fullName", "sidebarForceHidden", "classid", "courseid"
-//- User can be admin, teacher, sysadmin or parent
+//- User can be officer, teacher, sysadmin or parent
 
 mixin sidebar_item(link, text)
   if(text==active)
@@ -14,7 +14,7 @@ mixin small_item(link, text)
 
 if sidebarForceHidden
   div(class='sidebar' id='sidebar' style="margin-left: -100%;")
-    if(user=="admin")
+    if(user=="officer")
       a(class='active-sidebar-item' style="background:#B3E5FC;")
       a(class='active-sidebar-item' style="background:#B3E5FC; text-align:center; padding-right:10px; border-bottom: 1px solid rgba(0,0,0,.12);")
         | #{fullName}
@@ -32,7 +32,7 @@ if sidebarForceHidden
 
 else
   div(class='sidebar' id='sidebar')
-    if(user=="admin")
+    if(user=="officer")
       a(class='active-sidebar-item' style="background:#B3E5FC;")
       a(class='active-sidebar-item' style="background:#B3E5FC; padding-right:10px;")
         | #{fullName}
@@ -50,7 +50,8 @@ else
         | #{fullName}
       a(class='active-sidebar-item' style="background:#B3E5FC; border-bottom: 1px solid rgba(0,0,0,.12);")
       a(class='active-sidebar-item' style="background:#B3E5FC;")
-      +sidebar_item("/teacher/topics", "Insert daily topic")
+      +sidebar_item("/teacher/class/" + classid +"/course/" + courseid + "/course_home", "Course home page")
+      +sidebar_item("/teacher/class/" + classid +"/course/" + courseid + "/reg_topic", "Insert daily topic")
       +sidebar_item("/teacher/class/" + classid +"/course/" + courseid + "/add_material", "Add material")
       +sidebar_item("/teacher/class/" + classid +"/course/" + courseid + "/class_mark", "Insert marks (class)")
       +sidebar_item("/teacher/class/" + classid +"/course/" + courseid + "/insert_stuff", "Insert attendance and notes")
