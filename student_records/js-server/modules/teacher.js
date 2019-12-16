@@ -270,25 +270,27 @@ router.post("/class/:classid/course/:courseid/reg_mark", (req, res) => {
           let c = rows2[0].last_id + 1;
           var sql2 = "INSERT INTO mark(id,student_id,course_id,score,date_mark,period_mark,mark_subj,descr_mark_subj,type_mark_subj) VALUES ";
           var j = 0;
+          var pre_insert = 0;
           for (var i = 0; i < rows.length; ++i) {
             var mark = marks[i];
-            if(mark){
-              j = j + 1;
-            } 
-            if (i > 0 && mark) {
-              sql2 = sql2 + " , ";
-            }
             var stud = {
               id_stud: rows[i].id,
               first_name: rows[i].first_name,
               last_name: rows[i].last_name,
             }
-            
             studlist[i] = stud;
+
             if(mark){
+              j = j + 1; 
+              if(i>0 && pre_insert){
+                sql2 = sql2 + " , ";
+                pre_insert = 0;
+              }
               sql2 = sql2 + "(" + c + "," + stud.id_stud + "," + courseID + "," + mark + ", '" + date_mark + "' ," + period_mark + ",'" + mark_subj + "','" + descr_mark_subj + "','" + type_mark_subj + "')";
               c = c + 1;
+              pre_insert = 1;
             }
+            
             
           }
           console.log(sql2);
