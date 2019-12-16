@@ -10,6 +10,20 @@ const { body } = require('express-validator');
 
 var router = express.Router();
 
+
+router.use(/\/.*/, function (req, res, next) {
+    try {
+        if (req.session.user.user_type != 'officer') {
+            res.redirect("/");
+            return;
+        } else {
+            next();
+        }
+    } catch (err) {
+        res.redirect("/");
+    }
+});
+
 router.get("/officer_home", (req, res) => {
     const compiledPage = pug.compileFile("../pages/officer/officer_home.pug");
     res.end(compiledPage());

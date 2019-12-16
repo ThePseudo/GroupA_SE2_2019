@@ -21,6 +21,19 @@ var router = express.Router();
 /////////////////////////////////
 //ricambiare tutte le app in route
 
+router.use(/\/.*/, function (req, res, next) {
+    try {
+        if (req.session.user.user_type != 'admin') {
+            res.redirect("/");
+            return;
+        } else {
+            next();
+        }
+    } catch (err) {
+        res.redirect("/");
+    }
+});
+
 
 router.get("/admin_home", (req, res) => {
     const compiledPage = pug.compileFile("../pages/sysadmin/systemad_home.pug");
