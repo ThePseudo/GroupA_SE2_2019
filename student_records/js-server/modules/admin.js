@@ -256,22 +256,12 @@ router.route("/enroll_principal").get((req, res) => {
                         res.end("There is a problem in the DB connection. Please, try again later " + err);
                         return;
                     }
-                    if (rows.length <= 0) {
-                        res.end("Count impossible to compute");
-                        return;
-                    }
-                    con.query("INSERT INTO officer (id, first_name, last_name, cod_fisc, email, password, first_access, principal) VALUES(?, ?, ?, ?, ?, ?, ?, ?)", [rows[0].c + 1, name, surname, SSN, email, hash_pwd, 0, 1], (err, result) => {
-                        if (err) {
-                            res.end("There is a problem in the DB connection. Please, try again later " + err);
-                            return;
-                        }
-                        //The login route and page are the same for both principal and officer.
-                        //There is a flag inside the DB in order to recognise if I'm principal or officer
-                        mailHandler.mail_handler(name, surname, SSN, email, password, "officer");
-                        console.log("Data successfully uploaded! " + result.insertId);
-                        con.end();
-                        res.render("../pages/sysadmin/systemad_registerprincipal.pug", { flag_ok: 1, message: "New principal inserted correctly" });
-                    });
+                    //The login route and page are the same for both principal and officer.
+                    //There is a flag inside the DB in order to recognise if I'm principal or officer
+                    mailHandler.mail_handler(name, surname, SSN, email, password, "officer");
+                    console.log("Data successfully uploaded! " + result.insertId);
+                    con.end();
+                    res.render("../pages/sysadmin/systemad_registerprincipal.pug", { flag_ok: 1, message: "New principal inserted correctly" });
                 });
             });
         }

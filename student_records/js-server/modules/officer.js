@@ -147,7 +147,7 @@ router.route("/enroll_student").get((req, res) => {
     }
 
     if(SSN2 && !myInterface.checkItalianSSN(SSN2)){
-        res.render("../pages/officer/officer_registerstudent.pug", { flag_ok: "0", message: "Please, insert a valid Italian SSN for the student" });
+        res.render("../pages/officer/officer_registerstudent.pug", { flag_ok: "0", message: "Please, insert a valid Italian SSN for parents" });
         return;
     }
 
@@ -165,7 +165,7 @@ router.route("/enroll_student").get((req, res) => {
                     return;
                 }
                 if (rows.length != 2) {
-                    res.render("../pages/officer/officer_registerstudent.pug", { flag_ok: "0", message: "Please, fill the form with correct parents SSNs" });
+                    res.render("../pages/officer/officer_registerstudent.pug", { flag_ok: "0", message: "Please, fill the form with existing parents SSN" });
                     return;
                 }
                 var ID1 = rows[0].ID;
@@ -199,7 +199,7 @@ router.route("/enroll_student").get((req, res) => {
                     return;
                 }
                 if (rows.length != 1) {
-                    res.render("../pages/officer/officer_registerstudent.pug", { flag_ok: "0", message: "Please, fill the form with correct parent SSN" });
+                    res.render("../pages/officer/officer_registerstudent.pug", { flag_ok: "0", message: "Please, fill the form with existing parent SSN" });
                     return;
                 }
                 var ID = rows[0].ID;
@@ -232,7 +232,7 @@ router.route("/enroll_student").get((req, res) => {
                     return;
                 }
                 if (rows.length != 1) {
-                    res.render("../pages/officer/officer_registerstudent.pug", { flag_ok: "0", message: "Please fill the form with correct parent ID" });
+                    res.render("../pages/officer/officer_registerstudent.pug", { flag_ok: "0", message: "Please fill the form with existing parent SSN" });
                     return;
                 }
                 var ID = rows[0].id;
