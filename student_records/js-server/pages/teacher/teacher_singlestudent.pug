@@ -52,13 +52,13 @@ html
               div(class='col-sm-6')
                 div.form-group
                   label(for='course') Subject:
-                  input(type='text' placeholder='Subject' name='subject' class='form-control')
+                  input(type='text' id="mark_sub" oninput="checkMark()" placeholder='Subject' name='subject' class='form-control')
             div(class='row')
               div(class='col-sm-3')
               div(class='col-sm-6')
                 div.form-group
                   label(for='desc') Description:
-                  textarea(name="desc" form="markform" class="form-control" style="resize:none" rows="5")
+                  textarea(name="desc" id="mark_desc" oninput="checkMark()" form="markform" class="form-control" style="resize:none" rows="5")
             div(class='row')
               div(class='col-sm-3')
               div(class='col-sm-6')
@@ -88,7 +88,8 @@ html
             div(class="row")
               div(class='col-sm-5 col-lg-6')
               div(class='col-sm-4 col-lg-3 col-xs-10')
-                input(type='SUBMIT' value='Insert mark' name='insert_mark' class='btn blockButton' style='margin-top: 24px; padding: 6px 10px; margin-left:25%; width: 75%;')
+                input(type='SUBMIT' value='Insert mark' id='insert_mark' name='insert_mark' class='btn blockButton' style='margin-top: 24px; padding: 6px 10px; margin-left:25%; width: 75%;' disabled)
+      //- Note
       div(class="row")
         h2(class="title2") New note
       div(class="row")
@@ -99,11 +100,11 @@ html
               div(class='col-xs-12 col-sm-6')
                 div.form-group
                   label(for='note') Note:
-                  textarea(name="note" form="noteform" class="form-control" style="resize:none" rows="5")
+                  textarea(name="note" id="note_desc" oninput="checkNote() " form="noteform" class="form-control" style="resize:none" rows="5")
             div(class="row")
               div(class='col-sm-5 col-lg-6')
               div(class='col-sm-4 col-lg-3 col-xs-10')
-                input(type='SUBMIT' value='Insert note' name='insert_note' class='btn blockButton' style='margin-top: 24px; padding: 6px 10px; margin-left:25%; width: 75%;')
+                input(type='SUBMIT' value='Insert note' id='insert_note' name='insert_note' class='btn blockButton' style='margin-top: 24px; padding: 6px 10px; margin-left:25%; width: 75%;' disabled)
       //- List of marks
       div(class="row")
         h2(class="title2") Marks

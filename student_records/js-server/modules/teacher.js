@@ -283,20 +283,20 @@ router.get("/class/:classid/course/:courseid/class_mark", (req, res) => {
 //TODO
 router.post("/class/:classid/course/:courseid/reg_mark", (req, res) => {
 
-    var fullName = req.session.user.first_name + " " + req.session.user.last_name;
-    const compiledPage = pug.compileFile("../pages/teacher/teacher_insertclassmark.pug");
-    var con = myInterface.DBconnect();
+  var fullName = req.session.user.first_name + " " + req.session.user.last_name;
+  const compiledPage = pug.compileFile("../pages/teacher/teacher_insertclassmark.pug");
+  var con = myInterface.DBconnect();
 
 
-    var classID = req.params.classid;
-    var courseID = req.params.courseid;
-    var teacherID = req.session.user.id;
-    var date_mark = req.body.date;
-    var period_mark = 0;
-    var mark_subj = req.body.subject;
-    var descr_mark_subj = req.body.desc;
-    var type_mark_subj = req.body.type;
-    var sql = "SELECT St.id, first_name, last_name FROM student AS St, teacher_course_class AS Tcc " +
+  var classID = req.params.classid;
+  var courseID = req.params.courseid;
+  var teacherID = req.session.user.id;
+  var date_mark = req.body.date;
+  var period_mark = 0;
+  var mark_subj = req.body.subject;
+  var descr_mark_subj = req.body.desc;
+  var type_mark_subj = req.body.type;
+  var sql = "SELECT St.id, first_name, last_name FROM student AS St, teacher_course_class AS Tcc " +
     "WHERE Tcc.course_id = ? " +
     "AND St.class_id = ? AND Tcc.class_id = ? " +
     "AND Tcc.teacher_id = ? ";
@@ -321,9 +321,9 @@ router.post("/class/:classid/course/:courseid/reg_mark", (req, res) => {
           var j = 0;
           for (var i = 0; i < rows.length; ++i) {
             var mark = marks[i];
-            if(mark){
+            if (mark) {
               j = j + 1;
-            } 
+            }
             if (i > 0 && mark) {
               sql2 = sql2 + " , ";
             }
@@ -332,50 +332,50 @@ router.post("/class/:classid/course/:courseid/reg_mark", (req, res) => {
               first_name: rows[i].first_name,
               last_name: rows[i].last_name,
             }
-            
+
             studlist[i] = stud;
-            if(mark){
+            if (mark) {
               sql2 = sql2 + "(" + c + "," + stud.id_stud + "," + courseID + "," + mark + ", '" + date_mark + "' ," + period_mark + ",'" + mark_subj + "','" + descr_mark_subj + "','" + type_mark_subj + "')";
               c = c + 1;
             }
-            
+
           }
           console.log(sql2);
-          if (!mark_subj || !date_mark || !descr_mark_subj || !type_mark_subj || j<1 ) {
-            res.render("../pages/teacher/teacher_insertclassmark.pug", { fullName:fullName, courseid:courseID, classid:classID, studlist:studlist, flag_ok: "0", message: "Please fill the form correctly" });
+          if (!mark_subj || !date_mark || !descr_mark_subj || !type_mark_subj || j < 1) {
+            res.render("../pages/teacher/teacher_insertclassmark.pug", { fullName: fullName, courseid: courseID, classid: classID, studlist: studlist, flag_ok: "0", message: "Please fill the form correctly" });
             return;
           }
-            con.query(sql2, (err, rows, fields) => {
-              if (err) {
-                res.end("Database problem errore qui: " + err);
-                return;
-              }
-              else {
-                var sql3 = "SELECT * FROM mark";
-                con.query(sql3, (err, rows, fields) => {
-                  if (err) {
-                    res.end("Database problem errore sql3: " + err);
-                    return;
+          con.query(sql2, (err, rows, fields) => {
+            if (err) {
+              res.end("Database problem errore qui: " + err);
+              return;
+            }
+            else {
+              var sql3 = "SELECT * FROM mark";
+              con.query(sql3, (err, rows, fields) => {
+                if (err) {
+                  res.end("Database problem errore sql3: " + err);
+                  return;
+                }
+                else {
+                  for (var j = 0; j < rows.length; j++) {
+                    console.log(rows[j].id + " " + rows[j].student_id + " " + rows[j].course_id + " " + rows[j].score + " " +
+                      rows[j].date_mark + " " + rows[j].period_mark + " " +
+                      rows[j].mark_subj + " " + rows[j].descr_mark_subj + " " + rows[j].type_mark_subj);
                   }
-                  else {
-                    for (var j = 0; j < rows.length; j++) {
-                      console.log(rows[j].id + " " + rows[j].student_id + " " + rows[j].course_id + " " + rows[j].score + " " +
-                        rows[j].date_mark + " " + rows[j].period_mark + " " +
-                        rows[j].mark_subj + " " + rows[j].descr_mark_subj + " " + rows[j].type_mark_subj);
-                    }
-                    con.end();
-                    console.log("Data successfully uploaded! ");
-                    res.render("../pages/teacher/teacher_insertclassmark.pug", { fullName: fullName, courseid: courseID, classid: classID, studlist: studlist, flag_ok: "1", message: "New class marks inserted correctly" });
-                    return;
-                  }
-                });
-              }
-            });
-          }
-        });
-      }
+                  con.end();
+                  console.log("Data successfully uploaded! ");
+                  res.render("../pages/teacher/teacher_insertclassmark.pug", { fullName: fullName, courseid: courseID, classid: classID, studlist: studlist, flag_ok: "1", message: "New class marks inserted correctly" });
+                  return;
+                }
+              });
+            }
+          });
+        }
       });
-    });
+    }
+  });
+});
 //TODO
 router.get("/class/:classid/course/:courseid/add_material", (req, res) => {
 });
@@ -440,7 +440,10 @@ router.get("/class/:classid/course/:courseid/student/:studentid", (req, res) => 
   // test: https://localhost:8080/teacher/class/1/course/1/student/1
 });
 
-router.post("/class/:classid/course/:courseid/student/:studentid/insert_mark", (req, res) => {
+router.post("/class/:classid/course/:courseid/student/:studentid/insert_mark", [
+  body('subject').escape(),
+  body('desc').escape()
+], (req, res) => {
   var studentID = req.params.studentid;
   var courseID = req.params.courseid;
 
@@ -460,12 +463,16 @@ router.post("/class/:classid/course/:courseid/student/:studentid/insert_mark", (
   }
 
   // Check on nullables
-  if (subject == "" || description == "") {
+  if (subject.replace(/ /g, '').replace(/(?:\r\n|\r|\n)/g, '') == "" ||
+    description.replace(/ /g, '').replace(/(?:\r\n|\r|\n)/g, '') == "") {
     res.redirect("../" + studentID + "?msg=markerr");
     return;
   }
 
-  var sql = "SELECT COUNT(*) AS id FROM mark";
+  console.log(subject + "\n" + description);
+
+
+  var sql = "SELECT COUNT(*) AS id FROM mark FOR UPDATE;";
   var con = db.DBconnect();
   con.query(sql, (err, rows, fields) => {
     if (err) {
@@ -479,12 +486,44 @@ router.post("/class/:classid/course/:courseid/student/:studentid/insert_mark", (
       "VALUES(?,?,?,?,?,?,?,?,?);";
     con.query(sql, [id, studentID, courseID, finalMark, dateMark, period, subject, description, type],
       (err, result) => {
+        con.end();
         if (err) {
           res.end("Database error: " + err);
           return;
         }
         res.redirect("../" + studentID + "?msg=markok");
       });
+  });
+});
+
+router.post("/class/:classid/course/:courseid/student/:studentid/insert_note", [
+  body('note').escape()
+], (req, res) => {
+  var studentID = req.params.studentid;
+  var teacherID = req.session.user.id;
+  var note = req.body.note;
+  if (note.replace(/ /g, '').replace(/(?:\r\n|\r|\n)/g, '') == '') {
+    res.redirect("../" + studentID + "?msg=noteerr");
+    return;
+  }
+  var con = db.DBconnect()
+  var sql = "SELECT COUNT(*) AS id FROM note FOR UPDATE;";
+  con.query(sql, (err, rows, fields) => {
+    if (err) {
+      res.end("Database error: " + err);
+      return;
+    }
+    var id = rows[0].id;
+    ++id;
+    sql = "INSERT INTO note(id, student_id, teacher_id, note_date, motivation, justified) " +
+      "VALUES(?,?,?,?,?,?);"
+    con.query(sql, [id, studentID, teacherID, new Date(), note, 0], (err, result) => {
+      if (err) {
+        res.end("Database error: " + err);
+        return;
+      }
+      res.redirect("../" + studentID + "?msg=noteok");
+    });
   });
 });
 
