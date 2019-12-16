@@ -391,7 +391,10 @@ router.get("/class/:classid/course/:courseid/student/:studentid", (req, res) => 
   // test: https://localhost:8080/teacher/class/1/course/1/student/1
 });
 
-router.post("/class/:classid/course/:courseid/student/:studentid/insert_mark", (req, res) => {
+router.post("/class/:classid/course/:courseid/student/:studentid/insert_mark", [
+  body('subject').escape(),
+  body('desc').escape()
+], (req, res) => {
   var studentID = req.params.studentid;
   var courseID = req.params.courseid;
 
@@ -415,6 +418,9 @@ router.post("/class/:classid/course/:courseid/student/:studentid/insert_mark", (
     res.redirect("../" + studentID + "?msg=markerr");
     return;
   }
+
+  console.log(subject + "\n" + description);
+
 
   var sql = "SELECT COUNT(*) AS id FROM mark";
   var con = db.DBconnect();
