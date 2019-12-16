@@ -20,11 +20,6 @@ router.get("/enroll_student", (req, res) => {
     res.end(compiledPage());
 });
 
-router.get("/enroll_parent", (req, res) => {
-    const compiledPage = pug.compileFile("./pages/officer/officer_registerparent.pug");
-    res.end(compiledPage());
-});
-
 router.get("/insert_communication", (req, res) => {
     const compiledPage = pug.compileFile("./pages/officer/officer_communication.pug");
     res.end(compiledPage());
@@ -61,62 +56,59 @@ router.post("/insert_comm", [body('name')
 });
 
 
-router.route("/reg_parent").post([body('name')
-    .not().isEmpty()
-    .trim()
-    .escape(), body('surname')
-        .not().isEmpty()
-        .trim()
-        .escape(), body('SSN')
-            .not().isEmpty()
-            .trim()
-            .escape(), body('email')
-                .not().isEmpty()
-                .trim()
-                .escape().isEmail()
-], (req, res) => {
+router.route("/enroll_parent").get((req, res) => {
+    res.render("../pages/officer/officer_registerparent.pug");
+}).post(
+    [
+    body('name').trim().escape(), 
+    body('surname').trim().escape(), 
+    body('SSN').trim().escape(),
+    body('email').trim().escape().isEmail().normalizeEmail()
+], 
+(req, res) => {
     let name = req.body.name;
     let surname = req.body.surname;
     let SSN = req.body.SSN;
     let email = req.body.email;
-    //Random string of 16 chars ; isa:ho aggiunto il punto e virgola mancante
     let password = Math.random().toString(36).substring(2, 10) + Math.random().toString(36).substring(2, 10);
     let hash_pwd = bcrypt.hashSync(password, 10);
-
     var con = db.DBconnect();
 
     if (!name || !surname || !SSN || !email) {
-        res.render("../pages/officer/officer_registerparent.pug", { flag_ok: "0", message: "Please fill the form correctly" });
+        res.render("../pages/officer/officer_registerparent.pug", { flag_ok: "0", message: "Please, fill the form correctly" });
         return;
     }
 
-    con.query('SELECT COUNT(*) as c FROM parent', (err, rows, fields) => { // because we have no AUTO_UPDATE available on the DB
+    //TODO:check valid email format server side
+    //TODO: check italian SSN correct format
+
+    //Check if SSN already inserted (so the new parent's data is expected to be already inside the db)
+    con.query('SELECT * FROM parent WHERE cod_fisc = ?',[SSN], (err, rows) => {
         if (err) {
             res.end("There is a problem in the DB connection. Please, try again later " + err);
             return;
         }
-        let count = rows[0].c + 1;
-        con.query('SELECT COUNT(*) as c FROM parent WHERE cod_fisc = ?', [SSN], (err, rows, fields) => {
-            if (err) {
-                res.end("There is a problem in the DB connection. Please, try again later " + err);
-                return;
-            }
-            if (rows[0].c == 0) {
-                con.query("INSERT INTO parent(id, first_name, last_name, cod_fisc, email, password, first_access) VALUES(?, ?, ?, ?, ?, ?, ?)", [count, name, surname, SSN, email, hash_pwd, 0], (err, result) => {
+
+        if(rows.length > 0){
+            res.render("../pages/officer/officer_registerparent.pug", { flag_ok: "0", message: "Parent already exists"});
+        }else{
+            con.query('SELECT COUNT(*) as c FROM parent', (err, rows) => { // because we have no AUTO_UPDATE available on the DB
+                if (err) {
+                    res.end("There is a problem in the DB connection. Please, try again later " + err);
+                    return;
+                }
+                con.query("INSERT INTO parent(id, first_name, last_name, cod_fisc, email, password, first_access) VALUES(?, ?, ?, ?, ?, ?, ?)", [rows[0].c + 1, name, surname, SSN, email, hash_pwd, 0], (err, result) => {
                     if (err) {
                         res.end("There is a problem in the DB connection. Please, try again later " + err);
                         return;
                     }
                     mailHandler.mail_handler(name, surname, SSN, email, password, "parent");
-                    res.render("../pages/officer/officer_registerparent.pug", { flag_ok: "1", message: "New parent insertly correctly" });
+                    res.render("../pages/officer/officer_registerparent.pug", { flag_ok: "1", message: "New parent inserted correctly" });
                     con.end();
                     return;
                 });
-            } else {
-                res.render("../pages/officer/officer_registerparent.pug", { flag_ok: "0", message: "Parent already exist" });
-                return;
-            }
-        });
+            });
+        }
     });
 });
 

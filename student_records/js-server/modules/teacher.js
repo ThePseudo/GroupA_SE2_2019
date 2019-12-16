@@ -68,7 +68,7 @@ router.post("/up_file", [body('desc')
     });
     con.end();
     if (!desc || !file) {
-      res.render("../pages/teacher/teacher_coursematerial.pug", { flag_ok: "0", message: "Please fill the description and upload the file", Courses: Course_list });
+      res.render("../pages/teacher/teacher_coursematerial.pug", { flag_ok: "0", message: "Please, fill the description and upload the file", Courses: Course_list });
       return;
     }
     res.render("../pages/teacher/teacher_coursematerial.pug", {
@@ -206,7 +206,7 @@ router.route("/class/:classid/course/:courseid/reg_topic").get((req, res) => {
   if(!description || !date || !topic_name){
     res.render("../pages/teacher/teacher_coursetopic.pug",{
       ok_flag: 0,
-      message: "Please fill all the form fieds",
+      message: "Please, fill all the form fieds",
       fullName: fullName,
       dateString: dateString,
       courseid: req.params.courseid,

@@ -63,7 +63,7 @@ VALUES
 INSERT INTO parent
     (id, first_name, last_name,cod_fisc,email,password, first_access)
 VALUES
-    (3, "Marco", "Verdi", "4444", "marco@verdi.com", "$2a$10$0tXRERd11hkw3zKQQmFeTOAuUcMiI6/ThiMNvfMUvKmYkWkL0BRkO", 1);
+    (3, "Marco", "Verdi", "3333", "marco@verdi.com", "$2a$10$0tXRERd11hkw3zKQQmFeTOAuUcMiI6/ThiMNvfMUvKmYkWkL0BRkO", 1);
 
 CREATE TABLE student
 (
@@ -72,7 +72,7 @@ CREATE TABLE student
     last_name VARCHAR(50) NOT NULL,
     cod_fisc VARCHAR(20) UNIQUE NOT NULL,
     class_id INT,
-    parent_1 INT,
+    parent_1 INT NOT NULL,
     parent_2 INT
 );
 
@@ -94,7 +94,12 @@ VALUES
 INSERT INTO student
     (id,first_name,last_name,cod_fisc,class_id,parent_1,parent_2)
 VALUES
-    (4, "Serena", "Fetta", "GZ0OO", 2, 3, 4);
+    (4, "Serena", "Fetta", "GZ0OO", 2, 2, 3);
+
+INSERT INTO student
+    (id,first_name,last_name,cod_fisc,class_id,parent_1,parent_2)
+VALUES
+    (5, "Francesca", "Fetta", "PX7OO", 2, 2, 3);
 
 -- Classes
 
