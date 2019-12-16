@@ -247,7 +247,19 @@ router.post("/class/:classid/course/:courseid/reg_mark", (req, res) => {
     var mark_subj = req.body.subject;
     var descr_mark_subj = req.body.desc;
     var type_mark_subj = req.body.type;
+    var sql = "SELECT St.id, first_name, last_name FROM student AS St, teacher_course_class AS Tcc " +
+    "WHERE Tcc.course_id = ? " +
+    "AND St.class_id = ? AND Tcc.class_id = ? " +
+    "AND Tcc.teacher_id = ? ";
 
+  con.query(sql, [courseID, classID, classID, teacherID], (err, rows, fields) => {
+    if (err) {
+      res.end("Database problem reg_mark: " + err);
+      return;
+    }
+    else {
+      var marks = req.body.mark;
+      var studlist = [];
       var sql4 = "SELECT MAX(id) as last_id FROM mark";
       con.query(sql4, (err, rows2, fields2) => {
         if (err) {
@@ -312,8 +324,9 @@ router.post("/class/:classid/course/:courseid/reg_mark", (req, res) => {
             });
           }
         });
+      }
       });
-
+    });
 //TODO
 router.get("/class/:classid/course/:courseid/add_material", (req, res) => {
 });
