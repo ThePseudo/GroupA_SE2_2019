@@ -207,49 +207,6 @@ router.post("/reg_teacher", (req, res) => {
     });
 });
 
-
-router.post("/reg_topic", (req, res) => {
-    let course = req.body.course;
-    let date = req.body.date;
-    let classroom = req.body.class;
-    let desc = req.body.desc;
-
-    var con = db.DBconnect();
-
-
-    let sql = 'SELECT id FROM class WHERE class_name = ?';
-    con.query(sql, [classroom], function (err, rows, fields) {
-        if (err) {
-            res.end("There is a problem in the DB connection. Please, try again later " + err);
-            return;
-        }
-        var class_id = rows[0].id;
-        sql = 'SELECT id FROM course WHERE course_name = ?';
-        con.query(sql, [course], (err, rows, fields) => {
-            if (err) {
-                res.end("There is a problem in the DB connection. Please, try again later " + err);
-                return;
-            }
-            var course_id = rows[0].id + 1;
-            con.query('SELECT COUNT(*) as c FROM topic', (err, rows, fields) => { // because we have no AUTO_UPDATE available on the DB
-                if (err) {
-                    res.end("There is a problem in the DB connection. Please, try again later " + err);
-                    return;
-                }
-                con.query("INSERT INTO topic(id, topic_date, id_class, id_course, description) VALUES(?, ?, ?, ?, ?)", [rows[0].c, date, class_id, course_id, desc], (err, result) => {
-                    if (err) {
-                        res.end("There is a problem in the DB connection. Please, try again later " + err);
-                        return;
-                    }
-                    console.log("Data successfully uploaded! " + result.insertId);
-                    con.end();
-                    res.redirect("/topics");
-                });
-            });
-        });
-    });
-});
-
 router.post("/register", (req, res) => {
     var name = req.body.name;
     var surname = req.body.surname;
