@@ -5,7 +5,7 @@ const pug = require('pug');
 //const mailHandler = require("../modules/ethereal.js"); one-time email modules disabled but it works (maybe just for test!)
 const mailHandler = require("./nodemailer.js");
 const bcrypt = require('bcrypt');
-const db = require('../modules/functions.js');
+const myInterface = require('../modules/functions.js');
 const { body } = require('express-validator');
 
 var router = express.Router();
@@ -27,7 +27,7 @@ router.post("/insert_comm", [body('name')
 ], (req, res) => {
     let desc = req.body.desc;
 
-    var con = db.DBconnect();
+    var con = myInterface.DBconnect();
     let date = new Date();
     if (!desc) {
         res.render("../pages/officer/officer_communication.pug", { flag_ok: "0", message: "Please fill the description" });
@@ -67,16 +67,20 @@ router.route("/enroll_parent").get((req, res) => {
     let email = req.body.email;
     let password = Math.random().toString(36).substring(2, 10) + Math.random().toString(36).substring(2, 10);
     let hash_pwd = bcrypt.hashSync(password, 10);
-    var con = db.DBconnect();
+    var con = myInterface.DBconnect();
 
     if (!name || !surname || !SSN || !email) {
         res.render("../pages/officer/officer_registerparent.pug", { flag_ok: "0", message: "Please, fill the form correctly" });
         return;
     }
 
-    //TODO:check valid email format server side
-    //TODO: check italian SSN correct format
+    if(!myInterface.checkItalianSSN(SSN)){
+        res.render("../pages/officer/officer_registerparent.pug", { flag_ok: "0", message: "Please, insert a valid Italian SSN" });
+        return;
+    }
 
+    //TODO: check email format
+    
     //Check if SSN already inserted (so the new parent's data is expected to be already inside the db)
     con.query('SELECT * FROM parent WHERE cod_fisc = ?',[SSN], (err, rows) => {
         if (err) {
@@ -125,10 +129,25 @@ router.route("/enroll_student").get((req, res) => {
     let SSN1 = req.body.SSN1;
     let SSN2 = req.body.SSN2;
 
-    var con = db.DBconnect();
+    var con = myInterface.DBconnect();
 
     if (!name || !surname || !SSN) {
         res.render("../pages/officer/officer_registerstudent.pug", { flag_ok: "0", message: "Please, fill the form correctly" });
+        return;
+    }
+
+    if(!myInterface.checkItalianSSN(SSN)){
+        res.render("../pages/officer/officer_registerstudent.pug", { flag_ok: "0", message: "Please, insert a valid Italian SSN for the student" });
+        return;
+    }
+
+    if(SSN1 && !myInterface.checkItalianSSN(SSN1)){
+        res.render("../pages/officer/officer_registerstudent.pug", { flag_ok: "0", message: "Please, insert a valid Italian SSN for parents" });
+        return;
+    }
+
+    if(SSN2 && !myInterface.checkItalianSSN(SSN2)){
+        res.render("../pages/officer/officer_registerstudent.pug", { flag_ok: "0", message: "Please, insert a valid Italian SSN for the student" });
         return;
     }
 

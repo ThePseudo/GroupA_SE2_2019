@@ -83,8 +83,12 @@ router.route("/enroll_teacher").get((req, res) => {
         return;
     }
 
+    if(!myInterface.checkItalianSSN(SSN)){
+        res.render("../pages/sysadmin/systemad_registerteacher.pug", { flag_ok: "0", message: "Please, insert a valid Italian SSN" });
+        return;
+    }
     //TODO:check valid email format server side
-    //TODO: check italian SSN correct format
+    
 
 
     //Check if SSN already inserted (so the new teacher's data is expected to be already inside the db)
@@ -147,8 +151,12 @@ router.route("/enroll_officer").get((req, res) => {
         return;
     }
 
+    if(!myInterface.checkItalianSSN(SSN)){
+        res.render("../pages/sysadmin/systemad_registerofficer.pug", { flag_ok: "0", message: "Please, insert a valid Italian SSN" });
+        return;
+    }
     //TODO:check valid email format server side
-    //TODO: check italian SSN correct format
+   
 
     //Check if SSN already inserted (so the new officer/principal's data is expected to be already inside the db)
     con.query('SELECT * FROM officer WHERE cod_fisc = ?',[SSN], (err, rows) => {
@@ -208,8 +216,12 @@ router.route("/enroll_principal").get((req, res) => {
         return;
     }
 
+    if(!myInterface.checkItalianSSN(SSN)){
+        res.render("../pages/sysadmin/systemad_registerprincipal.pug", { flag_ok: "0", message: "Please, insert a valid Italian SSN" });
+        return;
+    }
     //TODO:check valid email format server side
-    //TODO: check italian SSN correct format
+    
 
     //Check if SSN already inserted (so the new officer/principal's data is expected to be already inside the db)
     con.query('SELECT * FROM officer WHERE cod_fisc = ?',[SSN], (err, rows) => {

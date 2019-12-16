@@ -6,7 +6,7 @@ CREATE TABLE teacher
     id INT PRIMARY KEY,
     first_name VARCHAR(50) NOT NULL,
     last_name VARCHAR(50) NOT NULL,
-    cod_fisc VARCHAR(20) UNIQUE NOT NULL,
+    cod_fisc VARCHAR(16) UNIQUE NOT NULL,
     email VARCHAR(100) NOT NULL,
     password VARCHAR(255) NOT NULL,
     first_access BOOLEAN NOT NULL
@@ -21,14 +21,14 @@ VALUES
 INSERT INTO teacher
     (id,first_name,last_name,cod_fisc,email,password,first_access)
 VALUES
-    (2, "Marina", "Indri", "MR64Y", "marina64@yahoo.com", "$2a$10$0tXRERd11hkw3zKQQmFeTOAuUcMiI6/ThiMNvfMUvKmYkWkL0BRkO", 1);
+    (2, "Marina", "Indri", "RVEQXX32E18B392G", "marina64@yahoo.com", "$2a$10$0tXRERd11hkw3zKQQmFeTOAuUcMiI6/ThiMNvfMUvKmYkWkL0BRkO", 1);
 
 CREATE TABLE officer
 (
     id INT PRIMARY KEY,
     first_name VARCHAR(50) NOT NULL,
     last_name VARCHAR(50) NOT NULL,
-    cod_fisc VARCHAR(20) UNIQUE NOT NULL,
+    cod_fisc VARCHAR(16) UNIQUE NOT NULL,
     email VARCHAR(100) NOT NULL,
     password VARCHAR(255) NOT NULL,
     first_access BOOLEAN NOT NULL,
@@ -40,12 +40,17 @@ INSERT INTO officer
 VALUES
     (1, "Ciccio", "Pasticcio", "CP80X", "pasticcio80@gmail.com", "$2a$10$0tXRERd11hkw3zKQQmFeTOAuUcMiI6/ThiMNvfMUvKmYkWkL0BRkO", 1, 0);
 
+INSERT INTO officer
+    (id,first_name,last_name,cod_fisc,email,password,first_access, principal)
+VALUES
+    (2, "Tommaso", "Bodda", "FTEZMF95C47E840N", "bodda75@gmail.com", "$2a$10$0tXRERd11hkw3zKQQmFeTOAuUcMiI6/ThiMNvfMUvKmYkWkL0BRkO", 1, 0);
+
 CREATE TABLE parent
 (
     id INT PRIMARY KEY,
     first_name VARCHAR(50) NOT NULL,
     last_name VARCHAR(50) NOT NULL,
-    cod_fisc VARCHAR(20) UNIQUE NOT NULL,
+    cod_fisc VARCHAR(16) UNIQUE NOT NULL,
     email VARCHAR(100) NOT NULL,
     password VARCHAR(255) NOT NULL,
     first_access BOOLEAN NOT NULL
@@ -54,52 +59,52 @@ CREATE TABLE parent
 INSERT INTO parent
     (id, first_name, last_name,cod_fisc,email,password, first_access)
 VALUES
-    (1, "Tizio", "Caio", "1111", "tizio@caio.com", "$2a$10$0tXRERd11hkw3zKQQmFeTOAuUcMiI6/ThiMNvfMUvKmYkWkL0BRkO", 1);
+    (1, "Alberto", "Rosso", "1111", "tizio@caio.com", "$2a$10$0tXRERd11hkw3zKQQmFeTOAuUcMiI6/ThiMNvfMUvKmYkWkL0BRkO", 1);
 
 INSERT INTO parent
     (id, first_name, last_name,cod_fisc,email,password, first_access)
 VALUES
-    (2, "Giorno", "Giovanna", "2222", "giorno@giovanna.com", "$2a$10$0tXRERd11hkw3zKQQmFeTOAuUcMiI6/ThiMNvfMUvKmYkWkL0BRkO", 1);
+    (2, "Piero", "Fetta", "HDDRWU63L46D667M", "giorno@giovanna.com", "$2a$10$0tXRERd11hkw3zKQQmFeTOAuUcMiI6/ThiMNvfMUvKmYkWkL0BRkO", 1);
 INSERT INTO parent
     (id, first_name, last_name,cod_fisc,email,password, first_access)
 VALUES
-    (3, "Marco", "Verdi", "3333", "marco@verdi.com", "$2a$10$0tXRERd11hkw3zKQQmFeTOAuUcMiI6/ThiMNvfMUvKmYkWkL0BRkO", 1);
+    (3, "Marco", "Verdi", "DZJVSL56R55D763T", "marco@verdi.com", "$2a$10$0tXRERd11hkw3zKQQmFeTOAuUcMiI6/ThiMNvfMUvKmYkWkL0BRkO", 1);
 
 CREATE TABLE student
 (
     id INT PRIMARY KEY,
     first_name VARCHAR(50) NOT NULL,
     last_name VARCHAR(50) NOT NULL,
-    cod_fisc VARCHAR(20) UNIQUE NOT NULL,
+    cod_fisc VARCHAR(16) UNIQUE NOT NULL,
     class_id INT,
-    parent_1 INT NOT NULL,
-    parent_2 INT
+    parent_1 VARCHAR(16) NOT NULL,
+    parent_2 VARCHAR(16)
 );
 
 INSERT INTO student
     (id,first_name,last_name,cod_fisc,class_id,parent_1,parent_2)
 VALUES
-    (1, "Giove", "Zeus", "GZ03A", 2, 1, 2);
+    (1, "Angelo", "Rosso", "NJRGTD35P14B145Z", 2, 1, 2);
 
 INSERT INTO student
     (id,first_name,last_name,cod_fisc,class_id,parent_1,parent_2)
 VALUES
-    (2, "Martino", "Arte", "GPP3A", 2, 1, 2);
+    (2, "Martino", "Arte", "RLIZFH80S05E249F", 2, 1, 2);
 
 INSERT INTO student
     (id,first_name,last_name,cod_fisc,class_id,parent_1,parent_2)
 VALUES
-    (3, "Martinella", "Leone", "AA03A", 2, 1, 2);
+    (3, "Martinella", "Leone", "JDKDMY59L04H816S", 2, 1, 2);
 
 INSERT INTO student
     (id,first_name,last_name,cod_fisc,class_id,parent_1,parent_2)
 VALUES
-    (4, "Serena", "Fetta", "GZ0OO", 2, 2, 3);
+    (4, "Serena", "Fetta", "BSOWTD48P60F492T", 2, 2, 3);
 
 INSERT INTO student
     (id,first_name,last_name,cod_fisc,class_id,parent_1,parent_2)
 VALUES
-    (5, "Francesca", "Fetta", "PX7OO", 2, 2, 3);
+    (5, "Francesca", "Fetta", "DVBGDD76L56E934Y", 2, 2, 3);
 
 -- Classes
 
@@ -166,7 +171,7 @@ CREATE TABLE admin
     id INT PRIMARY KEY,
     first_name VARCHAR(50) NOT NULL,
     last_name VARCHAR(50) NOT NULL,
-    cod_fisc VARCHAR(20) UNIQUE NOT NULL,
+    cod_fisc VARCHAR(16) UNIQUE NOT NULL,
     email VARCHAR(100) NOT NULL,
     password VARCHAR(255) NOT NULL
 );
@@ -174,7 +179,12 @@ CREATE TABLE admin
 INSERT INTO admin
     (id,first_name,last_name,cod_fisc,email,password)
 VALUES
-    (1, "Giovanni", "Rossi", "GPS67", "Rossi@yahoo.com", "$2a$10$0tXRERd11hkw3zKQQmFeTOAuUcMiI6/ThiMNvfMUvKmYkWkL0BRkO");
+    (1, "Giovanni", "Rossi", "GPS67", "rossi@yahoo.com", "$2a$10$0tXRERd11hkw3zKQQmFeTOAuUcMiI6/ThiMNvfMUvKmYkWkL0BRkO");
+
+INSERT INTO admin
+    (id,first_name,last_name,cod_fisc,email,password)
+VALUES
+    (2, "Arturo", "Merzario", "SJINBL63M03B687S", "racers@yahoo.com", "$2a$10$0tXRERd11hkw3zKQQmFeTOAuUcMiI6/ThiMNvfMUvKmYkWkL0BRkO");
 
 CREATE TABLE topic
 (
