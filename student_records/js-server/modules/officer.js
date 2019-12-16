@@ -15,11 +15,6 @@ router.get("/officer_home", (req, res) => {
     res.end(compiledPage());
 });
 
-router.get("/enroll_student", (req, res) => {
-    const compiledPage = pug.compileFile("./pages/officer/officer_registerstudent.pug");
-    res.end(compiledPage());
-});
-
 router.get("/insert_communication", (req, res) => {
     const compiledPage = pug.compileFile("./pages/officer/officer_communication.pug");
     res.end(compiledPage());
@@ -113,23 +108,17 @@ router.route("/enroll_parent").get((req, res) => {
 });
 
 
-router.route("/reg_student").post([body('name')
-    .not().isEmpty()
-    .trim()
-    .escape(), body('surname')
-        .not().isEmpty()
-        .trim()
-        .escape(), body('SSN')
-            .not().isEmpty()
-            .trim()
-            .escape(), body('SSN1')
-                .not().isEmpty()
-                .trim()
-                .escape(), body('SSN2')
-                    .not().isEmpty()
-                    .trim()
-                    .escape()
-], (req, res) => {
+router.route("/enroll_student").get((req, res) => {
+    res.render("../pages/officer/officer_registerstudent.pug");
+}).post(
+    [
+        body('name').trim().escape(), 
+        body('surname').trim().escape(), 
+        body('SSN').trim().escape(), 
+        body('SSN1').trim().escape(), 
+        body('SSN2').trim().escape()
+    ], 
+(req, res) => {
     let name = req.body.name;
     let surname = req.body.surname;
     let SSN = req.body.SSN;
@@ -139,7 +128,7 @@ router.route("/reg_student").post([body('name')
     var con = db.DBconnect();
 
     if (!name || !surname || !SSN) {
-        res.render("../pages/officer/officer_registerstudent.pug", { flag_ok: "0", message: "Please fill the form correctly" });
+        res.render("../pages/officer/officer_registerstudent.pug", { flag_ok: "0", message: "Please, fill the form correctly" });
         return;
     }
 
@@ -157,7 +146,7 @@ router.route("/reg_student").post([body('name')
                     return;
                 }
                 if (rows.length != 2) {
-                    res.render("../pages/officer/officer_registerstudent.pug", { flag_ok: "0", message: "Please fill the form with correct parents IDs" });
+                    res.render("../pages/officer/officer_registerstudent.pug", { flag_ok: "0", message: "Please, fill the form with correct parents SSNs" });
                     return;
                 }
                 con.query('SELECT COUNT(*) as c FROM student WHERE cod_fisc = ?', [SSN], (err, rows, fields) => {
@@ -176,7 +165,7 @@ router.route("/reg_student").post([body('name')
                             return;
                         });
                     } else {
-                        res.render("../pages/officer/officer_registerstudent.pug", { flag_ok: "0", message: "Student already exist" });
+                        res.render("../pages/officer/officer_registerstudent.pug", { flag_ok: "0", message: "Student already exists" });
                         return;
                     }
                 });
@@ -188,7 +177,7 @@ router.route("/reg_student").post([body('name')
                     return;
                 }
                 if (rows.length != 1) {
-                    res.render("../pages/officer/officer_registerstudent.pug", { flag_ok: "0", message: "Please fill the form with correct parent ID" });
+                    res.render("../pages/officer/officer_registerstudent.pug", { flag_ok: "0", message: "Please, fill the form with correct parent SSN" });
                     return;
                 }
                 con.query('SELECT COUNT(*) as c FROM student WHERE cod_fisc = ?', [SSN], (err, rows, fields) => {
@@ -202,12 +191,12 @@ router.route("/reg_student").post([body('name')
                                 res.end("There is a problem in the DB connection. Please, try again later " + err);
                                 return;
                             }
-                            res.render("../pages/officer/officer_registerstudent.pug", { flag_ok: "1", message: "New student insertly correctly" });
+                            res.render("../pages/officer/officer_registerstudent.pug", { flag_ok: "1", message: "New student inserted correctly" });
                             con.end();
                             return;
                         });
                     } else {
-                        res.render("../pages/officer/officer_registerstudent.pug", { flag_ok: "0", message: "Student already exist" });
+                        res.render("../pages/officer/officer_registerstudent.pug", { flag_ok: "0", message: "Student already exists" });
                         return;
                     }
                 });
@@ -233,18 +222,18 @@ router.route("/reg_student").post([body('name')
                                 res.end("There is a problem in the DB connection. Please, try again later " + err);
                                 return;
                             }
-                            res.render("../pages/officer/officer_registerstudent.pug", { flag_ok: "1", message: "New student insertly correctly" });
+                            res.render("../pages/officer/officer_registerstudent.pug", { flag_ok: "1", message: "New student inserted correctly" });
                             con.end();
                             return;
                         });
                     } else {
-                        res.render("../pages/officer/officer_registerstudent.pug", { flag_ok: "0", message: "Student already exist" });
+                        res.render("../pages/officer/officer_registerstudent.pug", { flag_ok: "0", message: "Student already exists" });
                         return;
                     }
                 });
             });
         } else {
-            res.render("../pages/officer/officer_registerstudent.pug", { flag_ok: "0", message: "Please fill the form correctly with at least one parent ID" });
+            res.render("../pages/officer/officer_registerstudent.pug", { flag_ok: "0", message: "Please, fill the form correctly with at least one parent SSN" });
             return;
         }
     });
