@@ -65,7 +65,7 @@ router.get('/parent_home', (req, res) => {
             res.end("There is a problem in the DB connection. Please, try again later\n" + err + "\n");
             return;
         }
-        console.log(rows);
+        //console.log(rows);
         for (var i = 0; i < rows.length; i++) {
             var communication_date = rows[i].comm_date.getDate() + "/" +
                 (rows[i].comm_date.getMonth() + 1) + "/" + rows[i].comm_date.getFullYear();
@@ -82,7 +82,7 @@ router.get('/parent_home', (req, res) => {
                 res.end("There is a problem in the DB connection. Please, try again later\n" + err + "\n");
                 return;
             }
-            console.log(rows);
+            //console.log(rows);
             for (var i = 0; i < rows.length; i++) {
                 var student = {
                     id: rows[i].id,
