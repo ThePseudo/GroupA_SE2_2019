@@ -314,7 +314,7 @@ INSERT INTO homework
 VALUES
     (1, 1, 1, "Study pages 5-6-7", "2019-10-17");
 
-
+-- Path: Angelo Rosso -> Science -> materials and homeworks
 INSERT INTO homework
     (id, course_id, class_id, description, date_hw)
 VALUES

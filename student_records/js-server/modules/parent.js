@@ -372,7 +372,7 @@ router.get('/:childID/course/:id/material_homework', (req, res) => {
                 var homeworks = [];
                 for (var i = 0; i < rows.length; ++i) {
                     var homework = {
-                        date: rows[i].date_hw,
+                        date: rows[i].date_hw.getDate() + "/" + (rows[i].date_hw.getMonth() + 1) + "/" + rows[i].date_hw.getFullYear(),
                         description: rows[i].description
                     }
                     homeworks[i] = homework;
