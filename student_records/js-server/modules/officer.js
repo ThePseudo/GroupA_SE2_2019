@@ -17,8 +17,7 @@ class Student {
     }
 }
 
-router.get("/class/:classid/class_composition", (req, res) => {
-    var classID = req.params.classid;
+function updateClass(classID, res) {
     var con = db.DBconnect();
     con.query('SELECT id, last_name, first_name FROM student WHERE class_id=0', (err, rows, fields) => { // because we have no AUTO_UPDATE available on the DB
         if (err) {
@@ -53,6 +52,11 @@ router.get("/class/:classid/class_composition", (req, res) => {
             });
         });
     });
+}
+
+router.get("/class/:classid/class_composition", (req, res) => {
+    var classID = req.params.classid;
+    updateClass(classID, res);
 });
 
 router.post("/class/:classid/up_class", (req, res) => {
@@ -67,7 +71,7 @@ router.post("/class/:classid/up_class", (req, res) => {
     let j = 0;
     let update1 = "UPDATE student SET class_id=0";
     let del = "DELETE FROM student_class";
-    let update2 = "UPDATE student SET class_id=2";
+    let update2 = "UPDATE student SET class_id=" + classID;
     let ins = "INSERT INTO student_class (student_id, class_id, year)";
     Object.keys(req.body).forEach(key => {
         if (req.body[key] != 0) {
@@ -91,40 +95,7 @@ router.post("/class/:classid/up_class", (req, res) => {
         }
     });
     if (i == 0 && j == 0) {
-        con.query('SELECT id, last_name, first_name FROM student WHERE class_id=0', (err, rows, fields) => { // because we have no AUTO_UPDATE available on the DB
-            if (err) {
-                res.end("There is a problem in the DB connection. Please, try again later " + err);
-                return;
-            }
-            let StudList = [];
-            i = 0;
-            Object.keys(rows).forEach(key => {
-                let Stud = new Student(rows[key].id, rows[key].last_name + " " + rows[key].first_name);
-                StudList[i] = Stud;
-                i++;
-            });
-            con.query('SELECT id, last_name, first_name FROM student WHERE class_id=?', [classID], (err, rows, fields) => { // because we have no AUTO_UPDATE available on the DB
-                if (err) {
-                    res.end("There is a problem in the DB connection. Please, try again later " + err);
-                    return;
-                }
-                let ClassList = [];
-                i = 0;
-                Object.keys(rows).forEach(key => {
-                    let Stud = new Student(rows[key].id, rows[key].last_name + " " + rows[key].first_name);
-                    ClassList[i] = Stud;
-                    i++;
-                });
-                con.query('SELECT class_name FROM class WHERE id=?', [classID], (err, rows, fields) => {
-                    if (err) {
-                        res.end("There is a problem in the DB connection. Please, try again later " + err);
-                        return;
-                    }
-                    res.render("../pages/officer/officer_classcomposition.pug", { className: rows[0].class_name, classID: classID, Class: ClassList, Students: StudList });
-                    return;
-                });
-            });
-        });
+        updateClass(classID, res);
     }
     if (i != 0 && j != 0) {
         con.query(update1, (err, rows, fields) => { // because we have no AUTO_UPDATE available on the DB
@@ -147,40 +118,7 @@ router.post("/class/:classid/up_class", (req, res) => {
                             res.end("There is a problem in the DB connection. Please, try again later " + err);
                             return;
                         }
-                        con.query('SELECT id, last_name, first_name FROM student WHERE class_id=0', (err, rows, fields) => { // because we have no AUTO_UPDATE available on the DB
-                            if (err) {
-                                res.end("There is a problem in the DB connection. Please, try again later " + err);
-                                return;
-                            }
-                            let StudList = [];
-                            i = 0;
-                            Object.keys(rows).forEach(key => {
-                                let Stud = new Student(rows[key].id, rows[key].last_name + " " + rows[key].first_name);
-                                StudList[i] = Stud;
-                                i++;
-                            });
-                            con.query('SELECT id, last_name, first_name FROM student WHERE class_id=?', [classID], (err, rows, fields) => { // because we have no AUTO_UPDATE available on the DB
-                                if (err) {
-                                    res.end("There is a problem in the DB connection. Please, try again later " + err);
-                                    return;
-                                }
-                                let ClassList = [];
-                                i = 0;
-                                Object.keys(rows).forEach(key => {
-                                    let Stud = new Student(rows[key].id, rows[key].last_name + " " + rows[key].first_name);
-                                    ClassList[i] = Stud;
-                                    i++;
-                                });
-                                con.query('SELECT class_name FROM class WHERE id=?', [classID], (err, rows, fields) => {
-                                    if (err) {
-                                        res.end("There is a problem in the DB connection. Please, try again later " + err);
-                                        return;
-                                    }
-                                    res.render("../pages/officer/officer_classcomposition.pug", { className: rows[0].class_name, classID: classID, Class: ClassList, Students: StudList });
-                                    return;
-                                });
-                            });
-                        });
+                        updateClass(classID, res);
                     });
                 });
             });
@@ -197,40 +135,7 @@ router.post("/class/:classid/up_class", (req, res) => {
                     res.end("There is a problem in the DB connection. Please, try again later " + err);
                     return;
                 }
-                con.query('SELECT id, last_name, first_name FROM student WHERE class_id=0', (err, rows, fields) => { // because we have no AUTO_UPDATE available on the DB
-                    if (err) {
-                        res.end("There is a problem in the DB connection. Please, try again later " + err);
-                        return;
-                    }
-                    let StudList = [];
-                    i = 0;
-                    Object.keys(rows).forEach(key => {
-                        let Stud = new Student(rows[key].id, rows[key].last_name + " " + rows[key].first_name);
-                        StudList[i] = Stud;
-                        i++;
-                    });
-                    con.query('SELECT id, last_name, first_name FROM student WHERE class_id=?', [classID], (err, rows, fields) => { // because we have no AUTO_UPDATE available on the DB
-                        if (err) {
-                            res.end("There is a problem in the DB connection. Please, try again later " + err);
-                            return;
-                        }
-                        let ClassList = [];
-                        i = 0;
-                        Object.keys(rows).forEach(key => {
-                            let Stud = new Student(rows[key].id, rows[key].last_name + " " + rows[key].first_name);
-                            ClassList[i] = Stud;
-                            i++;
-                        });
-                        con.query('SELECT class_name FROM class WHERE id=?', [classID], (err, rows, fields) => {
-                            if (err) {
-                                res.end("There is a problem in the DB connection. Please, try again later " + err);
-                                return;
-                            }
-                            res.render("../pages/officer/officer_classcomposition.pug", { className: rows[0].class_name, classID: classID, Class: ClassList, Students: StudList });
-                            return;
-                        });
-                    });
-                });
+                updateClass(classID, res);
             });
         });
     }
@@ -245,40 +150,7 @@ router.post("/class/:classid/up_class", (req, res) => {
                     res.end("There is a problem in the DB connection. Please, try again later " + err);
                     return;
                 }
-                con.query('SELECT id, last_name, first_name FROM student WHERE class_id=0', (err, rows, fields) => { // because we have no AUTO_UPDATE available on the DB
-                    if (err) {
-                        res.end("There is a problem in the DB connection. Please, try again later " + err);
-                        return;
-                    }
-                    let StudList = [];
-                    i = 0;
-                    Object.keys(rows).forEach(key => {
-                        let Stud = new Student(rows[key].id, rows[key].last_name + " " + rows[key].first_name);
-                        StudList[i] = Stud;
-                        i++;
-                    });
-                    con.query('SELECT id, last_name, first_name FROM student WHERE class_id=?', [classID], (err, rows, fields) => { // because we have no AUTO_UPDATE available on the DB
-                        if (err) {
-                            res.end("There is a problem in the DB connection. Please, try again later " + err);
-                            return;
-                        }
-                        let ClassList = [];
-                        i = 0;
-                        Object.keys(rows).forEach(key => {
-                            let Stud = new Student(rows[key].id, rows[key].last_name + " " + rows[key].first_name);
-                            ClassList[i] = Stud;
-                            i++;
-                        });
-                        con.query('SELECT class_name FROM class WHERE id=?', [classID], (err, rows, fields) => {
-                            if (err) {
-                                res.end("There is a problem in the DB connection. Please, try again later " + err);
-                                return;
-                            }
-                            res.render("../pages/officer/officer_classcomposition.pug", { className: rows[0].class_name, classID: classID, Class: ClassList, Students: StudList });
-                            return;
-                        });
-                    });
-                });
+                updateClass(classID, res);
             });
         });
     }

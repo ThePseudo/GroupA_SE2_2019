@@ -30,7 +30,7 @@ const principalPage = require('./modules/principal.js');
 
 // Constants
 const HTTPPORT = 8000;
-const HTTPSPORT = 8080;
+const HTTPSPORT = 9090;
 const HOST = '0.0.0.0';
 
 //fix for favicon.ico request
