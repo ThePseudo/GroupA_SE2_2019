@@ -337,7 +337,7 @@ router.route("/enroll_student").get((req, res) => {
                             return;
                         }
                         if (rows[0].c == 0) {
-                            con.query("INSERT INTO student(id, first_name, last_name, cod_fisc, class_id, parent_1, parent_2) VALUES(?, ?, ?, ?, ?, ?, ?)", [count, name, surname, SSN, 0, SSN1, SSN2], (err, result) => {
+                            con.query("INSERT INTO student(id, first_name, last_name, cod_fisc, class_id, parent_1, parent_2) VALUES(?, ?, ?, ?, ?, ?, ?)", [count, name, surname, SSN, 0, ID1, ID2], (err, result) => {
                                 if (err) {
                                     res.end("There is a problem in the DB connection. Please, try again later " + err);
                                     return;
@@ -370,7 +370,7 @@ router.route("/enroll_student").get((req, res) => {
                             return;
                         }
                         if (rows[0].c == 0) {
-                            con.query("INSERT INTO student(id, first_name, last_name, cod_fisc, class_id, parent_1, parent_2) VALUES(?, ?, ?, ?, ?, ?, ?)", [count, name, surname, SSN, 0, SSN1, null], (err, result) => {
+                            con.query("INSERT INTO student(id, first_name, last_name, cod_fisc, class_id, parent_1, parent_2) VALUES(?, ?, ?, ?, ?, ?, ?)", [count, name, surname, SSN, 0, ID, null], (err, result) => {
                                 if (err) {
                                     res.end("There is a problem in the DB connection. Please, try again later " + err);
                                     return;
@@ -403,7 +403,7 @@ router.route("/enroll_student").get((req, res) => {
                             return;
                         }
                         if (rows[0].c == 0) {
-                            con.query("INSERT INTO student(id, first_name, last_name, cod_fisc, class_id, parent_1, parent_2) VALUES(?, ?, ?, ?, ?, ?, ?)", [count, name, surname, SSN, 0, SSN2, null], (err, result) => {
+                            con.query("INSERT INTO student(id, first_name, last_name, cod_fisc, class_id, parent_1, parent_2) VALUES(?, ?, ?, ?, ?, ?, ?)", [count, name, surname, SSN, 0, ID, null], (err, result) => {
                                 if (err) {
                                     res.end("There is a problem in the DB connection. Please, try again later " + err);
                                     return;
