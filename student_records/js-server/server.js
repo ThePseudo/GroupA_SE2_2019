@@ -26,6 +26,7 @@ const parentPages = require('./modules/parent.js');
 const auth_router = require('./modules/Auth_manager.js');
 const teacherPages = require('./modules/teacher.js');
 const officerPage = require('./modules/officer.js');
+const principalPage = require('./modules/principal.js');
 
 // Constants
 const HTTPPORT = 8000;
@@ -41,6 +42,7 @@ app.use('/parent', parentPages);
 app.use('/auth_router', auth_router);
 app.use('/teacher', teacherPages);
 app.use('/officer', officerPage);
+app.use("/principal",principalPage);
 
 const options = {
     key: fs.readFileSync("./certs/localhost.key"),
@@ -49,8 +51,28 @@ const options = {
 
 // Main page
 app.get('/', (req, res) => {
-    const compiledPage = pug.compileFile("pages/home.pug");
-    res.end(compiledPage());
+    try {
+        switch (req.session.user.user_type) {
+            case "parent":
+                res.redirect("/parent/parent_home");
+                break;
+            case "teacher":
+                res.redirect("/teacher/teacher_home");
+                break;
+            case "admin":
+                res.redirect("/admin/admin_home");
+                break;
+            case "officer":
+                res.redirect("/officer/officer_home");
+                break;
+            default:
+                res.redirect("/auth_router/logout");
+                break;
+        }
+    } catch (err) {
+        const compiledPage = pug.compileFile("pages/home.pug");
+        res.end(compiledPage());
+    }
 });
 
 
@@ -63,10 +85,9 @@ app.get("/style", (req, res) => {
 app.get('/*', (req, res) => {
     fs.readFile(req.path, (err, data) => {
         if (err) {
-            console.log(req.path);
-            console.log(err);
-            const compiledPage = pug.compileFile("pages/base/404.pug");
-            res.end(compiledPage());
+            //console.log(err);
+            res.render("/pages/base/404.pug");
+            return;
         }
         res.end(data);
 
@@ -76,10 +97,9 @@ app.get('/*', (req, res) => {
 app.post('/*', (req, res) => {
     fs.readFile(req.path, (err, data) => {
         if (err) {
-            console.log(req.path);
             console.log(err);
-            const compiledPage = pug.compileFile("pages/base/404.pug");
-            res.end(compiledPage());
+            res.render("/pages/base/404.pug");
+            return;
         }
         res.end(data);
 
@@ -96,5 +116,5 @@ httpApp.get("*", (req, res) => {
 http.createServer(httpApp).listen(HTTPPORT);
 https.createServer(options, app).listen(HTTPSPORT);
 
-console.log(`Running on http://${HOST}:${HTTPPORT}`);
-console.log(`Running on https://${HOST}:${HTTPSPORT}`);
+console.log(`Running on http://localhost:${HTTPPORT}`);
+console.log(`Running on https://localhost:${HTTPSPORT}`);

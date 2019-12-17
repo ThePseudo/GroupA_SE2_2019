@@ -1,4 +1,4 @@
-//'use strict';
+'use strict';
 
 const express = require('express');
 const pug = require('pug');
@@ -13,7 +13,7 @@ const db = require('../modules/functions.js');
 
 var router = express.Router();
 
-router.use(/\/.*/, function(req, res, next) {
+router.use(/\/.*/, function (req, res, next) {
     try {
         if (req.session.user.user_type != 'parent') {
             res.redirect("/");
@@ -27,7 +27,7 @@ router.use(/\/.*/, function(req, res, next) {
 });
 
 
-router.use('/:id/*', function(req, res, next) {
+router.use('/:id/*', function (req, res, next) {
     var parentID = req.session.user.id;
     var childID = req.params.id;
     var con = db.DBconnect();
@@ -77,7 +77,7 @@ router.get('/parent_home', (req, res) => {
             commlist[i] = communication;
         }
         //let sql = 'SELECT id,first_name,last_name FROM student';
-        con.query('SELECT id,first_name,last_name FROM student WHERE parent_1=1 OR parent_2=1', (err, rows, fields) => {
+        con.query('SELECT id,first_name,last_name FROM student WHERE parent_1=? OR parent_2=?', [req.session.user.id, req.session.user.id], (err, rows, fields) => {
             if (err) {
                 res.end("There is a problem in the DB connection. Please, try again later\n" + err + "\n");
                 return;
@@ -117,7 +117,7 @@ router.get("/:childID/marks", (req, res) => {
         'AND mark.student_id = ? ' +
         'ORDER BY mark.date_mark DESC';
 
-    con.query(sql, [childID], function(err, rows, fields) {
+    con.query(sql, [childID], function (err, rows, fields) {
         if (err) {
             res.end("DB error: " + err);
         } else {
@@ -136,7 +136,7 @@ router.get("/:childID/marks", (req, res) => {
 
             sql = "SELECT first_name, last_name FROM student WHERE id = ?"
 
-            con.query(sql, [1], function(err, rows, fields) {
+            con.query(sql, [childID], function (err, rows, fields) {
                 if (err) {
                     res.end("DB error: " + err);
                 } else {
@@ -413,17 +413,54 @@ router.get('/:childID/course/:id/material_homework', (req, res) => {
 //show absences & notes
 
 router.get('/:childID/absences_notes', (req, res) => {
-    var fullName = req.session.user.first_name + " " + req.session.user.last_name;
     var childID = req.params.childID;
+    var fullName = req.session.user.first_name + " " + req.session.user.last_name;
+    var absence_array = [];
+    var note_array = [];
 
     var con = db.DBconnect();
 
+    var sql = "SELECT n.note_date, n.motivation, n.justified, t.first_name, t.last_name, t.email,t.id FROM note AS n,teacher AS t WHERE n.teacher_id = t.id AND n.student_id = ?";
 
+    con.query(sql, [childID], (err, rows) => {
+        if (err) {
+            res.end("DB error: " + err);
+            return;
+        }
 
+        for (var i = 0; i < rows.length; i++) {
+            note_array[i] = {};
+            note_array[i].teacherFullName = rows[i].first_name + " " + rows[i].last_name;
+            note_array[i].teacherEmail = rows[i].email;
+            note_array[i].date = rows[i].note_date.getDate() + "/" + (rows[i].note_date.getMonth() + 1) + "/" + rows[i].note_date.getFullYear();
+            note_array[i].motivation = rows[i].motivation;
+            note_array[i].justified = rows[i].justified;
+            note_array[i].teacherID = rows[i].id;
+        }
 
-    res.render('../pages/parent/parent_absences_notes.pug', {
-        fullName: fullName,
-        childID: childID
+        sql = "SELECT date_ab, start_h, end_h, justified FROM absence WHERE student_id = ?";
+        con.query(sql, [childID], (err, rows) => {
+            if (err) {
+                res.end("DB error: " + err);
+                return;
+            }
+            for (var i = 0; i < rows.length; i++) {
+                absence_array[i] = {};
+                absence_array[i].date = rows[i].date_ab.getDate() + "/" + (rows[i].date_ab.getMonth() + 1) + "/" + rows[i].date_ab.getFullYear();
+                absence_array[i].start_h = rows[i].start_h;
+                absence_array[i].end_h = rows[i].end_h;
+                absence_array[i].justified = rows[i].justified;
+            }
+            res.render("../pages/parent/parent_absences_notes.pug", { fullName: fullName, note_array: note_array, absence_array: absence_array, childID: childID });
+        });
     });
 });
+
+router.route("/:teacherID/contact").get((req, res) => {
+    console.log("qui");
+    res.render("../pages/parent/popup_email_send.pug");
+}).post((req, res) => {
+
+});
+
 module.exports = router;

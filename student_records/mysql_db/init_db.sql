@@ -6,24 +6,29 @@ CREATE TABLE teacher
     id INT PRIMARY KEY,
     first_name VARCHAR(50) NOT NULL,
     last_name VARCHAR(50) NOT NULL,
-    cod_fisc VARCHAR(20) UNIQUE NOT NULL,
+    cod_fisc VARCHAR(16) UNIQUE NOT NULL,
     email VARCHAR(100) NOT NULL,
     password VARCHAR(255) NOT NULL,
     first_access BOOLEAN NOT NULL
-    /* 1 first_ccess already done; 0 not yet */
+    /* 1 first_access already done; 0 not yet */
 );
 
 INSERT INTO teacher
     (id,first_name,last_name,cod_fisc,email,password,first_access)
 VALUES
-    (1, "Afrodite", "Venere", "AV85T", "venere85@yahoo.com", "$2a$10$0tXRERd11hkw3zKQQmFeTOAuUcMiI6/ThiMNvfMUvKmYkWkL0BRkO", 1);
+    (1, "Elena", "Baralis", "AV85T", "venere85@yahoo.com", "$2a$10$0tXRERd11hkw3zKQQmFeTOAuUcMiI6/ThiMNvfMUvKmYkWkL0BRkO", 1);
+
+INSERT INTO teacher
+    (id,first_name,last_name,cod_fisc,email,password,first_access)
+VALUES
+    (2, "Marina", "Indri", "RVEQXX32E18B392G", "marina64@yahoo.com", "$2a$10$0tXRERd11hkw3zKQQmFeTOAuUcMiI6/ThiMNvfMUvKmYkWkL0BRkO", 1);
 
 CREATE TABLE officer
 (
     id INT PRIMARY KEY,
     first_name VARCHAR(50) NOT NULL,
     last_name VARCHAR(50) NOT NULL,
-    cod_fisc VARCHAR(20) UNIQUE NOT NULL,
+    cod_fisc VARCHAR(16) UNIQUE NOT NULL,
     email VARCHAR(100) NOT NULL,
     password VARCHAR(255) NOT NULL,
     first_access BOOLEAN NOT NULL,
@@ -35,12 +40,17 @@ INSERT INTO officer
 VALUES
     (1, "Ciccio", "Pasticcio", "CP80X", "pasticcio80@gmail.com", "$2a$10$0tXRERd11hkw3zKQQmFeTOAuUcMiI6/ThiMNvfMUvKmYkWkL0BRkO", 1, 0);
 
+INSERT INTO officer
+    (id,first_name,last_name,cod_fisc,email,password,first_access, principal)
+VALUES
+    (2, "Tommaso", "Bodda", "FTEZMF95C47E840N", "bodda75@gmail.com", "$2a$10$0tXRERd11hkw3zKQQmFeTOAuUcMiI6/ThiMNvfMUvKmYkWkL0BRkO", 1, 0);
+
 CREATE TABLE parent
 (
     id INT PRIMARY KEY,
     first_name VARCHAR(50) NOT NULL,
     last_name VARCHAR(50) NOT NULL,
-    cod_fisc VARCHAR(20) UNIQUE NOT NULL,
+    cod_fisc VARCHAR(16) UNIQUE NOT NULL,
     email VARCHAR(100) NOT NULL,
     password VARCHAR(255) NOT NULL,
     first_access BOOLEAN NOT NULL
@@ -49,47 +59,52 @@ CREATE TABLE parent
 INSERT INTO parent
     (id, first_name, last_name,cod_fisc,email,password, first_access)
 VALUES
-    (1, "Tizio", "Caio", "1111", "tizio@caio.com", "$2a$10$0tXRERd11hkw3zKQQmFeTOAuUcMiI6/ThiMNvfMUvKmYkWkL0BRkO", 1);
+    (1, "Alberto", "Rosso", "1111", "tizio@caio.com", "$2a$10$0tXRERd11hkw3zKQQmFeTOAuUcMiI6/ThiMNvfMUvKmYkWkL0BRkO", 1);
 
 INSERT INTO parent
     (id, first_name, last_name,cod_fisc,email,password, first_access)
 VALUES
-    (2, "Giorno", "Giovanna", "2222", "giorno@giovanna.com", "$2a$10$0tXRERd11hkw3zKQQmFeTOAuUcMiI6/ThiMNvfMUvKmYkWkL0BRkO", 1);
+    (2, "Piero", "Fetta", "HDDRWU63L46D667M", "giorno@giovanna.com", "$2a$10$0tXRERd11hkw3zKQQmFeTOAuUcMiI6/ThiMNvfMUvKmYkWkL0BRkO", 1);
 INSERT INTO parent
     (id, first_name, last_name,cod_fisc,email,password, first_access)
 VALUES
-    (3, "Marco", "Verdi", "4444", "marco@verdi.com", "$2a$10$0tXRERd11hkw3zKQQmFeTOAuUcMiI6/ThiMNvfMUvKmYkWkL0BRkO", 1);
+    (3, "Marco", "Verdi", "DZJVSL56R55D763T", "marco@verdi.com", "$2a$10$0tXRERd11hkw3zKQQmFeTOAuUcMiI6/ThiMNvfMUvKmYkWkL0BRkO", 1);
 
 CREATE TABLE student
 (
     id INT PRIMARY KEY,
     first_name VARCHAR(50) NOT NULL,
     last_name VARCHAR(50) NOT NULL,
-    cod_fisc VARCHAR(20) UNIQUE NOT NULL,
+    cod_fisc VARCHAR(16) UNIQUE NOT NULL,
     class_id INT,
-    parent_1 INT,
-    parent_2 INT
+    parent_1 VARCHAR(16) NOT NULL,
+    parent_2 VARCHAR(16)
 );
 
 INSERT INTO student
     (id,first_name,last_name,cod_fisc,class_id,parent_1,parent_2)
 VALUES
-    (1, "Giove", "Zeus", "GZ03A", 2, 1, 2);
+    (1, "Angelo", "Rosso", "NJRGTD35P14B145Z", 2, 1, 2);
 
 INSERT INTO student
     (id,first_name,last_name,cod_fisc,class_id,parent_1,parent_2)
 VALUES
-    (2, "Martino", "Arte", "GPP3A", 2, 1, 2);
+    (2, "Martino", "Arte", "RLIZFH80S05E249F", 2, 1, 2);
 
 INSERT INTO student
     (id,first_name,last_name,cod_fisc,class_id,parent_1,parent_2)
 VALUES
-    (3, "Martinella", "Leone", "AA03A", 2, 1, 2);
+    (3, "Martinella", "Leone", "JDKDMY59L04H816S", 2, 1, 2);
 
 INSERT INTO student
     (id,first_name,last_name,cod_fisc,class_id,parent_1,parent_2)
 VALUES
-    (4, "Serena", "Fetta", "GZ0OO", 2, 3, 4);
+    (4, "Serena", "Fetta", "BSOWTD48P60F492T", 2, 2, 3);
+
+INSERT INTO student
+    (id,first_name,last_name,cod_fisc,class_id,parent_1,parent_2)
+VALUES
+    (5, "Francesca", "Fetta", "DVBGDD76L56E934Y", 2, 2, 3);
 
 -- Classes
 
@@ -135,12 +150,28 @@ INSERT INTO course
 VALUES
     (3, 'Science', '00FF00');
 
+INSERT INTO course
+    (id,course_name, color)
+VALUES
+    (4, 'Chemistry', "008080");
+
+INSERT INTO course
+    (id,course_name, color)
+VALUES
+    (5, 'Art', '008000');
+
+INSERT INTO course
+    (id,course_name, color)
+VALUES
+    (6, 'Geography', '00FFFF');
+
+
 CREATE TABLE admin
 (
     id INT PRIMARY KEY,
     first_name VARCHAR(50) NOT NULL,
     last_name VARCHAR(50) NOT NULL,
-    cod_fisc VARCHAR(20) UNIQUE NOT NULL,
+    cod_fisc VARCHAR(16) UNIQUE NOT NULL,
     email VARCHAR(100) NOT NULL,
     password VARCHAR(255) NOT NULL
 );
@@ -148,7 +179,12 @@ CREATE TABLE admin
 INSERT INTO admin
     (id,first_name,last_name,cod_fisc,email,password)
 VALUES
-    (1, "Giovanni", "Rossi", "GPS67", "Rossi@yahoo.com", "$2a$10$0tXRERd11hkw3zKQQmFeTOAuUcMiI6/ThiMNvfMUvKmYkWkL0BRkO");
+    (1, "Giovanni", "Rossi", "GPS67", "rossi@yahoo.com", "$2a$10$0tXRERd11hkw3zKQQmFeTOAuUcMiI6/ThiMNvfMUvKmYkWkL0BRkO");
+
+INSERT INTO admin
+    (id,first_name,last_name,cod_fisc,email,password)
+VALUES
+    (2, "Arturo", "Merzario", "SJINBL63M03B687S", "racers@yahoo.com", "$2a$10$0tXRERd11hkw3zKQQmFeTOAuUcMiI6/ThiMNvfMUvKmYkWkL0BRkO");
 
 CREATE TABLE topic
 (
@@ -184,17 +220,82 @@ CREATE TABLE note
     PRIMARY KEY(id)
 );
 
+INSERT INTO note
+    (id, student_id, teacher_id, note_date, motivation, justified)
+VALUES(1, 1, 1, "2019-09-30", "L'alunno fa rumore in classe", 1);
+
+INSERT INTO note
+    (id, student_id, teacher_id, note_date, motivation, justified)
+VALUES(2, 1, 2, "2019-09-29", "L'alunno fa ANCORA rumore in classe", 0);
+
+INSERT INTO note
+    (id, student_id, teacher_id, note_date, motivation, justified)
+VALUES(3, 1, 1, "2019-09-29", "L'alunno fa ANCORA rumore 3 ora provo a mettere una stringa lunga, ancora più lunga vediamo ora", 0);
+
+INSERT INTO note
+    (id, student_id, teacher_id, note_date, motivation, justified)
+VALUES(4, 1, 2, "2019-09-29", "L'alunno fa ANCORA rumore 4", 0);
+
+INSERT INTO note
+    (id, student_id, teacher_id, note_date, motivation, justified)
+VALUES(5, 1, 2, "2019-09-29", "L'alunno fa ANCORA rumore 5", 1);
+
+
+INSERT INTO note
+    (id, student_id, teacher_id, note_date, motivation, justified)
+VALUES(6, 2, 1, "2019-09-29", "L'alunno fa ANCORA rumore 4", 0);
+
+INSERT INTO note
+    (id, student_id, teacher_id, note_date, motivation, justified)
+VALUES(7, 2, 2, "2019-09-29", "L'alunno fa ANCORA rumore 5", 1);
+
 
 CREATE TABLE absence
 (
     id INT ,
     student_id INT NOT NULL,
     date_ab DATE NOT NULL,
-    start_h INT NOT NULL,
-    end_h INT NOT NULL,
+    start_h TIME NOT NULL,
+    end_h TIME NOT NULL,
     justified BOOLEAN NOT NULL,
     PRIMARY KEY(id)
 );
+
+INSERT INTO absence
+    (id, student_id, date_ab, start_h, end_h, justified)
+VALUES(1, 1, "2019-09-30", "08:00", "13:15", 1);
+
+INSERT INTO absence
+    (id, student_id, date_ab, start_h, end_h, justified)
+VALUES(2, 1, "2019-09-29", "08:00", "13:15", 0);
+
+INSERT INTO absence
+    (id, student_id, date_ab, start_h, end_h, justified)
+VALUES(3, 1, "2019-09-30", "08:00", "13:15", 1);
+
+INSERT INTO absence
+    (id, student_id, date_ab, start_h, end_h, justified)
+VALUES(4, 1, "2019-09-29", "08:00", "13:15", 0);
+
+INSERT INTO absence
+    (id, student_id, date_ab, start_h, end_h, justified)
+VALUES(5, 1, "2019-09-30", "08:00", "13:15", 1);
+
+INSERT INTO absence
+    (id, student_id, date_ab, start_h, end_h, justified)
+VALUES(6, 1, "2019-09-29", "08:00", "13:15", 0);
+
+INSERT INTO absence
+    (id, student_id, date_ab, start_h, end_h, justified)
+VALUES(7, 2, "2019-09-30", "08:00", "13:15", 1);
+
+INSERT INTO absence
+    (id, student_id, date_ab, start_h, end_h, justified)
+VALUES(8, 2, "2019-09-29", "08:00", "13:15", 0);
+
+INSERT INTO absence
+    (id, student_id, date_ab, start_h, end_h, justified)
+VALUES(9, 3, "2019-09-30", "08:00", "13:15", 1);
 
 -- Homework
 
@@ -226,30 +327,31 @@ CREATE TABLE material
 
 CREATE TABLE mark
 (
-    id INT UNIQUE NOT NULL,
+    id INT PRIMARY KEY,
     student_id INT NOT NULL,
     course_id INT NOT NULL,
-    score INT NOT NULL,
+    score FLOAT NOT NULL,
     date_mark DATE NOT NULL,
     period_mark INT NOT NULL,
-    PRIMARY KEY(id)
+    mark_subj VARCHAR(50) NOT NULL,
+    descr_mark_subj VARCHAR(500),
+    type_mark_subj ENUM ('Other','Written','Oral','Project')
 );
 
+INSERT INTO mark
+    (id,student_id, course_id, score, date_mark, period_mark,mark_subj,descr_mark_subj,type_mark_subj)
+VALUES
+    (1, 1, 1, 6, '2019-9-10', 1, 'Chim 1', '3 domande', 'Other');
 
 INSERT INTO mark
-    (id,student_id, course_id, score, date_mark, period_mark)
+    (id,student_id, course_id, score, date_mark, period_mark,mark_subj,descr_mark_subj,type_mark_subj)
 VALUES
-    (1, 1, 1, 6, '2019-9-10', 1);
+    (2, 1, 2, 8, '2019-9-11', 2, 'Chim 1', '3 domande', 'Other');
 
 INSERT INTO mark
-    (id,student_id, course_id, score, date_mark, period_mark)
+    (id,student_id, course_id, score, date_mark, period_mark,mark_subj,descr_mark_subj,type_mark_subj)
 VALUES
-    (2, 1, 2, 8, '2019-9-11', 2);
-
-INSERT INTO mark
-    (id,student_id, course_id, score, date_mark, period_mark)
-VALUES
-    (3, 1, 3, 10, '2019-9-12', 1);
+    (3, 1, 3, 10, '2019-9-12', 1, 'Chim 1', '3 domande', 'Other');
 
 -- RELATIONS
 

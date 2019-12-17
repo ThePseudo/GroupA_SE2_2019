@@ -1,11 +1,10 @@
-//'use strict';
-var path = require('path');
-var fs = require('fs');
-var os = require('os');
+const path = require('path');
+const fs = require('fs');
+const os = require('os');
 const express = require('express');
 const upload = require('express-fileupload');
 const pug = require('pug');
-const db = require('../modules/functions.js');
+const myInterface = require('../modules/functions.js');
 const { body } = require('express-validator');
 const Busboy = require('busboy');
 const inspect = require('util').inspect;
@@ -19,18 +18,19 @@ const inspect = require('util').inspect;
 
 var router = express.Router();
 
-//router.use(/\/.*/, function(req, res, next) {
-/*try {
-        if (req.session.user.user_type != 'teacher') {
-            res.redirect("/");
-            return;
-        } else {
-            next();
-        }
-    } catch (err) {
-        res.redirect("/");
+router.use(/\/.*/, function (req, res, next) {
+  try {
+    if (req.session.user.user_type != 'teacher') {
+      res.redirect("/");
+      return;
+    } else {
+      next();
     }
-});*/
+  } catch (err) {
+    res.redirect("/");
+  }
+});
+
 
 router.get("/class/:classid/course/:courseid/upload_file", (req, res) => {
     var classID = req.params.classid;
@@ -99,42 +99,42 @@ router.post("/class/:classid/course/:courseid/up_file", (req, res) => {
 });
 
 router.get("/teacher_home", (req, res) => { // T3
-    var fullName = req.session.user.first_name + " " + req.session.user.last_name;
+  var fullName = req.session.user.first_name + " " + req.session.user.last_name;
 
-    var date = new Date();
-    var year = date.getFullYear();
-    if (date.getMonth() < 9) { // before august
-        year--;
+  var date = new Date();
+  var year = date.getFullYear();
+  if (date.getMonth() < 9) { // before august
+    year--;
+  }
+
+  var con = myInterface.DBconnect();
+
+
+  var sql = "SELECT course_id, class_id, course_name, class_name FROM class, course, teacher_course_class " +
+    "WHERE course_id = course.id AND class_id = class.id " +
+    "AND year = ? AND teacher_id = ?";
+
+  con.query(sql, [year, req.session.user.id], (err, rows, fields) => {
+    if (err) {
+      res.end("Database problem: " + err);
+      return;
     }
-
-    var con = db.DBconnect();
-
-
-    var sql = "SELECT course_id, class_id, course_name, class_name FROM class, course, teacher_course_class " +
-        "WHERE course_id = course.id AND class_id = class.id " +
-        "AND year = ? AND teacher_id = ?";
-
-    con.query(sql, [year, req.session.user.id], (err, rows, fields) => {
-        if (err) {
-            res.end("Database problem: " + err);
-            return;
-        }
-        con.end();
-        var classCourses = [];
-        for (var i = 0; i < rows.length; ++i) {
-            var classCourse = {
-                classid: rows[i].class_id,
-                courseid: rows[i].course_id,
-                classname: rows[i].class_name,
-                coursename: rows[i].course_name
-            }
-            classCourses[i] = classCourse;
-        }
-        res.render("../pages/teacher/teacher_home.pug", {
-            fullName: fullName,
-            class_courses: classCourses
-        });
+    con.end();
+    var classCourses = [];
+    for (var i = 0; i < rows.length; ++i) {
+      var classCourse = {
+        classid: rows[i].class_id,
+        courseid: rows[i].course_id,
+        classname: rows[i].class_name,
+        coursename: rows[i].course_name
+      }
+      classCourses[i] = classCourse;
+    }
+    res.render("../pages/teacher/teacher_home.pug", {
+      fullName: fullName,
+      class_courses: classCourses
     });
+  });
 });
 
 // Note: from here on, routes should follow this format: "/class/:classid/course/:courseid/..."
@@ -147,125 +147,407 @@ router.get("/teacher_home", (req, res) => { // T3
 //------------------------------------------
 
 router.get("/class/:classid/course/:courseid/course_home", (req, res) => {
-    var fullName = req.session.user.first_name + " " + req.session.user.last_name;
+  var fullName = req.session.user.first_name + " " + req.session.user.last_name;
 
-    var con = db.DBconnect();
+  var con = myInterface.DBconnect();
 
-    var classID = req.params.classid;
-    var courseID = req.params.courseid;
-    var teacherID = req.session.user.id;
+  var classID = req.params.classid;
+  var courseID = req.params.courseid;
+  var teacherID = req.session.user.id;
 
-    let sql = "SELECT * FROM student WHERE class_id =? ORDER BY last_name"
-    con.query(sql, [classID], (err, rows, fields) => {
-        if (err) {
-            console.log(err);
-            con.end();
-            return;
-        } else {
-            var message = "";
-            var n_students = 0;
-            var student_array = [];
+  let sql = "SELECT * FROM student WHERE class_id =? ORDER BY last_name"
+  con.query(sql, [classID], (err, rows, fields) => {
+    if (err) {
+      console.log(err);
+      con.end();
+      return;
+    } else {
+      var message = "";
+      var n_students = 0;
+      var student_array = [];
 
-            if (rows.length <= 0) {
-                message = "No Student enrolled yet";
-            } else {
-                n_students = rows.length;
-                for (var i = 0; i < n_students; i++) {
-                    student_array[i] = {};
-                    student_array[i].id = rows[i].id;
-                    student_array[i].first_name = rows[i].first_name;
-                    student_array[i].last_name = rows[i].last_name;
-                    student_array[i].cod_fisc = rows[i].cod_fisc;
-                    student_array[i].parent_1 = rows[i].parent_1;
-                    student_array[i].parent_2 = rows[i].parent_1;
-                }
-            }
-            con.end();
+      if (rows.length <= 0) {
+        message = "No Student enrolled yet";
+      } else {
+        n_students = rows.length;
+        for (var i = 0; i < n_students; i++) {
+          student_array[i] = {};
+          student_array[i].id = rows[i].id;
+          student_array[i].first_name = rows[i].first_name;
+          student_array[i].last_name = rows[i].last_name;
+          student_array[i].cod_fisc = rows[i].cod_fisc;
+          student_array[i].parent_1 = rows[i].parent_1;
+          student_array[i].parent_2 = rows[i].parent_1;
         }
-        res.render('../pages/teacher/teacher_coursehome.pug', {
-            classid: classID,
-            courseid: courseID,
-            fullName: fullName,
-            message: message,
-            //courseName: "Math",
-            student_array: student_array,
-            n_students: n_students
-        });
+      }
+      con.end();
+    }
+    res.render('../pages/teacher/teacher_coursehome.pug', {
+      classid: classID,
+      courseid: courseID,
+      fullName: fullName,
+      message: message,
+      //courseName: "Math",
+      student_array: student_array,
+      n_students: n_students
     });
+  });
 });
 
 //------------------------------------------------------
 
+router.route("/class/:classid/course/:courseid/reg_topic").get((req, res) => {
+  var fullName = req.session.user.first_name + " " + req.session.user.last_name;
+  var dateString = myInterface.dailyDate();
 
-//TODO: change route and get parameters for future query
-router.get("/topics", (req, res) => {
+  res.render("../pages/teacher/teacher_coursetopic.pug", {
+    fullName: fullName,
+    dateString: dateString,
+    courseid: req.params.courseid,
+    classid: req.params.classid
+  });
+
+}).post(
+  [
+    body('description').trim().escape(),
+    body('date').trim().escape().toDate(),
+    body('topic_name').trim().escape()
+  ],
+  (req, res) => {
     var fullName = req.session.user.first_name + " " + req.session.user.last_name;
-    const compiledPage = pug.compileFile("../pages/teacher/teacher_coursetopic.pug");
-    var today = new Date();
-    var dayString = today.getDate();
-    var monthString = today.getMonth() + 1;
-    if (dayString < 10) dayString = '0' + today.getDate();
-    if (monthString < 10) monthString = '0' + (today.getMonth() + 1);
-    var todayString = today.getFullYear() + "-" + monthString + "-" + dayString;
-    res.end(compiledPage({
+    var dateString = myInterface.dailyDate();
+    var description = req.body.description;
+    var date = req.body.date;
+    var topic_name = req.body.topic_name;
+
+    console.log(description);
+    console.log(topic_name);
+    console.log(date);
+
+    if (!description || !date || !topic_name) {
+      res.render("../pages/teacher/teacher_coursetopic.pug", {
+        ok_flag: 0,
+        message: "Please, fill all the form fieds",
         fullName: fullName,
-        dateString: todayString
-    }));
-});
+        dateString: dateString,
+        courseid: req.params.courseid,
+        classid: req.params.classid
+      });
+      return;
+    }
+
+    var con = myInterface.DBconnect();
+
+    con.query('SELECT COUNT(*) as c FROM topic', (err, rows) => { // because we have no AUTO_UPDATE available on the DB
+      if (err) {
+        res.end("There is a problem in the DB connection. Please, try again later " + err);
+        return;
+      }
+      con.query("INSERT INTO topic(id, topic_date, id_class,id_course,description) VALUES(?, ?, ?, ?, ?)", [rows[0].c + 1, date, req.params.classid, req.params.courseid, description], (err, rows) => {
+        if (err) {
+          res.end("There is a problem in the DB connection. Please, try again later " + err);
+          return;
+        }
+
+        con.end();
+        res.render("../pages/teacher/teacher_coursetopic.pug", {
+          flag_ok: "1",
+          message: "New topic inserted correctly",
+          fullName: fullName,
+          dateString: dateString,
+          courseid: req.params.courseid,
+          classid: req.params.classid
+        });
+      });
+    });
+  });
 
 router.get("/class/:classid/course/:courseid/class_mark", (req, res) => {
-    var fullName = req.session.user.first_name + " " + req.session.user.last_name;
-    const compiledPage = pug.compileFile("../pages/teacher/teacher_insertclassmark.pug");
-    var con = db.DBconnect();
+  var fullName = req.session.user.first_name + " " + req.session.user.last_name;
+  const compiledPage = pug.compileFile("../pages/teacher/teacher_insertclassmark.pug");
+  var con = myInterface.DBconnect();
 
 
-    var classID = req.params.classid;
-    var courseID = req.params.courseid;
-    var teacherID = req.session.user.id;
+  var classID = req.params.classid;
+  var courseID = req.params.courseid;
+  var teacherID = req.session.user.id;
 
-    var sql = "SELECT first_name, last_name FROM student AS St, teacher_course_class AS Tcc " +
-        "WHERE Tcc.course_id = ? " +
-        "AND St.class_id = ? AND Tcc.class_id = ? " +
-        "AND Tcc.teacher_id = ? ";
+  var sql = "SELECT first_name, last_name FROM student AS St, teacher_course_class AS Tcc " +
+    "WHERE Tcc.course_id = ? " +
+    "AND St.class_id = ? AND Tcc.class_id = ? " +
+    "AND Tcc.teacher_id = ? ";
 
-    con.query(sql, [courseID, classID, classID, teacherID], (err, rows, fields) => {
+  con.query(sql, [courseID, classID, classID, teacherID], (err, rows, fields) => {
+    if (err) {
+      res.end("Database problem: " + err);
+      return;
+    }
+    con.end();
+    var studlist = [];
+    for (var i = 0; i < rows.length; ++i) {
+      var stud = {
+        first_name: rows[i].first_name,
+        last_name: rows[i].last_name,
+      }
+      studlist[i] = stud;
+    }
+
+    res.end(compiledPage({
+      studlist: studlist,
+      classid: req.params.classid,
+      courseid: req.params.courseid,
+      fullName: fullName
+    }));
+  });
+});
+
+//TODO
+router.post("/class/:classid/course/:courseid/reg_mark", (req, res) => {
+
+  var fullName = req.session.user.first_name + " " + req.session.user.last_name;
+  const compiledPage = pug.compileFile("../pages/teacher/teacher_insertclassmark.pug");
+  var con = myInterface.DBconnect();
+
+
+  var classID = req.params.classid;
+  var courseID = req.params.courseid;
+  var teacherID = req.session.user.id;
+  var date_mark = req.body.date;
+  var period_mark = 0;
+  var mark_subj = req.body.subject;
+  var descr_mark_subj = req.body.desc;
+  var type_mark_subj = req.body.type;
+  var sql = "SELECT St.id, first_name, last_name FROM student AS St, teacher_course_class AS Tcc " +
+    "WHERE Tcc.course_id = ? " +
+    "AND St.class_id = ? AND Tcc.class_id = ? " +
+    "AND Tcc.teacher_id = ? ";
+
+  con.query(sql, [courseID, classID, classID, teacherID], (err, rows, fields) => {
+    if (err) {
+      res.end("Database problem reg_mark: " + err);
+      return;
+    }
+    else {
+      var marks = req.body.mark;
+      var studlist = [];
+      var sql4 = "SELECT MAX(id) as last_id FROM mark";
+      con.query(sql4, (err, rows2, fields2) => {
         if (err) {
-            res.end("Database problem: " + err);
-            return;
+          res.end("Database problem reg_mark: " + err);
+          return;
         }
-        con.end();
-        var studlist = [];
-        for (var i = 0; i < rows.length; ++i) {
+        else {
+          let c = rows2[0].last_id + 1;
+          var sql2 = "INSERT INTO mark(id,student_id,course_id,score,date_mark,period_mark,mark_subj,descr_mark_subj,type_mark_subj) VALUES ";
+          var j = 0;
+          var pre_insert = 0;
+          for (var i = 0; i < rows.length; ++i) {
+            var mark = marks[i];
             var stud = {
-                first_name: rows[i].first_name,
-                last_name: rows[i].last_name,
+              id_stud: rows[i].id,
+              first_name: rows[i].first_name,
+              last_name: rows[i].last_name,
             }
             studlist[i] = stud;
+
+            if(mark){
+              j = j + 1; 
+              if(i>0 && pre_insert){
+                sql2 = sql2 + " , ";
+                pre_insert = 0;
+              }
+              sql2 = sql2 + "(" + c + "," + stud.id_stud + "," + courseID + "," + mark + ", '" + date_mark + "' ," + period_mark + ",'" + mark_subj + "','" + descr_mark_subj + "','" + type_mark_subj + "')";
+              c = c + 1;
+              pre_insert = 1;
+            }
+            
+            
+          }
+          console.log(sql2);
+          if (!mark_subj || !date_mark || !descr_mark_subj || !type_mark_subj || j < 1) {
+            res.render("../pages/teacher/teacher_insertclassmark.pug", { fullName: fullName, courseid: courseID, classid: classID, studlist: studlist, flag_ok: "0", message: "Please fill the form correctly" });
+            return;
+          }
+          con.query(sql2, (err, rows, fields) => {
+            if (err) {
+              res.end("Database problem errore qui: " + err);
+              return;
+            }
+            else {
+              var sql3 = "SELECT * FROM mark";
+              con.query(sql3, (err, rows, fields) => {
+                if (err) {
+                  res.end("Database problem errore sql3: " + err);
+                  return;
+                }
+                else {
+                  for (var j = 0; j < rows.length; j++) {
+                    console.log(rows[j].id + " " + rows[j].student_id + " " + rows[j].course_id + " " + rows[j].score + " " +
+                      rows[j].date_mark + " " + rows[j].period_mark + " " +
+                      rows[j].mark_subj + " " + rows[j].descr_mark_subj + " " + rows[j].type_mark_subj);
+                  }
+                  con.end();
+                  console.log("Data successfully uploaded! ");
+                  res.render("../pages/teacher/teacher_insertclassmark.pug", { fullName: fullName, courseid: courseID, classid: classID, studlist: studlist, flag_ok: "1", message: "New class marks inserted correctly" });
+                  return;
+                }
+              });
+            }
+          });
         }
-
-        res.end(compiledPage({
-            studlist: studlist,
-            classid: req.params.classid,
-            courseid: req.params.courseid,
-            fullName: fullName
-        }));
-    });
+      });
+    }
+  });
+});
+//TODO
+router.get("/class/:classid/course/:courseid/add_material", (req, res) => {
 });
 
-
-//TODO
-router.get("/class/:classid/course/:courseid/add_material", (req, res) => {});
-
-//TODO
-router.get("/class/:classid/course/:courseid/class_marks", (req, res) => {
-
-});
 
 //TODO: nome provvisorio per presenze e note, cambiare anche il nome della route nel file "sidebar.pug" 
 //presenze e note stessa route? magari due route diverse e due tasti diversi nella sidebar?
-router.get("/class/:classid/course/:courseid/insert_stuff", (req, res) => {});
+router.get("/class/:classid/course/:courseid/insert_stuff", (req, res) => { });
 
 //TODO
-router.get("/class/:classid/course/:courseid/insert_homework", (req, res) => {});
+router.get("/class/:classid/course/:courseid/insert_homework", (req, res) => { });
+
+//Student single page
+router.get("/class/:classid/course/:courseid/student/:studentid", (req, res) => {
+  var fullName = req.session.user.first_name + " " + req.session.user.last_name;
+  var con = myInterface.DBconnect();
+  var msg = req.query.msg;
+
+  var sql = "SELECT first_name, last_name FROM student WHERE id = ?";
+  con.query(sql, [req.params.studentid], (err, rows, fields) => {
+    if (err) {
+      res.end("Database error: " + err);
+      return;
+    }
+    var studentName = rows[0].first_name + " " + rows[0].last_name;
+    sql = "SELECT course_name FROM course WHERE id = ?";
+    con.query(sql, [req.params.courseid], (err, rows, fields) => {
+      if (err) {
+        res.end("Database error: " + err);
+        return;
+      }
+      var courseName = rows[0].course_name;
+      sql = "SELECT date_mark, score FROM mark WHERE student_id = ? AND course_id = ? ORDER BY date_mark DESC";
+      con.query(sql, [req.params.studentid, req.params.courseid], (err, rows, fields) => {
+        con.end();
+        if (err) {
+          res.end("Database error: " + err);
+          return;
+        }
+        var marks = [];
+        for (var i = 0; i < rows.length; ++i) {
+          var mark = {
+            score: rows[i].score,
+            date: rows[i].date_mark.getDate() + "/" +
+              (rows[i].date_mark.getMonth() + 1) + "/" + rows[i].date_mark.getFullYear()
+          }
+          marks[i] = mark;
+        }
+        res.render("../pages/teacher/teacher_singlestudent.pug", {
+          studentID: req.params.studentid,
+          studentName: studentName,
+          courseName: courseName,
+          classid: req.params.classid,
+          courseid: req.params.courseid,
+          fullName: fullName,
+          st_marks: marks,
+          msg: msg
+        });
+      });
+    });
+  });
+  // test: https://localhost:8080/teacher/class/1/course/1/student/1
+});
+
+router.post("/class/:classid/course/:courseid/student/:studentid/insert_mark", [
+  body('subject').escape(),
+  body('desc').escape()
+], (req, res) => {
+  var studentID = req.params.studentid;
+  var courseID = req.params.courseid;
+
+  var modifier = req.body.modifier;
+  var mark = req.body.mark;
+  var type = req.body.type;
+  // Nullables
+  var subject = req.body.subject;
+  var description = req.body.desc;
+
+  var finalMark = Number(mark) + Number(modifier);
+
+  var dateMark = new Date();
+  var period = 1;
+  if (dateMark.getMonth() > 1) { // after March
+    period = 2;
+  }
+
+  // Check on nullables
+  if (subject.replace(/ /g, '').replace(/(?:\r\n|\r|\n)/g, '') == "" ||
+    description.replace(/ /g, '').replace(/(?:\r\n|\r|\n)/g, '') == "") {
+    res.redirect("../" + studentID + "?msg=markerr");
+    return;
+  }
+
+  console.log(subject + "\n" + description);
+
+
+  var sql = "SELECT COUNT(*) AS id FROM mark FOR UPDATE;";
+  var con = db.DBconnect();
+  con.query(sql, (err, rows, fields) => {
+    if (err) {
+      res.end("Database error: " + err);
+      return;
+    }
+    var id = rows[0].id;
+    ++id;
+    sql = "INSERT INTO mark " +
+      "(id, student_id, course_id, score, date_mark, period_mark, mark_subj, descr_mark_subj, type_mark_subj) " +
+      "VALUES(?,?,?,?,?,?,?,?,?);";
+    con.query(sql, [id, studentID, courseID, finalMark, dateMark, period, subject, description, type],
+      (err, result) => {
+        con.end();
+        if (err) {
+          res.end("Database error: " + err);
+          return;
+        }
+        res.redirect("../" + studentID + "?msg=markok");
+      });
+  });
+});
+
+router.post("/class/:classid/course/:courseid/student/:studentid/insert_note", [
+  body('note').escape()
+], (req, res) => {
+  var studentID = req.params.studentid;
+  var teacherID = req.session.user.id;
+  var note = req.body.note;
+  if (note.replace(/ /g, '').replace(/(?:\r\n|\r|\n)/g, '') == '') {
+    res.redirect("../" + studentID + "?msg=noteerr");
+    return;
+  }
+  var con = db.DBconnect()
+  var sql = "SELECT COUNT(*) AS id FROM note FOR UPDATE;";
+  con.query(sql, (err, rows, fields) => {
+    if (err) {
+      res.end("Database error: " + err);
+      return;
+    }
+    var id = rows[0].id;
+    ++id;
+    sql = "INSERT INTO note(id, student_id, teacher_id, note_date, motivation, justified) " +
+      "VALUES(?,?,?,?,?,?);"
+    con.query(sql, [id, studentID, teacherID, new Date(), note, 0], (err, result) => {
+      if (err) {
+        res.end("Database error: " + err);
+        return;
+      }
+      res.redirect("../" + studentID + "?msg=noteok");
+    });
+  });
+});
 
 module.exports = router;
