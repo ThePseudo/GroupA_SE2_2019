@@ -30,7 +30,7 @@ const principalPage = require('./modules/principal.js');
 
 // Constants
 const HTTPPORT = 8000;
-const HTTPSPORT = 9090;
+const HTTPSPORT = 8080;
 const HOST = '0.0.0.0';
 
 //fix for favicon.ico request
@@ -42,7 +42,7 @@ app.use('/parent', parentPages);
 app.use('/auth_router', auth_router);
 app.use('/teacher', teacherPages);
 app.use('/officer', officerPage);
-app.use("/principal",principalPage);
+app.use("/principal", principalPage);
 
 const options = {
     key: fs.readFileSync("./certs/localhost.key"),
