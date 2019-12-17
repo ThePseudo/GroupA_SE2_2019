@@ -5,6 +5,7 @@
 - var user= "teacher"
 - var active= "Insert marks (class)"
 
+//- Uses variables: message, studlist, courseName, className
 doctype html
 html
   include ../base/head.pug
@@ -13,7 +14,7 @@ html
     include ../base/sidebar.pug
     div(class='container')
       div(class='row')
-        h1(class='title') Class #{classid} Course #{courseid} 
+        h1(class='title') #{className} - #{courseName} 
         div(class='row')
         if flag_ok == 1
           h2(class = 'ok_msg') &nbsp #{message} &nbsp

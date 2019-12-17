@@ -11,7 +11,7 @@ nav(class='navbar navbar-default')
     button(class='glyphicon glyphicon-menu-hamburger menuButton btn menuButton hidden-lg' id='navtoggle' onClick="onMenuButtonClick()")
   div(class='container-fluid')
     div(class='navbar-header' style='margin-left:50px;')
-      a(href='/' class='navbar-brand navbar-item') BB
+      a(href='/' class='navbar-brand navbar-item') WebSchool
     ul(class='nav navbar-nav navbar-right hidden-xs')
       if loggedIn
         +list('/auth_router/logout', 'Log out', 'glyphicon glyphicon-log-out')

@@ -348,7 +348,6 @@ router.get("/class/:classid/course/:courseid/class_mark", (req, res) => {
       res.end("Database problem: " + err);
       return;
     }
-    con.end();
     var studlist = [];
     for (var i = 0; i < rows.length; ++i) {
       var stud = {
@@ -357,13 +356,30 @@ router.get("/class/:classid/course/:courseid/class_mark", (req, res) => {
       }
       studlist[i] = stud;
     }
-
-    res.end(compiledPage({
-      studlist: studlist,
-      classid: req.params.classid,
-      courseid: req.params.courseid,
-      fullName: fullName
-    }));
+    sql = "SELECT course_name FROM course WHERE id = ?";
+    con.query(sql, [courseID], (err, rows) => {
+      if (err) {
+        res.end("Database problem: " + err);
+        return;
+      }
+      var courseName = rows[0].course_name;
+      sql = "SELECT class_name FROM class WHERE id = ?";
+      con.query(sql, [classID], (err, rows) => {
+        if (err) {
+          res.end("Database problem: " + err);
+          return;
+        }
+        var className = rows[0].class_name;
+        res.end(compiledPage({
+          studlist: studlist,
+          classid: classID,
+          courseid: courseID,
+          fullName: fullName,
+          courseName: courseName,
+          className: className
+        }));
+      });
+    });
   });
 });
 
