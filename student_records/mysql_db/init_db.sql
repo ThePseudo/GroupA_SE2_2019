@@ -309,6 +309,22 @@ CREATE TABLE homework
     PRIMARY KEY(id)
 );
 
+INSERT INTO homework
+    (id, course_id, class_id, description, date_hw)
+VALUES
+    (1, 1, 1, "Study pages 5-6-7", "2019-10-17");
+
+
+INSERT INTO homework
+    (id, course_id, class_id, description, date_hw)
+VALUES
+    (2, 3, 2, "Study pages 5-6-7", "2019-10-17");
+
+
+INSERT INTO homework
+    (id, course_id, class_id, description, date_hw)
+VALUES
+    (3, 3, 2, "Ex 1 pag 12", "2019-10-17");
 -- Materials
 
 CREATE TABLE material
