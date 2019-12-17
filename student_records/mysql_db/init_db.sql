@@ -16,7 +16,7 @@ CREATE TABLE teacher
 INSERT INTO teacher
     (id,first_name,last_name,cod_fisc,email,password,first_access)
 VALUES
-    (1, "Elena", "Baralis", "AV85T", "venere85@yahoo.com", "$2a$10$0tXRERd11hkw3zKQQmFeTOAuUcMiI6/ThiMNvfMUvKmYkWkL0BRkO", 1);
+    (1, "Elena", "Baralis", "AV85T", "elena.baralis.polito@gmail.com", "$2a$10$0tXRERd11hkw3zKQQmFeTOAuUcMiI6/ThiMNvfMUvKmYkWkL0BRkO", 1);
 
 INSERT INTO teacher
     (id,first_name,last_name,cod_fisc,email,password,first_access)
@@ -38,7 +38,7 @@ CREATE TABLE officer
 INSERT INTO officer
     (id,first_name,last_name,cod_fisc,email,password,first_access, principal)
 VALUES
-    (1, "Ciccio", "Pasticcio", "CP80X", "pasticcio80@gmail.com", "$2a$10$0tXRERd11hkw3zKQQmFeTOAuUcMiI6/ThiMNvfMUvKmYkWkL0BRkO", 1, 0);
+    (1, "Giorno", "Giovanna", "CP80X", "pasticcio80@gmail.com", "$2a$10$0tXRERd11hkw3zKQQmFeTOAuUcMiI6/ThiMNvfMUvKmYkWkL0BRkO", 1, 0);
 
 INSERT INTO officer
     (id,first_name,last_name,cod_fisc,email,password,first_access, principal)
@@ -59,7 +59,7 @@ CREATE TABLE parent
 INSERT INTO parent
     (id, first_name, last_name,cod_fisc,email,password, first_access)
 VALUES
-    (1, "Alberto", "Rosso", "1111", "tizio@caio.com", "$2a$10$0tXRERd11hkw3zKQQmFeTOAuUcMiI6/ThiMNvfMUvKmYkWkL0BRkO", 1);
+    (1, "Alberto", "Rosso", "1111", "alberto.rosso@gmail.com", "$2a$10$0tXRERd11hkw3zKQQmFeTOAuUcMiI6/ThiMNvfMUvKmYkWkL0BRkO", 1);
 
 INSERT INTO parent
     (id, first_name, last_name,cod_fisc,email,password, first_access)
@@ -68,7 +68,7 @@ VALUES
 INSERT INTO parent
     (id, first_name, last_name,cod_fisc,email,password, first_access)
 VALUES
-    (3, "Marco", "Verdi", "DZJVSL56R55D763T", "marco@verdi.com", "$2a$10$0tXRERd11hkw3zKQQmFeTOAuUcMiI6/ThiMNvfMUvKmYkWkL0BRkO", 1);
+    (3, "Jotaro", "Kujo", "DZJVSL56R55D763T", "marco@verdi.com", "$2a$10$0tXRERd11hkw3zKQQmFeTOAuUcMiI6/ThiMNvfMUvKmYkWkL0BRkO", 1);
 
 CREATE TABLE student
 (
@@ -179,7 +179,7 @@ CREATE TABLE admin
 INSERT INTO admin
     (id,first_name,last_name,cod_fisc,email,password)
 VALUES
-    (1, "Giovanni", "Rossi", "GPS67", "rossi@yahoo.com", "$2a$10$0tXRERd11hkw3zKQQmFeTOAuUcMiI6/ThiMNvfMUvKmYkWkL0BRkO");
+    (1, "Giovanni", "Girrgio", "GPS67", "rossi@yahoo.com", "$2a$10$0tXRERd11hkw3zKQQmFeTOAuUcMiI6/ThiMNvfMUvKmYkWkL0BRkO");
 
 INSERT INTO admin
     (id,first_name,last_name,cod_fisc,email,password)
