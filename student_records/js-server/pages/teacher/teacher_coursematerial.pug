@@ -1,8 +1,8 @@
 // Those variables should be in every page
-- var page = "Upload file"
+- var page = "Add material"
 - var loggedIn = true;
-- var user = "admin"
-- var active = "Upload file"
+- var user = "teacher"
+- var active = "Add material"
 
 doctype html
 html
@@ -12,7 +12,7 @@ html
     include ../base/sidebar.pug
     div(class='container sidebarContainer')
       div(class='row')
-        h1(class='title') Upload file
+        h1(class='title') Add material
       div(class='row')
         if flag_ok == 1
           h2(class = 'ok_msg') &nbsp #{message} &nbsp

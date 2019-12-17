@@ -32,70 +32,76 @@ router.use(/\/.*/, function (req, res, next) {
 });
 
 
-router.get("/class/:classid/course/:courseid/upload_file", (req, res) => {
-    var classID = req.params.classid;
-    var courseID = req.params.courseid;
-    var con = db.DBconnect();
-    res.render("../pages/teacher/teacher_coursematerial.pug", { classID: classID, courseID: courseID });
+router.get("/class/:classid/course/:courseid/add_material", (req, res) => {
+  var fullName = req.session.user.first_name + " " + req.session.user.last_name;
+
+  var classID = req.params.classid;
+  var courseID = req.params.courseid;
+  var con = myInterface.DBconnect();
+  res.render("../pages/teacher/teacher_coursematerial.pug", {
+    classID: classID,
+    courseID: courseID,
+    fullName: fullName
+  });
 
 });
 
 router.post("/class/:classid/course/:courseid/up_file", (req, res) => {
-    const compiledPage = pug.compileFile("./pages/teacher/teacher_coursematerial.pug");
-    res.set({ 'Content-Type': 'application/xhtml+xml; charset=utf-8' });
-    var classID = req.params.classid;
-    var courseID = req.params.courseid;
-    var date = new Date();
-    var con = db.DBconnect();
-    var busboy = new Busboy({ headers: req.headers });
-    busboy.on('field', function(fieldname, val, fieldnameTruncated, valTruncated, encoding, mimetype) {
-        let desc = inspect(val);
-        busboy.on('file', function(fieldname, file, filename, encoding, mimetype) {
-            var saveTo = path.join('.', "/upload/" + filename);
-            console.log('Desc: ' + desc + ' Uploading: ' + saveTo);
-            file.pipe(fs.createWriteStream(saveTo));
-            con.query('SELECT COUNT(*) as c FROM material', (err, rows, fields) => { // because we have no AUTO_UPDATE available on the DB
-                if (err) {
-                    res.end("There is a problem in the DB connection. Please, try again later " + err);
-                    return;
-                }
-                con.query("INSERT INTO material(id, course_id, class_id, description, link, date_mt) VALUES(?, ?, ?, ?, ?, ?)", [rows[0].c + 1, courseID, classID, desc, saveTo, date], (err, result) => {
-                    if (err) {
-                        res.end("There is a problem in the DB connection. Please, try again later " + err);
-                        return;
-                    }
-                    con.end();
-                });
-            });
-        });
-    });
-    busboy.on('finish', function() {
-        console.log('Upload complete');
-        res.writeHead(200, { 'Connection': 'close' });
-
-        //fa l'upload ma non va alla pagina successiva
-        //res.render non si può usare qui non provateci
-        //dà problemi di header res.render
-        res.end(compiledPage({
-            classID: classID,
-            courseID: courseID,
-        }));
-    });
-    return req.pipe(busboy);
-
-    /*console.log(req);
-    con.query("SELECT t.course_id, t.class_id, course_name, class_name FROM teacher_course_class t, course co, class cl WHERE teacher_id=1 AND t.course_id=co.id AND t.class_id=cl.id", (err, rows) => {
+  const compiledPage = pug.compileFile("./pages/teacher/teacher_coursematerial.pug");
+  res.set({ 'Content-Type': 'application/xhtml+xml; charset=utf-8' });
+  var classID = req.params.classid;
+  var courseID = req.params.courseid;
+  var date = new Date();
+  var con = myInterface.DBconnect();
+  var busboy = new Busboy({ headers: req.headers });
+  busboy.on('field', function (fieldname, val, fieldnameTruncated, valTruncated, encoding, mimetype) {
+    let desc = inspect(val);
+    busboy.on('file', function (fieldname, file, filename, encoding, mimetype) {
+      var saveTo = path.join('.', "/upload/" + filename);
+      console.log('Desc: ' + desc + ' Uploading: ' + saveTo);
+      file.pipe(fs.createWriteStream(saveTo));
+      con.query('SELECT COUNT(*) as c FROM material', (err, rows, fields) => { // because we have no AUTO_UPDATE available on the DB
         if (err) {
+          res.end("There is a problem in the DB connection. Please, try again later " + err);
+          return;
+        }
+        con.query("INSERT INTO material(id, course_id, class_id, description, link, date_mt) VALUES(?, ?, ?, ?, ?, ?)", [rows[0].c + 1, courseID, classID, desc, saveTo, date], (err, result) => {
+          if (err) {
             res.end("There is a problem in the DB connection. Please, try again later " + err);
             return;
-        }
-        con.end();
-        if (!file) {
-            res.render("../pages/teacher/teacher_coursematerial.pug", { flag_ok: "0", message: "Please fill the description and upload the file", Courses: Course_list });
-            return;
-        }
-        res.render("../pages/teacher/teacher_coursematerial.pug");
-    });*/
+          }
+          con.end();
+        });
+      });
+    });
+  });
+  busboy.on('finish', function () {
+    console.log('Upload complete');
+    res.writeHead(200, { 'Connection': 'close' });
+
+    //fa l'upload ma non va alla pagina successiva
+    //res.render non si può usare qui non provateci
+    //dà problemi di header res.render
+    res.end(compiledPage({
+      classID: classID,
+      courseID: courseID,
+    }));
+  });
+  return req.pipe(busboy);
+
+  /*console.log(req);
+  con.query("SELECT t.course_id, t.class_id, course_name, class_name FROM teacher_course_class t, course co, class cl WHERE teacher_id=1 AND t.course_id=co.id AND t.class_id=cl.id", (err, rows) => {
+      if (err) {
+          res.end("There is a problem in the DB connection. Please, try again later " + err);
+          return;
+      }
+      con.end();
+      if (!file) {
+          res.render("../pages/teacher/teacher_coursematerial.pug", { flag_ok: "0", message: "Please fill the description and upload the file", Courses: Course_list });
+          return;
+      }
+      res.render("../pages/teacher/teacher_coursematerial.pug");
+  });*/
 });
 
 router.get("/teacher_home", (req, res) => { // T3
@@ -350,9 +356,9 @@ router.post("/class/:classid/course/:courseid/reg_mark", (req, res) => {
             }
             studlist[i] = stud;
 
-            if(mark){
-              j = j + 1; 
-              if(i>0 && pre_insert){
+            if (mark) {
+              j = j + 1;
+              if (i > 0 && pre_insert) {
                 sql2 = sql2 + " , ";
                 pre_insert = 0;
               }
@@ -360,8 +366,8 @@ router.post("/class/:classid/course/:courseid/reg_mark", (req, res) => {
               c = c + 1;
               pre_insert = 1;
             }
-            
-            
+
+
           }
           console.log(sql2);
           if (!mark_subj || !date_mark || !descr_mark_subj || !type_mark_subj || j < 1) {
@@ -496,7 +502,7 @@ router.post("/class/:classid/course/:courseid/student/:studentid/insert_mark", [
 
 
   var sql = "SELECT COUNT(*) AS id FROM mark FOR UPDATE;";
-  var con = db.DBconnect();
+  var con = myInterface.DBconnect();
   con.query(sql, (err, rows, fields) => {
     if (err) {
       res.end("Database error: " + err);
@@ -529,7 +535,7 @@ router.post("/class/:classid/course/:courseid/student/:studentid/insert_note", [
     res.redirect("../" + studentID + "?msg=noteerr");
     return;
   }
-  var con = db.DBconnect()
+  var con = myInterface.DBconnect()
   var sql = "SELECT COUNT(*) AS id FROM note FOR UPDATE;";
   con.query(sql, (err, rows, fields) => {
     if (err) {
