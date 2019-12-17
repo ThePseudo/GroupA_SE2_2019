@@ -16,21 +16,21 @@ mixin rowNote(teacher, date, motivation,justified,teacherID,teacherEmail)
     //-Add route for page slot of the teacher
     td(style="text-align:left;" class="col-xs-3")
       button(class='btn blockButton')
-    
-    //-td(style="text-align:left;" class="col-xs-3")
-        script.
-          $(document).ready(function(){
-              $("#emailModal").on("show.bs.modal", function(event){
-              var button = $(event.relatedTarget)
-              var email = button.data("email")
-              var modal = $(this)
-              modal.find(".modal-body #teacher_email").val(email)
-              modal.find(".modal-body #email_body").val("")
-            })
-          })     
-        button(class='btn blockButton' href="javascript:void(0)" data-toggle="modal" data-target="#emailModal" data-email = teacherEmail)
 
-            
+    //-td(style="text-align:left;" class="col-xs-3")
+      script.
+        $(document).ready(function(){
+          $("#emailModal").on("show.bs.modal", function(event){
+          var button = $(event.relatedTarget)
+          var email = button.data("email")
+          var modal = $(this)
+          modal.find(".modal-body #teacher_email").val(email)
+          modal.find(".modal-body #email_body").val("")
+          })
+        })     
+      button(class='btn blockButton' href="javascript:void(0)" data-toggle="modal" data-target="#emailModal" data-email = teacherEmail)
+
+
 
 mixin rowAbsence(date, start_h, end_h,justified)
   tr(class="table-row table-row-base")
@@ -41,7 +41,7 @@ mixin rowAbsence(date, start_h, end_h,justified)
       td(style="background: rgb(24, 143, 13); text-align:left")
     else
       td(style="background: rgb(226, 45, 45); text-align:left")
-    
+
 doctype html
 html
   include ../base/head.pug
@@ -55,8 +55,8 @@ html
         div(class='row')
           h1(class='title') Notes
         div(class='row')
-          div(class="col-lg-2 col-sm-2 col-xs-1")
-          div(class="col-lg-8 col-sm-8 col-xs-10" style='align-content:center;')
+          div(class="col-lg-2 col-sm-1")
+          div(class="col-lg-8 col-sm-10 col-xs-12" style='align-content:center;')
             table(style="width:100%; text-align:center; align-content:center" class="table table-scroll")
               thead
                 tr(class='table-row-base' style="width:99%")
@@ -69,13 +69,13 @@ html
               tbody
                 for note in note_array
                   +rowNote(note.teacherFullName, note.date, note.motivation, note.justified, note.teacherID, note.teacherEmail)
-      
+
       div(class="h-50 d-inline-block")    
         div(class='row')
           h1(class='title') Absences
         div(class='row')
-          div(class="col-lg-2 col-sm-2 col-xs-1")
-          div(class="col-lg-8 col-sm-8 col-xs-10" style='align-content:center;')
+          div(class="col-lg-2 col-sm-1")
+          div(class="col-lg-8 col-sm-10 col-xs-12" style='align-content:center;')
             table(style="width:100%; text-align:center; align-content:center;  table-layout:fixed;" class="table table-scroll")
               thead
                 tr(class='table-row-base' style="width:98%")
@@ -101,15 +101,15 @@ html
           div(class='form-group')
             label(for="email") teacher's email:
             input(type="email" readonly class='form-control' id='teacher_email')
-        
+
           div(class='form-group')
             label(for="subject") Subject:
             input(type="text" readonly class='form-control' id="subject" name="subject" value = "Contact Request")
-          
+
           div(class='form-group')
             label(for="text_msg") Body:
             textarea(class = "form-control" rows="5" placeholder="Email body" id = "email_body" name = "email_body")   
-          
+
           button#btnemail.btn.btn-default(type="button" ) Send Email
       div(class="modal-footer")
-          button(class = "btn btn-default" data-dismiss="modal") Close
+        button(class = "btn btn-default" data-dismiss="modal") Close
