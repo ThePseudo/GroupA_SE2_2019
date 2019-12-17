@@ -8,6 +8,7 @@ const bcrypt = require('bcrypt');
 const myInterface = require('../modules/functions.js');
 const { body } = require('express-validator');
 
+
 var router = express.Router();
 
 class Student {
@@ -18,7 +19,7 @@ class Student {
 }
 
 function updateClass(classID, res) {
-    var con = db.DBconnect();
+    var con = myInterface.DBconnect();
     con.query('SELECT id, last_name, first_name FROM student WHERE class_id=0', (err, rows, fields) => { // because we have no AUTO_UPDATE available on the DB
         if (err) {
             res.end("There is a problem in the DB connection. Please, try again later " + err);
@@ -66,7 +67,7 @@ router.post("/class/:classid/up_class", (req, res) => {
     if (date.getMonth() < 9) { // before august
         year--;
     }
-    var con = db.DBconnect();
+    var con = myInterface.DBconnect();
     let i = 0;
     let j = 0;
     let update1 = "UPDATE student SET class_id=0";
