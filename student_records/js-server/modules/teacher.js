@@ -215,7 +215,6 @@ router.get("/class/:classid/course/:courseid/course_home", (req, res) => {
 
   var classID = req.params.classid;
   var courseID = req.params.courseid;
-  var teacherID = req.session.user.id;
 
   let sql = "SELECT * FROM student WHERE class_id =? ORDER BY last_name"
   con.query(sql, [classID], (err, rows, fields) => {
@@ -227,7 +226,6 @@ router.get("/class/:classid/course/:courseid/course_home", (req, res) => {
       var message = "";
       var n_students = 0;
       var student_array = [];
-
       if (rows.length <= 0) {
         message = "No Student enrolled yet";
       } else {
@@ -242,17 +240,23 @@ router.get("/class/:classid/course/:courseid/course_home", (req, res) => {
           student_array[i].parent_2 = rows[i].parent_1;
         }
       }
-      con.end();
     }
-    res.render('../pages/teacher/teacher_coursehome.pug', {
-      classid: classID,
-      courseid: courseID,
-      fullName: fullName,
-      message: message,
-      //courseName: "Math",
-      student_array: student_array,
-      n_students: n_students
-    });
+    con.query("SELECT class_name FROM class WHERE id = ?", [classID], (err, rows, fields) => {
+      if (err) {
+        res.end("DB error: " + err);
+        return;
+      }
+      res.render('../pages/teacher/teacher_coursehome.pug', {
+        classid: classID,
+        courseid: courseID,
+        fullName: fullName,
+        message: message,
+        courseName: rows[0].class_name,
+        student_array: student_array,
+        n_students: n_students
+      });
+    })
+
   });
 });
 
