@@ -3,8 +3,6 @@
 // Use at least Nodemailer v4.1.0
 const nodemailer = require('nodemailer');
 
-// Generate SMTP service account from ethereal.email
-
 module.exports.mail_handler = function (first_name, last_name, username, email, tmp_pwd, user_type) {
   /*
   credenziali:  
@@ -21,7 +19,7 @@ module.exports.mail_handler = function (first_name, last_name, username, email, 
   });
 
   const mailOptions = {
-    from: 'mr.Principal@email.com', // sender address
+    from: 'sysAdmin@gmail.com', // sender address
     to: email, // list of receivers
     subject: 'Credentialial new user', // Subject line
     html: `<p>Dear ${first_name} ${last_name},</p>

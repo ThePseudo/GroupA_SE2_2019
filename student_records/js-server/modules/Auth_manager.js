@@ -49,10 +49,12 @@ router.route('/login_parent').get((req, res) => {
     res.render("../pages/login_parent.pug");
 
 }).post(
-    [body('cod_fisc')
+    [
+        body('cod_fisc')
         .not().isEmpty()
         .trim()
-        .escape()],
+        .escape()
+    ],
     (req, res) => {
         //i valori del form sono individuati dal valore dell'attributo "name"!
         var cod_fisc = req.body.cod_fisc;
@@ -108,10 +110,12 @@ router.route('/login_teacher').get((req, res) => {
     res.render("../pages/login_teacher.pug");
 
 }).post(
-    [body('cod_fisc')
+    [
+        body('cod_fisc')
         .not().isEmpty()
         .trim()
-        .escape()],
+        .escape()
+    ],
     (req, res) => {
         //i valori del form sono individuati dal valore dell'attributo "name"!
         var cod_fisc = req.body.cod_fisc;
@@ -158,19 +162,22 @@ router.route('/login_teacher').get((req, res) => {
         }
     });
 
+//Common route for office but also principal because the principal is inside the officer table!!!!!
 router.route('/login_officer').get((req, res) => {
 
     if (req.session.user) {
-        res.redirect("/officer/officer_home");
+        res.redirect("/"+req.session.user.user_type + "/" + req.session.user.user_type +"_home");
         return;
     }
     res.render("../pages/login_officer.pug");
 
 }).post(
-    [body('cod_fisc')
+    [
+        body('cod_fisc')
         .not().isEmpty()
         .trim()
-        .escape()],
+        .escape()
+    ],
     (req, res) => {
         //i valori del form sono individuati dal valore dell'attributo "name"!
         var cod_fisc = req.body.cod_fisc;
@@ -184,7 +191,7 @@ router.route('/login_officer').get((req, res) => {
             console.log("TRY CONNECT");
             var con = db.DBconnect();
 
-            let sql = 'SELECT * FROM officer WHERE cod_fisc = ? AND !principal';
+            let sql = 'SELECT * FROM officer WHERE cod_fisc = ?';
             con.query(sql, [cod_fisc], (err, result) => {
 
                 if (err) {
@@ -199,11 +206,15 @@ router.route('/login_officer').get((req, res) => {
                     //The cod_fisc exists in the DB, now check the hashed password ( a string + salt) via method "compareSync"
                     if (bcrypt.compareSync(password, result[0].password)) {
                         console.log("OK PWD");
-
-                        setup_session_var("officer", result[0], req.session);
+                        
+                        let user_t="";
+                        if(result[0].principal)  
+                            user_t = "principal";
+                        else 
+                            user_t = "officer";
+                        setup_session_var(user_t, result[0], req.session);
                         con.end();
                         myRedirect(req.session, res);
-
                     } else {
                         // Passwords don't match
                         con.end();
@@ -226,10 +237,12 @@ router.route('/login_admin').get((req, res) => {
     res.render("../pages/login_admin.pug");
 
 }).post(
-    [body('cod_fisc')
+    [
+        body('cod_fisc')
         .not().isEmpty()
         .trim()
-        .escape()],
+        .escape()
+    ],
     (req, res) => {
         //i valori del form sono individuati dal valore dell'attributo "name"!
         var cod_fisc = req.body.cod_fisc;
@@ -276,66 +289,6 @@ router.route('/login_admin').get((req, res) => {
         }
     });
 
-router.route('/login_principal').get((req, res) => {
-
-    if (req.session.user) {
-        res.redirect("/principal/principal_home");
-        return;
-    }
-    res.render("../pages/login_principal.pug");
-
-}).post(
-    [body('cod_fisc')
-        .not().isEmpty()
-        .trim()
-        .escape()],
-    (req, res) => {
-        //i valori del form sono individuati dal valore dell'attributo "name"!
-        var cod_fisc = req.body.cod_fisc;
-        var password = req.body.password;
-
-        //Check if both cod_fisc and password field are filled
-        if (!cod_fisc || !password) {
-            res.render("../pages/login_principal.pug", { err_msg: "Please enter username and password" });
-        }
-        else { //If yes, try to connect to the DB and check cod_fisc and then password (string+salt hashed via bcrypt module)
-            console.log("TRY CONNECT");
-            var con = db.DBconnect();
-
-            let sql = 'SELECT * FROM officer WHERE cod_fisc = ? AND principal';
-            con.query(sql, [cod_fisc], (err, result) => {
-
-                if (err) {
-                    console.log(err);
-                    con.end();
-                    return;
-                }
-
-                if (result.length > 0) {
-                    console.log("OK USER");
-
-                    //The cod_fisc exists in the DB, now check the hashed password ( a string + salt) via method "compareSync"
-                    if (bcrypt.compareSync(password, result[0].password)) {
-                        console.log("OK PWD");
-
-                        setup_session_var("principal", result[0], req.session);
-                        con.end();
-                        res.redirect("/principal/principal_home");
-
-                    } else {
-                        // Passwords don't match
-                        con.end();
-                        res.render("../pages/principal_admin.pug", { err_msg: 'Incorrect Username and/or Password!' });
-                    }
-                } else {
-                    // user don't match
-                    res.render("../pages/login_principal.pug", { err_msg: 'Incorrect Username and/or Password!' });
-                }
-            });
-        }
-    });
-
-
 router.route('/change_pwd').get((req, res) => {
     res.render("../pages/change_pwd.pug");
 }).post(((req, res) => {
@@ -355,7 +308,12 @@ router.route('/change_pwd').get((req, res) => {
         var con = db.DBconnect();
         let hash_pwd = bcrypt.hashSync(password, 10);
         console.log(req.session.user.cod_fisc);
-        con.query('UPDATE ?? SET password = ?, first_access = ? WHERE cod_fisc = ?', [req.session.user.user_type, hash_pwd, 1, req.session.user.cod_fisc], function (err, result) {
+        var user_t = req.session.user.user_type;
+        var table_to_update = user_t; 
+        if(user_t == "principal") 
+            table_to_update = "officer";
+            
+        con.query('UPDATE ?? SET password = ?, first_access = ? WHERE cod_fisc = ?', [table_to_update, hash_pwd, 1, req.session.user.cod_fisc], function (err, result) {
             console.log(result);
             if (err) {
                 con.end();
@@ -363,7 +321,6 @@ router.route('/change_pwd').get((req, res) => {
                 return;
             }
             else {
-                let user_t = req.session.user.user_type;
                 console.log(user_t);
                 con.end();
                 res.redirect("/" + user_t + "/" + user_t + "_home");

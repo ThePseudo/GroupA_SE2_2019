@@ -1,7 +1,7 @@
 // Those variables should be in every page
 - var page = "Enroll student"
 - var loggedIn = true;
-- var user = "admin"
+- var user = "officer"
 - var active = "Enroll student"
 
 doctype html
@@ -18,7 +18,7 @@ html
           h2(class = 'ok_msg') &nbsp #{message} &nbsp
         else
           h2(class = 'err_msg') &nbsp #{message} &nbsp
-      form(method='POST' action='/officer/reg_student')
+      form(method='POST' action='/officer/enroll_student')
         div(class='row' style='margin-top: 40px;')
           div(class='col-lg-3')
           div(class='col-lg-6 col-xs-12')
