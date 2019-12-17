@@ -18,16 +18,8 @@ html
           h2(class = 'ok_msg') &nbsp #{message} &nbsp
         else
           h2(class = 'err_msg') &nbsp #{message} &nbsp
-      form(method='POST' action='/teacher/up_file')
+      form(method='POST' action="/teacher/class/"+classID+"/course/"+courseID+"/up_file" enctype="multipart/form-data")
         div(class='row' style='margin-top: 40px;')
-          div(class='col-lg-3')
-          div(class='col-lg-6 col-xs-12')
-            div.form-group
-              label(for='file') Class-Course:
-              select(name="course")
-                for course in Courses
-                  option(value=course) #{course}
-        div(class='row')
           div(class='col-lg-3')
           div(class='col-lg-6 col-xs-12')
             div.form-group

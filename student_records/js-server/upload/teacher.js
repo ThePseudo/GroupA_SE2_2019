@@ -74,8 +74,8 @@ router.post("/class/:classid/course/:courseid/up_file", (req, res) => {
         res.writeHead(200, { 'Connection': 'close' });
 
         //fa l'upload ma non va alla pagina successiva
-        //res.render non si può usare qui non provateci
-        //dà problemi di header res.render
+        //res.render non si puà usare qui non provateci
+        //da problemi di header res.render
         res.end(compiledPage({
             classID: classID,
             courseID: courseID,
