@@ -1,8 +1,15 @@
 // Those variables should be in every page
 - var page = "Upload file"
 - var loggedIn = true;
-- var user = "admin"
+- var user = "teacher"
 - var active = "Upload file"
+
+mixin rowUploadFile(date, link, description)
+  tr(class="table-row table-row-base")
+    td(style="text-align:left")= date
+    td(style="text-align:left")= description
+    td(style="text-align:left;")
+      a(href='/' + link)
 
 doctype html
 html
@@ -18,28 +25,36 @@ html
           h2(class = 'ok_msg') &nbsp #{message} &nbsp
         else
           h2(class = 'err_msg') &nbsp #{message} &nbsp
-      form(method='POST' action="/teacher/class/"+classid+"/course/"+courseid+"/up_file")
-        div(class='row' style='margin-top: 40px;')
-          div(class='col-lg-3')
-          div(class='col-lg-6 col-xs-12')
-            div.form-group
-              label(for='file') Class-Course:
-              select(name="course")
-                for course in Courses
-                  option(value=course) #{course}
+      form(method='POST' action="/teacher/class/"+classid+"/course/"+courseid+"/upload_file")
         div(class='row')
           div(class='col-lg-3')
           div(class='col-lg-6 col-xs-12')
             div.form-group
-              label(for='desc') Description:
-              input(type='text' placeholder='Description' name='desc' class="form-control")
+              label(for='description') Description:
+              input(type='text' placeholder='Description' name='description' class="form-control" required)
         div(class='row')
           div(class='col-lg-3')
           div(class='col-lg-6 col-xs-12')
             div.form-group
               label(for='file') File:
-              input(type='file' placeholder='File' name='file' class="form-control")
-        div(class='row')
-          div(class='col-sm-8 col-lg-6')
+              input(type='file' placeholder='File' name='file' class="form-control" required)
+        div(class="row")
+          div(class='col-sm-5 col-lg-6')
           div(class='col-sm-4 col-lg-3 col-xs-10')
-            input(type='SUBMIT' value='Upload file' class='btn blockButton' style='margin-top:24px; padding: 6px 10px; margin-left:25%; width:75%;')
+            input(type='SUBMIT' value='Upload file' name="upload_file" class='btn blockButton' style='margin-top:24px; padding: 6px 10px; margin-left:25%; width:75%;')
+      
+      div(class="h-50 d-inline-block")    
+        div(class='row')
+          h1(class='title') Old Material
+        div(class='row')
+          div(class="col-lg-2 col-sm-2 col-xs-1")
+          div(class="col-lg-8 col-sm-8 col-xs-10" style='align-content:center;')
+            table(style="width:100%; text-align:center; align-content:center;  table-layout:fixed;" class="table table-scroll")
+              thead
+                tr(class='table-row-base' style="width:99%")
+                  th(style="text-align:left") Date
+                  th(style="text-align:left") Link
+                  th(style="text-align:left") Description
+              tbody
+                for upload_file in upload_file_array
+                  +rowUploadFile(upload_file.date, upload_file.link, upload_file.description)
