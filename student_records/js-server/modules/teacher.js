@@ -1,9 +1,13 @@
-'use strict';
-
+const path = require('path');
+const fs = require('fs');
+const os = require('os');
 const express = require('express');
+const upload = require('express-fileupload');
 const pug = require('pug');
 const myInterface = require('../modules/functions.js');
 const { body } = require('express-validator');
+const Busboy = require('busboy');
+const inspect = require('util').inspect;
 
 //IMPORTO oggetto rappresentante la sessione.
 //Per accedere ->  req.session
@@ -27,54 +31,71 @@ router.use(/\/.*/, function (req, res, next) {
   }
 });
 
-router.get("/upload_file", (req, res) => {
-  var con = myInterface.DBconnect();
-  con.query("SELECT course_id, class_id FROM teacher_course_class WHERE teacher_id=1", (err, rows) => {
-    if (err) {
-      res.end("There is a problem in the DB connection. Please, try again later " + err);
-      return;
-    }
-    var Course_list = [];
-    var i = 0;
-    rows.forEach(element => {
-      Course_list[i] = element.class_id + "-" + element.course_id;
-      i++;
-    });
-    con.end();
-    res.render("../pages/teacher/teacher_coursematerial.pug", {
-      Courses: Course_list
-    });
-  });
+
+router.get("/class/:classid/course/:courseid/upload_file", (req, res) => {
+    var classID = req.params.classid;
+    var courseID = req.params.courseid;
+    var con = db.DBconnect();
+    res.render("../pages/teacher/teacher_coursematerial.pug", { classID: classID, courseID: courseID });
+
 });
 
-router.post("/up_file", [body('desc')
-  .not().isEmpty()
-  .trim()
-  .escape()
-], (req, res) => {
-  let desc = req.body.desc;
-  let file = req.body.file;
-  var con = myInterface.DBconnect();
-  con.query("SELECT course_id, class_id FROM teacher_course_class WHERE teacher_id=1", (err, rows) => {
-    if (err) {
-      res.end("There is a problem in the DB connection. Please, try again later " + err);
-      return;
-    }
-    var Course_list = [];
-    var i = 0;
-    rows.forEach(element => {
-      Course_list[i] = element.class_id + "-" + element.course_id;
-      i++;
+router.post("/class/:classid/course/:courseid/up_file", (req, res) => {
+    const compiledPage = pug.compileFile("./pages/teacher/teacher_coursematerial.pug");
+    res.set({ 'Content-Type': 'application/xhtml+xml; charset=utf-8' });
+    var classID = req.params.classid;
+    var courseID = req.params.courseid;
+    var date = new Date();
+    var con = db.DBconnect();
+    var busboy = new Busboy({ headers: req.headers });
+    busboy.on('field', function(fieldname, val, fieldnameTruncated, valTruncated, encoding, mimetype) {
+        let desc = inspect(val);
+        busboy.on('file', function(fieldname, file, filename, encoding, mimetype) {
+            var saveTo = path.join('.', "/upload/" + filename);
+            console.log('Desc: ' + desc + ' Uploading: ' + saveTo);
+            file.pipe(fs.createWriteStream(saveTo));
+            con.query('SELECT COUNT(*) as c FROM material', (err, rows, fields) => { // because we have no AUTO_UPDATE available on the DB
+                if (err) {
+                    res.end("There is a problem in the DB connection. Please, try again later " + err);
+                    return;
+                }
+                con.query("INSERT INTO material(id, course_id, class_id, description, link, date_mt) VALUES(?, ?, ?, ?, ?, ?)", [rows[0].c + 1, courseID, classID, desc, saveTo, date], (err, result) => {
+                    if (err) {
+                        res.end("There is a problem in the DB connection. Please, try again later " + err);
+                        return;
+                    }
+                    con.end();
+                });
+            });
+        });
     });
-    con.end();
-    if (!desc || !file) {
-      res.render("../pages/teacher/teacher_coursematerial.pug", { flag_ok: "0", message: "Please, fill the description and upload the file", Courses: Course_list });
-      return;
-    }
-    res.render("../pages/teacher/teacher_coursematerial.pug", {
-      Courses: Course_list
+    busboy.on('finish', function() {
+        console.log('Upload complete');
+        res.writeHead(200, { 'Connection': 'close' });
+
+        //fa l'upload ma non va alla pagina successiva
+        //res.render non si può usare qui non provateci
+        //dà problemi di header res.render
+        res.end(compiledPage({
+            classID: classID,
+            courseID: courseID,
+        }));
     });
-  });
+    return req.pipe(busboy);
+
+    /*console.log(req);
+    con.query("SELECT t.course_id, t.class_id, course_name, class_name FROM teacher_course_class t, course co, class cl WHERE teacher_id=1 AND t.course_id=co.id AND t.class_id=cl.id", (err, rows) => {
+        if (err) {
+            res.end("There is a problem in the DB connection. Please, try again later " + err);
+            return;
+        }
+        con.end();
+        if (!file) {
+            res.render("../pages/teacher/teacher_coursematerial.pug", { flag_ok: "0", message: "Please fill the description and upload the file", Courses: Course_list });
+            return;
+        }
+        res.render("../pages/teacher/teacher_coursematerial.pug");
+    });*/
 });
 
 router.get("/teacher_home", (req, res) => { // T3
