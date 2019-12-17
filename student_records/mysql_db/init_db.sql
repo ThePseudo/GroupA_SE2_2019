@@ -318,37 +318,37 @@ CREATE TABLE material
     class_id INT NOT NULL,
     description TEXT NOT NULL,
     link TEXT NOT NULL,
-    date DATE NOT NULL,
+    date_mt DATE NOT NULL,
     PRIMARY KEY(id)
 );
 
 INSERT INTO material
-    (id,course_id, class_id, description, link, date)
+    (id,course_id, class_id, description, link, date_mt)
 VALUES
-    (1, 3, 2, "questo è un test per vedere come si comporta la tabella con stringhe lunghe", "test.txt",'2019-9-12');
+    (1, 3, 2, "questo è un test per vedere come si comporta la tabella con stringhe lunghe", "test.txt", '2019-9-12');
 
 INSERT INTO material
-    (id,course_id, class_id, description, link, date)
+    (id,course_id, class_id, description, link, date_mt)
 VALUES
     (2, 3, 2, "prova descrizione1", "file.pdf", '2019-9-12');
 
 INSERT INTO material
-    (id,course_id, class_id, description, link, date)
+    (id,course_id, class_id, description, link, date_mt)
 VALUES
     (3, 3, 2, "prova descrizione2", "file.pdf", '2019-9-12');
 
 INSERT INTO material
-    (id,course_id, class_id, description, link, date)
+    (id,course_id, class_id, description, link, date_mt)
 VALUES
     (4, 3, 2, "prova descrizione3", "file.pdf", '2019-9-12');
 
 INSERT INTO material
-    (id,course_id, class_id, description, link, date)
+    (id,course_id, class_id, description, link, date_mt)
 VALUES
     (5, 3, 2, "prova descrizione4", "file.pdf", '2019-9-12');
 
 INSERT INTO material
-    (id,course_id, class_id, description, link, date)
+    (id,course_id, class_id, description, link, date_mt)
 VALUES
     (6, 3, 2, "prova descrizione5", "file.pdf", '2019-9-12');
 

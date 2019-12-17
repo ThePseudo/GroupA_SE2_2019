@@ -11,6 +11,19 @@ const { body } = require('express-validator');
 
 var router = express.Router();
 
+router.use(/\/.*/, function (req, res, next) {
+    try {
+        if (req.session.user.user_type != 'officer') {
+            res.redirect("/");
+            return;
+        } else {
+            next();
+        }
+    } catch (err) {
+        res.redirect("/");
+    }
+});
+
 class Student {
     constructor(id, name) {
         this.id = id;
