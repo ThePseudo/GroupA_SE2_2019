@@ -271,19 +271,19 @@ VALUES(2, 1, "2019-09-29", "08:00", "13:15", 0);
 
 INSERT INTO absence
     (id, student_id, date_ab, start_h, end_h, justified)
-VALUES(3, 1, "2019-09-30", "08:00", "13:15", 1);
+VALUES(3, 1, "2019-10-20", "08:00", "13:15", 1);
 
 INSERT INTO absence
     (id, student_id, date_ab, start_h, end_h, justified)
-VALUES(4, 1, "2019-09-29", "08:00", "13:15", 0);
+VALUES(4, 1, "2019-10-21", "08:00", "13:15", 1);
 
 INSERT INTO absence
     (id, student_id, date_ab, start_h, end_h, justified)
-VALUES(5, 1, "2019-09-30", "08:00", "13:15", 1);
+VALUES(5, 1, "2019-10-22", "08:00", "13:15", 1);
 
 INSERT INTO absence
     (id, student_id, date_ab, start_h, end_h, justified)
-VALUES(6, 1, "2019-09-29", "08:00", "13:15", 0);
+VALUES(6, 1, "2019-10-10", "08:00", "13:15", 0);
 
 INSERT INTO absence
     (id, student_id, date_ab, start_h, end_h, justified)

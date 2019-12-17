@@ -420,7 +420,7 @@ router.get('/:childID/absences_notes', (req, res) => {
 
     var con = db.DBconnect();
 
-    var sql = "SELECT n.note_date, n.motivation, n.justified, t.first_name, t.last_name, t.email,t.id FROM note AS n,teacher AS t WHERE n.teacher_id = t.id AND n.student_id = ?";
+    var sql = "SELECT n.note_date, n.motivation, n.justified, t.first_name, t.last_name, t.email,t.id FROM note AS n,teacher AS t WHERE n.teacher_id = t.id AND n.student_id = ? ORDER BY n.note_date DESC";
 
     con.query(sql, [childID], (err, rows) => {
         if (err) {
@@ -438,7 +438,7 @@ router.get('/:childID/absences_notes', (req, res) => {
             note_array[i].teacherID = rows[i].id;
         }
 
-        sql = "SELECT date_ab, start_h, end_h, justified FROM absence WHERE student_id = ?";
+        sql = "SELECT date_ab, start_h, end_h, justified FROM absence WHERE student_id = ? ORDER BY date_ab DESC";
         con.query(sql, [childID], (err, rows) => {
             if (err) {
                 res.end("DB error: " + err);
