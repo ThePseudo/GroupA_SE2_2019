@@ -5,6 +5,7 @@ const express = require('express');
 const upload = require('express-fileupload');
 const pug = require('pug');
 const myInterface = require('../modules/functions.js');
+const fileUpload_handler = require('express-fileupload');
 const { body } = require('express-validator');
 const Busboy = require('busboy');
 const inspect = require('util').inspect;
@@ -103,6 +104,61 @@ router.post("/class/:classid/course/:courseid/up_file", (req, res) => {
       res.render("../pages/teacher/teacher_coursematerial.pug");
   });*/
 });
+
+
+router.route("/class/:classid/course/:courseid/upload_file").get((req, res) => {
+  var con = myInterface.DBconnect();
+  console.log(req.params.classid);
+  console.log(req.params.courseid);
+  let sql = "SELECT date, description, link FROM material WHERE class_id = ? AND course_id = ?";
+  con.query(sql, [req.params.classid, req.params.courseid], (err, rows) => {
+    if (err) {
+      res.end(err);
+      con.end();
+      return;
+    }
+    let upload_file_array = [];
+    for (var i = 0; i < rows.length; i++) {
+      upload_file_array[i] = {};
+      var date = rows[i].date.getDate() + "/" + (rows[i].date.getMonth() + 1) + "/" + rows[i].date.getFullYear();
+      upload_file_array[i].date = date;
+      upload_file_array[i].description = rows[i].description;
+      upload_file_array[i].link = rows[i].link;
+    }
+    con.end();
+    console.log(upload_file_array);
+    res.render("../pages/teacher/teacher_coursematerial.pug", { upload_file_array: upload_file_array });
+  })
+}).post(
+  [
+    body('desc').trim().escape()
+  ],
+  (req, res) => {
+    let description = req.body.description;
+    let file = req.body.file;
+    var con = myInterface.DBconnect();
+
+
+    //sanitize file?
+    if (!description || !file) {
+      res.render("../pages/teacher/teacher_coursematerial.pug", { flag_ok: "0", message: "Please, fill the description and choose a file to upload" });
+      return;
+    }
+    /*
+   
+    // The name of the input field (i.e. "sampleFile") is used to retrieve the uploaded file
+    let sampleFile = req.files.sampleFile;
+  
+    // Use the mv() method to place the file somewhere on your server
+    sampleFile.mv('/somewhere/on/your/server/filename.jpg', function(err) {
+      if (err)
+        return res.status(500).send(err);
+  
+      res.send('File uploaded!');
+    });
+    */
+
+  });
 
 router.get("/teacher_home", (req, res) => { // T3
   var fullName = req.session.user.first_name + " " + req.session.user.last_name;
@@ -405,10 +461,6 @@ router.post("/class/:classid/course/:courseid/reg_mark", (req, res) => {
     }
   });
 });
-//TODO
-router.get("/class/:classid/course/:courseid/add_material", (req, res) => {
-});
-
 
 //TODO: nome provvisorio per presenze e note, cambiare anche il nome della route nel file "sidebar.pug" 
 //presenze e note stessa route? magari due route diverse e due tasti diversi nella sidebar?
