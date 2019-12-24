@@ -390,6 +390,7 @@ router.route("/:teacherID/contact").get((req, res) => {
     res.render("../pages/parent/popup_email_send.pug");
 }).post((req, res) => {
 
+
 });
 
 module.exports = router;
