@@ -19,26 +19,34 @@ const inspect = require('util').inspect;
 
 var router = express.Router();
 
-router.use(/\/.*/, function (req, res, next) {
-  try {
-    if (req.session.user.user_type != 'teacher') {
+var fullName = "";
+var con;
+
+
+router.use(/\/.*/,
+  function (req, res, next) {
+    try {
+      if (req.session.user.user_type != 'teacher') {
+        res.redirect("/");
+        return;
+      } else {
+        next();
+      }
+    } catch (err) {
       res.redirect("/");
-      return;
-    } else {
-      next();
     }
-  } catch (err) {
-    res.redirect("/");
+  },
+  function (req, res, next) {
+    fullName = req.session.user.first_name + " " + req.session.user.last_name;
+    con = myInterface.DBconnect();
   }
-});
+);
 
-
+// Class upload
 router.get("/class/:classid/course/:courseid/add_material", (req, res) => {
-  var fullName = req.session.user.first_name + " " + req.session.user.last_name;
 
   var classID = req.params.classid;
   var courseID = req.params.courseid;
-  var con = myInterface.DBconnect();
   res.render("../pages/teacher/teacher_coursematerial.pug", {
     classID: classID,
     courseID: courseID,
@@ -47,13 +55,15 @@ router.get("/class/:classid/course/:courseid/add_material", (req, res) => {
 
 });
 
+/*
+  TODO: don't use res.render, instead redirect to add_material
+*/
 router.post("/class/:classid/course/:courseid/up_file", (req, res) => {
   const compiledPage = pug.compileFile("./pages/teacher/teacher_coursematerial.pug");
   res.set({ 'Content-Type': 'application/xhtml+xml; charset=utf-8' });
   var classID = req.params.classid;
   var courseID = req.params.courseid;
   var date = new Date();
-  var con = myInterface.DBconnect();
   var busboy = new Busboy({ headers: req.headers });
   busboy.on('field', function (fieldname, val, fieldnameTruncated, valTruncated, encoding, mimetype) {
     let desc = inspect(val);
@@ -105,7 +115,9 @@ router.post("/class/:classid/course/:courseid/up_file", (req, res) => {
   });*/
 });
 
-
+/*
+  TODO: don't use res.render, instead redirect to add_material
+*/
 router.route("/class/:classid/course/:courseid/upload_file").get((req, res) => {
   var con = myInterface.DBconnect();
   console.log(req.params.classid);
@@ -161,16 +173,11 @@ router.route("/class/:classid/course/:courseid/upload_file").get((req, res) => {
   });
 
 router.get("/teacher_home", (req, res) => { // T3
-  var fullName = req.session.user.first_name + " " + req.session.user.last_name;
-
   var date = new Date();
   var year = date.getFullYear();
   if (date.getMonth() < 9) { // before august
     year--;
   }
-
-  var con = myInterface.DBconnect();
-
 
   var sql = "SELECT course_id, class_id, course_name, class_name FROM class, course, teacher_course_class " +
     "WHERE course_id = course.id AND class_id = class.id " +
@@ -209,10 +216,6 @@ router.get("/teacher_home", (req, res) => { // T3
 //------------------------------------------
 
 router.get("/class/:classid/course/:courseid/course_home", (req, res) => {
-  var fullName = req.session.user.first_name + " " + req.session.user.last_name;
-
-  var con = myInterface.DBconnect();
-
   var classID = req.params.classid;
   var courseID = req.params.courseid;
 
@@ -256,14 +259,13 @@ router.get("/class/:classid/course/:courseid/course_home", (req, res) => {
         n_students: n_students
       });
     })
-
   });
 });
 
 //------------------------------------------------------
 
+/* TODO: don't render in POST, update ASAP */
 router.route("/class/:classid/course/:courseid/reg_topic").get((req, res) => {
-  var fullName = req.session.user.first_name + " " + req.session.user.last_name;
   var dateString = myInterface.dailyDate();
 
   res.render("../pages/teacher/teacher_coursetopic.pug", {
@@ -301,9 +303,6 @@ router.route("/class/:classid/course/:courseid/reg_topic").get((req, res) => {
       });
       return;
     }
-
-    var con = myInterface.DBconnect();
-
     con.query('SELECT COUNT(*) as c FROM topic', (err, rows) => { // because we have no AUTO_UPDATE available on the DB
       if (err) {
         res.end("There is a problem in the DB connection. Please, try again later " + err);
@@ -329,11 +328,6 @@ router.route("/class/:classid/course/:courseid/reg_topic").get((req, res) => {
   });
 
 router.get("/class/:classid/course/:courseid/class_mark", (req, res) => {
-  var fullName = req.session.user.first_name + " " + req.session.user.last_name;
-  const compiledPage = pug.compileFile("../pages/teacher/teacher_insertclassmark.pug");
-  var con = myInterface.DBconnect();
-
-
   var classID = req.params.classid;
   var courseID = req.params.courseid;
   var teacherID = req.session.user.id;
@@ -370,27 +364,24 @@ router.get("/class/:classid/course/:courseid/class_mark", (req, res) => {
           return;
         }
         var className = rows[0].class_name;
-        res.end(compiledPage({
+        res.render("../pages/teacher/teacher_insertclassmark.pug", {
           studlist: studlist,
           classid: classID,
           courseid: courseID,
           fullName: fullName,
           courseName: courseName,
           className: className
-        }));
+        });
       });
     });
   });
 });
 
 //TODO
+/*
+  Don't render in post, fix ASAP
+*/
 router.post("/class/:classid/course/:courseid/reg_mark", (req, res) => {
-
-  var fullName = req.session.user.first_name + " " + req.session.user.last_name;
-  const compiledPage = pug.compileFile("../pages/teacher/teacher_insertclassmark.pug");
-  var con = myInterface.DBconnect();
-
-
   var classID = req.params.classid;
   var courseID = req.params.courseid;
   var teacherID = req.session.user.id;
@@ -491,8 +482,6 @@ router.get("/class/:classid/course/:courseid/insert_homework", (req, res) => { }
 
 //Student single page
 router.get("/class/:classid/course/:courseid/student/:studentid", (req, res) => {
-  var fullName = req.session.user.first_name + " " + req.session.user.last_name;
-  var con = myInterface.DBconnect();
   var msg = req.query.msg;
 
   var sql = "SELECT first_name, last_name FROM student WHERE id = ?";
@@ -570,9 +559,7 @@ router.post("/class/:classid/course/:courseid/student/:studentid/insert_mark", [
     return;
   }
 
-  console.log(subject + "\n" + description);
-
-
+  //console.log(subject + "\n" + description);
   var sql = "SELECT COUNT(*) AS id FROM mark FOR UPDATE;";
   var con = myInterface.DBconnect();
   con.query(sql, (err, rows, fields) => {

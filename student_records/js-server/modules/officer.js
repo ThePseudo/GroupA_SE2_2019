@@ -30,7 +30,8 @@ router.use(/\/.*/,
         fullName = req.session.user.first_name + " " + req.session.user.last_name;
         con = myInterface.DBconnect();
         next();
-    });
+    }
+);
 
 // Class composition
 class Student {
