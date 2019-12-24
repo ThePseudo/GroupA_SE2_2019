@@ -8,22 +8,31 @@ const bcrypt = require('bcrypt');
 const myInterface = require('../modules/functions.js');
 const { body } = require('express-validator');
 
-
 var router = express.Router();
 
-router.use(/\/.*/, function (req, res, next) {
-    try {
-        if (req.session.user.user_type != 'officer') {
-            res.redirect("/");
-            return;
-        } else {
-            next();
-        }
-    } catch (err) {
-        res.redirect("/");
-    }
-});
+var fullName = "";
+var con;
 
+router.use(/\/.*/,
+    function (req, res, next) {
+        try {
+            if (req.session.user.user_type != 'officer') {
+                res.redirect("/");
+                return;
+            } else {
+                next();
+            }
+        } catch (err) {
+            res.redirect("/");
+        }
+    },
+    function (req, res, next) {
+        fullName = req.session.user.first_name + " " + req.session.user.last_name;
+        con = myInterface.DBconnect();
+        next();
+    });
+
+// Class composition
 class Student {
     constructor(id, name) {
         this.id = id;
@@ -32,7 +41,6 @@ class Student {
 }
 
 function updateClass(classID, res) {
-    var con = myInterface.DBconnect();
     con.query('SELECT id, last_name, first_name FROM student WHERE class_id=0', (err, rows, fields) => { // because we have no AUTO_UPDATE available on the DB
         if (err) {
             res.end("There is a problem in the DB connection. Please, try again later " + err);
@@ -68,11 +76,21 @@ function updateClass(classID, res) {
     });
 }
 
+// Class composition partially done, some TODOs:
+/*
+    + Graphic improvement
+    + Add a GET message parameter request
+    + Don't use updateClass(), write the code directly here
+*/
 router.get("/class/:classid/class_composition", (req, res) => {
     var classID = req.params.classid;
     updateClass(classID, res);
 });
 
+// In updating the class composition, some TODOs:
+/*
+    + Don't use res.render, use res.redirect with a GET message (look at the following routes)
+*/
 router.post("/class/:classid/up_class", (req, res) => {
     var classID = req.params.classid;
     var date = new Date();
@@ -193,6 +211,7 @@ router.get("/insert_communication", (req, res) => {
             break;
     }
     res.render("../pages/officer/officer_communication.pug", {
+        fullName: fullName,
         msg: writtenMsg,
         msgclass: msgClass
     });
@@ -206,7 +225,6 @@ router.post("/insert_comm", [body('name')
 ], (req, res) => {
     let desc = req.body.desc;
 
-    var con = myInterface.DBconnect();
     let date = new Date();
     if (!desc) {
         res.redirect("./insert_communication?msg=err");
@@ -255,6 +273,7 @@ router.route("/enroll_parent").get((req, res) => {
             break;
     }
     res.render("../pages/officer/officer_registerparent.pug", {
+        fullName: fullName,
         msg: writtenMsg,
         classmsg: classMsg
     });
@@ -316,7 +335,9 @@ router.route("/enroll_parent").get((req, res) => {
 
 // Enroll student
 router.route("/enroll_student").get((req, res) => {
-    res.render("../pages/officer/officer_registerstudent.pug");
+    res.render("../pages/officer/officer_registerstudent.pug", {
+        fullName: fullName
+    });
 }).post(
     [
         body('name').trim().escape(),
