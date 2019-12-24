@@ -1,8 +1,6 @@
 'use strict';
 
 const express = require('express');
-const pug = require('pug');
-//const mailHandler = require("../modules/ethereal.js"); one-time email modules disabled but it works (maybe just for test!)
 const mailHandler = require("./nodemailer.js");
 const bcrypt = require('bcrypt');
 const myInterface = require('../modules/functions.js');
@@ -32,6 +30,11 @@ router.use(/\/.*/,
         next();
     }
 );
+
+// Officer home
+router.get("/officer_home", (req, res) => {
+    res.render("../pages/officer/officer_home.pug");
+});
 
 // Class composition
 class Student {
@@ -91,6 +94,7 @@ router.get("/class/:classid/class_composition", (req, res) => {
 // In updating the class composition, some TODOs:
 /*
     + Don't use res.render, use res.redirect with a GET message (look at the following routes + their pages )
+    + Review both GET and post
 */
 router.post("/class/:classid/up_class", (req, res) => {
     var classID = req.params.classid;
@@ -188,11 +192,6 @@ router.post("/class/:classid/up_class", (req, res) => {
     }
 })
 
-router.get("/officer_home", (req, res) => {
-    const compiledPage = pug.compileFile("../pages/officer/officer_home.pug");
-    res.end(compiledPage());
-});
-
 // Insert communication
 router.get("/insert_communication", (req, res) => {
     var msg = req.query.msg;
@@ -248,6 +247,10 @@ router.post("/insert_comm", [body('name')
 });
 
 // Register parent
+/*
+    TODO
+    Note: see again for code redundancy
+*/
 router.route("/enroll_parent").get((req, res) => {
     var msg = req.query.msg;
     var writtenMsg = "";
@@ -333,6 +336,10 @@ router.route("/enroll_parent").get((req, res) => {
     });
 
 // Enroll student
+/*
+    TODO
+    Note: see again for code redundancy
+*/
 router.route("/enroll_student").get((req, res) => {
     res.render("../pages/officer/officer_registerstudent.pug", {
         fullName: fullName
