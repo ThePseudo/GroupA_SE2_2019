@@ -229,7 +229,9 @@ router.route("/class/:classid/course/:courseid/reg_topic").get((req, res) => {
     courseid: courseID,
     classid: classID,
     msg: writtenMsg,
-    msgClass: msgClass
+    msgClass: msgClass,
+    className: className,
+    courseName: courseName
   });
 }).post(
   [

@@ -5,7 +5,8 @@
 - var user= "teacher"
 - var active= "Insert marks (class)"
 
-//- Uses variables: message, studlist, courseName, className, msg, msgClass, dateString
+//- Uses variables: classid, courseid, studlist[] {first_name, last_name}
+  message, studlist, courseName, className, msg, msgClass, dateString
 doctype html
 html
   include ../base/head.pug
@@ -14,7 +15,7 @@ html
     include ../base/sidebar.pug
     div(class='container')
       div(class='row')
-        h1(class='title') #{className} - #{courseName}
+        h1(class='title') #{className} - #{courseName} - Insert marks
       if msg != ""
         div(class='row')
           h2(class=msgClass) #{msg}
@@ -32,7 +33,7 @@ html
             div(class='col-sm-6')
               div.form-group
                 label(for='desc') Description:
-                textarea(name="desc" placeholder="Description of subject" value='Description' form="regform" class="form-control")
+                textarea(name="desc" placeholder="Description of subject" value='Description' form="regform" class="form-control" style="resize:none" rows="8")
           div(class='row')
             div(class='col-sm-3')
             div(class='col-sm-6')
@@ -65,7 +66,7 @@ html
                   th(style="text-align:left;") Student
                   th(style="text-align:left;") Mark
                 each student in studlist
-                  tr
-                    th(name="studentname" style="text-align:left;") #{student.first_name + " " + student.last_name}
-                    th 
+                  tr(class="table-row-base")
+                    td(name="studentname" style="text-align:left;") #{student.first_name + " " + student.last_name}
+                    td 
                       input(type='number' min='1' max='10' name="mark" form="regform" class="form-control")
