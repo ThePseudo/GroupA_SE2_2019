@@ -175,6 +175,7 @@ router.get("/officer_home", (req, res) => {
     res.end(compiledPage());
 });
 
+// Insert communication
 router.get("/insert_communication", (req, res) => {
     var msg = req.query.msg;
     var writtenMsg = "";
@@ -228,9 +229,35 @@ router.post("/insert_comm", [body('name')
     });
 });
 
-
+// Register parent
 router.route("/enroll_parent").get((req, res) => {
-    res.render("../pages/officer/officer_registerparent.pug");
+    var msg = req.query.msg;
+    var writtenMsg = "";
+    var classMsg = "";
+    switch (msg) {
+        case "noform":
+            writtenMsg = "Please, fill all the data";
+            classMsg = "err_msg";
+            break;
+        case "nossn":
+            writtenMsg = "Please, insert a valid italian SSN";
+            classMsg = "err_msg";
+            break;
+        case "parex":
+            writtenMsg = "Parent already exists";
+            classMsg = "err_msg";
+            break;
+        case "ok":
+            writtenMsg = "New parent inserted correctly";
+            classMsg = "ok_msg"
+            break;
+        default:
+            break;
+    }
+    res.render("../pages/officer/officer_registerparent.pug", {
+        msg: writtenMsg,
+        classmsg: classMsg
+    });
 }).post(
     [
         body('name').trim().escape(),
@@ -248,15 +275,13 @@ router.route("/enroll_parent").get((req, res) => {
         var con = myInterface.DBconnect();
 
         if (!name || !surname || !SSN || !email) {
-            res.render("../pages/officer/officer_registerparent.pug", { flag_ok: "0", message: "Please, fill the form correctly" });
+            res.redirect("./enroll_parent?msg=noform");
             return;
         }
-
         if (!myInterface.checkItalianSSN(SSN)) {
-            res.render("../pages/officer/officer_registerparent.pug", { flag_ok: "0", message: "Please, insert a valid Italian SSN" });
+            res.redirect("./enroll_parent?msg=nossn");
             return;
         }
-
         //TODO: check email format
 
         //Check if SSN already inserted (so the new parent's data is expected to be already inside the db)
@@ -267,29 +292,29 @@ router.route("/enroll_parent").get((req, res) => {
             }
 
             if (rows.length > 0) {
-                res.render("../pages/officer/officer_registerparent.pug", { flag_ok: "0", message: "Parent already exists" });
-            } else {
-                con.query('SELECT COUNT(*) as c FROM parent', (err, rows) => { // because we have no AUTO_UPDATE available on the DB
+                res.redirect("./enroll_parent?msg=parex");
+                return;
+            }
+            con.query('SELECT COUNT(*) as c FROM parent', (err, rows) => { // because we have no AUTO_UPDATE available on the DB
+                if (err) {
+                    res.end("There is a problem in the DB connection. Please, try again later " + err);
+                    return;
+                }
+                con.query("INSERT INTO parent(id, first_name, last_name, cod_fisc, email, password, first_access) VALUES(?, ?, ?, ?, ?, ?, ?)", [rows[0].c + 1, name, surname, SSN, email, hash_pwd, 0], (err, result) => {
                     if (err) {
                         res.end("There is a problem in the DB connection. Please, try again later " + err);
                         return;
                     }
-                    con.query("INSERT INTO parent(id, first_name, last_name, cod_fisc, email, password, first_access) VALUES(?, ?, ?, ?, ?, ?, ?)", [rows[0].c + 1, name, surname, SSN, email, hash_pwd, 0], (err, result) => {
-                        if (err) {
-                            res.end("There is a problem in the DB connection. Please, try again later " + err);
-                            return;
-                        }
-                        mailHandler.mail_handler(name, surname, SSN, email, password, "parent");
-                        res.render("../pages/officer/officer_registerparent.pug", { flag_ok: "1", message: "New parent inserted correctly" });
-                        con.end();
-                        return;
-                    });
+                    mailHandler.mail_handler(name, surname, SSN, email, password, "parent");
+                    res.redirect("./enroll_parent?msg=ok");
+                    con.end();
+                    return;
                 });
-            }
+            });
         });
     });
 
-
+// Enroll student
 router.route("/enroll_student").get((req, res) => {
     res.render("../pages/officer/officer_registerstudent.pug");
 }).post(
