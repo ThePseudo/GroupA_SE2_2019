@@ -1,7 +1,9 @@
-// - Those variables should be in every page
-- var page = "Parent " + " login";
+//- Those variables should be in every page
+- var page = "Teacher " + " login";
 - var loggedIn = false;
 
+//- Unified login page
+//- variables used: msg, user, shownUser
 doctype html
 html
   include base/head.pug
@@ -9,12 +11,12 @@ html
     include base/navbar.pug
     div(class='container')
       div(class='row')
-        h1(class='title') Parent login 
+        h1(class='title') #{shownUser} login 
       div(class='row')
         h2(class = 'title2') Please, sign in
-        h2(class = 'err_msg') &nbsp #{err_msg}
+        h2(class = 'err_msg') #{msg}
       //- Parametric form
-      form(action='/auth_router/login_parent' method="POST") 
+      form(action='/auth_router/login_'+user method="POST") 
         div(class='row')
           div(class='col-lg-3')
           div(class='col-lg-6 col-xs-12')
@@ -30,4 +32,4 @@ html
         div(class="row")
           div(class='col-sm-5 col-lg-6')
           div(class='col-sm-4 col-lg-3 col-xs-10')
-            input(type='SUBMIT' value='Log in' name='login_parent' class='btn blockButton' style='margin-top: 24px; padding: 6px 10px; margin-left:25%; width: 75%;')
+            input(type='SUBMIT' value='Log in' name='login_'+user class='btn blockButton' style='margin-top: 24px; padding: 6px 10px; margin-left:25%; width: 75%;')
