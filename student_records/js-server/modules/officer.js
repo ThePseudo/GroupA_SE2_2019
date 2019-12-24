@@ -176,9 +176,27 @@ router.get("/officer_home", (req, res) => {
 });
 
 router.get("/insert_communication", (req, res) => {
-    const compiledPage = pug.compileFile("./pages/officer/officer_communication.pug");
-    res.end(compiledPage());
+    var msg = req.query.msg;
+    var writtenMsg = "";
+    var msgClass = "";
+    switch (msg) {
+        case "ok":
+            writtenMsg = "Communication inserted correctly";
+            msgClass = "ok_msg";
+            break;
+        case "err":
+            writtenMsg = "Please fill the description";
+            msgClass = "err_msg";
+            break;
+        default:
+            break;
+    }
+    res.render("../pages/officer/officer_communication.pug", {
+        msg: writtenMsg,
+        msgclass: msgClass
+    });
 });
+
 ////////////////////////
 router.post("/insert_comm", [body('name')
     .not().isEmpty()
@@ -190,7 +208,7 @@ router.post("/insert_comm", [body('name')
     var con = myInterface.DBconnect();
     let date = new Date();
     if (!desc) {
-        res.render("../pages/officer/officer_communication.pug", { flag_ok: "0", message: "Please fill the description" });
+        res.redirect("./insert_communication?msg=err");
         return;
     }
     con.query('SELECT COUNT(*) as c FROM General_Communication', (err, rows, fields) => { // because we have no AUTO_UPDATE available on the DB
@@ -204,7 +222,7 @@ router.post("/insert_comm", [body('name')
                 return;
             }
             con.end();
-            res.render("../pages/officer/officer_communication.pug", { flag_ok: "1", message: "Message uploaded" });
+            res.redirect("./insert_communication?msg=ok");
             return;
         });
     });
