@@ -88,6 +88,41 @@ function myRedirect(sess, res) {
     }
 }
 
+function login(userType, req, res) {
+    //Check if both cod_fisc and password field are filled
+    if (!cod_fisc || !password) {
+        res.redirect("./login_" + userType + "?msg=err");
+        return;
+    }
+    //If yes, try to connect to the DB and check cod_fisc and then password
+    let sql = 'SELECT * FROM ' + userType + ' WHERE cod_fisc = ?';
+    con.query(sql, [cod_fisc], (err, result) => {
+        con.end();
+        if (err) {
+            res.end(err);
+            return;
+        }
+        if (result.length > 0) {
+            //The cod_fisc exists in the DB, now check the hashed password
+            if (bcrypt.compareSync(password, result[0].password)) {
+                if (userType == "officer") {
+                    if (result[0].principal) {
+                        userType = "principal";
+                    }
+                }
+                setup_session_var(userType, result[0], req.session);
+                myRedirect(req.session, res);
+            }
+            else {
+                // Passwords don't match
+                res.redirect("./login_" + userType + "?msg=wrong");
+            }
+        } else {
+            // user don't match
+            res.redirect("./login_" + userType + "?msg=wrong");
+        }
+    });
+}
 
 router.route('/login_parent').get((req, res) => {
     res.render("../pages/login.pug", {
@@ -103,35 +138,7 @@ router.route('/login_parent').get((req, res) => {
             .escape()
     ],
     (req, res) => {
-        //Check if both cod_fisc and password field are filled
-        if (!cod_fisc || !password) {
-            res.redirect("./login_parent?msg=err");
-            return;
-        }
-        //If yes, try to connect to the DB and check cod_fisc and then password
-        let sql = 'SELECT * FROM parent WHERE cod_fisc = ?';
-        con.query(sql, [cod_fisc], (err, result) => {
-            con.end();
-            if (err) {
-                res.end(err);
-                return;
-            }
-            if (result.length > 0) {
-                //The cod_fisc exists in the DB, now check the hashed password
-                if (bcrypt.compareSync(password, result[0].password)) {
-                    setup_session_var("parent", result[0], req.session);
-                    myRedirect(req.session, res);
-                }
-                else {
-                    // Passwords don't match
-                    res.redirect("./login_parent?msg=wrong");
-
-                }
-            } else {
-                // user don't match
-                res.redirect("./login_parent?msg=wrong");
-            }
-        });
+        login("parent", req, res);
     }
 );
 
@@ -149,33 +156,7 @@ router.route('/login_teacher').get((req, res) => {
             .escape()
     ],
     (req, res) => {
-        //Check if both cod_fisc and password field are filled
-        if (!cod_fisc || !password) {
-            res.redirect("./login_teacher?msg=err");
-            return;
-        }
-        //If yes, try to connect to the DB and check cod_fisc and then password (string+salt hashed via bcrypt module)
-        let sql = 'SELECT * FROM teacher WHERE cod_fisc = ?';
-        con.query(sql, [cod_fisc], (err, result) => {
-            con.end();
-            if (err) {
-                res.end(err);
-                return;
-            }
-            if (result.length > 0) {
-                //The cod_fisc exists in the DB, now check the hashed password ( a string + salt) via method "compareSync"
-                if (bcrypt.compareSync(password, result[0].password)) {
-                    setup_session_var("teacher", result[0], req.session);
-                    myRedirect(req.session, res);
-                } else {
-                    // Passwords don't match
-                    res.redirect("./login_teacher?msg=wrong");
-                }
-            } else {
-                // user don't match
-                res.redirect("./login_teacher?msg=wrong");
-            }
-        });
+        login("teacher", req, res);
     }
 );
 
@@ -194,38 +175,7 @@ router.route('/login_officer').get((req, res) => {
             .escape()
     ],
     (req, res) => {
-        //Check if both cod_fisc and password field are filled
-        if (!cod_fisc || !password) {
-            res.redirect("./login_officer?msg=err");
-            return;
-        }
-        //If yes, try to connect to the DB and check cod_fisc and then password (string+salt hashed via bcrypt module)
-        let sql = 'SELECT * FROM officer WHERE cod_fisc = ?';
-        con.query(sql, [cod_fisc], (err, result) => {
-            con.end();
-            if (err) {
-                res.end(err);
-                return;
-            }
-            if (result.length > 0) {
-                //The cod_fisc exists in the DB, now check the hashed password ( a string + salt) via method "compareSync"
-                if (bcrypt.compareSync(password, result[0].password)) {
-                    let user_t = "";
-                    if (result[0].principal)
-                        user_t = "principal";
-                    else
-                        user_t = "officer";
-                    setup_session_var(user_t, result[0], req.session);
-                    myRedirect(req.session, res);
-                } else {
-                    // Passwords don't match
-                    res.redirect("./login_officer?msg=wrong");
-                }
-            } else {
-                // user don't match
-                res.redirect("./login_officer?msg=wrong");
-            }
-        });
+        login("officer", req, res);
     }
 );
 
@@ -243,33 +193,7 @@ router.route('/login_admin').get((req, res) => {
             .escape()
     ],
     (req, res) => {
-        //Check if both cod_fisc and password field are filled
-        if (!cod_fisc || !password) {
-            res.redirect("./login_admin?msg=err");
-            return;
-        }
-        //If yes, try to connect to the DB and check cod_fisc and then password (string+salt hashed via bcrypt module)
-        let sql = 'SELECT * FROM admin WHERE cod_fisc = ?';
-        con.query(sql, [cod_fisc], (err, result) => {
-            con.end();
-            if (err) {
-                res.end(err);
-                return;
-            }
-            if (result.length > 0) {
-                //The cod_fisc exists in the DB, now check the hashed password ( a string + salt) via method "compareSync"
-                if (bcrypt.compareSync(password, result[0].password)) {
-                    setup_session_var("admin", result[0], req.session);
-                    res.redirect("/admin/admin_home");
-                } else {
-                    // Passwords don't match
-                    res.redirect("./login_admin?msg=wrong");
-                }
-            } else {
-                // user don't match
-                res.redirect("./login_admin?msg=wrong");
-            }
-        });
+        login("admin", req, res);
     }
 );
 
