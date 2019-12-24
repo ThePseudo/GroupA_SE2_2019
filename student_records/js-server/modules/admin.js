@@ -18,6 +18,7 @@ var SSN;
 var email;
 var password;
 var hash_pwd;
+var userType;
 
 router.use(/\/.*/,
     function (req, res, next) {
@@ -68,79 +69,18 @@ router.use(/\/.*/,
     }
 );
 
+router.use("/enroll/:user", (req, res, next) => {
+    userType = req.params.user;
+    next();
+})
 
 router.get("/admin_home", (req, res) => {
     res.render("../pages/sysadmin/systemad_home.pug");
 });
 
-// Register function
-function insert(userType, req, res) {
-    var table = userType;
-    var principal = 0;
-    if (userType == "principal") {
-        table = "officer";
-        principal = 1;
-    }
-    if (!first_name || !last_name || !SSN || !email) {
-        res.redirect("./" + userType + "?msg=err");
-        return;
-    }
-    if (!myInterface.checkItalianSSN(SSN)) {
-        res.redirect("./" + userType + "?msg=errssn");
-        return;
-    }
-    //TODO:check valid email format server side
-
-    //Check if SSN already inserted (so the new teacher's data is expected to be already inside the db)
-    con.query("SELECT * FROM " + table + " WHERE cod_fisc = ?", [SSN], (err, rows) => {
-        if (err) {
-            res.end("There is a problem in the DB connection. Please, try again later " + err);
-            return;
-        }
-        if (rows.length > 0) {
-            res.redirect("./" + userType + "?msg=errpres");
-        } else {
-            con.query('SELECT COUNT(*) as c FROM ' + table, (err, rows) => { // because we have no AUTO_UPDATE available on the DB
-                if (err) {
-                    res.end("There is a problem in the DB connection. Please, try again later " + err);
-                    return;
-                }
-                if (rows.length <= 0) {
-                    res.end("Count impossible to compute");
-                    return;
-                }
-                var sql;
-                var params = [];
-                switch (table) {
-                    case "teacher":
-                        sql = "INSERT INTO teacher(id, first_name, last_name, cod_fisc, email, password, first_access) VALUES(?, ?, ?, ?, ?, ?, ?)";
-                        params = [rows[0].c + 1, first_name, last_name, SSN, email, hash_pwd, 0];
-                        break;
-                    case "officer":
-                        sql = "INSERT INTO officer(id, first_name, last_name, cod_fisc, email, password, first_access,principal) VALUES(?, ?, ?, ?, ?, ?, ?, ?)";
-                        params = [rows[0].c + 1, first_name, last_name, SSN, email, hash_pwd, 0, principal];
-                        break;
-                    default:
-                        break;
-                }
-                con.query(sql, params, (err, result) => {
-                    con.end();
-                    if (err) {
-                        res.end("There is a problem in the DB connection. Please, try again later " + err);
-                        return;
-                    }
-                    mailHandler.mail_handler(first_name, last_name, SSN, email, password, "teacher");
-                    res.redirect("./" + userType + "?msg=ok");
-                });
-            });
-        }
-    });
-}
-
 router.route("/enroll/:user").get((req, res) => {
-    var user = req.params.user;
     var renderPath;
-    switch (user) {
+    switch (userType) {
         case "teacher":
             renderPath = "../pages/sysadmin/systemad_registerteacher.pug";
             break;
@@ -166,8 +106,67 @@ router.route("/enroll/:user").get((req, res) => {
         body('email').trim().escape().isEmail().normalizeEmail()
     ],
     (req, res) => {
-        var user = req.params.user;
-        insert(user, req, res);
-    });
+        var table = userType;
+        var principal = 0;
+        if (userType == "principal") {
+            table = "officer";
+            principal = 1;
+        }
+        if (!first_name || !last_name || !SSN || !email) {
+            res.redirect("./" + userType + "?msg=err");
+            return;
+        }
+        if (!myInterface.checkItalianSSN(SSN)) {
+            res.redirect("./" + userType + "?msg=errssn");
+            return;
+        }
+        //TODO:check valid email format server side
+
+        //Check if SSN already inserted (so the new teacher's data is expected to be already inside the db)
+        con.query("SELECT * FROM " + table + " WHERE cod_fisc = ?", [SSN], (err, rows) => {
+            if (err) {
+                res.end("There is a problem in the DB connection. Please, try again later " + err);
+                return;
+            }
+            if (rows.length > 0) {
+                res.redirect("./" + userType + "?msg=errpres");
+            } else {
+                con.query('SELECT COUNT(*) as c FROM ' + table, (err, rows) => { // because we have no AUTO_UPDATE available on the DB
+                    if (err) {
+                        res.end("There is a problem in the DB connection. Please, try again later " + err);
+                        return;
+                    }
+                    if (rows.length <= 0) {
+                        res.end("Count impossible to compute");
+                        return;
+                    }
+                    var sql;
+                    var params = [];
+                    switch (table) {
+                        case "teacher":
+                            sql = "INSERT INTO teacher(id, first_name, last_name, cod_fisc, email, password, first_access) VALUES(?, ?, ?, ?, ?, ?, ?)";
+                            params = [rows[0].c + 1, first_name, last_name, SSN, email, hash_pwd, 0];
+                            break;
+                        case "officer":
+                            sql = "INSERT INTO officer(id, first_name, last_name, cod_fisc, email, password, first_access,principal) VALUES(?, ?, ?, ?, ?, ?, ?, ?)";
+                            params = [rows[0].c + 1, first_name, last_name, SSN, email, hash_pwd, 0, principal];
+                            break;
+                        default:
+                            break;
+                    }
+                    con.query(sql, params, (err, result) => {
+                        con.end();
+                        if (err) {
+                            res.end("There is a problem in the DB connection. Please, try again later " + err);
+                            return;
+                        }
+                        mailHandler.mail_handler(first_name, last_name, SSN, email, password, "teacher");
+                        res.redirect("./" + userType + "?msg=ok");
+                    });
+                });
+            }
+        });
+    }
+);
 
 module.exports = router;
