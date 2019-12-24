@@ -5,7 +5,6 @@ const session = require('express-session');
 const fs = require('fs');
 const https = require('https');
 const http = require('http');
-const pug = require('pug');
 const bodyParser = require('body-parser');
 
 // App
@@ -31,7 +30,7 @@ const principalPage = require('./modules/principal.js');
 // Constants
 const HTTPPORT = 8000;
 const HTTPSPORT = 8080;
-const HOST = '0.0.0.0';
+const HOST = 'localhost';
 
 //fix for favicon.ico request
 app.get('/favicon.ico', (req, res) => res.status(204));
@@ -70,11 +69,9 @@ app.get('/', (req, res) => {
                 break;
         }
     } catch (err) {
-        const compiledPage = pug.compileFile("pages/home.pug");
-        res.end(compiledPage());
+        res.render("/pages/home.pug");
     }
 });
-
 
 app.get("/style", (req, res) => {
     const page = fs.readFileSync("pages/base/style.css");
@@ -97,17 +94,13 @@ app.get('/*', (req, res) => {
 app.post('/*', (req, res) => {
     fs.readFile(req.path, (err, data) => {
         if (err) {
-            console.log(err);
+            //console.log(err);
             res.render("/pages/base/404.pug");
             return;
         }
         res.end(data);
-
     })
 });
-
-//app.listen(PORT, HOST);
-
 
 const httpApp = express();
 httpApp.get("*", (req, res) => {
@@ -116,5 +109,5 @@ httpApp.get("*", (req, res) => {
 http.createServer(httpApp).listen(HTTPPORT);
 https.createServer(options, app).listen(HTTPSPORT);
 
-console.log(`Running on http://localhost:${HTTPPORT}`);
-console.log(`Running on https://localhost:${HTTPSPORT}`);
+console.log(`Running on http://${HOST}:${HTTPPORT}`);
+console.log(`Running on https://${HOST}:${HTTPSPORT}`);
