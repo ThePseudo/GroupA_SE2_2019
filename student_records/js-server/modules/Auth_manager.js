@@ -16,6 +16,7 @@ var cod_fisc;
 var password;
 var textMsg;
 
+var accepted_userTypes = ["parent", "teacher", "officer", "admin"];
 
 router.get('/logout', (req, res) => {
     req.session.destroy();
@@ -88,112 +89,65 @@ function myRedirect(sess, res) {
     }
 }
 
-function login(userType, req, res) {
-    //Check if both cod_fisc and password field are filled
-    if (!cod_fisc || !password) {
-        res.redirect("./login_" + userType + "?msg=err");
+// All logins
+router.route('/login/:userType').get((req, res) => {
+    var userType = req.params.userType;
+    if (!accepted_userTypes.includes(userType)) {
+        res.redirect("/");
         return;
     }
-    //If yes, try to connect to the DB and check cod_fisc and then password
-    let sql = 'SELECT * FROM ' + userType + ' WHERE cod_fisc = ?';
-    con.query(sql, [cod_fisc], (err, result) => {
-        con.end();
-        if (err) {
-            res.end(err);
+    res.render("../pages/login.pug", {
+        msg: textMsg,
+        user: userType,
+        shownUser: userType.replace(/^\w/, c => c.toUpperCase())
+    });
+}).post(
+    [
+        body('cod_fisc')
+            .not().isEmpty()
+            .trim()
+            .escape()
+    ],
+    (req, res) => {
+        var userType = req.params.userType;
+        if (!accepted_userTypes.includes(userType)) {
+            res.redirect("/");
             return;
         }
-        if (result.length > 0) {
-            //The cod_fisc exists in the DB, now check the hashed password
-            if (bcrypt.compareSync(password, result[0].password)) {
-                if (userType == "officer") {
-                    if (result[0].principal) {
-                        userType = "principal";
-                    }
-                }
-                setup_session_var(userType, result[0], req.session);
-                myRedirect(req.session, res);
-            }
-            else {
-                // Passwords don't match
-                res.redirect("./login_" + userType + "?msg=wrong");
-            }
-        } else {
-            // user don't match
-            res.redirect("./login_" + userType + "?msg=wrong");
+        //Check if both cod_fisc and password field are filled
+        if (!cod_fisc || !password) {
+            res.redirect("./" + userType + "?msg=err");
+            return;
         }
-    });
-}
-
-router.route('/login_parent').get((req, res) => {
-    res.render("../pages/login.pug", {
-        msg: textMsg,
-        user: "parent",
-        shownUser: "Parent"
-    });
-}).post(
-    [
-        body('cod_fisc')
-            .not().isEmpty()
-            .trim()
-            .escape()
-    ],
-    (req, res) => {
-        login("parent", req, res);
-    }
-);
-
-router.route('/login_teacher').get((req, res) => {
-    res.render("../pages/login.pug", {
-        msg: textMsg,
-        user: "teacher",
-        shownUser: "Teacher"
-    });
-}).post(
-    [
-        body('cod_fisc')
-            .not().isEmpty()
-            .trim()
-            .escape()
-    ],
-    (req, res) => {
-        login("teacher", req, res);
-    }
-);
-
-//Common route for office but also principal because the principal is inside the officer table!!!!!
-router.route('/login_officer').get((req, res) => {
-    res.render("../pages/login.pug", {
-        msg: textMsg,
-        user: "officer",
-        shownUser: "Officer"
-    });
-}).post(
-    [
-        body('cod_fisc')
-            .not().isEmpty()
-            .trim()
-            .escape()
-    ],
-    (req, res) => {
-        login("officer", req, res);
-    }
-);
-
-router.route('/login_admin').get((req, res) => {
-    res.render("../pages/login.pug", {
-        msg: textMsg,
-        user: "admin",
-        shownUser: "Admin"
-    });
-}).post(
-    [
-        body('cod_fisc')
-            .not().isEmpty()
-            .trim()
-            .escape()
-    ],
-    (req, res) => {
-        login("admin", req, res);
+        //If yes, try to connect to the DB and check cod_fisc and then password
+        let sql = 'SELECT * FROM ' + userType + ' WHERE cod_fisc = ?';
+        con.query(sql, [cod_fisc], (err, result) => {
+            con.end();
+            if (err) {
+                res.end(err);
+                return;
+            }
+            if (result.length > 0) {
+                //The cod_fisc exists in the DB, now check the hashed password
+                if (bcrypt.compareSync(password, result[0].password)) {
+                    if (userType == "officer") {
+                        // Principal in officer table
+                        if (result[0].principal) {
+                            userType = "principal";
+                        }
+                    }
+                    setup_session_var(userType, result[0], req.session);
+                    myRedirect(req.session, res);
+                }
+                else {
+                    // Passwords don't match
+                    res.redirect("./" + userType + "?msg=wrong");
+                }
+            } else {
+                // user don't match
+                res.redirect("./" + userType + "?msg=wrong");
+            }
+        });
     }
 );
 
