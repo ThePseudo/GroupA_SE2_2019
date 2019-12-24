@@ -278,7 +278,6 @@ router.route('/change_pwd').get((req, res) => {
         msg: textMsg
     });
 }).post((req, res) => {
-    var password = req.body.password;
     var confirm_pwd = req.body.confirm_pwd;
     //Check if password field are filled
     if (!password || !confirm_pwd) {
