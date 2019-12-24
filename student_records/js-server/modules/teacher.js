@@ -39,6 +39,7 @@ router.use(/\/.*/,
   function (req, res, next) {
     fullName = req.session.user.first_name + " " + req.session.user.last_name;
     con = myInterface.DBconnect();
+    next();
   }
 );
 

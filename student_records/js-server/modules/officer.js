@@ -90,7 +90,7 @@ router.get("/class/:classid/class_composition", (req, res) => {
 
 // In updating the class composition, some TODOs:
 /*
-    + Don't use res.render, use res.redirect with a GET message (look at the following routes)
+    + Don't use res.render, use res.redirect with a GET message (look at the following routes + their pages )
 */
 router.post("/class/:classid/up_class", (req, res) => {
     var classID = req.params.classid;
