@@ -5,7 +5,7 @@
 - var user= "teacher"
 - var active= "Insert daily topic"
 
-//- variables used: fullName, dateString
+//- variables used: fullName, dateString, msg, msgClass
 
 doctype html
 html
@@ -16,11 +16,10 @@ html
     div(class='container')
       div(class='row')
         h1(class='title') Record daily topic
-        div(class='row')
-        if flag_ok == 1
-          h2(class = 'ok_msg') &nbsp #{message} &nbsp
-        else
-          h2(class = 'err_msg') &nbsp #{message} &nbsp
+      if msg != ""
+        div(class="row")
+          h2(class=msgClass) #{msg}
+      div(class='row')
       form(method='POST' action="/teacher/class/" + classid +"/course/" + courseid + "/reg_topic" id="regform")
         div(class='row' style='margin-top: 40px;')
           div(class='col-sm-3')
