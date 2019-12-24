@@ -27,7 +27,7 @@ module.exports.mail_handler = function (first_name, last_name, username, email, 
 
         // Message object
         let message = {
-            from: '<Mr.Principal@school.edu>',
+            from: '<noreply@school.edu>',
             to: email,
             subject: 'First Access, change password',
             html: `<p>Dear ${first_name} ${last_name},</p>

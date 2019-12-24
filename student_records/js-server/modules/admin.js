@@ -1,25 +1,13 @@
-//'use strict';
+'use strict';
 
 const express = require('express');
 const pug = require('pug');
-//const mailHandler = require("../modules/ethereal.js"); one-time email modules disabled but it works (maybe just for test!)
 const mailHandler = require("./nodemailer.js");
 const myInterface = require('../modules/functions.js');
 const bcrypt = require('bcrypt');
 const { body } = require('express-validator');
 var router = express.Router();
 
-// router.use('/:id', function (req, res, next) {
-//     console.log('Request URL:', req.originalUrl);
-//     next();
-// }, function (req, res, next) {
-//     console.log('Request Type:', req.method);
-//     next();
-// });
-
-// TODO: make this and fix it
-/////////////////////////////////
-//ricambiare tutte le app in route
 
 router.use(/\/.*/, function (req, res, next) {
     try {
@@ -82,25 +70,25 @@ router.route("/enroll_teacher").get((req, res) => {
         body('SSN').trim().escape(),
         body('email').trim().escape().isEmail().normalizeEmail()
     ],
-  (req, res) => {
-    let name = req.body.name;
-    let surname = req.body.surname;
-    let SSN = req.body.SSN;
-    let email = req.body.email;
-    let password = Math.random().toString(36).substring(2, 10) + Math.random().toString(36).substring(2, 10);
-    let hash_pwd = bcrypt.hashSync(password, 10);
-    var con = myInterface.DBconnect();
+    (req, res) => {
+        let name = req.body.name;
+        let surname = req.body.surname;
+        let SSN = req.body.SSN;
+        let email = req.body.email;
+        let password = Math.random().toString(36).substring(2, 10) + Math.random().toString(36).substring(2, 10);
+        let hash_pwd = bcrypt.hashSync(password, 10);
+        var con = myInterface.DBconnect();
 
-    if(!name || !surname || !SSN || !email){
-        res.render("../pages/sysadmin/systemad_registerteacher.pug", {ok_flag: 0, message: "Please, fill all the form fields"});
-        return;
-    }
+        if (!name || !surname || !SSN || !email) {
+            res.render("../pages/sysadmin/systemad_registerteacher.pug", { ok_flag: 0, message: "Please, fill all the form fields" });
+            return;
+        }
 
-    if(!myInterface.checkItalianSSN(SSN)){
-        res.render("../pages/sysadmin/systemad_registerteacher.pug", { flag_ok: "0", message: "Please, insert a valid Italian SSN" });
-        return;
-    }
-    //TODO:check valid email format server side
+        if (!myInterface.checkItalianSSN(SSN)) {
+            res.render("../pages/sysadmin/systemad_registerteacher.pug", { flag_ok: "0", message: "Please, insert a valid Italian SSN" });
+            return;
+        }
+        //TODO:check valid email format server side
 
         //Check if SSN already inserted (so the new teacher's data is expected to be already inside the db)
         con.query('SELECT * FROM teacher WHERE cod_fisc = ?', [SSN], (err, rows) => {
@@ -149,58 +137,58 @@ router.route("/enroll_officer").get((req, res) => {
         body('email').trim().escape().isEmail().normalizeEmail()
     ],
     (req, res) => {
-    let name = req.body.name;
-    let surname = req.body.surname;
-    let SSN = req.body.SSN;
-    let email = req.body.email;
-    let password = Math.random().toString(36).substring(2, 10) + Math.random().toString(36).substring(2, 10);
-    let hash_pwd = bcrypt.hashSync(password, 10);
-    var con = myInterface.DBconnect();
+        let name = req.body.name;
+        let surname = req.body.surname;
+        let SSN = req.body.SSN;
+        let email = req.body.email;
+        let password = Math.random().toString(36).substring(2, 10) + Math.random().toString(36).substring(2, 10);
+        let hash_pwd = bcrypt.hashSync(password, 10);
+        var con = myInterface.DBconnect();
 
-    if(!name || !surname || !SSN || !email){
-        res.render("../pages/sysadmin/systemad_registerofficer.pug", {ok_flag: 0, message: "Please, fill all the form fields"});
-        return;
-    }
-
-    if(!myInterface.checkItalianSSN(SSN)){
-        res.render("../pages/sysadmin/systemad_registerofficer.pug", { flag_ok: "0", message: "Please, insert a valid Italian SSN" });
-        return;
-    }
-    //TODO:check valid email format server side
-   
-    //Check if SSN already inserted (so the new officer/principal's data is expected to be already inside the db)
-    con.query('SELECT * FROM officer WHERE cod_fisc = ?', [SSN], (err, rows) => {
-        if (err) {
-            res.end("There is a problem in the DB connection. Please, try again later " + err);
+        if (!name || !surname || !SSN || !email) {
+            res.render("../pages/sysadmin/systemad_registerofficer.pug", { ok_flag: 0, message: "Please, fill all the form fields" });
             return;
         }
 
-        if (rows.length > 0) {
-            res.render("../pages/sysadmin/systemad_registerofficer.pug", { flag_ok: 0, message: "Officer already exists" });
-        } else {
-            con.query('SELECT COUNT(*) as c FROM officer', (err, rows) => { // because we have no AUTO_UPDATE available on the DB
-                if (err) {
-                    res.end("There is a problem in the DB connection. Please, try again later " + err);
-                    return;
-                }
-                if (rows.length <= 0) {
-                    res.end("Count impossible to compute");
-                    return;
-                }
-                con.query("INSERT INTO officer(id, first_name, last_name, cod_fisc, email, password, first_access,principal) VALUES(?, ?, ?, ?, ?, ?, ?, ?)", [rows[0].c + 1, name, surname, SSN, email, hash_pwd, 0, 0], (err, result) => {
+        if (!myInterface.checkItalianSSN(SSN)) {
+            res.render("../pages/sysadmin/systemad_registerofficer.pug", { flag_ok: "0", message: "Please, insert a valid Italian SSN" });
+            return;
+        }
+        //TODO:check valid email format server side
+
+        //Check if SSN already inserted (so the new officer/principal's data is expected to be already inside the db)
+        con.query('SELECT * FROM officer WHERE cod_fisc = ?', [SSN], (err, rows) => {
+            if (err) {
+                res.end("There is a problem in the DB connection. Please, try again later " + err);
+                return;
+            }
+
+            if (rows.length > 0) {
+                res.render("../pages/sysadmin/systemad_registerofficer.pug", { flag_ok: 0, message: "Officer already exists" });
+            } else {
+                con.query('SELECT COUNT(*) as c FROM officer', (err, rows) => { // because we have no AUTO_UPDATE available on the DB
                     if (err) {
                         res.end("There is a problem in the DB connection. Please, try again later " + err);
                         return;
                     }
-                    mailHandler.mail_handler(name, surname, SSN, email, password, "officer");
-                    console.log("Data successfully uploaded! " + result.insertId);
-                    con.end();
-                    res.render("../pages/sysadmin/systemad_registerofficer.pug", { flag_ok: 1, message: "New officer inserted correctly" });
+                    if (rows.length <= 0) {
+                        res.end("Count impossible to compute");
+                        return;
+                    }
+                    con.query("INSERT INTO officer(id, first_name, last_name, cod_fisc, email, password, first_access,principal) VALUES(?, ?, ?, ?, ?, ?, ?, ?)", [rows[0].c + 1, name, surname, SSN, email, hash_pwd, 0, 0], (err, result) => {
+                        if (err) {
+                            res.end("There is a problem in the DB connection. Please, try again later " + err);
+                            return;
+                        }
+                        mailHandler.mail_handler(name, surname, SSN, email, password, "officer");
+                        console.log("Data successfully uploaded! " + result.insertId);
+                        con.end();
+                        res.render("../pages/sysadmin/systemad_registerofficer.pug", { flag_ok: 1, message: "New officer inserted correctly" });
+                    });
                 });
-            });
-        }
+            }
+        });
     });
-});
 
 
 router.route("/enroll_principal").get((req, res) => {
@@ -213,60 +201,60 @@ router.route("/enroll_principal").get((req, res) => {
         body('email').trim().escape().isEmail().normalizeEmail()
     ],
     (req, res) => {
-    let name = req.body.name;
-    let surname = req.body.surname;
-    let SSN = req.body.SSN;
-    let email = req.body.email;
-    let password = Math.random().toString(36).substring(2, 10) + Math.random().toString(36).substring(2, 10);
-    let hash_pwd = bcrypt.hashSync(password, 10);
-    var con = myInterface.DBconnect();
-    
-    if(!name || !surname || !SSN || !email){
-        res.render("../pages/sysadmin/systemad_registerprincipal.pug", {ok_flag: 0, message: "Please, fill all the form fields"});
-        return;
-    }
+        let name = req.body.name;
+        let surname = req.body.surname;
+        let SSN = req.body.SSN;
+        let email = req.body.email;
+        let password = Math.random().toString(36).substring(2, 10) + Math.random().toString(36).substring(2, 10);
+        let hash_pwd = bcrypt.hashSync(password, 10);
+        var con = myInterface.DBconnect();
 
-    if(!myInterface.checkItalianSSN(SSN)){
-        res.render("../pages/sysadmin/systemad_registerprincipal.pug", { flag_ok: "0", message: "Please, insert a valid Italian SSN" });
-        return;
-    }
-    //TODO:check valid email format server side
-    
-    //Check if SSN already inserted (so the new officer/principal's data is expected to be already inside the db)
-    con.query('SELECT * FROM officer WHERE cod_fisc = ?',[SSN], (err, rows) => {
-        if (err) {
-            res.end("There is a problem in the DB connection. Please, try again later " + err);
+        if (!name || !surname || !SSN || !email) {
+            res.render("../pages/sysadmin/systemad_registerprincipal.pug", { ok_flag: 0, message: "Please, fill all the form fields" });
             return;
         }
 
-        if(rows.length > 0){
-            res.render("../pages/sysadmin/systemad_registerprincipal.pug", {flag_ok: 0, message: "Principal already exists"});
-        }else{
-            con.query('SELECT COUNT(*) as c FROM officer', (err, rows) => { // because we have no AUTO_UPDATE available on the DB
-                if (err) {
-                    res.end("There is a problem in the DB connection. Please, try again later " + err);
-                    return;
-                }
-                if (rows.length <= 0) {
-                    res.end("Count impossible to compute");
-                    return;
-                }
-                con.query("INSERT INTO officer (id, first_name, last_name, cod_fisc, email, password, first_access, principal) VALUES(?, ?, ?, ?, ?, ?, ?, ?)", [rows[0].c + 1, name, surname, SSN, email, hash_pwd, 0, 1], (err, result) => {
+        if (!myInterface.checkItalianSSN(SSN)) {
+            res.render("../pages/sysadmin/systemad_registerprincipal.pug", { flag_ok: "0", message: "Please, insert a valid Italian SSN" });
+            return;
+        }
+        //TODO:check valid email format server side
+
+        //Check if SSN already inserted (so the new officer/principal's data is expected to be already inside the db)
+        con.query('SELECT * FROM officer WHERE cod_fisc = ?', [SSN], (err, rows) => {
+            if (err) {
+                res.end("There is a problem in the DB connection. Please, try again later " + err);
+                return;
+            }
+
+            if (rows.length > 0) {
+                res.render("../pages/sysadmin/systemad_registerprincipal.pug", { flag_ok: 0, message: "Principal already exists" });
+            } else {
+                con.query('SELECT COUNT(*) as c FROM officer', (err, rows) => { // because we have no AUTO_UPDATE available on the DB
                     if (err) {
                         res.end("There is a problem in the DB connection. Please, try again later " + err);
                         return;
                     }
-                    //The login route and page are the same for both principal and officer.
-                    //There is a flag inside the DB in order to recognise if I'm principal or officer
-                    mailHandler.mail_handler(name, surname, SSN, email, password, "officer");
-                    console.log("Data successfully uploaded! " + result.insertId);
-                    con.end();
-                    res.render("../pages/sysadmin/systemad_registerprincipal.pug", { flag_ok: 1, message: "New principal inserted correctly" });
+                    if (rows.length <= 0) {
+                        res.end("Count impossible to compute");
+                        return;
+                    }
+                    con.query("INSERT INTO officer (id, first_name, last_name, cod_fisc, email, password, first_access, principal) VALUES(?, ?, ?, ?, ?, ?, ?, ?)", [rows[0].c + 1, name, surname, SSN, email, hash_pwd, 0, 1], (err, result) => {
+                        if (err) {
+                            res.end("There is a problem in the DB connection. Please, try again later " + err);
+                            return;
+                        }
+                        //The login route and page are the same for both principal and officer.
+                        //There is a flag inside the DB in order to recognise if I'm principal or officer
+                        mailHandler.mail_handler(name, surname, SSN, email, password, "officer");
+                        console.log("Data successfully uploaded! " + result.insertId);
+                        con.end();
+                        res.render("../pages/sysadmin/systemad_registerprincipal.pug", { flag_ok: 1, message: "New principal inserted correctly" });
+                    });
                 });
-            });
-        }
+            }
+        });
     });
-});
 
 router.post("/register", (req, res) => {
     var name = req.body.name;

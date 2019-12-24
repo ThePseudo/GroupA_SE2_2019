@@ -1,7 +1,7 @@
 'use strict';
 
 const express = require('express');
-const db = require('../modules/functions.js');
+const myInterface = require('../modules/functions.js');
 
 //IMPORTO oggetto rappresentante la sessione.
 //Per accedere ->  req.session
@@ -36,7 +36,7 @@ router.use(/\/.*/,
     },
     function (req, res, next) {
         fullName = req.session.user.first_name + " " + req.session.user.last_name;
-        con = db.DBconnect();
+        con = myInterface.DBconnect();
         next();
     }
 );
