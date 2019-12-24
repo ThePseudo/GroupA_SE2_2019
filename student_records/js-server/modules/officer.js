@@ -99,7 +99,6 @@ router.post("/class/:classid/up_class", (req, res) => {
     if (date.getMonth() < 9) { // before august
         year--;
     }
-    var con = myInterface.DBconnect();
     let i = 0;
     let j = 0;
     let update1 = "UPDATE student SET class_id=0";
@@ -292,7 +291,6 @@ router.route("/enroll_parent").get((req, res) => {
         let email = req.body.email;
         let password = Math.random().toString(36).substring(2, 10) + Math.random().toString(36).substring(2, 10);
         let hash_pwd = bcrypt.hashSync(password, 10);
-        var con = myInterface.DBconnect();
 
         if (!name || !surname || !SSN || !email) {
             res.redirect("./enroll_parent?msg=noform");
@@ -353,8 +351,6 @@ router.route("/enroll_student").get((req, res) => {
         let SSN = req.body.SSN;
         let SSN1 = req.body.SSN1;
         let SSN2 = req.body.SSN2;
-
-        var con = myInterface.DBconnect();
 
         if (!name || !surname || !SSN) {
             res.render("../pages/officer/officer_registerstudent.pug", { flag_ok: "0", message: "Please, fill the form correctly" });

@@ -394,7 +394,7 @@ router.get("/class/:classid/course/:courseid/insert_homework", (req, res) => { }
 //Student single page
 router.get("/class/:classid/course/:courseid/student/:studentid", (req, res) => {
   var msg = req.query.msg;
-  sql = "SELECT date_mark, score FROM mark " +
+  let sql = "SELECT date_mark, score FROM mark " +
     " WHERE student_id = ? AND course_id = ? ORDER BY date_mark DESC";
   con.query(sql, [studentID, courseID], (err, rows) => {
     con.end();
