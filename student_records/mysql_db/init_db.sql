@@ -3,7 +3,7 @@ SET CHARSET utf8mb4;
 
 CREATE TABLE teacher
 (
-    id INT PRIMARY KEY,
+    id INT PRIMARY KEY AUTO_INCREMENT,
     first_name VARCHAR(50) NOT NULL,
     last_name VARCHAR(50) NOT NULL,
     cod_fisc VARCHAR(16) UNIQUE NOT NULL,
@@ -15,7 +15,7 @@ CREATE TABLE teacher
 
 CREATE TABLE officer
 (
-    id INT PRIMARY KEY,
+    id INT PRIMARY KEY AUTO_INCREMENT,
     first_name VARCHAR(50) NOT NULL,
     last_name VARCHAR(50) NOT NULL,
     cod_fisc VARCHAR(16) UNIQUE NOT NULL,
@@ -27,7 +27,7 @@ CREATE TABLE officer
 
 CREATE TABLE parent
 (
-    id INT PRIMARY KEY,
+    id INT PRIMARY KEY AUTO_INCREMENT,
     first_name VARCHAR(50) NOT NULL,
     last_name VARCHAR(50) NOT NULL,
     cod_fisc VARCHAR(16) UNIQUE NOT NULL,
@@ -38,7 +38,7 @@ CREATE TABLE parent
 
 CREATE TABLE student
 (
-    id INT PRIMARY KEY,
+    id INT PRIMARY KEY AUTO_INCREMENT,
     first_name VARCHAR(50) NOT NULL,
     last_name VARCHAR(50) NOT NULL,
     cod_fisc VARCHAR(16) UNIQUE NOT NULL,
@@ -49,20 +49,20 @@ CREATE TABLE student
 
 CREATE TABLE class
 (
-    id INT PRIMARY KEY,
+    id INT PRIMARY KEY AUTO_INCREMENT,
     class_name VARCHAR(2) UNIQUE NOT NULL
 );
 
 CREATE TABLE course
 (
-    id INT PRIMARY KEY,
+    id INT PRIMARY KEY AUTO_INCREMENT,
     course_name VARCHAR(50) UNIQUE NOT NULL,
     color VARCHAR(6) UNIQUE NOT NULL
 );
 
 CREATE TABLE admin
 (
-    id INT PRIMARY KEY,
+    id INT PRIMARY KEY AUTO_INCREMENT,
     first_name VARCHAR(50) NOT NULL,
     last_name VARCHAR(50) NOT NULL,
     cod_fisc VARCHAR(16) UNIQUE NOT NULL,
@@ -72,7 +72,7 @@ CREATE TABLE admin
 
 CREATE TABLE topic
 (
-    id INT UNIQUE NOT NULL,
+    id INT UNIQUE NOT NULL AUTO_INCREMENT,
     topic_date DATE NOT NULL,
     id_class INT NOT NULL,
     id_course INT NOT NULL,
@@ -82,50 +82,46 @@ CREATE TABLE topic
 
 CREATE TABLE note
 (
-    id INT,
+    id INT PRIMARY KEY AUTO_INCREMENT,
     student_id INT NOT NULL,
     teacher_id INT NOT NULL,
     note_date DATE NOT NULL,
     motivation TEXT NOT NULL,
-    justified BOOLEAN NOT NULL,
-    PRIMARY KEY(id)
+    justified BOOLEAN NOT NULL
 );
 
 CREATE TABLE absence
 (
-    id INT ,
+    id INT PRIMARY KEY AUTO_INCREMENT,
     student_id INT NOT NULL,
     date_ab DATE NOT NULL,
     start_h TIME NOT NULL,
     end_h TIME NOT NULL,
-    justified BOOLEAN NOT NULL,
-    PRIMARY KEY(id)
+    justified BOOLEAN NOT NULL
 );
 
 CREATE TABLE homework
 (
-    id INT UNIQUE NOT NULL,
+    id INT PRIMARY KEY AUTO_INCREMENT,
     course_id INT NOT NULL,
     class_id INT NOT NULL,
     description TEXT NOT NULL,
-    date_hw DATE NOT NULL,
-    PRIMARY KEY(id)
+    date_hw DATE NOT NULL
 );
 
 CREATE TABLE material
 (
-    id INT UNIQUE NOT NULL,
+    id INT PRIMARY KEY AUTO_INCREMENT,
     course_id INT NOT NULL,
     class_id INT NOT NULL,
     description TEXT NOT NULL,
     link TEXT NOT NULL,
-    date_mt DATE NOT NULL,
-    PRIMARY KEY(id)
+    date_mt DATE NOT NULL
 );
 
 CREATE TABLE mark
 (
-    id INT PRIMARY KEY,
+    id INT PRIMARY KEY AUTO_INCREMENT,
     student_id INT NOT NULL,
     course_id INT NOT NULL,
     score FLOAT NOT NULL,
@@ -138,7 +134,7 @@ CREATE TABLE mark
 
 CREATE TABLE General_Communication
 (
-    id INT PRIMARY KEY,
+    id INT PRIMARY KEY AUTO_INCREMENT,
     communication TEXT,
     comm_date DATE
 );
@@ -148,9 +144,9 @@ CREATE TABLE General_Communication
 -- Maybe delete (?) Not sure. TODO: review with team
 CREATE TABLE student_class
 (
-    student_id INT,
-    class_id INT,
-    year INT,
+    student_id INT NOT NULL,
+    class_id INT NOT NULL,
+    year INT NOT NULL,
     PRIMARY KEY(student_id, class_id, year)
 );
 
