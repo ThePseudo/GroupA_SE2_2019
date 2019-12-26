@@ -18,18 +18,18 @@ html
       //- Parametric form
       form(action='/auth_router/login/'+user method="POST") 
         div(class='row')
-          div(class='col-lg-3')
-          div(class='col-lg-6 col-xs-12')
+          div(class='col-lg-3 col-sm-1')
+          div(class='col-lg-6 col-xs-12 col-sm-10')
             div(class='form-group')
               label(for='cod_fisc') SSN:
               input(type="text" class='form-control' id='cod_fisc' name="cod_fisc" required)
         div(class='row')
-          div(class='col-lg-3')
-          div(class='col-lg-6 col-xs-12')
+          div(class='col-lg-3 col-sm-1')
+          div(class='col-lg-6 col-xs-12 col-sm-10')
             div(class='form-group')
               label(for='password') Password:
               input(type="password" class='form-control' id='password' name="password" required)
         div(class="row")
-          div(class='col-sm-5 col-lg-6')
+          div(class='col-sm-7 col-lg-6')
           div(class='col-sm-4 col-lg-3 col-xs-10')
             input(type='SUBMIT' value='Log in' name='login/'+user class='btn blockButton' style='margin-top: 24px; padding: 6px 10px; margin-left:25%; width: 75%;')
