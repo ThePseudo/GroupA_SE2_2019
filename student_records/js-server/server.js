@@ -99,7 +99,7 @@ app.get("/style", (req, res) => {
 });
 
 // Page not found
-app.get('/*', (req, res) => {
+app.use('/', (req, res) => {
     fs.readFile(req.path, (err, data) => {
         if (err) {
             //console.log(err);
@@ -108,17 +108,6 @@ app.get('/*', (req, res) => {
         }
         res.end(data);
 
-    })
-});
-
-app.post('/*', (req, res) => {
-    fs.readFile(req.path, (err, data) => {
-        if (err) {
-            //console.log(err);
-            res.render("/pages/base/404.pug");
-            return;
-        }
-        res.end(data);
     })
 });
 
