@@ -35,6 +35,26 @@ const HOST = 'localhost';
 //fix for favicon.ico request
 app.get('/favicon.ico', (req, res) => res.status(204));
 
+app.use('/:path', (req, res, next) => {
+    const acceptedPaths = ["admin", "parent", "teacher", "officer", "principal"];
+    const path = req.params.path;
+    if (acceptedPaths.includes(path)) {
+        try {
+            if (req.session.user.user_type != path) {
+                res.redirect("/");
+                return;
+            } else {
+                next();
+            }
+        } catch (err) {
+            res.redirect("/");
+        }
+    }
+    else {
+        next();
+    }
+});
+
 //mount external route, now I can access to external route via ex. /admin/routename inside adminPages module .js
 app.use('/admin', adminPages);
 app.use('/parent', parentPages);

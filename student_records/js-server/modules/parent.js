@@ -21,25 +21,11 @@ var classID;
 var courseID;
 var courseName = "";
 
-router.use(/\/.*/,
-    function (req, res, next) {
-        try {
-            if (req.session.user.user_type != 'parent') {
-                res.redirect("/");
-                return;
-            } else {
-                next();
-            }
-        } catch (err) {
-            res.redirect("/");
-        }
-    },
-    function (req, res, next) {
-        fullName = req.session.user.first_name + " " + req.session.user.last_name;
-        con = myInterface.DBconnect();
-        next();
-    }
-);
+router.use(/\/.*/, function (req, res, next) {
+    fullName = req.session.user.first_name + " " + req.session.user.last_name;
+    con = myInterface.DBconnect();
+    next();
+});
 
 router.use('/:id', function (req, res, next) {
     parentID = req.session.user.id;

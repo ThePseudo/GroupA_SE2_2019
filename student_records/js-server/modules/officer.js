@@ -11,25 +11,11 @@ var router = express.Router();
 var fullName = "";
 var con;
 
-router.use(/\/.*/,
-    function (req, res, next) {
-        try {
-            if (req.session.user.user_type != 'officer') {
-                res.redirect("/");
-                return;
-            } else {
-                next();
-            }
-        } catch (err) {
-            res.redirect("/");
-        }
-    },
-    function (req, res, next) {
-        fullName = req.session.user.first_name + " " + req.session.user.last_name;
-        con = myInterface.DBconnect();
-        next();
-    }
-);
+router.use(/\/.*/, function (req, res, next) {
+    fullName = req.session.user.first_name + " " + req.session.user.last_name;
+    con = myInterface.DBconnect();
+    next();
+});
 
 // Officer home
 router.get("/officer_home", (req, res) => {

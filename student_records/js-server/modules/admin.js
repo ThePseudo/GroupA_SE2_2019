@@ -20,54 +20,41 @@ var password;
 var hash_pwd;
 var userType;
 
-router.use(/\/.*/,
-    function (req, res, next) {
-        try {
-            if (req.session.user.user_type != 'admin') {
-                res.redirect("/");
-                return;
-            } else {
-                next();
-            }
-        } catch (err) {
-            res.redirect("/");
-        }
-    }, function (req, res, next) {
-        first_name = req.body.name;
-        last_name = req.body.surname;
-        SSN = req.body.SSN;
-        email = req.body.email;
-        password = Math.random().toString(36).substring(2, 10) + Math.random().toString(36).substring(2, 10);
-        hash_pwd = bcrypt.hashSync(password, 10);
-        con = myInterface.DBconnect();
-        next();
-    }, (req, res, next) => {
-        msg = req.query.msg;
-        msgClass = "";
-        msgText = "";
-        switch (msg) {
-            case "err":
-                msgText = "Please, fill all the data";
-                msgClass = "err_msg";
-                break;
-            case "errssn":
-                msgText = "Please, insert an Italian SSN";
-                msgClass = "err_msg";
-                break;
-            case "errpres":
-                msgText = "User already registered";
-                msgClass = "err_msg";
-                break;
-            case "ok":
-                msgText = "User inserted correctly";
-                msgClass = "ok_msg";
-                break;
-            default:
-                break;
-        }
-        next();
+router.use(/\/.*/, function (req, res, next) {
+    first_name = req.body.name;
+    last_name = req.body.surname;
+    SSN = req.body.SSN;
+    email = req.body.email;
+    password = Math.random().toString(36).substring(2, 10) + Math.random().toString(36).substring(2, 10);
+    hash_pwd = bcrypt.hashSync(password, 10);
+    con = myInterface.DBconnect();
+    next();
+}, (req, res, next) => {
+    msg = req.query.msg;
+    msgClass = "";
+    msgText = "";
+    switch (msg) {
+        case "err":
+            msgText = "Please, fill all the data";
+            msgClass = "err_msg";
+            break;
+        case "errssn":
+            msgText = "Please, insert an Italian SSN";
+            msgClass = "err_msg";
+            break;
+        case "errpres":
+            msgText = "User already registered";
+            msgClass = "err_msg";
+            break;
+        case "ok":
+            msgText = "User inserted correctly";
+            msgClass = "ok_msg";
+            break;
+        default:
+            break;
     }
-);
+    next();
+});
 
 router.use("/enroll/:user", (req, res, next) => {
     userType = req.params.user;
