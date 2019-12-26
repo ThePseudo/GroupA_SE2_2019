@@ -1,8 +1,8 @@
 'use strict';
 
 const express = require('express');
-const mailHandler = require("./nodemailer.js");
-const myInterface = require('../modules/functions.js');
+const mailHandler = require("./mail.js");
+const myInterface = require('./functions.js');
 const bcrypt = require('bcrypt');
 const { body } = require('express-validator');
 const router = express.Router();
@@ -110,48 +110,41 @@ router.route("/enroll/:user").get((req, res) => {
         //TODO:check valid email format server side
 
         //Check if SSN already inserted (so the new teacher's data is expected to be already inside the db)
-        con.query("SELECT * FROM " + table + " WHERE cod_fisc = ?", [SSN], (err, rows) => {
+        con.query('SELECT COUNT(*) as c FROM ' + table, (err, rows) => { // because we have no AUTO_UPDATE available on the DB
             if (err) {
                 res.end("There is a problem in the DB connection. Please, try again later " + err);
                 return;
             }
-            if (rows.length > 0) {
-                res.redirect("./" + userType + "?msg=errpres");
-            } else {
-                con.query('SELECT COUNT(*) as c FROM ' + table, (err, rows) => { // because we have no AUTO_UPDATE available on the DB
-                    if (err) {
-                        res.end("There is a problem in the DB connection. Please, try again later " + err);
-                        return;
-                    }
-                    if (rows.length <= 0) {
-                        res.end("Count impossible to compute");
-                        return;
-                    }
-                    var sql;
-                    var params = [];
-                    switch (table) {
-                        case "teacher":
-                            sql = "INSERT INTO teacher(id, first_name, last_name, cod_fisc, email, password, first_access) VALUES(?, ?, ?, ?, ?, ?, ?)";
-                            params = [rows[0].c + 1, first_name, last_name, SSN, email, hash_pwd, 0];
-                            break;
-                        case "officer":
-                            sql = "INSERT INTO officer(id, first_name, last_name, cod_fisc, email, password, first_access,principal) VALUES(?, ?, ?, ?, ?, ?, ?, ?)";
-                            params = [rows[0].c + 1, first_name, last_name, SSN, email, hash_pwd, 0, principal];
-                            break;
-                        default:
-                            break;
-                    }
-                    con.query(sql, params, (err, result) => {
-                        con.end();
-                        if (err) {
-                            res.end("There is a problem in the DB connection. Please, try again later " + err);
-                            return;
-                        }
-                        mailHandler.mail_handler(first_name, last_name, SSN, email, password, "teacher");
-                        res.redirect("./" + userType + "?msg=ok");
-                    });
-                });
+            if (rows.length <= 0) {
+                res.end("Count impossible to compute");
+                return;
             }
+            var sql;
+            var params = [];
+            switch (table) {
+                case "teacher":
+                    sql = "INSERT INTO teacher(first_name, last_name, cod_fisc, email, password, first_access) " +
+                        "VALUES(?, ?, ?, ?, ?, ?)";
+                    params = [first_name, last_name, SSN, email, hash_pwd, 0];
+                    break;
+                case "officer":
+                    sql = "INSERT INTO officer" +
+                        "(first_name, last_name, cod_fisc, email, password, first_access, principal) " +
+                        "VALUES(?, ?, ?, ?, ?, ?, ?)";
+                    params = [first_name, last_name, SSN, email, hash_pwd, 0, principal];
+                    break;
+                default:
+                    break;
+            }
+            con.query(sql, params, (err, result) => {
+                con.end();
+                if (err) {
+                    res.end("There is a problem in the DB connection. Please, try again later " + err);
+                    return;
+                }
+                mailHandler.mail_handler(first_name, last_name, SSN, email, password, "teacher");
+                res.redirect("./" + userType + "?msg=ok");
+            });
         });
     }
 );

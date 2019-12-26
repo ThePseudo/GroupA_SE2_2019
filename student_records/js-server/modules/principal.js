@@ -1,7 +1,7 @@
 const express = require('express');
 const pug = require('pug');
 //const mailHandler = require("../modules/ethereal.js"); one-time email modules disabled but it works (maybe just for test!)
-const mailHandler = require("./nodemailer.js");
+const mailHandler = require("./mail.js");
 const bcrypt = require('bcrypt');
 const db = require('../modules/functions.js');
 const { body } = require('express-validator');
