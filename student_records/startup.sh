@@ -1,4 +1,5 @@
 #!/bin/bash
+clear
 echo "Starting MySql"
 dpkg-reconfigure mysql-server-5.7 > /dev/null 2>&1
 service mysql start > /dev/null 2>&1
@@ -12,4 +13,5 @@ rm -rf ./db
 rm -f startup.sh
 echo "Starting Node"
 node server.js &
+sleep 2
 /bin/bash
