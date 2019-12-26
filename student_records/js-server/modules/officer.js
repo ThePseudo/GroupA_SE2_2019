@@ -348,6 +348,7 @@ router.route("/enroll_student").get((req, res) => {
         case "nopar":
             writtenMsg = "This parent does not exist";
             classMsg = "err_msg";
+            break;
         case "ok":
             writtenMsg = "New parent inserted correctly";
             classMsg = "ok_msg"
