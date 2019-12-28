@@ -76,10 +76,6 @@ router.post("/insert_comm", [body('name')
 });
 
 // Register parent
-/*
-    TODO
-    Note: see again for code redundancy
-*/
 router.route("/enroll_parent").get((req, res) => {
     var msg = req.query.msg;
     var writtenMsg = "";
@@ -162,11 +158,6 @@ router.route("/enroll_parent").get((req, res) => {
 );
 
 // Enroll student
-/*
-    TODO
-    Note: see again for code redundancy
-    RES RENDERS OH NOOOOOOO!
-*/
 router.route("/enroll_student").get((req, res) => {
     var msg = req.query.msg;
     var writtenMsg = "";
