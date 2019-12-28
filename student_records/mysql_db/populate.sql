@@ -61,6 +61,16 @@ INSERT INTO student
 VALUES
     ("Francesca", "Fetta", "DVBGDD76L56E934Y", 2, 2, 3);
 
+INSERT INTO student
+    (first_name,last_name,cod_fisc,parent_1,parent_2)
+VALUES
+    ("Alessandro", "Sardegna", "PPPGDD76L56E934Y", 2, 3);
+
+INSERT INTO student
+    (first_name,last_name,cod_fisc,parent_1,parent_2)
+VALUES
+    ("Alessandra", "Pugliese", "AAAGDD76L56E934Y" , 2, 3);
+
 -- Class
 INSERT INTO class
     (class_name)

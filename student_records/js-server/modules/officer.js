@@ -23,9 +23,67 @@ router.get("/officer_home", (req, res) => {
 });
 
 router.get("/class_composition", (req, res) => {
-    res.render("../pages/officer/officer_classcomposition.pug");
+    var msg = req.query.msg;
+    var writtenMsg = "";
+    var msgClass = "";
+    switch (msg) {
+        case "ok":
+            writtenMsg = "Class composition update correctly";
+            msgClass = "ok_msg";
+            break;
+        case "err":
+            writtenMsg = "Some error occured";
+            msgClass = "err_msg";
+            break;
+        default:
+            break;
+    }
+
+    con.query("SELECT id,class_name FROM class", (err, result) => {
+        if (err) {
+            res.end("There is a problem in the DB connection. Please, try again later " + err);
+            return;
+        }
+        var classlist = [];
+        for (var i = 0; i < result.length; i++) {
+            var classitem = {
+                id: result[i].id,
+                class_name: result[i].class_name,
+            }
+            classlist[i] = classitem;
+        }
+        con.query("SELECT * FROM student WHERE class_id IS NULL", (err, result2) => {
+            if (err) {
+                res.end("There is a problem in the DB connection. Please, try again later " + err);
+                return;
+            }
+            var studentnoclass = [];
+            for (var i = 0; i < result2.length; i++) {
+                var studentnoclassitem = {
+                    id: result2[i].id,
+                    first_name: result2[i].first_name,
+                    last_name: result2[i].last_name,
+                    cod_fisc: result2[i].cod_fisc,
+                    class_id: result2[i].class_id,
+                    parent_1: result2[i].parent_1,
+                    parent_2: result2[i].parent_2
+                }
+                studentnoclass[i] = studentnoclassitem;
+            }
+            res.render("../pages/officer/officer_classcomposition.pug",{
+                classlist: classlist,
+                studentnoclass: studentnoclass,
+                fullName: fullName,
+                msg: writtenMsg,
+                msgclass: msgClass
+            });
+        });
+    });
 });
 
+router.post("/officer/up_class", (req, res) => {
+    res.redirect("./class_composition");
+});
 
 // Insert communication
 router.get("/insert_communication", (req, res) => {
