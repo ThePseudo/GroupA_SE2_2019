@@ -15,8 +15,9 @@ html
       div(class='row')
         h1(class='title') Class Composition
       div(class='row')
+        // start
         h1 Pre-selected-options
-        select(multiple='multiple' name='my-select[]')
+        select#pre-selected-options(multiple='multiple')
           option(value='elem_1' selected='') elem 1
           option(value='elem_2') elem 2
           option(value='elem_3') elem 3
@@ -26,7 +27,7 @@ html
         // jQuery
         // script(src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.0.0/jquery.min.js')
         // Bootstrap JavaScript
-        //script(src='https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-alpha/js/bootstrap.min.js')
+        // script(src='https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-alpha/js/bootstrap.min.js')
         script(src='multiselect/js/jquery.multi-select.js')
         script(type='text/javascript').
           // run pre selected options
