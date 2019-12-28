@@ -93,8 +93,14 @@ app.get('/', (req, res) => {
     }
 });
 
+// Routes for links
 app.get("/style", (req, res) => {
     const page = fs.readFileSync("pages/base/style.css");
+    res.end(page);
+});
+
+app.get("/multiselect", (req, res) => {
+    const page = fs.readFileSync("pages/officer/multiselect/js/jquery.multi-select.js")
     res.end(page);
 });
 

@@ -1,9 +1,9 @@
-// Those variables should be in every page
+//- Those variables should be in every page
 - var page = "Class composition"
 - var loggedIn = true;
 - var user = "officer"
 - var active = "Class composition"
-    
+
 
 doctype html
 html
@@ -15,7 +15,7 @@ html
       div(class='row')
         h1(class='title') Class Composition
       div(class='row')
-        // start
+        //- start
         h1 Pre-selected-options
         select(id='pre-selected-options' multiple='multiple')
           option(value='elem_1' selected) elem 1
@@ -23,16 +23,16 @@ html
           option(value='elem_3') elem 3
           option(value='elem_4' selected) elem 4
           option(value='elem_100') elem 100
-        // ends
+        //- ends
 
-        // questi script sono commentati perchè ci sono già nell'head ma di altre versioni e non so come gestirle
+        //- questi script sono commentati perchè ci sono già nell'head ma di altre versioni e non so come gestirle
 
-        // jQuery
-        // script(src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.0.0/jquery.min.js')
-        // Bootstrap JavaScript
-        // script(src='https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-alpha/js/bootstrap.min.js')
+        //- jQuery
+        //- script(src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.0.0/jquery.min.js')
+        //- Bootstrap JavaScript
+        //- script(src='https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-alpha/js/bootstrap.min.js')
 
-        script(src='multiselect/js/jquery.multi-select.js')
+        script(type='text/javascript' src='/multiselect')
         script(type='text/javascript').
           // run pre selected options
           $('#pre-selected-options').multiSelect();
