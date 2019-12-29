@@ -81,8 +81,8 @@ router.get("/class_composition", (req, res) => {
     });
 });
 
-router.post("/officer/up_class", (req, res) => {
-    res.redirect("./class_composition");
+router.post("/up_class", (req, res) => {
+    res.redirect("./class_composition?msg=ok");
 });
 
 // Insert communication

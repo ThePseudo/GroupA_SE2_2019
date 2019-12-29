@@ -9,20 +9,29 @@ doctype html
 html
   include ../base/head.pug
   body
+    script(type='text/javascript').
+      function redirect(){
+        location.href="/officer/up_class";
+      }
     include ../base/navbar.pug
     include ../base/sidebar.pug
     div(class='container sidebarContainer')
       div(class='row')
         h1(class='title') Class Composition
+      if msg != ""
+        div(class='row')
+          div(class="col-xs-12")
+            h2(class=msgclass) #{msg}
       div(class='row')
         form(method='POST' action="/officer/up_class" id="regform")
           div(class='row' style='margin-top: 40px;')
             div(class='col-sm-3')
             div(class='col-sm-6')
               div.form-group
-                select(id='select_class')
+                select(id='select_class' onchange="redirect()")
+                  option(value="") Select
                   each classitem in classlist
-                    option(value=classitem.id selected) #{classitem.class_name}
+                    option(value=classitem.id) #{classitem.class_name}
           div(class='row')
             div(class='col-sm-3')
             div(class='col-sm-6')
