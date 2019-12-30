@@ -11,6 +11,12 @@ mixin rowUploadFile(date, link, description)
     td(style="text-align:left;")
       a(href='/' + link)
 
+mixin rowMaterials(title, link)
+  tr(class="table-row table-row-base")
+    td(style="width: 70%; text-align: left; padding-left: 20px;")= title
+    td(style="width: 70%; text-align: left; padding-left: 20px;")
+      a(href="/download/"+link) Link
+
 doctype html
 html
   include ../base/head.pug
