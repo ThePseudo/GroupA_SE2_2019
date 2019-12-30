@@ -100,10 +100,15 @@ app.get("/style", (req, res) => {
     res.end(page);
 });
 
+// Multiselect
+app.get("/multiselect", (req, res) => {
+    const page = fs.readFileSync("pages/officer/multiselect/js/jquery.multi-select.js")
+    res.end(page);
+});
 
 // Page not found
 app.get('/*', (req, res) => {
-    console.log(req.path);
+    //console.log(req.path);
     if (req.path.search("/download/") != -1) {
         let str = req.path.replace("/download/", "");
         var file = path.join(__dirname, str);
