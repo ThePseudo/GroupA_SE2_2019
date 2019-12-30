@@ -4,6 +4,12 @@
 - var user = "admin"
 - var active = "Upload file"
 
+mixin rowMaterials(title, link)
+  tr(class="table-row table-row-base")
+    td(style="width: 70%; text-align: left; padding-left: 20px;")= title
+    td(style="width: 70%; text-align: left; padding-left: 20px;")
+      a(href="/download/"+link) Link
+
 doctype html
 html
   include ../base/head.pug
@@ -35,3 +41,14 @@ html
           div(class='col-sm-8 col-lg-6')
           div(class='col-sm-4 col-lg-3 col-xs-10')
             input(type='SUBMIT' value='Upload file' class='btn blockButton' style='margin-top:24px; padding: 6px 10px; margin-left:25%; width:75%;')
+        div(class='row')
+          h1(class='title') List
+        div(class='row')
+          div(class="col-lg-2 col-sm-2")
+          div(class="col-lg-8 col-sm-12 col-xs-12" style='align-content:center;')
+            table(style="width:100%; text-align:center; align-content:center" class="table table-bordered")
+              tr(class='table-row-base')
+                th Description
+                th Link
+              for mt in Materials
+                +rowMaterials(mt.description, mt.link)

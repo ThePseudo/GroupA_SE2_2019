@@ -1,5 +1,5 @@
 //'use strict';
-
+const mime = require('mime');
 const express = require('express');
 const session = require('express-session');
 const fs = require('fs');
@@ -7,6 +7,7 @@ const https = require('https');
 const http = require('http');
 const pug = require('pug');
 const bodyParser = require('body-parser');
+var path = require('path');
 
 // App
 const app = express();
@@ -42,7 +43,7 @@ app.use('/parent', parentPages);
 app.use('/auth_router', auth_router);
 app.use('/teacher', teacherPages);
 app.use('/officer', officerPage);
-app.use("/principal",principalPage);
+app.use("/principal", principalPage);
 
 const options = {
     key: fs.readFileSync("./certs/localhost.key"),
@@ -83,15 +84,30 @@ app.get("/style", (req, res) => {
 
 // Page not found
 app.get('/*', (req, res) => {
-    fs.readFile(req.path, (err, data) => {
-        if (err) {
-            //console.log(err);
-            res.render("/pages/base/404.pug");
-            return;
-        }
-        res.end(data);
+    console.log(req.path);
+    if (req.path.search("/download/") != -1) {
+        let str = req.path.replace("/download/", "");
+        var file = path.join(__dirname, str);
+        var filename = path.basename(file);
+        var mimetype = mime.lookup(file);
 
-    })
+        res.setHeader('Content-disposition', 'attachment; filename=' + filename);
+        res.setHeader('Content-type', mimetype);
+
+        var filestream = fs.createReadStream(file);
+        filestream.pipe(res);
+        return;
+    } else {
+        fs.readFile(req.path, (err, data) => {
+            if (err) {
+                //console.log(err);
+                res.render("/pages/base/404.pug");
+                return;
+            }
+            res.end(data);
+
+        })
+    }
 });
 
 app.post('/*', (req, res) => {

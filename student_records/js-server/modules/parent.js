@@ -2,7 +2,7 @@
 
 const express = require('express');
 const pug = require('pug');
-const db = require('../modules/functions.js');
+const myInterface = require('../modules/functions.js');
 
 //IMPORTO oggetto rappresentante la sessione.
 //Per accedere ->  req.session
@@ -13,7 +13,7 @@ const db = require('../modules/functions.js');
 
 var router = express.Router();
 
-router.use(/\/.*/, function (req, res, next) {
+router.use(/\/.*/, function(req, res, next) {
     try {
         if (req.session.user.user_type != 'parent') {
             res.redirect("/");
@@ -27,10 +27,10 @@ router.use(/\/.*/, function (req, res, next) {
 });
 
 
-router.use('/:id/*', function (req, res, next) {
+router.use('/:id/*', function(req, res, next) {
     var parentID = req.session.user.id;
     var childID = req.params.id;
-    var con = db.DBconnect();
+    var con = myInterface.DBconnect();
 
     if (!isNaN(childID)) {
         let sql = "SELECT id FROM student WHERE id = ? AND (parent_1 = ? OR parent_2 = ?)"
@@ -55,7 +55,7 @@ router.use('/:id/*', function (req, res, next) {
 router.get('/parent_home', (req, res) => {
     var commlist = [];
     var studlist = [];
-    var con = db.DBconnect();
+    var con = myInterface.DBconnect();
 
     const compiledPage = pug.compileFile('../pages/parent/parent_homepage.pug');
 
@@ -110,14 +110,14 @@ router.get("/:childID/marks", (req, res) => {
     var fullName = req.session.user.first_name + " " + req.session.user.last_name;
     var childID = req.params.childID;
     var marks = [];
-    var con = db.DBconnect();
+    var con = myInterface.DBconnect();
 
     let sql = 'SELECT * FROM mark, course ' +
         'WHERE mark.course_id = course.id ' +
         'AND mark.student_id = ? ' +
         'ORDER BY mark.date_mark DESC';
 
-    con.query(sql, [childID], function (err, rows, fields) {
+    con.query(sql, [childID], function(err, rows, fields) {
         if (err) {
             res.end("DB error: " + err);
         } else {
@@ -136,7 +136,7 @@ router.get("/:childID/marks", (req, res) => {
 
             sql = "SELECT first_name, last_name FROM student WHERE id = ?"
 
-            con.query(sql, [childID], function (err, rows, fields) {
+            con.query(sql, [childID], function(err, rows, fields) {
                 if (err) {
                     res.end("DB error: " + err);
                 } else {
@@ -162,7 +162,7 @@ router.get("/:childID/marks", (req, res) => {
 router.get('/:childID/show_courses', (req, res) => {
     var courses = [];
     var fullName = req.session.user.first_name + " " + req.session.user.last_name;
-    var con = db.DBconnect();
+    var con = myInterface.DBconnect();
 
 
     var sql = "SELECT * FROM course ORDER BY id";
@@ -211,7 +211,7 @@ router.get('/:childID/show_courses', (req, res) => {
 
 router.get('/:childID/course/:id', (req, res) => {
     var fullName = req.session.user.first_name + " " + req.session.user.last_name;
-    var con = db.DBconnect();
+    var con = myInterface.DBconnect();
 
 
     var sql = 'SELECT course_name FROM course WHERE id = ?';
@@ -234,7 +234,7 @@ router.get('/:childID/course/:id', (req, res) => {
 
 router.get('/:childID/course/:id/marks', (req, res) => {
     var fullName = req.session.user.first_name + " " + req.session.user.last_name;
-    var con = db.DBconnect();
+    var con = myInterface.DBconnect();
 
 
     var sql = 'SELECT course_name FROM course WHERE course.id = ?';
@@ -284,10 +284,9 @@ router.get('/:childID/course/:id/marks', (req, res) => {
 });
 
 // course topics
-
 router.get('/:childID/course/:id/topics', (req, res) => {
     var fullName = req.session.user.first_name + " " + req.session.user.last_name;
-    var con = db.DBconnect();
+    var con = myInterface.DBconnect();
 
 
     var sql = 'SELECT course_name FROM course WHERE course.id = ?';
@@ -341,7 +340,7 @@ router.get('/:childID/course/:id/topics', (req, res) => {
 
 router.get('/:childID/course/:id/material_homework', (req, res) => {
     var fullName = req.session.user.first_name + " " + req.session.user.last_name;
-    var con = db.DBconnect();
+    var con = myInterface.DBconnect();
 
 
     var sql = 'SELECT course_name FROM course WHERE course.id = ?';
@@ -358,6 +357,7 @@ router.get('/:childID/course/:id/material_homework', (req, res) => {
                 res.end("DB error: " + err);
                 return;
             }
+            console.log(rows);
             var student_name = rows[0].first_name + " " + rows[0].last_name;
             var classID = rows[0].class_id;
             sql = 'SELECT date_hw, description FROM homework ' +
@@ -369,6 +369,7 @@ router.get('/:childID/course/:id/material_homework', (req, res) => {
                     res.end("DB error: " + err);
                     return;
                 }
+                console.log(rows);
                 var homeworks = [];
                 for (var i = 0; i < rows.length; ++i) {
                     var homework = {
@@ -386,15 +387,17 @@ router.get('/:childID/course/:id/material_homework', (req, res) => {
                         res.end("DB error: " + err);
                         return;
                     }
+                    console.log(rows);
                     var materials = [];
                     for (var i = 0; i < rows.length; ++i) {
                         var material = {
-                            date: rows[i].link,
+                            link: rows[i].link,
                             description: rows[i].description
                         }
                         materials[i] = material;
                     }
-
+                    console.log(homeworks)
+                    console.log(materials)
                     res.render('../pages/parent/parent_coursehomework.pug', {
                         courseName: course_name,
                         student_name: student_name,
@@ -418,7 +421,7 @@ router.get('/:childID/absences_notes', (req, res) => {
     var absence_array = [];
     var note_array = [];
 
-    var con = db.DBconnect();
+    var con = myInterface.DBconnect();
 
     var sql = "SELECT n.note_date, n.motivation, n.justified, t.first_name, t.last_name, t.email,t.id FROM note AS n,teacher AS t WHERE n.teacher_id = t.id AND n.student_id = ?";
 

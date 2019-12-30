@@ -8,14 +8,14 @@
 
 mixin rowHomeworks(date, desc)
   tr(class="table-row table-row-base")
-    td(style="width: 70%; text-align: left; padding-left: 20px;") #{date}
-    td(style="width: 70%; text-align: left; padding-left: 20px;") #{desc}
+    td(style="width: 70%; text-align: left; padding-left: 20px;")= (date.getDate() + "/" + (date.getMonth()+1) + "/" + date.getFullYear())
+    td(style="width: 70%; text-align: left; padding-left: 20px;")= desc
 
 mixin rowMaterials(title, link)
   tr(class="table-row table-row-base")
-    td(style="width: 70%; text-align: left; padding-left: 20px;") #{title}
+    td(style="width: 70%; text-align: left; padding-left: 20px;")= title
     td(style="width: 70%; text-align: left; padding-left: 20px;")
-      a(href='/' + link) Link
+      a(href="/download/"+link) Link
 
 doctype html
 html
@@ -27,7 +27,7 @@ html
       a(href="../"+courseID class="noLinkTitle backButton")
         span(class="glyphicon glyphicon-menu-left backButton")
       div(class='row')
-        h1(class='title') #{student_name}'s #{fullName} materials
+        h1(class='title') #{student_name}'s #{courseName} materials
       div(class='row')
         div(class="col-lg-2 col-sm-2")
         div(class="col-lg-8 col-sm-12 col-xs-12" style='align-content:center;')
@@ -36,17 +36,17 @@ html
               th Title
               th Link
             for mt in course_mtw
-              +rowMaterial(mt.description, mt.link)
+              +rowMaterials(mt.description, mt.link)
       div(class='row')
-        h1(class='title') #{student_name}'s #{fullName} homeworks
+        h1(class='title') #{student_name}'s #{courseName} homeworks
       div(class='row')
         div(class="col-lg-2 col-sm-2")
         div(class="col-lg-8 col-sm-12 col-xs-12" style='align-content:center;')
           table(style="width:100%; text-align:center; align-content:center" class="table table-bordered")
             tr(class='table-row-base')
-              th Title
-              th Link
+              th Date
+              th Description
             for hw in student_hws
-              +rowHomework(hw.date_hw, hw.descriptions)
+              +rowHomeworks(hw.date, hw.description)
 
               //- ADD DOWNLOAD
