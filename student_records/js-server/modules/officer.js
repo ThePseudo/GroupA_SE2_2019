@@ -22,7 +22,8 @@ router.get("/officer_home", (req, res) => {
     res.render("../pages/officer/officer_home.pug");
 });
 
-router.get("/class_composition", (req, res) => {
+router.get("/class_composition", (req, res)  => {
+    var classselected = req.query.classselected;
     var msg = req.query.msg;
     var writtenMsg = "";
     var msgClass = "";
@@ -52,7 +53,12 @@ router.get("/class_composition", (req, res) => {
             }
             classlist[i] = classitem;
         }
-        con.query("SELECT * FROM student WHERE class_id IS NULL", (err, result2) => {
+        var query = "SELECT * FROM student WHERE class_id IS NULL";
+        if(classselected!='Select' && classselected!=undefined)
+            query=query+" OR class_id="+classselected;
+        console.log(classselected);
+        console.log(query);
+        con.query(query, (err, result2) => {
             if (err) {
                 res.end("There is a problem in the DB connection. Please, try again later " + err);
                 return;
@@ -70,18 +76,27 @@ router.get("/class_composition", (req, res) => {
                 }
                 studentnoclass[i] = studentnoclassitem;
             }
+            console.log(studentnoclass);
             res.render("../pages/officer/officer_classcomposition.pug",{
                 classlist: classlist,
                 studentnoclass: studentnoclass,
                 fullName: fullName,
                 msg: writtenMsg,
-                msgclass: msgClass
+                msgclass: msgClass,
+                classselect: classselected
             });
         });
     });
 });
 
 router.post("/up_class", (req, res) => {
+    var pippo =req.body.studentselected;
+    for(var i=0; i<pippo.length;i++)
+        console.log(pippo[i]);
+    res.redirect("./class_composition?msg=ok");
+});
+
+router.post("/new_class", (req, res) => {
     res.redirect("./class_composition?msg=ok");
 });
 
