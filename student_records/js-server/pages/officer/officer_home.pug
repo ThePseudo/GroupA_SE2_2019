@@ -11,8 +11,8 @@ mixin loginBtn(text, image, href)
       button(class='btn blockButton')
         div(class='row')
           img(src= image style='width:100%;height:auto;')
-        div(class='row')
-          a(class='noLinkTitle' style='margin-top: 20px;')= text
+        div(class='row' style='margin-top: 8px;')
+          a(class='noLinkTitle')= text
 
 doctype html
 html
@@ -21,12 +21,13 @@ html
     include ../base/navbar.pug
     div(class='container')
       div(class='row')
-        h1(class='title') Welcome to BB
+        h1(class='title') Welcome to WebSchool
       div(class='row')
         h2(class = 'title2') What type of person you would register?
       div(class='row')
-        +loginBtn('Student', '../images/teacher.png', '/officer/enroll_student')
-        +loginBtn('Parent', '../images/teacher.png', '/officer/enroll_parent')
-   
+        +loginBtn('Student', '../images/student.png', '/officer/enroll_student')
+        +loginBtn('Parent', '../images/parent.png', '/officer/enroll_parent')
+        +loginBtn('Class', '../images/child.png', '/officer/class_composition')
+
 
 

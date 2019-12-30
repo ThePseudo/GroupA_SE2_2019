@@ -19,7 +19,7 @@ module.exports.mail_handler = function (first_name, last_name, username, email, 
   });
 
   const mailOptions = {
-    from: 'sysAdmin@gmail.com', // sender address
+    from: 'noReply@webschool.com', // sender address
     to: email, // list of receivers
     subject: 'Credentialial new user', // Subject line
     html: `<p>Dear ${first_name} ${last_name},</p>
@@ -28,6 +28,8 @@ module.exports.mail_handler = function (first_name, last_name, username, email, 
         <p>password: ${tmp_pwd}</p>
         <a href="https://localhost:8080/auth_router/login_${user_type}"><button>Go to Login Page</button>`
   };
+
+
 
   transporter.sendMail(mailOptions, function (err, info) {
     if (err)

@@ -13,36 +13,60 @@ const myInterface = require('../modules/functions.js');
 
 var router = express.Router();
 
-router.use(/\/.*/, function(req, res, next) {
-    try {
-        if (req.session.user.user_type != 'parent') {
-            res.redirect("/");
-            return;
-        } else {
+var fullName = "";
+var con;
+var studentName = "";
+var parentID;
+var studentID;
+var classID;
+var courseID;
+var courseName = "";
+
+router.use(/\/.*/, function (req, res, next) {
+    fullName = req.session.user.first_name + " " + req.session.user.last_name;
+    con = myInterface.DBconnect();
+    next();
+});
+
+router.use('/:id', function (req, res, next) {
+    parentID = req.session.user.id;
+    studentID = req.params.id;
+    if (!isNaN(studentID)) {
+        let sql = "SELECT id, first_name, last_name, class_id " +
+            "FROM student WHERE id = ? AND (parent_1 = ? OR parent_2 = ?)"
+        con.query(sql, [studentID, parentID, parentID], (err, rows) => {
+            if (err) {
+                res.end("Database problem: " + err)
+                return;
+            }
+            if (rows.length < 1) {
+                res.end("It's not your child you're looking for, is it?");
+                return;
+            }
+            classID = rows[0].class_id;
+            studentName = rows[0].first_name + " " + rows[0].last_name;
             next();
-        }
-    } catch (err) {
-        res.redirect("/");
+        });
+    } else {
+        next();
     }
 });
 
-
-router.use('/:id/*', function(req, res, next) {
-    var parentID = req.session.user.id;
-    var childID = req.params.id;
-    var con = myInterface.DBconnect();
-
-    if (!isNaN(childID)) {
-        let sql = "SELECT id FROM student WHERE id = ? AND (parent_1 = ? OR parent_2 = ?)"
-        con.query(sql, [childID, parentID, parentID], (err, rows, fields) => {
+router.use("/:studentID/course/:courseID", function (req, res, next) {
+    courseID = req.params.courseID;
+    if (!isNaN(courseID)) {
+        let sql = "SELECT course_name FROM course WHERE id = ?";
+        con.query(sql, [courseID], (err, rows) => {
             if (err) {
-                res.end("Database problem: " + err)
-            } else {
-                if (rows.length < 1) {
-                    res.end("It's not your child you're looking for, is it?");
-                } else
-                    next();
+                res.end("DB problem: " + err);
+                return;
             }
+            if (rows.length < 1) {
+                res.end("The subject doesn't exist");
+                return;
+            }
+            courseName = rows[0].course_name;
+            next();
         });
     } else {
         next();
@@ -58,14 +82,12 @@ router.get('/parent_home', (req, res) => {
     var con = myInterface.DBconnect();
 
     const compiledPage = pug.compileFile('../pages/parent/parent_homepage.pug');
-
     con.query('SELECT * FROM General_Communication ORDER BY comm_date DESC', (err, rows, fields) => {
-
         if (err) {
             res.end("There is a problem in the DB connection. Please, try again later\n" + err + "\n");
             return;
         }
-        console.log(rows);
+        //console.log(rows);
         for (var i = 0; i < rows.length; i++) {
             var communication_date = rows[i].comm_date.getDate() + "/" +
                 (rows[i].comm_date.getMonth() + 1) + "/" + rows[i].comm_date.getFullYear();
@@ -82,7 +104,7 @@ router.get('/parent_home', (req, res) => {
                 res.end("There is a problem in the DB connection. Please, try again later\n" + err + "\n");
                 return;
             }
-            console.log(rows);
+            //console.log(rows);
             for (var i = 0; i < rows.length; i++) {
                 var student = {
                     id: rows[i].id,
@@ -93,11 +115,10 @@ router.get('/parent_home', (req, res) => {
             }
             //console.log("Data successfully uploaded! " + result.insertId);
             con.end();
-            res.end(compiledPage({
+            res.render('../pages/parent/parent_homepage.pug', {
                 communicationList: commlist,
                 studentList: studlist,
-            }));
-
+            });
         });
     });
 });
@@ -106,9 +127,7 @@ router.get('/parent_home', (req, res) => {
 
 // ALL MARKS
 
-router.get("/:childID/marks", (req, res) => {
-    var fullName = req.session.user.first_name + " " + req.session.user.last_name;
-    var childID = req.params.childID;
+router.get("/:studentID/marks", (req, res) => {
     var marks = [];
     var con = myInterface.DBconnect();
 
@@ -116,243 +135,179 @@ router.get("/:childID/marks", (req, res) => {
         'WHERE mark.course_id = course.id ' +
         'AND mark.student_id = ? ' +
         'ORDER BY mark.date_mark DESC';
-
-    con.query(sql, [childID], function(err, rows, fields) {
+    con.query(sql, [studentID], function (err, rows, fields) {
         if (err) {
             res.end("DB error: " + err);
-        } else {
-            // Check if the result is found or not
-            for (var i = 0; i < rows.length; i++) {
-                // Create the object to save the data.
-                var mark = {
-                    subject: rows[i].course_name,
-                    date: rows[i].date_mark,
-                    mark: rows[i].score
-                }
-
-                // Add object into array
-                marks[i] = mark;
-            }
-
-            sql = "SELECT first_name, last_name FROM student WHERE id = ?"
-
-            con.query(sql, [childID], function(err, rows, fields) {
-                if (err) {
-                    res.end("DB error: " + err);
-                } else {
-                    if (rows) {
-                        res.render("../pages/parent/parent_allmark.pug", {
-                            student_name: rows[0].first_name + " " + rows[0].last_name,
-                            student_marks: marks,
-                            childID: childID,
-                            fullName: fullName
-                        });
-                    } else {
-                        res.end("This student does not exist!");
-                    }
-                }
-                con.end();
-            });
+            return;
         }
+        // Check if the result is found or not
+        for (var i = 0; i < rows.length; i++) {
+            // Create the object to save the data.
+            var mark = {
+                subject: rows[i].course_name,
+                date: rows[i].date_mark,
+                mark: rows[i].score
+            }
+            marks[i] = mark;
+        }
+        res.render("../pages/parent/parent_allmark.pug", {
+            student_name: studentName,
+            student_marks: marks,
+            childID: studentID,
+            fullName: fullName
+        });
     });
 });
 
 // COURSES
 
-router.get('/:childID/show_courses', (req, res) => {
+router.get('/:studentID/show_courses', (req, res) => {
     var courses = [];
     var fullName = req.session.user.first_name + " " + req.session.user.last_name;
     var con = myInterface.DBconnect();
-
-
     var sql = "SELECT * FROM course ORDER BY id";
     con.query(sql, (err, rows, fields) => {
         if (err) {
             res.end("DB error: " + err);
-        } else {
-            for (var i = 0; i < rows.length; ++i) {
-                var course = {
-                    id: rows[i].id,
-                    name: rows[i].course_name,
-                    newRow: (rows[i].id % 4 == 1),
-                    color: rows[i].color
-                }
-                courses[i] = course;
-            }
-
-            // TODO: retrieve data from DB, need new table
-            var course_hour = []; // length: 7
-            var course_hour_row = []; // length: 6
-            course_hour_row = ["FF0000", "0000FF", "FFFFFF", "FFFFFF", "FFFFFF", "FFFFFF"];
-            course_hour[0] = course_hour_row;
-            course_hour_row = ["FFFFFF", "FF0000", "FFFFFF", "FFFFFF", "FFFFFF", "FFFFFF"];
-            course_hour[1] = course_hour_row;
-            course_hour_row = ["00FF00", "FF0000", "FFFFFF", "FFFFFF", "FFFFFF", "FFFFFF"];
-            course_hour[2] = course_hour_row;
-            course_hour_row = ["00FF00", "FFFFFF", "FFFFFF", "FFFFFF", "FFFFFF", "FFFFFF"];
-            course_hour[3] = course_hour_row;
-            course_hour_row = ["FFFFFF", "FFFFFF", "FFFFFF", "FFFFFF", "FF0000", "FFFFFF"];
-            course_hour[4] = course_hour_row;
-            course_hour_row = ["FFFFFF", "FFFFFF", "FFFFFF", "FFFFFF", "FFFFFF", "FFFFFF"];
-            course_hour[5] = course_hour_row;
-            course_hour_row = ["FFFFFF", "FFFFFF", "FFFFFF", "FFFFFF", "FFFFFF", "FFFFFF"];
-            course_hour[6] = course_hour_row;
-
-            res.render('../pages/parent/parent_courselist.pug', {
-                courses: courses,
-                childID: req.params.childID,
-                fullName: fullName,
-                course_hours: course_hour
-            });
+            return;
         }
+        for (var i = 0; i < rows.length; ++i) {
+            var course = {
+                id: rows[i].id,
+                name: rows[i].course_name,
+                newRow: (rows[i].id % 4 == 1),
+                color: rows[i].color
+            }
+            courses[i] = course;
+        }
+
+        // TODO: retrieve data from DB, need new table
+        var course_hour = []; // length: 7
+        var course_hour_row = []; // length: 6
+        course_hour_row = ["FF0000", "0000FF", "FFFFFF", "FFFFFF", "FFFFFF", "FFFFFF"];
+        course_hour[0] = course_hour_row;
+        course_hour_row = ["FFFFFF", "FF0000", "FFFFFF", "FFFFFF", "FFFFFF", "FFFFFF"];
+        course_hour[1] = course_hour_row;
+        course_hour_row = ["00FF00", "FF0000", "FFFFFF", "FFFFFF", "FFFFFF", "FFFFFF"];
+        course_hour[2] = course_hour_row;
+        course_hour_row = ["00FF00", "FFFFFF", "FFFFFF", "FFFFFF", "FFFFFF", "FFFFFF"];
+        course_hour[3] = course_hour_row;
+        course_hour_row = ["FFFFFF", "FFFFFF", "FFFFFF", "FFFFFF", "FF0000", "FFFFFF"];
+        course_hour[4] = course_hour_row;
+        course_hour_row = ["FFFFFF", "FFFFFF", "FFFFFF", "FFFFFF", "FFFFFF", "FFFFFF"];
+        course_hour[5] = course_hour_row;
+        course_hour_row = ["FFFFFF", "FFFFFF", "FFFFFF", "FFFFFF", "FFFFFF", "FFFFFF"];
+        course_hour[6] = course_hour_row;
+
+        res.render('../pages/parent/parent_courselist.pug', {
+            courses: courses,
+            childID: studentID,
+            fullName: fullName,
+            course_hours: course_hour
+        });
         con.end();
     });
 });
 
-router.get('/:childID/course/:id', (req, res) => {
-    var fullName = req.session.user.first_name + " " + req.session.user.last_name;
-    var con = myInterface.DBconnect();
-
-
-    var sql = 'SELECT course_name FROM course WHERE id = ?';
-
-    con.query(sql, [req.params.id], (err, rows, fields) => {
-        if (err) {
-            res.end("DB error: " + err);
-        } else {
-            res.render('../pages/parent/parent_coursehomepage.pug', {
-                courseName: rows[0].course_name,
-                courseID: req.params.id,
-                childID: req.params.childID,
-                fullName: fullName
-            });
-        }
+router.get('/:studentID/course/:courseID', (req, res) => {
+    res.render('../pages/parent/parent_coursehomepage.pug', {
+        courseName: courseName,
+        courseID: courseID,
+        childID: studentID,
+        fullName: fullName
     });
 });
 
 /// course marks
 
-router.get('/:childID/course/:id/marks', (req, res) => {
-    var fullName = req.session.user.first_name + " " + req.session.user.last_name;
-    var con = myInterface.DBconnect();
-
-
-    var sql = 'SELECT course_name FROM course WHERE course.id = ?';
-
-    con.query(sql, [req.params.id], (err, rows, fields) => {
+router.get('/:studentID/course/:courseID/marks', (req, res) => {
+    let sql = 'SELECT date_mark, score FROM mark ' +
+        'WHERE mark.student_id = ? ' +
+        'AND mark.course_id = ? ' +
+        'ORDER BY mark.date_mark DESC';
+    con.query(sql, [studentID, courseID], (err, rows, fields) => {
+        con.end();
         if (err) {
             res.end("DB error: " + err);
             return;
         }
-        var course_name = rows[0].course_name;
-        sql = "SELECT first_name, last_name FROM student WHERE id = ?";
-        con.query(sql, [req.params.childID], (err, rows, fields) => {
-            if (err) {
-                res.end("DB error: " + err);
-                return;
+        var marks = [];
+        for (var i = 0; i < rows.length; ++i) {
+            var student_mark = {
+                date: rows[i].date_mark,
+                mark: rows[i].score
             }
-            var student_name = rows[0].first_name + " " + rows[0].last_name;
-            sql = 'SELECT date_mark, score FROM mark ' +
-                'WHERE mark.student_id = ? ' +
-                'AND mark.course_id = ? ' +
-                'ORDER BY mark.date_mark DESC';
-            con.query(sql, [req.params.childID, req.params.id], (err, rows, fields) => {
-                if (err) {
-                    res.end("DB error: " + err);
-                    return;
-                }
-                var marks = [];
-                for (var i = 0; i < rows.length; ++i) {
-                    var student_mark = {
-                        date: rows[i].date_mark,
-                        mark: rows[i].score
-                    }
-                    marks[i] = student_mark;
-                }
-
-                res.render('../pages/parent/parent_coursemark.pug', {
-                    courseName: course_name,
-                    student_name: student_name,
-                    student_marks: marks,
-                    childID: req.params.childID,
-                    fullName: fullName,
-                    courseID: req.params.id
-                });
-            });
+            marks[i] = student_mark;
+        }
+        res.render('../pages/parent/parent_coursemark.pug', {
+            courseName: courseName,
+            student_name: studentName,
+            student_marks: marks,
+            childID: studentID,
+            fullName: fullName,
+            courseID: courseID
         });
     });
 });
 
 // course topics
-router.get('/:childID/course/:id/topics', (req, res) => {
-    var fullName = req.session.user.first_name + " " + req.session.user.last_name;
-    var con = myInterface.DBconnect();
-
-
-    var sql = 'SELECT course_name FROM course WHERE course.id = ?';
-
-    con.query(sql, [req.params.id], (err, rows, fields) => {
+router.get('/:studentID/course/:courseID/topics', (req, res) => {
+    let sql = 'SELECT topic_date, description FROM topic ' +
+        'WHERE topic.id_class = ? ' +
+        'AND topic.id_course = ? ' +
+        'ORDER BY topic.topic_date DESC';
+    con.query(sql, [classID, courseID], (err, rows, fields) => {
         if (err) {
             res.end("DB error: " + err);
             return;
         }
-        var course_name = rows[0].course_name;
-        sql = "SELECT first_name, last_name, class_id FROM student WHERE id = ?";
-        con.query(sql, [req.params.childID], (err, rows, fields) => {
-            if (err) {
-                res.end("DB error: " + err);
-                return;
+        var topics = [];
+        for (var i = 0; i < rows.length; ++i) {
+            var topic = {
+                date: rows[i].topic_date,
+                description: rows[i].description
             }
-            var student_name = rows[0].first_name + " " + rows[0].last_name;
-            var classID = rows[0].class_id;
-            sql = 'SELECT topic_date, description FROM topic ' +
-                'WHERE topic.id_class = ? ' +
-                'AND topic.id_course = ? ' +
-                'ORDER BY topic.topic_date DESC';
-            con.query(sql, [classID, req.params.id], (err, rows, fields) => {
-                if (err) {
-                    res.end("DB error: " + err);
-                    return;
-                }
-                var topics = [];
-                for (var i = 0; i < rows.length; ++i) {
-                    var topic = {
-                        date: rows[i].topic_date,
-                        description: rows[i].description
-                    }
-                    topics[i] = topic;
-                }
-
-                res.render('../pages/parent/parent_coursetopic.pug', {
-                    courseName: course_name,
-                    student_name: student_name,
-                    topics: topics,
-                    childID: req.params.childID,
-                    fullName: fullName,
-                    courseID: req.params.id
-                });
-            });
+            topics[i] = topic;
+        }
+        res.render('../pages/parent/parent_coursetopic.pug', {
+            courseName: courseName,
+            student_name: studentName,
+            topics: topics,
+            childID: studentID,
+            fullName: fullName,
+            courseID: courseID
         });
     });
 });
 
 // course homeworks
 
-router.get('/:childID/course/:id/material_homework', (req, res) => {
-    var fullName = req.session.user.first_name + " " + req.session.user.last_name;
-    var con = myInterface.DBconnect();
-
-
-    var sql = 'SELECT course_name FROM course WHERE course.id = ?';
-
-    con.query(sql, [req.params.id], (err, rows, fields) => {
+router.get('/:studentID/course/:courseID/material_homework', (req, res) => {
+    let sql = 'SELECT date_hw, description FROM homework ' +
+        'WHERE class_id = ? ' +
+        'AND course_id = ? ' +
+        'ORDER BY date_hw DESC';
+    con.query(sql, [classID, courseID], (err, rows, fields) => {
         if (err) {
             res.end("DB error: " + err);
             return;
         }
-        var course_name = rows[0].course_name;
-        sql = "SELECT first_name, last_name, class_id FROM student WHERE id = ?";
-        con.query(sql, [req.params.childID], (err, rows, fields) => {
+        var homeworks = [];
+        for (var i = 0; i < rows.length; ++i) {
+            var homework = {
+                date: rows[i].date_hw.getDate() + "/" +
+                    (rows[i].date_hw.getMonth() + 1) + "/" +
+                    rows[i].date_hw.getFullYear(),
+                description: rows[i].description
+            }
+            homeworks[i] = homework;
+        }
+        sql = 'SELECT link, description, date_mt FROM material ' +
+            'WHERE class_id = ? ' +
+            'AND course_id = ? ' +
+            'ORDER BY date_mt DESC';
+        con.query(sql, [classID, courseID], (err, rows, fields) => {
+            con.end();
             if (err) {
                 res.end("DB error: " + err);
                 return;
@@ -415,22 +370,17 @@ router.get('/:childID/course/:id/material_homework', (req, res) => {
 
 //show absences & notes
 
-router.get('/:childID/absences_notes', (req, res) => {
-    var childID = req.params.childID;
-    var fullName = req.session.user.first_name + " " + req.session.user.last_name;
+router.get('/:studentID/absences_notes', (req, res) => {
     var absence_array = [];
     var note_array = [];
-
-    var con = myInterface.DBconnect();
-
-    var sql = "SELECT n.note_date, n.motivation, n.justified, t.first_name, t.last_name, t.email,t.id FROM note AS n,teacher AS t WHERE n.teacher_id = t.id AND n.student_id = ?";
-
-    con.query(sql, [childID], (err, rows) => {
+    var sql = "SELECT n.note_date, n.motivation, n.justified, t.first_name, t.last_name, " +
+        "t.email,t.id FROM note AS n,teacher AS t " +
+        "WHERE n.teacher_id = t.id AND n.student_id = ? ORDER BY n.note_date DESC";
+    con.query(sql, [studentID], (err, rows) => {
         if (err) {
             res.end("DB error: " + err);
             return;
         }
-
         for (var i = 0; i < rows.length; i++) {
             note_array[i] = {};
             note_array[i].teacherFullName = rows[i].first_name + " " + rows[i].last_name;
@@ -440,9 +390,8 @@ router.get('/:childID/absences_notes', (req, res) => {
             note_array[i].justified = rows[i].justified;
             note_array[i].teacherID = rows[i].id;
         }
-
-        sql = "SELECT date_ab, start_h, end_h, justified FROM absence WHERE student_id = ?";
-        con.query(sql, [childID], (err, rows) => {
+        sql = "SELECT date_ab, start_h, end_h, justified FROM absence WHERE student_id = ? ORDER BY date_ab DESC";
+        con.query(sql, [studentID], (err, rows) => {
             if (err) {
                 res.end("DB error: " + err);
                 return;
@@ -454,11 +403,17 @@ router.get('/:childID/absences_notes', (req, res) => {
                 absence_array[i].end_h = rows[i].end_h;
                 absence_array[i].justified = rows[i].justified;
             }
-            res.render("../pages/parent/parent_absences_notes.pug", { fullName: fullName, note_array: note_array, absence_array: absence_array, childID: childID });
+            res.render("../pages/parent/parent_absences_notes.pug", {
+                fullName: fullName,
+                note_array: note_array,
+                absence_array: absence_array,
+                childID: studentID
+            });
         });
     });
 });
 
+// TODO (but much YEAH in the log <3)
 router.route("/:teacherID/contact").get((req, res) => {
     console.log("qui");
     res.render("../pages/parent/popup_email_send.pug");

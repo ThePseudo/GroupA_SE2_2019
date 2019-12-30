@@ -5,7 +5,7 @@
 - var user= "teacher"
 - var active= "Insert daily topic"
 
-//- variables used: fullName, dateString
+//- variables used: fullName, dateString, msg, msgClass, className, courseName
 
 doctype html
 html
@@ -13,21 +13,20 @@ html
   body
     include ../base/navbar.pug
     include ../base/sidebar.pug
-    div(class='container')
+    div(class='container sidebarContainer')
       div(class='row')
-        h1(class='title') Record daily topic
-        div(class='row')
-        if flag_ok == 1
-          h2(class = 'ok_msg') &nbsp #{message} &nbsp
-        else
-          h2(class = 'err_msg') &nbsp #{message} &nbsp
+        h1(class='title') #{className} - #{courseName} - Record daily topic
+      if msg != ""
+        div(class="row")
+          h2(class=msgClass) #{msg}
+      div(class='row')
       form(method='POST' action="/teacher/class/" + classid +"/course/" + courseid + "/reg_topic" id="regform")
         div(class='row' style='margin-top: 40px;')
           div(class='col-sm-3')
           div(class='col-sm-6')
             div.form-group
               label(for='course') Subject:
-              input(type = "text" placeholder="topic's name" name='topic_name' class='form-control' required)
+              input(type = "text" placeholder="Topic name" name='topic_name' class='form-control' required)
         div(class='row')
           div(class='col-sm-3')
           div(class='col-sm-6')
@@ -39,7 +38,7 @@ html
           div(class='col-sm-6')
             div.form-group
               label(for='desc') Description:
-              textarea(name="description" form="regform" class="form-control" required)
+              textarea(name="description" placeholder="Topic description" form="regform" class="form-control" required style="resize:none" rows="5")
         div(class="row")
           div(class='col-sm-5 col-lg-6')
           div(class='col-sm-4 col-lg-3 col-xs-10')
