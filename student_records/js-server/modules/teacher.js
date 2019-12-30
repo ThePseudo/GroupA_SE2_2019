@@ -159,7 +159,7 @@ router.post("/class/:classid/course/:courseid/up_file", (req, res) => {
             classCourses[i] = classCourse;
         }
         res.render("../pages/teacher/teacher_coursematerial.pug");
-    });*/
+    });
 });
 
 router.get("/teacher_home", (req, res) => { // T3

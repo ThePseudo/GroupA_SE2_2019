@@ -33,7 +33,11 @@ router.get("/class_composition", (req, res)  => {
             msgClass = "ok_msg";
             break;
         case "err":
-            writtenMsg = "Some error occured";
+            writtenMsg = "Some error occured in class composition";
+            msgClass = "err_msg";
+            break;
+        case "err_class":
+            writtenMsg = "The class already exists";
             msgClass = "err_msg";
             break;
         default:
@@ -76,7 +80,9 @@ router.get("/class_composition", (req, res)  => {
                 }
                 studentnoclass[i] = studentnoclassitem;
             }
+           
             console.log(studentnoclass);
+          
             res.render("../pages/officer/officer_classcomposition.pug",{
                 classlist: classlist,
                 studentnoclass: studentnoclass,
@@ -90,14 +96,55 @@ router.get("/class_composition", (req, res)  => {
 });
 
 router.post("/up_class", (req, res) => {
-    var pippo =req.body.studentselected;
-    for(var i=0; i<pippo.length;i++)
-        console.log(pippo[i]);
     res.redirect("./class_composition?msg=ok");
+    return;
+    // var student =req.body.studentselected;
+    // var classselected = req.body.classselected;
+    // var updatequery = "";
+    // for(var i=0; i<student.length;i++){
+    //     console.log(student[i]);
+    //     if(student[i]){
+    //         updatequery = updatequery + " UPDATE student SET class_id='"+classselected+"' WHERE id="+student[i]+" ;";
+    //     }
+    //     else{
+    //         updatequery = updatequery + " UPDATE student SET class_id=NULL WHERE id="+student[i]+" ;";
+    //     }
+    // }
+    // con.query(updatequery,(err, result) => {
+    //     if (err) {
+    //         res.end("There is a problem in the DB connection. Please, try again later " + err);
+    //         return;
+    //     }           
+    //     res.redirect("./class_composition?msg=ok");
+    // });
 });
 
 router.post("/new_class", (req, res) => {
-    res.redirect("./class_composition?msg=ok");
+    var newclassyear = req.body.newclassyear;
+    var newclasssection = req.body.newclasssection;
+    var classname = newclassyear+newclasssection;
+
+    con.query("SELECT class_name FROM class WHERE class_name = ?",[classname],(err, result) => {
+        if (err) {
+            res.end("There is a problem in the DB connection. Please, try again later " + err);
+            return;
+        }
+        if(result.length>0){
+            res.redirect("./class_composition?msg=err_class");
+            con.end();
+            return;
+        }
+        con.query("INSERT INTO class (class_name) VALUES (?)",[classname],(err, result3) => {
+            if (err) {
+                res.end("There is a problem in the DB connection. Please, try again later " + err);
+                return;
+            }           
+            con.end();
+            res.redirect("./class_composition?msg=ok");
+            return;
+        });
+    });
+    
 });
 
 // Insert communication

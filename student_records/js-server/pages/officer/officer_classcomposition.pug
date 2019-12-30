@@ -35,10 +35,10 @@ html
             div(class='col-sm-6')
               div.form-group
                 label(for='newclass') Year of the new class:
-                input(type='number' min='1' max='5' name='newclassyear' class="form-control")
+                input(type='number' min='1' max='5' name='newclassyear' class="form-control" required)
               div.form-group
                 label(for='newclass') Section of the new class:
-                input(type='text' name='newclasssection' class="form-control")
+                input(type='text' maxlength="1" name='newclasssection' class="form-control" required)
           div(class='row')
                 div(class='col-sm-3')
                 div(class='col-sm-6')
@@ -59,21 +59,18 @@ html
             div(class='col-sm-6')
               div.form-group
                 //- start
-                select(id='pre-selected-options' name='studentselected' multiple='multiple')
+                select(id='pre-selected-options' multiple='multiple')
                   each studentnoclassitem in studentnoclass
                     if(studentnoclassitem.class_id!=null)
                       option(value=studentnoclassitem.id selected) #{studentnoclassitem.first_name+ " " +studentnoclassitem.last_name}
                     else
                       option(value=studentnoclassitem.id) #{studentnoclassitem.first_name+ " " +studentnoclassitem.last_name}
                 //- ends
-
                 //- questi script sono commentati perchè ci sono già nell'head ma di altre versioni e non so come gestirle
-
                 //- jQuery
                 //- script(src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.0.0/jquery.min.js')
                 //- Bootstrap JavaScript
                 //- script(src='https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-alpha/js/bootstrap.min.js')
-
                 script(type='text/javascript' src='/multiselect')
                 script(type='text/javascript').
                   // run pre selected options
