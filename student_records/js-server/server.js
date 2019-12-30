@@ -106,7 +106,10 @@ app.get("/multiselect", (req, res) => {
     res.end(page);
 });
 
-// Page not found
+// Download
+/*
+    TODO: req.path.search()? Could the route just be "/download"?
+*/
 app.get('/*', (req, res) => {
     //console.log(req.path);
     if (req.path.search("/download/") != -1) {
