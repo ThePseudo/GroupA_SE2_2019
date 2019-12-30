@@ -1,0 +1,57 @@
+//- Those variables should be in every page
+- var page = "Daily topic"
+- var loggedIn = true;
+- var date = new Date();
+- var user= "teacher"
+- var active= "Insert daily topic"
+
+//- variables used: fullName, dateString
+
+mixin rowMark(date, description)
+  tr(class="table-row table-row-base")
+    td(style="width:50%")= date.getFullYear() + "-" + date.getMonth() + "-" + date.getDate()
+    td(style="width:50%")= description
+
+doctype html
+html
+  include ../base/head.pug
+  body
+    include ../base/navbar.pug
+    include ../base/sidebar.pug
+    div(class='container')
+      div(class='row')
+        h1(class='title') Record homework
+        div(class='row')
+        if flag_ok == 1
+          h2(class = 'ok_msg') &nbsp #{message} &nbsp
+        else
+          h2(class = 'err_msg') &nbsp #{message} &nbsp
+      form(method='POST' action="/teacher/class/" + classid +"/course/" + courseid + "/reg_homework" id="regform")
+        div(class='row' style='margin-top: 40px;')
+          div(class='col-sm-3')
+          div(class='col-sm-6')
+            div.form-group
+              label(for='date') Date:
+              input(type='date' name='date' value=dateString class="form-control" required)    
+        div(class='row')
+          div(class='col-sm-3')
+          div(class='col-sm-6')
+            div.form-group
+              label(for='desc') Description:
+              textarea(name="description" form="regform" class="form-control" required)
+        div(class="row")
+          div(class='col-sm-5 col-lg-6')
+          div(class='col-sm-4 col-lg-3 col-xs-10')
+            input(type='SUBMIT' value='Record topic' class='btn blockButton' style='margin-top: 24px; margin-left: 25%; padding: 6px 10px; width: 75%;')
+        div(class="row")
+            h1(class='title') List
+        div(class="row")
+            div(class="col-sm-3")
+            div(class="col-sm-6 col-xs-12" style='align-content:center;')
+              table(style="width:100%; text-align:center; align-content:center" class="table table-bordered")
+                tr(class='table-row-base')
+                  th Date
+                  th Description
+                for HW in HomeworkList
+                  +rowMark(HW.date, HW.description)
+

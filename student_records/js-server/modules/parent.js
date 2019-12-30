@@ -1,6 +1,7 @@
 'use strict';
 
 const express = require('express');
+const pug = require('pug');
 const myInterface = require('../modules/functions.js');
 
 //IMPORTO oggetto rappresentante la sessione.
@@ -78,6 +79,9 @@ router.use("/:studentID/course/:courseID", function (req, res, next) {
 router.get('/parent_home', (req, res) => {
     var commlist = [];
     var studlist = [];
+    var con = myInterface.DBconnect();
+
+    const compiledPage = pug.compileFile('../pages/parent/parent_homepage.pug');
     con.query('SELECT * FROM General_Communication ORDER BY comm_date DESC', (err, rows, fields) => {
         if (err) {
             res.end("There is a problem in the DB connection. Please, try again later\n" + err + "\n");
@@ -125,6 +129,8 @@ router.get('/parent_home', (req, res) => {
 
 router.get("/:studentID/marks", (req, res) => {
     var marks = [];
+    var con = myInterface.DBconnect();
+
     let sql = 'SELECT * FROM mark, course ' +
         'WHERE mark.course_id = course.id ' +
         'AND mark.student_id = ? ' +
@@ -142,7 +148,6 @@ router.get("/:studentID/marks", (req, res) => {
                 date: rows[i].date_mark,
                 mark: rows[i].score
             }
-            // Add object into array
             marks[i] = mark;
         }
         res.render("../pages/parent/parent_allmark.pug", {
@@ -158,6 +163,8 @@ router.get("/:studentID/marks", (req, res) => {
 
 router.get('/:studentID/show_courses', (req, res) => {
     var courses = [];
+    var fullName = req.session.user.first_name + " " + req.session.user.last_name;
+    var con = myInterface.DBconnect();
     var sql = "SELECT * FROM course ORDER BY id";
     con.query(sql, (err, rows, fields) => {
         if (err) {
@@ -212,6 +219,7 @@ router.get('/:studentID/course/:courseID', (req, res) => {
 });
 
 /// course marks
+
 router.get('/:studentID/course/:courseID/marks', (req, res) => {
     let sql = 'SELECT date_mark, score FROM mark ' +
         'WHERE mark.student_id = ? ' +
@@ -304,22 +312,57 @@ router.get('/:studentID/course/:courseID/material_homework', (req, res) => {
                 res.end("DB error: " + err);
                 return;
             }
-            var materials = [];
-            for (var i = 0; i < rows.length; ++i) {
-                var material = {
-                    date: rows[i].link,
-                    description: rows[i].description
+            console.log(rows);
+            var student_name = rows[0].first_name + " " + rows[0].last_name;
+            var classID = rows[0].class_id;
+            sql = 'SELECT date_hw, description FROM homework ' +
+                'WHERE class_id = ? ' +
+                'AND course_id = ? ' +
+                'ORDER BY date_hw DESC';
+            con.query(sql, [classID, req.params.id], (err, rows, fields) => {
+                if (err) {
+                    res.end("DB error: " + err);
+                    return;
                 }
-                materials[i] = material;
-            }
-            res.render('../pages/parent/parent_coursehomework.pug', {
-                courseName: courseName,
-                student_name: studentName,
-                student_hws: homeworks,
-                childID: studentID,
-                fullName: fullName,
-                course_mtw: materials,
-                courseID: courseID
+                console.log(rows);
+                var homeworks = [];
+                for (var i = 0; i < rows.length; ++i) {
+                    var homework = {
+                        date: rows[i].date_hw,
+                        description: rows[i].description
+                    }
+                    homeworks[i] = homework;
+                }
+                sql = 'SELECT link, description, date_mt FROM material ' +
+                    'WHERE class_id = ? ' +
+                    'AND course_id = ? ' +
+                    'ORDER BY date_mt DESC';
+                con.query(sql, [classID, req.params.id], (err, rows, fields) => {
+                    if (err) {
+                        res.end("DB error: " + err);
+                        return;
+                    }
+                    console.log(rows);
+                    var materials = [];
+                    for (var i = 0; i < rows.length; ++i) {
+                        var material = {
+                            link: rows[i].link,
+                            description: rows[i].description
+                        }
+                        materials[i] = material;
+                    }
+                    console.log(homeworks)
+                    console.log(materials)
+                    res.render('../pages/parent/parent_coursehomework.pug', {
+                        courseName: course_name,
+                        student_name: student_name,
+                        student_hws: homeworks,
+                        childID: req.params.childID,
+                        fullName: fullName,
+                        course_mtw: materials,
+                        courseID: req.params.id
+                    });
+                });
             });
         });
     });
