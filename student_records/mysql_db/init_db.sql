@@ -160,3 +160,18 @@ CREATE TABLE teacher_course_class
     year INT NOT NULL,
     PRIMARY KEY(teacher_id, course_id, class_id, year)
 );
+
+
+CREATE TABLE timetable
+(
+    start_time_slot TIME NOT NULL,
+    teacher_id INT NOT NULL,
+    course_id INT NOT NULL,
+    class_id INT NOT NULL,
+    day VARCHAR(10) NOT NULL,
+    FOREIGN KEY (teacher_id,course_id,class_id) 
+    REFERENCES teacher_course_class(teacher_id,course_id,class_id)
+        ON UPDATE CASCADE
+        ON DELETE CASCADE, 
+    PRIMARY KEY(start_time_slot,day)
+)

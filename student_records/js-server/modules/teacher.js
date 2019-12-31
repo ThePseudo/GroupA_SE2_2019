@@ -164,7 +164,7 @@ router.post("/class/:classid/course/:courseid/up_file", (req, res) => {
 
 router.get("/teacher_home", (req, res) => { // T3
     var fullName = req.session.user.first_name + " " + req.session.user.last_name;
-
+    var teacherCourses = [];
     var date = new Date();
     var year = date.getFullYear();
     if (date.getMonth() < 9) { // before august
@@ -172,7 +172,6 @@ router.get("/teacher_home", (req, res) => { // T3
     }
 
     var con = myInterface.DBconnect();
-
 
     var sql = "SELECT course_id, class_id, course_name, class_name FROM class, course, teacher_course_class " +
         "WHERE course_id = course.id AND class_id = class.id " +
@@ -183,7 +182,6 @@ router.get("/teacher_home", (req, res) => { // T3
             res.end("Database problem: " + err);
             return;
         }
-        con.end();
         var classCourses = [];
         for (var i = 0; i < rows.length; ++i) {
             var classCourse = {
@@ -194,9 +192,47 @@ router.get("/teacher_home", (req, res) => { // T3
             }
             classCourses[i] = classCourse;
         }
-        res.render("../pages/teacher/teacher_home.pug", {
-            fullName: fullName,
-            class_courses: classCourses
+
+        var sql = "SELECT * FROM timetable,teacher_course_class ORDER BY id";
+        con.query(sql, (err, rows, fields) => {
+            if (err) {
+                res.end("DB error: " + err);
+                return;
+            }
+            for (var i = 0; i < rows.length; ++i) {
+                var course = {
+                    id: rows[i].id,
+                    name: rows[i].course_name,
+                    newRow: (rows[i].id % 4 == 1),
+                    color: rows[i].color
+                }
+                teacherCourses[i] = course;
+            }
+    
+            // TODO: retrieve data from DB, need new table
+            var course_hour = []; // length: 7
+            var course_hour_row = []; // length: 6
+            course_hour_row = ["FF0000", "0000FF", "FFFFFF", "FFFFFF", "FFFFFF", "FFFFFF"];
+            course_hour[0] = course_hour_row;
+            course_hour_row = ["FFFFFF", "FF0000", "FFFFFF", "FFFFFF", "FFFFFF", "FFFFFF"];
+            course_hour[1] = course_hour_row;
+            course_hour_row = ["00FF00", "FF0000", "FFFFFF", "FFFFFF", "FFFFFF", "FFFFFF"];
+            course_hour[2] = course_hour_row;
+            course_hour_row = ["00FF00", "FFFFFF", "FFFFFF", "FFFFFF", "FFFFFF", "FFFFFF"];
+            course_hour[3] = course_hour_row;
+            course_hour_row = ["FFFFFF", "FFFFFF", "FFFFFF", "FFFFFF", "FF0000", "FFFFFF"];
+            course_hour[4] = course_hour_row;
+            course_hour_row = ["FFFFFF", "FFFFFF", "FFFFFF", "FFFFFF", "FFFFFF", "FFFFFF"];
+            course_hour[5] = course_hour_row;
+            course_hour_row = ["FFFFFF", "FFFFFF", "FFFFFF", "FFFFFF", "FFFFFF", "FFFFFF"];
+            course_hour[6] = course_hour_row;
+
+            con.end();
+            res.render("../pages/teacher/teacher_home.pug", {
+                fullName: fullName,
+                class_courses: classCourses,
+                course_hours:course_hour
+            });
         });
     });
 });
