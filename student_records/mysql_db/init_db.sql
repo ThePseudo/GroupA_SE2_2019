@@ -164,11 +164,11 @@ CREATE TABLE teacher_course_class
 
 CREATE TABLE timetable
 (
-    start_time_slot TIME NOT NULL,
+    start_time_slot INT NOT NULL,
     teacher_id INT NOT NULL,
     course_id INT NOT NULL,
     class_id INT NOT NULL,
-    day VARCHAR(10) NOT NULL,
+    day INT NOT NULL,
     FOREIGN KEY (teacher_id,course_id,class_id) 
     REFERENCES teacher_course_class(teacher_id,course_id,class_id)
         ON UPDATE CASCADE

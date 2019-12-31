@@ -11,6 +11,7 @@ const fileUpload_handler = require('express-fileupload');
 const { body } = require('express-validator');
 const Busboy = require('busboy');
 const inspect = require('util').inspect;
+const start_time_slot = ["08:00","09:00","10:00","11:00","12:00"];
 
 //IMPORTO oggetto rappresentante la sessione.
 //Per accedere ->  req.session
@@ -164,7 +165,7 @@ router.post("/class/:classid/course/:courseid/up_file", (req, res) => {
 
 router.get("/teacher_home", (req, res) => { // T3
     var fullName = req.session.user.first_name + " " + req.session.user.last_name;
-    var teacherCourses = [];
+    var course_hours = [];
     var date = new Date();
     var year = date.getFullYear();
     if (date.getMonth() < 9) { // before august
@@ -193,45 +194,43 @@ router.get("/teacher_home", (req, res) => { // T3
             classCourses[i] = classCourse;
         }
 
-        var sql = "SELECT * FROM timetable,teacher_course_class ORDER BY id";
-        con.query(sql, (err, rows, fields) => {
+        sql = ` SELECT tt.start_time_slot as start_time_slot,tt.class_id as class_id, tt.course_id as course_id, tt.day as day 
+                FROM timetable as tt ,teacher_course_class as tcc 
+                WHERE tt.course_id = tcc.course_id AND tt.class_id = tcc.class_id AND tt.teacher_id = tcc.teacher_id AND tt.teacher_id = ?
+                ORDER BY tt.day,tt.start_time_slot `;
+        let params = [req.session.user.id]
+        con.query(sql, params, (err, rows, fields) => {
             if (err) {
                 res.end("DB error: " + err);
                 return;
             }
-            for (var i = 0; i < rows.length; ++i) {
-                var course = {
-                    id: rows[i].id,
-                    name: rows[i].course_name,
-                    newRow: (rows[i].id % 4 == 1),
-                    color: rows[i].color
+            var i = 0;
+            for(var timeslot=0; timeslot < 5; timeslot++){
+                course_hours[timeslot]=[];
+                for(var day = 0; day < 6 ; day++){
+                    if(i<rows.length){
+                        if(rows[i].start_time_slot == timeslot && rows[i].day == day+1){
+                            var course = {
+                                class_id: rows[i].class_id,
+                                course_id: rows[i].course_id,
+                                day: rows[i].day,
+                                start_time_slot: rows[i].start_time_slot
+                            }
+                            course_hours[timeslot][day] = course;
+                            i++;
+                        }
+                    }
+                    else 
+                        course_hours[timeslot][day] = {};
                 }
-                teacherCourses[i] = course;
             }
-    
-            // TODO: retrieve data from DB, need new table
-            var course_hour = []; // length: 7
-            var course_hour_row = []; // length: 6
-            course_hour_row = ["FF0000", "0000FF", "FFFFFF", "FFFFFF", "FFFFFF", "FFFFFF"];
-            course_hour[0] = course_hour_row;
-            course_hour_row = ["FFFFFF", "FF0000", "FFFFFF", "FFFFFF", "FFFFFF", "FFFFFF"];
-            course_hour[1] = course_hour_row;
-            course_hour_row = ["00FF00", "FF0000", "FFFFFF", "FFFFFF", "FFFFFF", "FFFFFF"];
-            course_hour[2] = course_hour_row;
-            course_hour_row = ["00FF00", "FFFFFF", "FFFFFF", "FFFFFF", "FFFFFF", "FFFFFF"];
-            course_hour[3] = course_hour_row;
-            course_hour_row = ["FFFFFF", "FFFFFF", "FFFFFF", "FFFFFF", "FF0000", "FFFFFF"];
-            course_hour[4] = course_hour_row;
-            course_hour_row = ["FFFFFF", "FFFFFF", "FFFFFF", "FFFFFF", "FFFFFF", "FFFFFF"];
-            course_hour[5] = course_hour_row;
-            course_hour_row = ["FFFFFF", "FFFFFF", "FFFFFF", "FFFFFF", "FFFFFF", "FFFFFF"];
-            course_hour[6] = course_hour_row;
-
+           
             con.end();
             res.render("../pages/teacher/teacher_home.pug", {
                 fullName: fullName,
                 class_courses: classCourses,
-                course_hours:course_hour
+                course_hours:course_hours,
+                start_time_slot: start_time_slot
             });
         });
     });
