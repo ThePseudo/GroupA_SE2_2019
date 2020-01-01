@@ -687,7 +687,8 @@ router.get("/class/:classid/class_timetable",(req,res)=>{
                     if(rows[i].start_time_slot == timeslot+1 && rows[i].day == day+1){
                         var course = {
                             courseName: rows[i].course_name,
-                            teacher_fullName: rows[i].last_name + " " + rows[i].first_name,
+                            teacher_lastName: rows[i].last_name,
+                            teacher_firstName: rows[i].first_name,
                             start_time_slot: rows[i].start_time_slot
                         }
                         course_hours[timeslot][day] = course;
