@@ -107,6 +107,9 @@ router.use("/class/:classid/course/:courseid/student/:studentid",
 router.get("/teacher_home", (req, res) => { // T3
     var date = new Date();
     var year = date.getFullYear();
+    var course_hours = [];
+    var courseNameMap = [];
+    var classNameMap = [];
     if (date.getMonth() < 9) { // before august
         year--;
     }
@@ -122,6 +125,9 @@ router.get("/teacher_home", (req, res) => { // T3
         }
         var classCourses = [];
         for (var i = 0; i < rows.length; ++i) {
+            courseNameMap[rows[i].course_id] = rows[i].course_name;
+            classNameMap[rows[i].class_id] = rows[i].class_name;
+            
             var classCourse = {
                 classid: rows[i].class_id,
                 courseid: rows[i].course_id,
@@ -130,12 +136,13 @@ router.get("/teacher_home", (req, res) => { // T3
             }
             classCourses[i] = classCourse;
         }
-
+      
         sql = ` SELECT tt.start_time_slot as start_time_slot,tt.class_id as class_id, tt.course_id as course_id, tt.day as day 
                 FROM timetable as tt ,teacher_course_class as tcc 
                 WHERE tt.course_id = tcc.course_id AND tt.class_id = tcc.class_id AND tt.teacher_id = tcc.teacher_id AND tt.teacher_id = ?
                 ORDER BY tt.day,tt.start_time_slot `;
-        let params = [req.session.user.id]
+        
+                let params = [req.session.user.id]
         con.query(sql, params, (err, rows, fields) => {
             if (err) {
                 res.end("DB error: " + err);
@@ -145,11 +152,12 @@ router.get("/teacher_home", (req, res) => { // T3
             for(var timeslot=0; timeslot < 5; timeslot++){
                 course_hours[timeslot]=[];
                 for(var day = 0; day < 6 ; day++){
+                    course_hours[timeslot][day] = {}
                     if(i<rows.length){
-                        if(rows[i].start_time_slot == timeslot && rows[i].day == day+1){
+                        if(rows[i].start_time_slot == timeslot+1 && rows[i].day == day+1){
                             var course = {
-                                class_id: rows[i].class_id,
-                                course_id: rows[i].course_id,
+                                className: classNameMap[rows[i].class_id],
+                                courseName: courseNameMap[rows[i].course_id],
                                 day: rows[i].day,
                                 start_time_slot: rows[i].start_time_slot
                             }
@@ -157,8 +165,7 @@ router.get("/teacher_home", (req, res) => { // T3
                             i++;
                         }
                     }
-                    else 
-                        course_hours[timeslot][day] = {};
+                    console.log(course_hours[timeslot][day]);
                 }
             }
            

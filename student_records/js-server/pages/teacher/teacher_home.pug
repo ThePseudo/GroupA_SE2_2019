@@ -35,7 +35,7 @@ html
     div(class='container')
       //- Time table
       div(class='row')
-        h1(class='title') My Week Time table
+        h1(class='title2') Weekly Timetable
       div(class='row')
         div(class="col-lg-12" style='align-content:center;')
           table(style="width:100%; text-align:center; align-content:center" class="table table-bordered")
@@ -62,8 +62,10 @@ html
                 td= start_time_slot[i]
                 - i++;
                 for col in row
-                  if col
-                    td=col.class_id
-                  else
-                    td &nbsp
+                  td(style = "text-align:center")
+                    |&nbsp#{col.className}&nbsp
+                    br 
+                    |&nbsp#{col.courseName}&nbsp 
+            //-Metto &nbsp prima e dopo per centrare la scritta
+            //-Metto &nbsp per avere la stessa dimensione per celle piene e celle vuote
                   
