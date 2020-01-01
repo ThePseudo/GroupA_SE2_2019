@@ -1,4 +1,5 @@
-//'use strict';
+'use strict';
+
 const mime = require('mime');
 const express = require('express');
 const session = require('express-session');
