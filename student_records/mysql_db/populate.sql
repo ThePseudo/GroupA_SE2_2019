@@ -1,3 +1,5 @@
+SET CHARSET utf8mb4;
+
 -- Teacher
 INSERT INTO teacher
     (first_name,last_name,cod_fisc,email,password,first_access)

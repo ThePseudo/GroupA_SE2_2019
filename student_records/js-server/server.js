@@ -1,4 +1,5 @@
-//'use strict';
+'use strict';
+
 const mime = require('mime');
 const express = require('express');
 const session = require('express-session');
@@ -109,6 +110,7 @@ app.get("/multiselect", (req, res) => {
 // Download
 /*
     TODO: req.path.search()? Could the route just be "/download"?
+    Are we really sure we should do all this mess to return the file? TODO: review this part
 */
 app.get('/*', (req, res) => {
     //console.log(req.path);
