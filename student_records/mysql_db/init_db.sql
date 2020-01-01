@@ -1,4 +1,3 @@
-SET CHARSET utf8mb4;
 -- ENTITIES
 
 CREATE TABLE teacher
