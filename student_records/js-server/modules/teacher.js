@@ -114,11 +114,11 @@ router.get("/teacher_home", (req, res) => { // T3
         year--;
     }
 
-    var sql = "SELECT course_id, class_id, course_name, class_name FROM class, course, teacher_course_class " +
-        "WHERE course_id = course.id AND class_id = class.id " +
-        "AND year = ? AND teacher_id = ?";
+    var sql = ` SELECT course_id, class_id, course_name, class_name FROM class, course, teacher_course_class
+                WHERE course_id = course.id AND class_id = class.id
+                AND year = ? AND teacher_id = ? `;
 
-    con.query(sql, [year, req.session.user.id], (err, rows, fields) => {
+    con.query(sql, [year, req.session.user.id], (err, rows) => {
         if (err) {
             res.end("Database problem: " + err);
             return;
@@ -158,7 +158,6 @@ router.get("/teacher_home", (req, res) => { // T3
                             var course = {
                                 className: classNameMap[rows[i].class_id],
                                 courseName: courseNameMap[rows[i].course_id],
-                                day: rows[i].day,
                                 start_time_slot: rows[i].start_time_slot
                             }
                             course_hours[timeslot][day] = course;
@@ -653,6 +652,60 @@ router.route("/class/:classid/course/:courseid/upload_file").get((req, res) => {
         });
         */
 
+});
+
+router.get("/class/:classid/class_timetable",(req,res)=>{
+    var date = new Date();
+    var year = date.getFullYear();
+    var className;
+    var course_hours = [];
+    if (date.getMonth() < 9) { // before august
+        year--;
+    }
+
+    var sql = ` SELECT first_name, last_name, course_name, class_name, tt.start_time_slot as start_time_slot,tt.class_id as class_id, tt.course_id as course_id, tt.day as day 
+                FROM timetable as tt ,teacher_course_class as tcc, class, course, teacher
+                WHERE tcc.course_id = course.id AND tcc.class_id = class.id AND tt.course_id = tcc.course_id 
+                AND tt.class_id = tcc.class_id AND tt.teacher_id = tcc.teacher_id AND tcc.teacher_id = teacher.id
+                AND year = ? AND tcc.class_id = ?
+                ORDER BY tt.day,tt.start_time_slot `;
+    
+    con.query(sql, [year, req.params.classid], (err, rows) => {
+        if (err) {
+            res.end("Database problem: " + err);
+            return;
+        }
+        
+        className = rows[0].class_name;
+
+        var i = 0;
+        for(var timeslot=0; timeslot < 5; timeslot++){
+            course_hours[timeslot]=[];
+            for(var day = 0; day < 5 ; day++){
+                course_hours[timeslot][day] = {}
+                if(i<rows.length){
+                    if(rows[i].start_time_slot == timeslot+1 && rows[i].day == day+1){
+                        var course = {
+                            courseName: rows[i].course_name,
+                            teacher_fullName: rows[i].last_name + " " + rows[i].first_name,
+                            start_time_slot: rows[i].start_time_slot
+                        }
+                        course_hours[timeslot][day] = course;
+                        i++;
+                    }
+                }
+                console.log(course_hours[timeslot][day]);
+            }
+        }
+        
+        con.end();
+        res.render("../pages/teacher/teacher_class_timetable.pug", {
+            fullName: fullName,
+            course_hours:course_hours,
+            className: className,
+            start_time_slot: start_time_slot
+        });
     });
+});
 
 module.exports = router;
