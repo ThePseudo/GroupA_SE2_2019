@@ -151,7 +151,7 @@ router.get("/teacher_home", (req, res) => { // T3
             var i = 0;
             for(var timeslot=0; timeslot < 5; timeslot++){
                 course_hours[timeslot]=[];
-                for(var day = 0; day < 6 ; day++){
+                for(var day = 0; day < 5 ; day++){
                     course_hours[timeslot][day] = {}
                     if(i<rows.length){
                         if(rows[i].start_time_slot == timeslot+1 && rows[i].day == day+1){
