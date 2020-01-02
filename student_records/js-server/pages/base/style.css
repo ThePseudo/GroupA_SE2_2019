@@ -247,6 +247,9 @@ input[type="date"] {
     padding: 8px;
 }
 
+.green {
+    background-color: rgb(107, 255, 107);
+}
 
 /* Smaller screens */
 

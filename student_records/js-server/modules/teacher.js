@@ -379,7 +379,7 @@ router.get("/class/:classid/course/:courseid/absences", (req, res) => {
     var sql = "SELECT s.id, first_name, last_name " +
         "FROM student AS s, teacher_course_class AS tcc " +
         "WHERE s.class_id = tcc.class_id " +
-        "AND tcc.teacher_id = ? AND s.class_id = ? ";
+        "AND tcc.teacher_id = ? AND s.class_id = ?";
     con.query(sql, [teacherID, classID], (err, rows) => {
         if (err) {
             res.end("Database error: " + err);
@@ -418,6 +418,9 @@ router.get("/class/:classid/course/:courseid/absences", (req, res) => {
                     default: break;
                 }
             });
+
+            var sortedStudents = Array.from(students.keys());
+            console.log(sortedStudents);
             res.render("../pages/teacher/teacher_insertabsence.pug", {
                 fullName: fullName,
                 classid: classID,
@@ -460,7 +463,6 @@ router.get("/class/:classid/course/:courseid/student/:studentid", (req, res) => 
             msg: msg
         });
     });
-    // test: https://localhost:8080/teacher/class/1/course/1/student/1
 });
 
 router.post("/class/:classid/course/:courseid/student/:studentid/insert_mark", [
