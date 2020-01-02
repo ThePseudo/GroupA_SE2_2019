@@ -1,5 +1,4 @@
 'use strict';
-
 const express = require('express');
 const mailHandler = require("./mail.js");
 const bcrypt = require('bcrypt');
@@ -33,7 +32,7 @@ router.get("/class_composition", (req, res)  => {
             msgClass = "ok_msg";
             break;
         case "err":
-            writtenMsg = "Some error occured in class composition";
+            writtenMsg = "Some error occured in student class composition";
             msgClass = "err_msg";
             break;
         case "err_class":
@@ -81,6 +80,7 @@ router.get("/class_composition", (req, res)  => {
                 studentnoclass[i] = studentnoclassitem;
             }
            
+            console.log("print student no class");
             console.log(studentnoclass);
           
             res.render("../pages/officer/officer_classcomposition.pug",{
@@ -89,34 +89,45 @@ router.get("/class_composition", (req, res)  => {
                 fullName: fullName,
                 msg: writtenMsg,
                 msgclass: msgClass,
-                classselect: classselected
+                classselected: classselected
             });
         });
     });
 });
 
 router.post("/up_class", (req, res) => {
-    res.redirect("./class_composition?msg=ok");
-    return;
-    // var student =req.body.studentselected;
-    // var classselected = req.body.classselected;
-    // var updatequery = "";
-    // for(var i=0; i<student.length;i++){
-    //     console.log(student[i]);
-    //     if(student[i]){
-    //         updatequery = updatequery + " UPDATE student SET class_id='"+classselected+"' WHERE id="+student[i]+" ;";
-    //     }
-    //     else{
-    //         updatequery = updatequery + " UPDATE student SET class_id=NULL WHERE id="+student[i]+" ;";
-    //     }
-    // }
-    // con.query(updatequery,(err, result) => {
-    //     if (err) {
-    //         res.end("There is a problem in the DB connection. Please, try again later " + err);
-    //         return;
-    //     }           
-    //     res.redirect("./class_composition?msg=ok");
-    // });
+    var student =req.body['pippo[]'];
+    var classselected = req.body.classselected;
+    var query = "SELECT * FROM student WHERE class_id IS NULL OR class_id="+classselected;
+    con.query(query, (err, result2) => {
+        if (err) {
+            res.end("There is a problem in the DB connection. Please, try again later " + err);
+            return;
+        }
+        var updatequery = "";
+        console.log(student);
+        for(var i=0; i<result2.length;i++){
+            if(student!=undefined && student.includes(result2[i].id + '')){
+                console.log("selected");
+                console.log(result2[i].id+" "+result2[i].first_name+" "+result2[i].last_name+"\n");
+                updatequery = updatequery + " UPDATE student SET class_id="+classselected+" WHERE id="+result2[i].id+";";
+            }
+            else{
+                console.log("not selected");
+                console.log(result2[i].id+" "+result2[i].first_name+" "+result2[i].last_name+"\n");
+                updatequery = updatequery + " UPDATE student SET class_id=NULL WHERE id="+result2[i].id+";";
+            }
+        }
+        console.log(updatequery);
+        con.query(updatequery,(err, result) => {
+            if (err) {
+                res.end("There is a problem in the DB connection. Please, try again later " + err);
+                return;
+            }           
+            res.redirect("./class_composition?msg=ok&classselected="+classselected);
+            return;
+        });
+    });
 });
 
 router.post("/new_class", (req, res) => {
