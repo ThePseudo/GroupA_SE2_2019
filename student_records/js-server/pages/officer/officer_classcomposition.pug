@@ -51,7 +51,7 @@ html
             div(class='col-sm-6')
               div.form-group
                 select(name='classselected' id='select_class' onchange="redirect()")
-                  option(value="Select") Select
+                  //- option(value="Select") Select
                   each classitem in classlist
                     if(classselected==classitem.id)
                       option(value=classitem.id selected) #{classitem.class_name}
