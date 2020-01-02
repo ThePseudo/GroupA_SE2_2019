@@ -654,10 +654,9 @@ router.route("/class/:classid/course/:courseid/upload_file").get((req, res) => {
 
 });
 
-router.get("/class/:classid/class_timetable",(req,res)=>{
+router.get("/class/:classid/course/:courseid/class_timetable",(req,res)=>{
     var date = new Date();
     var year = date.getFullYear();
-    var className;
     var course_hours = [];
     if (date.getMonth() < 9) { // before august
         year--;
@@ -670,14 +669,12 @@ router.get("/class/:classid/class_timetable",(req,res)=>{
                 AND year = ? AND tcc.class_id = ?
                 ORDER BY tt.day,tt.start_time_slot `;
     
-    con.query(sql, [year, req.params.classid], (err, rows) => {
+    con.query(sql, [year, classID], (err, rows) => {
         if (err) {
             res.end("Database problem: " + err);
             return;
         }
         
-        className = rows[0].class_name;
-
         var i = 0;
         for(var timeslot=0; timeslot < 5; timeslot++){
             course_hours[timeslot]=[];
@@ -704,7 +701,9 @@ router.get("/class/:classid/class_timetable",(req,res)=>{
             fullName: fullName,
             course_hours:course_hours,
             className: className,
-            start_time_slot: start_time_slot
+            start_time_slot: start_time_slot,
+            classid: classID,
+            courseid: courseID
         });
     });
 });
