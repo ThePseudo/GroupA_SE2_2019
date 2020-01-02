@@ -46,7 +46,7 @@ html
 
       div(class='row')
         form(method='POST' action="/officer/up_class" id="regform")
-          div(class='row' style='margin-top: 40px;')
+          div(class='row' align='center' style='margin-top: 40px;')
             div(class='col-sm-3')
             div(class='col-sm-6')
               div.form-group
@@ -57,7 +57,7 @@ html
                       option(value=classitem.id selected) #{classitem.class_name}
                     else
                       option(value=classitem.id) #{classitem.class_name}
-          div(class='row')
+          div(class='row' align='center')
             div(class='col-sm-3')
             div(class='col-sm-6')
               div.form-group
