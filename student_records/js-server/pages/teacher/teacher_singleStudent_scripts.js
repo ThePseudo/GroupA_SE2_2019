@@ -34,3 +34,26 @@ function checkNote() {
         note_btn.disabled = true;
     }
 }
+
+function justify(e) {
+    insert(e, 1);
+}
+
+function unJustify(e) {
+    insert(e, 0);
+}
+
+function insert(e, justified) {
+    $.ajax({
+        type: "POST",
+        url: location.pathname + "/justify_absence",
+        data:
+        {
+            id: e.id,
+            justified: justified
+        },
+        success: function (response) {
+            location.reload();
+        }
+    });
+}

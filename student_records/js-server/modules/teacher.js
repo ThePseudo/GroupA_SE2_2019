@@ -461,7 +461,6 @@ router.post("/class/:classid/course/:courseid/student/:studentid/insert_absence"
         }
         res.end("Ok");
     });
-
 });
 
 router.post("/class/:classid/course/:courseid/student/:studentid/remove_absence", (req, res, next) => {
@@ -479,6 +478,23 @@ router.post("/class/:classid/course/:courseid/student/:studentid/remove_absence"
     });
 });
 
+//Justify
+router.post("/class/:classid/course/:courseid/student/:studentid/justify_absence", (req, res) => {
+    var absenceID = req.body.id;
+    var justified = req.body.justified;
+    if (!absenceID || isNaN(absenceID) || (justified != 0 && justified != 1)) {
+        res.end("Error in input");
+        return;
+    }
+    var sql = "UPDATE absence SET justified = ? WHERE id = ?";
+    con.query(sql, [justified, absenceID], (err, result) => {
+        if (err) {
+            res.end("Error in database: " + err);
+            return;
+        }
+        res.end("Ok");
+    });
+});
 
 //Student single page
 router.get("/class/:classid/course/:courseid/student/:studentid", (req, res) => {
@@ -507,7 +523,7 @@ router.get("/class/:classid/course/:courseid/student/:studentid", (req, res) => 
         const endYear = "08-31";
         var minDate = ((new Date().getFullYear()) - 1) + "-" + endYear;
         var maxDate = (new Date().getFullYear()) + "-" + endYear;
-        sql = "SELECT date_ab, absence_type, justified FROM absence " +
+        sql = "SELECT id, date_ab, absence_type, justified FROM absence " +
             "WHERE date_ab > ? AND date_ab < ? AND student_id = ? ORDER BY date_ab DESC";
         con.query(sql, [minDate, maxDate, studentID], (err, rows) => {
             if (err) {
@@ -516,11 +532,12 @@ router.get("/class/:classid/course/:courseid/student/:studentid", (req, res) => 
             }
             var absences = [];
             for (var i = 0; i < rows.length; ++i) {
+                var date = rows[i].date_ab;
                 var absence = {
-                    date: rows[i].date_ab.getDate() + "/" +
-                        (rows[i].date_ab.getMonth() + 1) + "/" + rows[i].date_ab.getFullYear(),
+                    date: date.getDate() + "/" + (date.getMonth() + 1) + "/" + date.getFullYear(),
                     type: rows[i].absence_type,
-                    justified: rows[i].justified
+                    justified: rows[i].justified,
+                    id: rows[i].id
                 }
                 absences[i] = absence;
             }

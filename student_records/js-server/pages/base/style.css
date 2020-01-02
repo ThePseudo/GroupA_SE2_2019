@@ -67,8 +67,16 @@ body {
     background-color: #AED581;
 }
 
+.green:hover {
+    background-color: #8BC34A;
+}
+
 .red {
     background-color: #FF8A65;
+}
+
+.red:hover {
+    background-color: #FF5722;
 }
 
 .blockButton {
