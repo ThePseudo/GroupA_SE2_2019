@@ -376,7 +376,57 @@ router.get("/class/:classid/course/:courseid/insert_homework", (req, res) => { }
 
 // Absences
 router.get("/class/:classid/course/:courseid/absences", (req, res) => {
-    var sql = "";
+    var sql = "SELECT s.id, first_name, last_name " +
+        "FROM student AS s, teacher_course_class AS tcc " +
+        "WHERE s.class_id = tcc.class_id " +
+        "AND tcc.teacher_id = ? AND s.class_id = ? ";
+    con.query(sql, [teacherID, classID], (err, rows) => {
+        if (err) {
+            res.end("Database error: " + err);
+            return;
+        }
+        var students = {};
+        for (var i = 0; i < rows.length; ++i) {
+            var student = {
+                id: rows[i].id,
+                first_name: rows[i].first_name,
+                last_name: rows[i].last_name,
+                absent: false,
+                lateEntry: false,
+                earlyExit: false
+            }
+            students[rows[i].id] = student;
+        }
+        sql = "SELECT student_id, absence_type, date_ab FROM absence WHERE date_ab = ?;"
+        con.query(sql, [myInterface.dailyDate()], (err, rows) => {
+            if (err) {
+                res.end("Database error: " + err);
+                return;
+            }
+            // Absence types = ['Absent', 'LateEntry', 'EarlyExit'];
+            rows.forEach(row => {
+                switch (row.absence_type) {
+                    case 'Absent':
+                        students[row.student_id].absent = true;
+                        break;
+                    case 'LateEntry':
+                        students[row.student_id].lateEntry = true;
+                        break;
+                    case 'EarlyExit':
+                        students[row.student_id].earlyExit = true;
+                        break;
+                    default: break;
+                }
+            });
+            res.render("../pages/teacher/teacher_insertabsence.pug", {
+                fullName: fullName,
+                classid: classID,
+                courseid: courseID,
+                className: className,
+                students: students
+            });
+        });
+    });
 });
 
 //Student single page

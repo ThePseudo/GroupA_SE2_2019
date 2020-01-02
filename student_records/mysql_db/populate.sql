@@ -172,40 +172,21 @@ VALUES(2, 2, "2019-09-29", "L'alunno fa ANCORA rumore 5", 1);
 
 -- Absence
 INSERT INTO absence
-    (student_id, date_ab, start_h, end_h, justified)
-VALUES(1, "2019-09-30", "08:00", "13:15", 1);
+    (student_id, date_ab, absence_type, justified)
+VALUES(1, "2019-09-30", "Absent", 1);
 
 INSERT INTO absence
-    (student_id, date_ab, start_h, end_h, justified)
-VALUES(1, "2019-09-29", "08:00", "13:15", 0);
+    (student_id, date_ab, absence_type, justified)
+VALUES(1, "2019-09-29", "Absent", 1);
 
 INSERT INTO absence
-    (student_id, date_ab, start_h, end_h, justified)
-VALUES(1, "2019-10-20", "08:00", "13:15", 1);
+    (student_id, date_ab, absence_type, justified)
+VALUES(1, "2019-09-28", "Absent", 1);
 
 INSERT INTO absence
-    (student_id, date_ab, start_h, end_h, justified)
-VALUES(1, "2019-10-21", "08:00", "13:15", 1);
+    (student_id, date_ab, absence_type, justified)
+VALUES(1, "2020-01-02", "LateEntry", 0);
 
-INSERT INTO absence
-    (student_id, date_ab, start_h, end_h, justified)
-VALUES(1, "2019-10-22", "08:00", "13:15", 1);
-
-INSERT INTO absence
-    (student_id, date_ab, start_h, end_h, justified)
-VALUES(1, "2019-10-10", "08:00", "13:15", 0);
-
-INSERT INTO absence
-    (student_id, date_ab, start_h, end_h, justified)
-VALUES(2, "2019-09-30", "08:00", "13:15", 1);
-
-INSERT INTO absence
-    (student_id, date_ab, start_h, end_h, justified)
-VALUES(2, "2019-09-29", "08:00", "13:15", 0);
-
-INSERT INTO absence
-    (student_id, date_ab, start_h, end_h, justified)
-VALUES(3, "2019-09-30", "08:00", "13:15", 1);
 
 -- Homework
 INSERT INTO homework
