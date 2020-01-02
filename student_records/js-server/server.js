@@ -39,10 +39,10 @@ app.get('/favicon.ico', (req, res) => res.status(204));
 
 app.use('/:path', (req, res, next) => {
     const acceptedPaths = ["admin", "parent", "teacher", "officer", "principal"];
-    const path = req.params.path;
-    if (acceptedPaths.includes(path)) {
+    const curPath = req.params.path;
+    if (acceptedPaths.includes(curPath)) {
         try {
-            if (req.session.user.user_type != path) {
+            if (req.session.user.user_type != pacurPathth) {
                 res.redirect("/");
                 return;
             } else {
