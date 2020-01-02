@@ -108,8 +108,7 @@ router.get("/teacher_home", (req, res) => { // T3
     var date = new Date();
     var year = date.getFullYear();
     var course_hours = [];
-    var courseNameMap = [];
-    var classNameMap = [];
+    
     if (date.getMonth() < 9) { // before august
         year--;
     }
@@ -123,18 +122,16 @@ router.get("/teacher_home", (req, res) => { // T3
             res.end("Database problem: " + err);
             return;
         }
-        var classCourses = [];
+        var classCoursesMap = [];
         for (var i = 0; i < rows.length; ++i) {
-            courseNameMap[rows[i].course_id] = rows[i].course_name;
-            classNameMap[rows[i].class_id] = rows[i].class_name;
-            
+
             var classCourse = {
                 classid: rows[i].class_id,
                 courseid: rows[i].course_id,
-                classname: rows[i].class_name,
-                coursename: rows[i].course_name
+                className: rows[i].class_name,
+                courseName: rows[i].course_name
             }
-            classCourses[i] = classCourse;
+            classCoursesMap[rows[i].course_id] = classCourse;
         }
       
         sql = ` SELECT tt.start_time_slot as start_time_slot,tt.class_id as class_id, tt.course_id as course_id, tt.day as day 
@@ -142,7 +139,7 @@ router.get("/teacher_home", (req, res) => { // T3
                 WHERE tt.course_id = tcc.course_id AND tt.class_id = tcc.class_id AND tt.teacher_id = tcc.teacher_id AND tt.teacher_id = ?
                 ORDER BY tt.day,tt.start_time_slot `;
         
-                let params = [req.session.user.id]
+        let params = [req.session.user.id]
         con.query(sql, params, (err, rows, fields) => {
             if (err) {
                 res.end("DB error: " + err);
@@ -155,12 +152,7 @@ router.get("/teacher_home", (req, res) => { // T3
                     course_hours[timeslot][day] = {}
                     if(i<rows.length){
                         if(rows[i].start_time_slot == timeslot+1 && rows[i].day == day+1){
-                            var course = {
-                                className: classNameMap[rows[i].class_id],
-                                courseName: courseNameMap[rows[i].course_id],
-                                start_time_slot: rows[i].start_time_slot
-                            }
-                            course_hours[timeslot][day] = course;
+                            course_hours[timeslot][day] = classCoursesMap[rows[i].course_id];
                             i++;
                         }
                     }
@@ -171,7 +163,7 @@ router.get("/teacher_home", (req, res) => { // T3
             con.end();
             res.render("../pages/teacher/teacher_home.pug", {
                 fullName: fullName,
-                class_courses: classCourses,
+                class_courses: classCoursesMap,
                 course_hours:course_hours,
                 start_time_slot: start_time_slot
             });
