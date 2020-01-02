@@ -98,25 +98,23 @@ router.get("/class_composition", (req, res)  => {
 router.post("/up_class", (req, res) => {
     var student =req.body['pippo[]'];
     var classselected = req.body.classselected;
-    console.log("student");
-    console.log(student);
-    console.log("Class selected");
-    console.log(classselected);
-
-    var query = "SELECT id FROM student WHERE class_id IS NULL OR class_id="+classselected;
+    var query = "SELECT * FROM student WHERE class_id IS NULL OR class_id="+classselected;
     con.query(query, (err, result2) => {
         if (err) {
             res.end("There is a problem in the DB connection. Please, try again later " + err);
             return;
         }
         var updatequery = "";
+        console.log(student);
         for(var i=0; i<result2.length;i++){
-            console.log(result2[i].id);
-            console.log(student);
-            if(student!=undefined && result2[i].id in student){
+            if(student!=undefined && student.includes(result2[i].id + '')){
+                console.log("selected");
+                console.log(result2[i].id+" "+result2[i].first_name+" "+result2[i].last_name+"\n");
                 updatequery = updatequery + " UPDATE student SET class_id="+classselected+" WHERE id="+result2[i].id+";";
             }
             else{
+                console.log("not selected");
+                console.log(result2[i].id+" "+result2[i].first_name+" "+result2[i].last_name+"\n");
                 updatequery = updatequery + " UPDATE student SET class_id=NULL WHERE id="+result2[i].id+";";
             }
         }
