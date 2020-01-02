@@ -33,6 +33,7 @@ var className = "";
 
 router.use(/\/.*/, function (req, res, next) {
     fullName = req.session.user.first_name + " " + req.session.user.last_name;
+    teacherID = req.session.user.id;
     con = myInterface.DBconnect();
     next();
 });
@@ -370,13 +371,13 @@ router.post("/class/:classid/course/:courseid/reg_mark", (req, res) => {
     });
 });
 
-//TODO: nome provvisorio per presenze e note, cambiare anche il nome della route nel file "sidebar.pug" 
-//presenze e note stessa route? magari due route diverse e due tasti diversi nella sidebar?
-// insert_stuff non è un nome molto professionale per una route
-router.get("/class/:classid/course/:courseid/insert_stuff", (req, res) => { });
-
 //TODO
 router.get("/class/:classid/course/:courseid/insert_homework", (req, res) => { });
+
+// Absences
+router.get("/class/:classid/course/:courseid/absences", (req, res) => {
+    var sql = "";
+});
 
 //Student single page
 router.get("/class/:classid/course/:courseid/student/:studentid", (req, res) => {
