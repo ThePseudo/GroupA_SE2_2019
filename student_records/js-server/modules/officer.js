@@ -319,7 +319,7 @@ router.route("/enroll_student").get((req, res) => {
             classMsg = "err_msg";
             break;
         case "ok":
-            writtenMsg = "New parent inserted correctly";
+            writtenMsg = "New student inserted correctly";
             classMsg = "ok_msg"
             break;
         default:
