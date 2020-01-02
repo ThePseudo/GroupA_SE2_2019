@@ -185,7 +185,7 @@ VALUES(1, "2019-09-28", "Absent", 1);
 
 INSERT INTO absence
     (student_id, date_ab, absence_type, justified)
-VALUES(1, "2020-01-02", "LateEntry", 0);
+VALUES(1, "2020-01-02", "Late entry", 0);
 
 
 -- Homework

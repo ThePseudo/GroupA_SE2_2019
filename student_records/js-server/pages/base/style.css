@@ -54,6 +54,23 @@ body {
     text-decoration: none;
 }
 
+.blueTextHover {
+    transition-duration: 0.2s;
+}
+
+.blueTextHover:hover {
+    color: #0000e0;
+    transition-duration: 0.2s;
+}
+
+.green {
+    background-color: #AED581;
+}
+
+.red {
+    background-color: #FF8A65;
+}
+
 .blockButton {
     display: block;
     width: 100%;

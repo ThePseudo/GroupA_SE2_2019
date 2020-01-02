@@ -4,7 +4,8 @@
 - var user = "teacher"
 - var active = ""
 
-//- Variables used: studentName, courseName, marks[] {score, date}, studentID, msg
+//- Variables used: studentName, courseName, marks[] {score, date}, studentID, msg,
+  absences[] {date, type, justified}
 
 - const marks = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
 - const modifiers = [0, 0.25, 0.5, 0.75]
@@ -13,6 +14,15 @@ mixin rowMark(date, mark)
   tr(class="table-row table-row-base")
     td(style="width:50%")= date
     td(style="width:50%")= mark
+
+mixin rowAbsence(date, type, justified)
+  tr(class="table-row table-row-base")
+    td(style="width:40%")= date
+    td(style="width:40%")= type
+    if justified
+      td(style="width:20%" class="green")
+    else
+      td(style="width:20%" class="red")
 
 doctype html
 html
@@ -24,7 +34,7 @@ html
       include ./teacher_singleStudent_scripts.js
     div(class="container sidebarContainer")
       //- TODO: link back to backwards page
-      a(href="../course_home" class="noLinkTitle backButton")
+      a(href="../"+back class="noLinkTitle backButton")
         span(class="glyphicon glyphicon-menu-left backButton")
       div(class="row")
         h1(class = 'title') #{courseName} - #{studentName} overview
@@ -117,3 +127,16 @@ html
               th Mark
             for mark in st_marks
               +rowMark(mark.date, mark.score)
+      //- List of absences
+      div(class="row")
+        h2(class="title2") Absences
+      div(class="row")
+        div(class="col-sm-3")
+        div(class="col-sm-6 col-xs-12" style='align-content:center;')
+          table(style="width:100%; text-align:center; align-content:center" class="table table-bordered")
+            tr(class='table-row-base')
+              th Date
+              th Absence type
+              th Justified
+            for absence in absences
+              +rowAbsence(absence.date, absence.type, absence.justified)

@@ -1,15 +1,15 @@
-// State can be Absent, LateEntry or EarlyExit
+// State can be Absent, Late entry or EarlyExit
 
 function insertAbsence(e) {
     insert(e, "Absent");
 }
 
 function insertLateEntry(e) {
-    insert(e, "LateEntry");
+    insert(e, "Late entry");
 }
 
 function insertEarlyExit(e) {
-    insert(e, "EarlyExit");
+    insert(e, "Early exit");
 }
 
 function insert(e, absType) {

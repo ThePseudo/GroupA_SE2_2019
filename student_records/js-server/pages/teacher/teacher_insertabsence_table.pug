@@ -11,7 +11,8 @@ mixin cellGreen(value, student, absType)
 
 mixin rowStudent(student)
   tr(class="table-row table-row-base")
-    td #{student.first_name} #{student.last_name}
+    td 
+      a(class="noLinkTitle blueTextHover" style="padding:8px" href="./student/"+student.id+"?back=absences") #{student.first_name} #{student.last_name}
     +cellGreen(student.absent, student, "insertAbsence")
     +cellGreen(student.lateEntry, student, "insertLateEntry")
     +cellGreen(student.earlyExit, student, "insertEarlyExit")

@@ -94,7 +94,7 @@ CREATE TABLE absence
     id INT UNIQUE NOT NULL AUTO_INCREMENT,
     student_id INT NOT NULL,
     date_ab DATE NOT NULL,
-    absence_type ENUM('Absent', 'LateEntry', 'EarlyExit') NOT NULL,
+    absence_type ENUM('Absent', 'Late entry', 'Early exit') NOT NULL,
     justified BOOLEAN NOT NULL,
     PRIMARY KEY(student_id, date_ab)
 );

@@ -413,17 +413,17 @@ router.get("/class/:classid/course/:courseid/absence_table", (req, res) => {
                 res.end("Database error: " + err);
                 return;
             }
-            // Absence types = ['Absent', 'LateEntry', 'EarlyExit'];
+            // Absence types = ['Absent', 'Late entry', 'Early exit'];
             rows.forEach(row => {
                 var student = students.get(row.student_id);
                 switch (row.absence_type) {
                     case 'Absent':
                         student.absent = true;
                         break;
-                    case 'LateEntry':
+                    case 'Late entry':
                         student.lateEntry = true;
                         break;
-                    case 'EarlyExit':
+                    case 'Early exit':
                         student.earlyExit = true;
                         break;
                     default: break;
@@ -442,15 +442,19 @@ router.get("/class/:classid/course/:courseid/absence_table", (req, res) => {
 
 // Insert and remove absences
 router.post("/class/:classid/course/:courseid/student/:studentid/insert_absence", (req, res) => {
-    const acceptedAbsTypes = ["Absent", "LateEntry", "EarlyExit"];
+    const acceptedAbsTypes = ["Absent", "Late entry", "Early exit"];
     var absType = req.body.type;
+    var justified = req.body.justified;
+    if (!justified) {
+        justified = 0;
+    }
     if (!absType || !acceptedAbsTypes.includes(absType) || isNaN(studentID)) {
         res.end("Something in the input parameters went wrong!");
         return;
     }
-    var sql = "INSERT INTO absence(student_id, date_ab, absence_type, justified) VALUES(?,?,?,0) " +
+    var sql = "INSERT INTO absence(student_id, date_ab, absence_type, justified) VALUES(?,?,?,?) " +
         "ON DUPLICATE KEY UPDATE absence_type = ?;";
-    con.query(sql, [studentID, myInterface.dailyDate(), absType, absType], (err, result) => {
+    con.query(sql, [studentID, myInterface.dailyDate(), absType, absType, justified], (err, result) => {
         if (err) {
             res.end("Database error: " + err);
             return;
@@ -479,10 +483,14 @@ router.post("/class/:classid/course/:courseid/student/:studentid/remove_absence"
 //Student single page
 router.get("/class/:classid/course/:courseid/student/:studentid", (req, res) => {
     var msg = req.query.msg;
+    var back = req.query.back;
+
+    if (!back) {
+        back = "course_home";
+    }
     let sql = "SELECT date_mark, score FROM mark " +
         " WHERE student_id = ? AND course_id = ? ORDER BY date_mark DESC";
     con.query(sql, [studentID, courseID], (err, rows) => {
-        con.end();
         if (err) {
             res.end("Database error: " + err);
             return;
@@ -496,15 +504,38 @@ router.get("/class/:classid/course/:courseid/student/:studentid", (req, res) => 
             }
             marks[i] = mark;
         }
-        res.render("../pages/teacher/teacher_singlestudent.pug", {
-            studentID: studentID,
-            studentName: studentName,
-            courseName: courseName,
-            classid: classID,
-            courseid: courseID,
-            fullName: fullName,
-            st_marks: marks,
-            msg: msg
+        const endYear = "08-31";
+        var minDate = ((new Date().getFullYear()) - 1) + "-" + endYear;
+        var maxDate = (new Date().getFullYear()) + "-" + endYear;
+        sql = "SELECT date_ab, absence_type, justified FROM absence " +
+            "WHERE date_ab > ? AND date_ab < ? AND student_id = ? ORDER BY date_ab DESC";
+        con.query(sql, [minDate, maxDate, studentID], (err, rows) => {
+            if (err) {
+                res.end("Database error: " + err);
+                return;
+            }
+            var absences = [];
+            for (var i = 0; i < rows.length; ++i) {
+                var absence = {
+                    date: rows[i].date_ab.getDate() + "/" +
+                        (rows[i].date_ab.getMonth() + 1) + "/" + rows[i].date_ab.getFullYear(),
+                    type: rows[i].absence_type,
+                    justified: rows[i].justified
+                }
+                absences[i] = absence;
+            }
+            res.render("../pages/teacher/teacher_singlestudent.pug", {
+                studentID: studentID,
+                studentName: studentName,
+                courseName: courseName,
+                classid: classID,
+                courseid: courseID,
+                fullName: fullName,
+                st_marks: marks,
+                absences: absences,
+                msg: msg,
+                back: back
+            });
         });
     });
 });
