@@ -247,8 +247,15 @@ input[type="date"] {
     padding: 8px;
 }
 
-.green {
-    background-color: rgb(107, 255, 107);
+.orange {
+    background-color: #FFB74D;
+}
+.orange:hover {
+    background-color: #FF9800;
+}
+
+.blueHover:hover {
+    background-color: #4FC3F7;
 }
 
 /* Smaller screens */

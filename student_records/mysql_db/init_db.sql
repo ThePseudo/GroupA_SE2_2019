@@ -91,11 +91,12 @@ CREATE TABLE note
 
 CREATE TABLE absence
 (
-    id INT PRIMARY KEY AUTO_INCREMENT,
+    id INT UNIQUE NOT NULL AUTO_INCREMENT,
     student_id INT NOT NULL,
     date_ab DATE NOT NULL,
     absence_type ENUM('Absent', 'LateEntry', 'EarlyExit') NOT NULL,
-    justified BOOLEAN NOT NULL
+    justified BOOLEAN NOT NULL,
+    PRIMARY KEY(student_id, date_ab)
 );
 
 CREATE TABLE homework

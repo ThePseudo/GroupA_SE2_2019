@@ -1,0 +1,29 @@
+//- Ajax. Belongs to page teacher_insertabsence
+
+//- variables used: students[] {id, first_name, last_name, absent, lateEntry, earlyExit}
+
+//- If true, the cell is green
+mixin cellGreen(value, student, absType) 
+  if value
+    td(class="orange" style="cursor:pointer;" id=student.id onclick="removeAbsence(this)")
+  else
+    td(class="blueHover" style="cursor:pointer;" id=student.id onclick=absType+"(this)")
+
+mixin rowStudent(student)
+  tr(class="table-row table-row-base")
+    td #{student.first_name} #{student.last_name}
+    +cellGreen(student.absent, student, "insertAbsence")
+    +cellGreen(student.lateEntry, student, "insertLateEntry")
+    +cellGreen(student.earlyExit, student, "insertEarlyExit")
+
+div(class="col-xs-12")
+  div(class="col-sm-3")
+  div(class="col-sm-6 col-xs-12" style='align-content:center;')
+    table(style="width:100%; text-align:center; align-content:center" class="table table-bordered")
+      tr(class='table-row-base')
+        th(style="width=40%;") Student
+        th(style="width=20%;") Absent
+        th(style="width=20%;") Late entry
+        th(style="width=20%;") Exit early
+      for student in students
+        +rowStudent(student)

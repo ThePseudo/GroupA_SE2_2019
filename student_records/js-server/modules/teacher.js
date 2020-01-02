@@ -376,6 +376,16 @@ router.get("/class/:classid/course/:courseid/insert_homework", (req, res) => { }
 
 // Absences
 router.get("/class/:classid/course/:courseid/absences", (req, res) => {
+    res.render("../pages/teacher/teacher_insertabsence.pug", {
+        fullName: fullName,
+        classid: classID,
+        courseid: courseID,
+        className: className
+    });
+});
+
+// AJAX absence table: this way we have a live update
+router.get("/class/:classid/course/:courseid/absence_table", (req, res) => {
     var sql = "SELECT s.id, first_name, last_name " +
         "FROM student AS s, teacher_course_class AS tcc " +
         "WHERE s.class_id = tcc.class_id " +
@@ -385,7 +395,7 @@ router.get("/class/:classid/course/:courseid/absences", (req, res) => {
             res.end("Database error: " + err);
             return;
         }
-        var students = {};
+        var students = new Map();
         for (var i = 0; i < rows.length; ++i) {
             var student = {
                 id: rows[i].id,
@@ -395,7 +405,7 @@ router.get("/class/:classid/course/:courseid/absences", (req, res) => {
                 lateEntry: false,
                 earlyExit: false
             }
-            students[rows[i].id] = student;
+            students.set(rows[i].id, student);
         }
         sql = "SELECT student_id, absence_type, date_ab FROM absence WHERE date_ab = ?;"
         con.query(sql, [myInterface.dailyDate()], (err, rows) => {
@@ -405,32 +415,66 @@ router.get("/class/:classid/course/:courseid/absences", (req, res) => {
             }
             // Absence types = ['Absent', 'LateEntry', 'EarlyExit'];
             rows.forEach(row => {
+                var student = students.get(row.student_id);
                 switch (row.absence_type) {
                     case 'Absent':
-                        students[row.student_id].absent = true;
+                        student.absent = true;
                         break;
                     case 'LateEntry':
-                        students[row.student_id].lateEntry = true;
+                        student.lateEntry = true;
                         break;
                     case 'EarlyExit':
-                        students[row.student_id].earlyExit = true;
+                        student.earlyExit = true;
                         break;
                     default: break;
                 }
+                students.set(row.student_id, student);
             });
 
-            var sortedStudents = Array.from(students.keys());
-            console.log(sortedStudents);
-            res.render("../pages/teacher/teacher_insertabsence.pug", {
-                fullName: fullName,
-                classid: classID,
-                courseid: courseID,
-                className: className,
-                students: students
+            var sortedStudents = Array.from(students.values());
+            sortedStudents.sort((a, b) => a.last_name.localeCompare(b.last_name));
+            res.render("../pages/teacher/teacher_insertabsence_table.pug", {
+                students: sortedStudents
             });
         });
     });
 });
+
+// Insert and remove absences
+router.post("/class/:classid/course/:courseid/student/:studentid/insert_absence", (req, res) => {
+    const acceptedAbsTypes = ["Absent", "LateEntry", "EarlyExit"];
+    var absType = req.body.type;
+    if (!absType || !acceptedAbsTypes.includes(absType) || isNaN(studentID)) {
+        res.end("Something in the input parameters went wrong!");
+        return;
+    }
+    var sql = "INSERT INTO absence(student_id, date_ab, absence_type, justified) VALUES(?,?,?,0) " +
+        "ON DUPLICATE KEY UPDATE absence_type = ?;";
+    con.query(sql, [studentID, myInterface.dailyDate(), absType, absType], (err, result) => {
+        if (err) {
+            res.end("Database error: " + err);
+            return;
+        }
+        res.end("Ok");
+    });
+
+});
+
+router.post("/class/:classid/course/:courseid/student/:studentid/remove_absence", (req, res, next) => {
+    if (isNaN(studentID)) {
+        res.end("Something in the input parameters went wrong!");
+        return;
+    }
+    var sql = "DELETE FROM absence WHERE student_id = ? AND date_ab = ?";
+    con.query(sql, [studentID, myInterface.dailyDate()], (err, result) => {
+        if (err) {
+            res.end("Database error: " + err);
+            return;
+        }
+        res.end("Ok");
+    });
+});
+
 
 //Student single page
 router.get("/class/:classid/course/:courseid/student/:studentid", (req, res) => {

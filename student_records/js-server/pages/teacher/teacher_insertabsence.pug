@@ -4,22 +4,7 @@
 - var user = "teacher"
 - var active = "Insert attendance"
 
-//- Variables used: courseName, students[] {id, first_name, last_name, absent, lateEntry, earlyExit},
-  className
-
-//- If true, the cell is green
-mixin cellGreen(value, student) 
-  if value
-    td(class="green" id=student.id)
-  else
-    td(id=student.id)
-
-mixin rowStudent(student)
-  tr(class="table-row table-row-base")
-    td #{student.first_name} #{student.last_name}
-    +cellGreen(student.absent, student)
-    +cellGreen(student.lateEntry, student)
-    +cellGreen(student.earlyExit, student)
+//- Variables used: courseName, className
 
 
 
@@ -29,19 +14,13 @@ html
   body
     include ../base/navbar.pug
     include ../base/sidebar.pug
+    script
+      include teacher_insertabsence_scripts.js
     div(class="container sidebarContainer")
-    div(class="row")
-      h1(class = 'title') #{className} - Student attendance
-    div(class="row")
-      h2(class="title2") Attendance today
-    div(class="row")
-      div(class="col-sm-3")
-      div(class="col-sm-6 col-xs-12" style='align-content:center;')
-        table(style="width:100%; text-align:center; align-content:center" class="table table-bordered")
-          tr(class='table-row-base')
-            th Student
-            th Absent
-            th Late entry
-            th Exit early
-          for student in students
-            +rowStudent(student)
+      div(class="row")
+        div(class="col-xs-12")
+          h1(class = 'title') #{className} - Student attendance
+      div(class="row")
+        div(class="col-xs-12")
+          h2(class="title2") Insert attendance for today
+      div(class="row" id="content")
