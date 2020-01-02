@@ -51,30 +51,30 @@ html
             div(class='col-sm-6')
               div.form-group
                 select(name='classselected' id='select_class' onchange="redirect()")
-                  option(value="Select") Select
+                  //- option(value="Select") Select
                   each classitem in classlist
-                    option(value=classitem.id) #{classitem.class_name}
+                    if(classselected==classitem.id)
+                      option(value=classitem.id selected) #{classitem.class_name}
+                    else
+                      option(value=classitem.id) #{classitem.class_name}
           div(class='row')
             div(class='col-sm-3')
             div(class='col-sm-6')
               div.form-group
                 //- start
-                select(id='pre-selected-options' multiple='multiple')
+                select(id='pre-selected-options' name='pippo[]' multiple='multiple')
                   each studentnoclassitem in studentnoclass
                     if(studentnoclassitem.class_id!=null)
                       option(value=studentnoclassitem.id selected) #{studentnoclassitem.first_name+ " " +studentnoclassitem.last_name}
                     else
                       option(value=studentnoclassitem.id) #{studentnoclassitem.first_name+ " " +studentnoclassitem.last_name}
-                //- ends
-                //- questi script sono commentati perchè ci sono già nell'head ma di altre versioni e non so come gestirle
-                //- jQuery
-                //- script(src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.0.0/jquery.min.js')
-                //- Bootstrap JavaScript
-                //- script(src='https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-alpha/js/bootstrap.min.js')
                 script(type='text/javascript' src='/multiselect')
                 script(type='text/javascript').
                   // run pre selected options
-                  $('#pre-selected-options').multiSelect();
+                  $('#pre-selected-options').multiSelect({
+                    selectableHeader: "<div align='center'>Not Assigned Student</div>",
+                    selectionHeader: "<div align='center'>Class Student</div>"
+                  });
           div(class='row')
             div(class='col-sm-3')
             div(class='col-sm-6')
