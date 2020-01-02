@@ -42,7 +42,7 @@ app.use('/:path', (req, res, next) => {
     const curPath = req.params.path;
     if (acceptedPaths.includes(curPath)) {
         try {
-            if (req.session.user.user_type != pacurPathth) {
+            if (req.session.user.user_type != curPath) {
                 res.redirect("/");
                 return;
             } else {
