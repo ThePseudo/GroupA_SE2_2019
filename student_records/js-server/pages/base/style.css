@@ -54,6 +54,31 @@ body {
     text-decoration: none;
 }
 
+.blueTextHover {
+    transition-duration: 0.2s;
+}
+
+.blueTextHover:hover {
+    color: #0000e0;
+    transition-duration: 0.2s;
+}
+
+.green {
+    background-color: #AED581;
+}
+
+.green:hover {
+    background-color: #8BC34A;
+}
+
+.red {
+    background-color: #FF8A65;
+}
+
+.red:hover {
+    background-color: #FF5722;
+}
+
 .blockButton {
     display: block;
     width: 100%;
@@ -139,6 +164,7 @@ body {
 
 .table {
     box-shadow: 1px 2px 5px rgba(0, 0, 0, .2);
+    font-size:large;
 }
 
 .table-row-base {
@@ -149,7 +175,7 @@ body {
 .table-scroll  tbody{
     display:block;
     overflow:auto;
-    max-height:200px;
+    max-height:240px;
     width:100%;
     table-layout:fixed;
 }
@@ -165,6 +191,7 @@ body {
     width: 100%;
     box-sizing: border-box; /* because of the border (Chrome needs this line, but not FF) */
     table-layout:fixed;
+    border: 0;
 }
 
 th,
@@ -247,6 +274,16 @@ input[type="date"] {
     padding: 8px;
 }
 
+.orange {
+    background-color: #FFB74D;
+}
+.orange:hover {
+    background-color: #FF9800;
+}
+
+.blueHover:hover {
+    background-color: #4FC3F7;
+}
 
 /* Smaller screens */
 

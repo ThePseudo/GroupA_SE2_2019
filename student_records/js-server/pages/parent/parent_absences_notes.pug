@@ -4,15 +4,17 @@
 - var user = "parent"
 - var active = "Notes and absences"
 
+//- Variables used: note_array[], absence_array[] {date, type, justified}
+
 mixin rowNote(teacher, date, motivation,justified,teacherID,teacherEmail)
   tr(class="table-row table-row-base")
     td(class="col-xs-2" style="text-align:left;")= teacher
     td(class="col-xs-2" style="text-align:left;")= date
     td(class="col-lg-10" style="text-align:left;")= motivation
     if(justified)   
-      td(style="background: rgb(24, 143, 13); text-align:left;" class="col-xs-2")
+      td(style="text-align:left; margin-left:-8px" class="col-xs-2 green")
     else
-      td(style="background: rgb(226, 45, 45); text-align:left;" class="col-xs-2")
+      td(style="text-align:left;" class="col-xs-2 red")
     //-Add route for page slot of the teacher
     td(style="text-align:left;" class="col-xs-3")
       button(class='btn blockButton')
@@ -32,15 +34,14 @@ mixin rowNote(teacher, date, motivation,justified,teacherID,teacherEmail)
 
 
 
-mixin rowAbsence(date, start_h, end_h,justified)
+mixin rowAbsence(date, type, justified, id)
   tr(class="table-row table-row-base")
-    td(style="text-align:left")= date
-    td(style="text-align:left")= start_h
-    td(style="text-align:left")= end_h
-    if(justified)   
-      td(style="background: rgb(24, 143, 13); text-align:left")
+    td(style="width:40%")= date
+    td(style="width:40%")= type
+    if justified
+      td(style="width:20%; cursor:pointer;" class="green")
     else
-      td(style="background: rgb(226, 45, 45); text-align:left")
+      td(style="width:20%; cursor:pointer;" class="red")
 
 doctype html
 html
@@ -52,37 +53,35 @@ html
       div(class='row')
         h1(class='title') Notes
       div(class='row' style="margin-top:16px;")
-        div(class="col-lg-2 col-sm-1")
-        div(class="col-lg-8 col-sm-10 col-xs-12" style='align-content:center;')
+        div(class="col-md-1")
+        div(class="col-md-10 col-xs-12" style='align-content:center;')
           table(style="width:100%; text-align:center; align-content:center" class="table table-scroll")
             thead
-              tr(class='table-row-base' style="width:99%")
+              tr(class='table-row-base' style="width:100%")
                 th(class="col-xs-2" style="text-align:left;") Teacher
                 th(class="col-xs-2" style="text-align:left;") Date
                 th(class="col-lg-10" style="text-align:left;") Motivation
-                th(class="col-xs-2" style="text-align:left;") justified
+                th(class="col-xs-2" style="text-align:left;") Justified
                 th(class="col-xs-3" style="text-align:left;") Arrange appointment
                 //-th(class="col-xs-3" style="text-align:left;") Contact 
             tbody
               for note in note_array
                 +rowNote(note.teacherFullName, note.date, note.motivation, note.justified, note.teacherID, note.teacherEmail)
-
-      div(class="h-50 d-inline-block")    
-        div(class='row')
-          h1(class='title') Absences
-        div(class='row' style="margin-top:16px;")
-          div(class="col-lg-2 col-sm-1")
-          div(class="col-lg-8 col-sm-10 col-xs-12" style='align-content:center;')
-            table(style="width:100%; text-align:center; align-content:center;  table-layout:fixed;" class="table table-scroll")
-              thead
-                tr(class='table-row-base' style="width:98%")
-                  th(style="text-align:left") Date
-                  th(style="text-align:left") start
-                  th(style="text-align:left") end
-                  th(style="text-align:left") justified
-              tbody
-                for absence in absence_array
-                  +rowAbsence(absence.date, absence.start_h, absence.end_h, absence.justified)
+      //- List of absences
+      div(class="row")
+        h2(class="title2") Absences
+      div(class="row")
+        div(class="col-md-1")
+        div(class="col-md-10 col-xs-12" style='align-content:center;')
+          table(style="width:100%; text-align:center; align-content:center" class="table table-scroll")
+            thead
+              tr(class='table-row-base' style="width:100%")
+                th(style="width:40%") Date
+                th(style="width:40%") Absence type
+                th(style="width:20%") Justified
+            tbody
+              for absence in absence_array
+                +rowAbsence(absence.date, absence.type, absence.justified)
 
 //- Modal for PopUp email send
 //-#emailModal(class="modal fade" role = "dialog")

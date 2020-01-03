@@ -1,7 +1,6 @@
 'use strict';
 
 const express = require('express');
-const pug = require('pug');
 const myInterface = require('../modules/functions.js');
 
 //IMPORTO oggetto rappresentante la sessione.
@@ -20,7 +19,10 @@ var parentID;
 var studentID;
 var classID;
 var courseID;
+var className = "";
 var courseName = "";
+
+const start_time_slot = ["08:00", "09:00", "10:00", "11:00", "12:00"];
 
 router.use(/\/.*/, function (req, res, next) {
     fullName = req.session.user.first_name + " " + req.session.user.last_name;
@@ -32,8 +34,8 @@ router.use('/:id', function (req, res, next) {
     parentID = req.session.user.id;
     studentID = req.params.id;
     if (!isNaN(studentID)) {
-        let sql = "SELECT id, first_name, last_name, class_id " +
-            "FROM student WHERE id = ? AND (parent_1 = ? OR parent_2 = ?)"
+        let sql = "SELECT first_name, last_name, class_id, class_name " +
+            "FROM student, class WHERE student.class_id = class.id AND student.id = ? AND (parent_1 = ? OR parent_2 = ?)"
         con.query(sql, [studentID, parentID, parentID], (err, rows) => {
             if (err) {
                 res.end("Database problem: " + err)
@@ -44,6 +46,7 @@ router.use('/:id', function (req, res, next) {
                 return;
             }
             classID = rows[0].class_id;
+            className = rows[0].class_name
             studentName = rows[0].first_name + " " + rows[0].last_name;
             next();
         });
@@ -79,9 +82,6 @@ router.use("/:studentID/course/:courseID", function (req, res, next) {
 router.get('/parent_home', (req, res) => {
     var commlist = [];
     var studlist = [];
-    var con = myInterface.DBconnect();
-
-    const compiledPage = pug.compileFile('../pages/parent/parent_homepage.pug');
     con.query('SELECT * FROM General_Communication ORDER BY comm_date DESC', (err, rows, fields) => {
         if (err) {
             res.end("There is a problem in the DB connection. Please, try again later\n" + err + "\n");
@@ -129,8 +129,6 @@ router.get('/parent_home', (req, res) => {
 
 router.get("/:studentID/marks", (req, res) => {
     var marks = [];
-    var con = myInterface.DBconnect();
-
     let sql = 'SELECT * FROM mark, course ' +
         'WHERE mark.course_id = course.id ' +
         'AND mark.student_id = ? ' +
@@ -148,6 +146,7 @@ router.get("/:studentID/marks", (req, res) => {
                 date: rows[i].date_mark,
                 mark: rows[i].score
             }
+            // Add object into array
             marks[i] = mark;
         }
         res.render("../pages/parent/parent_allmark.pug", {
@@ -161,51 +160,75 @@ router.get("/:studentID/marks", (req, res) => {
 
 // COURSES
 
-router.get('/:studentID/show_courses', (req, res) => {
-    var courses = [];
-    var fullName = req.session.user.first_name + " " + req.session.user.last_name;
-    var con = myInterface.DBconnect();
-    var sql = "SELECT * FROM course ORDER BY id";
-    con.query(sql, (err, rows, fields) => {
+router.get("/:studentID/show_courses", (req, res) => {
+    var course_hours = [];
+    var coursesMap = [];
+    var date = new Date();
+    var year = date.getFullYear();
+    if (date.getMonth() < 9) { // before august
+        year--;
+    }
+
+    var sql = ` SELECT first_name, last_name, teacher.id as teacher_id, course_name, course.id as course_id,color,year
+                FROM course, teacher_course_class as tcc, teacher
+                WHERE course.id = tcc.course_id  AND tcc.teacher_id = teacher.id AND tcc.class_id = ? AND year = ?
+                ORDER BY course_id `;
+    let params = [classID, year];
+    con.query(sql, params, (err, rows) => {
         if (err) {
-            res.end("DB error: " + err);
+            res.end("Database problem: " + err);
             return;
         }
+
         for (var i = 0; i < rows.length; ++i) {
             var course = {
-                id: rows[i].id,
-                name: rows[i].course_name,
-                newRow: (rows[i].id % 4 == 1),
-                color: rows[i].color
+                courseid: rows[i].course_id,
+                courseName: rows[i].course_name,
+                color: rows[i].color,
+                teacherFullName: rows[i].last_name + " " + rows[i].first_name
             }
-            courses[i] = course;
+            coursesMap[rows[i].course_id] = course;
         }
 
-        // TODO: retrieve data from DB, need new table
-        var course_hour = []; // length: 7
-        var course_hour_row = []; // length: 6
-        course_hour_row = ["FF0000", "0000FF", "FFFFFF", "FFFFFF", "FFFFFF", "FFFFFF"];
-        course_hour[0] = course_hour_row;
-        course_hour_row = ["FFFFFF", "FF0000", "FFFFFF", "FFFFFF", "FFFFFF", "FFFFFF"];
-        course_hour[1] = course_hour_row;
-        course_hour_row = ["00FF00", "FF0000", "FFFFFF", "FFFFFF", "FFFFFF", "FFFFFF"];
-        course_hour[2] = course_hour_row;
-        course_hour_row = ["00FF00", "FFFFFF", "FFFFFF", "FFFFFF", "FFFFFF", "FFFFFF"];
-        course_hour[3] = course_hour_row;
-        course_hour_row = ["FFFFFF", "FFFFFF", "FFFFFF", "FFFFFF", "FF0000", "FFFFFF"];
-        course_hour[4] = course_hour_row;
-        course_hour_row = ["FFFFFF", "FFFFFF", "FFFFFF", "FFFFFF", "FFFFFF", "FFFFFF"];
-        course_hour[5] = course_hour_row;
-        course_hour_row = ["FFFFFF", "FFFFFF", "FFFFFF", "FFFFFF", "FFFFFF", "FFFFFF"];
-        course_hour[6] = course_hour_row;
+        //console.log(coursesMap);
+        sql = ` SELECT  tcc.teacher_id as teacher_id, tt.start_time_slot as start_time_slot,tt.class_id as class_id, tt.course_id as course_id, tt.day as day 
+                    FROM timetable as tt ,teacher_course_class as tcc
+                    WHERE tt.course_id = tcc.course_id 
+                    AND tt.class_id = tcc.class_id AND tt.teacher_id = tcc.teacher_id
+                    AND year = ? AND tcc.class_id = ?
+                    ORDER BY tt.day,tt.start_time_slot `
 
-        res.render('../pages/parent/parent_courselist.pug', {
-            courses: courses,
-            childID: studentID,
-            fullName: fullName,
-            course_hours: course_hour
+        params = [year, classID]
+        con.query(sql, params, (err, rows, fields) => {
+            if (err) {
+                res.end("DB error: " + err);
+                return;
+            }
+            var i = 0;
+            for (var timeslot = 0; timeslot < 5; timeslot++) {
+                course_hours[timeslot] = [];
+                for (var day = 0; day < 5; day++) {
+                    course_hours[timeslot][day] = {}
+                    if (i < rows.length) {
+                        if (rows[i].start_time_slot == timeslot + 1 && rows[i].day == day + 1) {
+                            course_hours[timeslot][day] = coursesMap[rows[i].course_id];
+                            i++;
+                        }
+                    }
+                    //console.log(course_hours[timeslot][day]);
+                }
+            }
+
+            con.end();
+            res.render('../pages/parent/parent_courselist.pug', {
+                courses: coursesMap,
+                className: className,
+                childID: studentID,
+                fullName: fullName,
+                course_hours: course_hours,
+                start_time_slot: start_time_slot
+            });
         });
-        con.end();
     });
 });
 
@@ -219,7 +242,6 @@ router.get('/:studentID/course/:courseID', (req, res) => {
 });
 
 /// course marks
-
 router.get('/:studentID/course/:courseID/marks', (req, res) => {
     let sql = 'SELECT date_mark, score FROM mark ' +
         'WHERE mark.student_id = ? ' +
@@ -312,57 +334,22 @@ router.get('/:studentID/course/:courseID/material_homework', (req, res) => {
                 res.end("DB error: " + err);
                 return;
             }
-            console.log(rows);
-            var student_name = rows[0].first_name + " " + rows[0].last_name;
-            var classID = rows[0].class_id;
-            sql = 'SELECT date_hw, description FROM homework ' +
-                'WHERE class_id = ? ' +
-                'AND course_id = ? ' +
-                'ORDER BY date_hw DESC';
-            con.query(sql, [classID, req.params.id], (err, rows, fields) => {
-                if (err) {
-                    res.end("DB error: " + err);
-                    return;
+            var materials = [];
+            for (var i = 0; i < rows.length; ++i) {
+                var material = {
+                    date: rows[i].link,
+                    description: rows[i].description
                 }
-                console.log(rows);
-                var homeworks = [];
-                for (var i = 0; i < rows.length; ++i) {
-                    var homework = {
-                        date: rows[i].date_hw,
-                        description: rows[i].description
-                    }
-                    homeworks[i] = homework;
-                }
-                sql = 'SELECT link, description, date_mt FROM material ' +
-                    'WHERE class_id = ? ' +
-                    'AND course_id = ? ' +
-                    'ORDER BY date_mt DESC';
-                con.query(sql, [classID, req.params.id], (err, rows, fields) => {
-                    if (err) {
-                        res.end("DB error: " + err);
-                        return;
-                    }
-                    console.log(rows);
-                    var materials = [];
-                    for (var i = 0; i < rows.length; ++i) {
-                        var material = {
-                            link: rows[i].link,
-                            description: rows[i].description
-                        }
-                        materials[i] = material;
-                    }
-                    console.log(homeworks)
-                    console.log(materials)
-                    res.render('../pages/parent/parent_coursehomework.pug', {
-                        courseName: course_name,
-                        student_name: student_name,
-                        student_hws: homeworks,
-                        childID: req.params.childID,
-                        fullName: fullName,
-                        course_mtw: materials,
-                        courseID: req.params.id
-                    });
-                });
+                materials[i] = material;
+            }
+            res.render('../pages/parent/parent_coursehomework.pug', {
+                courseName: courseName,
+                student_name: studentName,
+                student_hws: homeworks,
+                childID: studentID,
+                fullName: fullName,
+                course_mtw: materials,
+                courseID: courseID
             });
         });
     });
@@ -390,7 +377,7 @@ router.get('/:studentID/absences_notes', (req, res) => {
             note_array[i].justified = rows[i].justified;
             note_array[i].teacherID = rows[i].id;
         }
-        sql = "SELECT date_ab, start_h, end_h, justified FROM absence WHERE student_id = ? ORDER BY date_ab DESC";
+        sql = "SELECT absence_type, date_ab, justified FROM absence WHERE student_id = ? ORDER BY date_ab DESC";
         con.query(sql, [studentID], (err, rows) => {
             if (err) {
                 res.end("DB error: " + err);
@@ -399,8 +386,7 @@ router.get('/:studentID/absences_notes', (req, res) => {
             for (var i = 0; i < rows.length; i++) {
                 absence_array[i] = {};
                 absence_array[i].date = rows[i].date_ab.getDate() + "/" + (rows[i].date_ab.getMonth() + 1) + "/" + rows[i].date_ab.getFullYear();
-                absence_array[i].start_h = rows[i].start_h;
-                absence_array[i].end_h = rows[i].end_h;
+                absence_array[i].type = rows[i].absence_type;
                 absence_array[i].justified = rows[i].justified;
             }
             res.render("../pages/parent/parent_absences_notes.pug", {

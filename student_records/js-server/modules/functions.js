@@ -2,11 +2,11 @@
 
 const mysql = require('mysql');
 
-const passwd = "pwd";
-
 //functions
 module.exports.DBconnect = function () {
+    const passwd = "pwd";
     return mysql.createConnection({
+        multipleStatements: true,
         host: "localhost",
         user: "root",
         password: passwd,

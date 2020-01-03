@@ -1,4 +1,5 @@
-//'use strict';
+'use strict';
+
 const mime = require('mime');
 const express = require('express');
 const session = require('express-session');
@@ -38,10 +39,10 @@ app.get('/favicon.ico', (req, res) => res.status(204));
 
 app.use('/:path', (req, res, next) => {
     const acceptedPaths = ["admin", "parent", "teacher", "officer", "principal"];
-    const path = req.params.path;
-    if (acceptedPaths.includes(path)) {
+    const curPath = req.params.path;
+    if (acceptedPaths.includes(curPath)) {
         try {
-            if (req.session.user.user_type != path) {
+            if (req.session.user.user_type != curPath) {
                 res.redirect("/");
                 return;
             } else {
@@ -100,10 +101,19 @@ app.get("/style", (req, res) => {
     res.end(page);
 });
 
+// Multiselect
+app.get("/multiselect", (req, res) => {
+    const page = fs.readFileSync("pages/officer/multiselect/js/jquery.multi-select.js")
+    res.end(page);
+});
 
-// Page not found
+// Download
+/*
+    TODO: req.path.search()? Could the route just be "/download"?
+    Are we really sure we should do all this mess to return the file? TODO: review this part
+*/
 app.get('/*', (req, res) => {
-    console.log(req.path);
+    //console.log(req.path);
     if (req.path.search("/download/") != -1) {
         let str = req.path.replace("/download/", "");
         var file = path.join(__dirname, str);

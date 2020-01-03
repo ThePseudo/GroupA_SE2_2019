@@ -9,42 +9,72 @@ doctype html
 html
   include ../base/head.pug
   body
+    script(type='text/javascript').
+      function redirect(){
+        var e = document.getElementById("select_class");
+        var result = e.options[e.selectedIndex].value;
+        $("#select_class").submit();
+        location.href="/officer/class_composition?classselected="+result;
+      }
     include ../base/navbar.pug
     include ../base/sidebar.pug
     div(class='container sidebarContainer')
       div(class='row')
         h1(class='title') Class Composition
+      if msg != ""
+        div(class='row')
+          div(class="col-xs-12")
+            h2(class=msgclass) #{msg}
+
       div(class='row')
-        form(method='POST' action="/officer/up_class" id="regform")
+        h3(class='title') Insert new class if is necessary
+      div(class='row')
+        form(method='POST' action="/officer/new_class" id="newclassform")
           div(class='row' style='margin-top: 40px;')
             div(class='col-sm-3')
             div(class='col-sm-6')
               div.form-group
-                select(id='select_class')
-                  each classitem in classlist
-                    option(value=classitem.id selected) #{classitem.class_name}
+                label(for='newclass') Year of the new class:
+                input(type='number' min='1' max='5' name='newclassyear' class="form-control" required)
+              div.form-group
+                label(for='newclass') Section of the new class:
+                input(type='text' maxlength="1" name='newclasssection' class="form-control" required)
           div(class='row')
+                div(class='col-sm-3')
+                div(class='col-sm-6')
+                  input(type='SUBMIT' value='Insert new class' class='btn blockButton' style='margin-top: 24px; padding: 6px 10px;')
+
+      div(class='row')
+        form(method='POST' action="/officer/up_class" id="regform")
+          div(class='row' align='center' style='margin-top: 40px;')
+            div(class='col-sm-3')
+            div(class='col-sm-6')
+              div.form-group
+                select(name='classselected' id='select_class' onchange="redirect()")
+                  //- option(value="Select") Select
+                  each classitem in classlist
+                    if(classselected==classitem.id)
+                      option(value=classitem.id selected) #{classitem.class_name}
+                    else
+                      option(value=classitem.id) #{classitem.class_name}
+          div(class='row' align='center')
             div(class='col-sm-3')
             div(class='col-sm-6')
               div.form-group
                 //- start
-                select(id='pre-selected-options' multiple='multiple')
+                select(id='pre-selected-options' name='pippo[]' multiple='multiple')
                   each studentnoclassitem in studentnoclass
+                    if(studentnoclassitem.class_id!=null)
+                      option(value=studentnoclassitem.id selected) #{studentnoclassitem.first_name+ " " +studentnoclassitem.last_name}
+                    else
                       option(value=studentnoclassitem.id) #{studentnoclassitem.first_name+ " " +studentnoclassitem.last_name}
-                  
-                //- ends
-
-                //- questi script sono commentati perchè ci sono già nell'head ma di altre versioni e non so come gestirle
-
-                //- jQuery
-                //- script(src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.0.0/jquery.min.js')
-                //- Bootstrap JavaScript
-                //- script(src='https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-alpha/js/bootstrap.min.js')
-
                 script(type='text/javascript' src='/multiselect')
                 script(type='text/javascript').
                   // run pre selected options
-                  $('#pre-selected-options').multiSelect();
+                  $('#pre-selected-options').multiSelect({
+                    selectableHeader: "<div align='center'>Not Assigned Student</div>",
+                    selectionHeader: "<div align='center'>Class Student</div>"
+                  });
           div(class='row')
             div(class='col-sm-3')
             div(class='col-sm-6')

@@ -1,4 +1,3 @@
-SET CHARSET utf8mb4;
 -- ENTITIES
 
 CREATE TABLE teacher
@@ -92,12 +91,12 @@ CREATE TABLE note
 
 CREATE TABLE absence
 (
-    id INT PRIMARY KEY AUTO_INCREMENT,
+    id INT UNIQUE NOT NULL AUTO_INCREMENT,
     student_id INT NOT NULL,
     date_ab DATE NOT NULL,
-    start_h TIME NOT NULL,
-    end_h TIME NOT NULL,
-    justified BOOLEAN NOT NULL
+    absence_type ENUM('Absent', 'Late entry', 'Early exit') NOT NULL,
+    justified BOOLEAN NOT NULL,
+    PRIMARY KEY(student_id, date_ab)
 );
 
 CREATE TABLE homework
@@ -160,3 +159,18 @@ CREATE TABLE teacher_course_class
     year INT NOT NULL,
     PRIMARY KEY(teacher_id, course_id, class_id, year)
 );
+
+
+CREATE TABLE timetable
+(
+    start_time_slot INT NOT NULL,
+    teacher_id INT NOT NULL,
+    course_id INT NOT NULL,
+    class_id INT NOT NULL,
+    day INT NOT NULL,
+    FOREIGN KEY (teacher_id,course_id,class_id) 
+    REFERENCES teacher_course_class(teacher_id,course_id,class_id)
+        ON UPDATE CASCADE
+        ON DELETE CASCADE, 
+    PRIMARY KEY(start_time_slot,day)
+)
