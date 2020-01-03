@@ -132,7 +132,7 @@ router.post("/up_class", (req, res) => {
 
 router.post("/new_class", (req, res) => {
     var newclassyear = req.body.newclassyear;
-    var newclasssection = req.body.newclasssection;
+    var newclasssection = req.body.newclasssection.toUpperCase();
     var classname = newclassyear+newclasssection;
 
     con.query("SELECT class_name FROM class WHERE class_name = ?",[classname],(err, result) => {
