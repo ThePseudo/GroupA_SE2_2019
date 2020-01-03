@@ -191,14 +191,14 @@ router.get("/:studentID/show_courses", (req, res) => {
         }
 
         //console.log(coursesMap);
-        var sql = ` SELECT  tcc.teacher_id as teacher_id, tt.start_time_slot as start_time_slot,tt.class_id as class_id, tt.course_id as course_id, tt.day as day 
+        sql = ` SELECT  tcc.teacher_id as teacher_id, tt.start_time_slot as start_time_slot,tt.class_id as class_id, tt.course_id as course_id, tt.day as day 
                     FROM timetable as tt ,teacher_course_class as tcc
                     WHERE tt.course_id = tcc.course_id 
                     AND tt.class_id = tcc.class_id AND tt.teacher_id = tcc.teacher_id
                     AND year = ? AND tcc.class_id = ?
                     ORDER BY tt.day,tt.start_time_slot `
 
-        let params = [year, classID]
+        params = [year, classID]
         con.query(sql, params, (err, rows, fields) => {
             if (err) {
                 res.end("DB error: " + err);

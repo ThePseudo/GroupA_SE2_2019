@@ -11,7 +11,7 @@ const fileUpload_handler = require('express-fileupload');
 const { body } = require('express-validator');
 const Busboy = require('busboy');
 const inspect = require('util').inspect;
-const start_time_slot = ["08:00","09:00","10:00","11:00","12:00"];
+const start_time_slot = ["08:00", "09:00", "10:00", "11:00", "12:00"];
 
 //IMPORTO oggetto rappresentante la sessione.
 //Per accedere ->  req.session
@@ -109,7 +109,7 @@ router.get("/teacher_home", (req, res) => { // T3
     var date = new Date();
     var year = date.getFullYear();
     var course_hours = [];
-    
+
     if (date.getMonth() < 9) { // before august
         year--;
     }
@@ -134,12 +134,12 @@ router.get("/teacher_home", (req, res) => { // T3
             }
             classCoursesMap[rows[i].course_id] = classCourse;
         }
-      
+
         sql = ` SELECT tt.start_time_slot as start_time_slot,tt.class_id as class_id, tt.course_id as course_id, tt.day as day 
                 FROM timetable as tt ,teacher_course_class as tcc 
                 WHERE tt.course_id = tcc.course_id AND tt.class_id = tcc.class_id AND tt.teacher_id = tcc.teacher_id AND tt.teacher_id = ?
                 ORDER BY tt.day,tt.start_time_slot `;
-        
+
         let params = [req.session.user.id]
         con.query(sql, params, (err, rows, fields) => {
             if (err) {
@@ -147,12 +147,12 @@ router.get("/teacher_home", (req, res) => { // T3
                 return;
             }
             var i = 0;
-            for(var timeslot=0; timeslot < 5; timeslot++){
-                course_hours[timeslot]=[];
-                for(var day = 0; day < 5 ; day++){
+            for (var timeslot = 0; timeslot < 5; timeslot++) {
+                course_hours[timeslot] = [];
+                for (var day = 0; day < 5; day++) {
                     course_hours[timeslot][day] = {}
-                    if(i<rows.length){
-                        if(rows[i].start_time_slot == timeslot+1 && rows[i].day == day+1){
+                    if (i < rows.length) {
+                        if (rows[i].start_time_slot == timeslot + 1 && rows[i].day == day + 1) {
                             course_hours[timeslot][day] = classCoursesMap[rows[i].course_id];
                             i++;
                         }
@@ -160,12 +160,12 @@ router.get("/teacher_home", (req, res) => { // T3
                     console.log(course_hours[timeslot][day]);
                 }
             }
-           
+
             con.end();
             res.render("../pages/teacher/teacher_home.pug", {
                 fullName: fullName,
                 class_courses: classCoursesMap,
-                course_hours:course_hours,
+                course_hours: course_hours,
                 start_time_slot: start_time_slot
             });
         });
@@ -789,9 +789,9 @@ router.route("/class/:classid/course/:courseid/upload_file").get((req, res) => {
         });
         */
 
-});
+    });
 
-router.get("/class/:classid/course/:courseid/class_timetable",(req,res)=>{
+router.get("/class/:classid/course/:courseid/class_timetable", (req, res) => {
     var date = new Date();
     var year = date.getFullYear();
     var course_hours = [];
@@ -805,20 +805,20 @@ router.get("/class/:classid/course/:courseid/class_timetable",(req,res)=>{
                 AND tt.class_id = tcc.class_id AND tt.teacher_id = tcc.teacher_id AND tcc.teacher_id = teacher.id
                 AND year = ? AND tcc.class_id = ?
                 ORDER BY tt.day,tt.start_time_slot `;
-    
+
     con.query(sql, [year, classID], (err, rows) => {
         if (err) {
             res.end("Database problem: " + err);
             return;
         }
-        
+
         var i = 0;
-        for(var timeslot=0; timeslot < 5; timeslot++){
-            course_hours[timeslot]=[];
-            for(var day = 0; day < 5 ; day++){
+        for (var timeslot = 0; timeslot < 5; timeslot++) {
+            course_hours[timeslot] = [];
+            for (var day = 0; day < 5; day++) {
                 course_hours[timeslot][day] = {}
-                if(i<rows.length){
-                    if(rows[i].start_time_slot == timeslot+1 && rows[i].day == day+1){
+                if (i < rows.length) {
+                    if (rows[i].start_time_slot == timeslot + 1 && rows[i].day == day + 1) {
                         var course = {
                             courseName: rows[i].course_name,
                             teacher_lastName: rows[i].last_name,
@@ -832,11 +832,11 @@ router.get("/class/:classid/course/:courseid/class_timetable",(req,res)=>{
                 console.log(course_hours[timeslot][day]);
             }
         }
-        
+
         con.end();
         res.render("../pages/teacher/teacher_class_timetable.pug", {
             fullName: fullName,
-            course_hours:course_hours,
+            course_hours: course_hours,
             className: className,
             start_time_slot: start_time_slot,
             classid: classID,
