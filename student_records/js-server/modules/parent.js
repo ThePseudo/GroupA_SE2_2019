@@ -22,7 +22,7 @@ var courseID;
 var className = "";
 var courseName = "";
 
-const start_time_slot = ["08:00","09:00","10:00","11:00","12:00"];
+const start_time_slot = ["08:00", "09:00", "10:00", "11:00", "12:00"];
 
 router.use(/\/.*/, function (req, res, next) {
     fullName = req.session.user.first_name + " " + req.session.user.last_name;
@@ -160,7 +160,7 @@ router.get("/:studentID/marks", (req, res) => {
 
 // COURSES
 
-router.get("/:studentID/show_courses", (req, res) => { 
+router.get("/:studentID/show_courses", (req, res) => {
     var course_hours = [];
     var coursesMap = [];
     var date = new Date();
@@ -173,8 +173,8 @@ router.get("/:studentID/show_courses", (req, res) => {
                 FROM course, teacher_course_class as tcc, teacher
                 WHERE course.id = tcc.course_id  AND tcc.teacher_id = teacher.id AND tcc.class_id = ? AND year = ?
                 ORDER BY course_id `;
-    let params = [classID,year] ;  
-    con.query(sql,params, (err, rows) => {
+    let params = [classID, year];
+    con.query(sql, params, (err, rows) => {
         if (err) {
             res.end("Database problem: " + err);
             return;
@@ -189,40 +189,40 @@ router.get("/:studentID/show_courses", (req, res) => {
             }
             coursesMap[rows[i].course_id] = course;
         }
-        
-        console.log(coursesMap);
+
+        //console.log(coursesMap);
         var sql = ` SELECT  tcc.teacher_id as teacher_id, tt.start_time_slot as start_time_slot,tt.class_id as class_id, tt.course_id as course_id, tt.day as day 
                     FROM timetable as tt ,teacher_course_class as tcc
                     WHERE tt.course_id = tcc.course_id 
                     AND tt.class_id = tcc.class_id AND tt.teacher_id = tcc.teacher_id
                     AND year = ? AND tcc.class_id = ?
                     ORDER BY tt.day,tt.start_time_slot `
-        
-        let params = [year,classID]
+
+        let params = [year, classID]
         con.query(sql, params, (err, rows, fields) => {
             if (err) {
                 res.end("DB error: " + err);
                 return;
             }
             var i = 0;
-            for(var timeslot=0; timeslot < 5; timeslot++){
-                course_hours[timeslot]=[];
-                for(var day = 0; day < 5 ; day++){
+            for (var timeslot = 0; timeslot < 5; timeslot++) {
+                course_hours[timeslot] = [];
+                for (var day = 0; day < 5; day++) {
                     course_hours[timeslot][day] = {}
-                    if(i<rows.length){
-                        if(rows[i].start_time_slot == timeslot+1 && rows[i].day == day+1){
+                    if (i < rows.length) {
+                        if (rows[i].start_time_slot == timeslot + 1 && rows[i].day == day + 1) {
                             course_hours[timeslot][day] = coursesMap[rows[i].course_id];
                             i++;
                         }
                     }
-                    console.log(course_hours[timeslot][day]);
+                    //console.log(course_hours[timeslot][day]);
                 }
             }
-           
+
             con.end();
             res.render('../pages/parent/parent_courselist.pug', {
                 courses: coursesMap,
-                className : className,
+                className: className,
                 childID: studentID,
                 fullName: fullName,
                 course_hours: course_hours,
@@ -377,7 +377,7 @@ router.get('/:studentID/absences_notes', (req, res) => {
             note_array[i].justified = rows[i].justified;
             note_array[i].teacherID = rows[i].id;
         }
-        sql = "SELECT date_ab, start_h, end_h, justified FROM absence WHERE student_id = ? ORDER BY date_ab DESC";
+        sql = "SELECT absence_type, date_ab, justified FROM absence WHERE student_id = ? ORDER BY date_ab DESC";
         con.query(sql, [studentID], (err, rows) => {
             if (err) {
                 res.end("DB error: " + err);
@@ -386,8 +386,7 @@ router.get('/:studentID/absences_notes', (req, res) => {
             for (var i = 0; i < rows.length; i++) {
                 absence_array[i] = {};
                 absence_array[i].date = rows[i].date_ab.getDate() + "/" + (rows[i].date_ab.getMonth() + 1) + "/" + rows[i].date_ab.getFullYear();
-                absence_array[i].start_h = rows[i].start_h;
-                absence_array[i].end_h = rows[i].end_h;
+                absence_array[i].type = rows[i].absence_type;
                 absence_array[i].justified = rows[i].justified;
             }
             res.render("../pages/parent/parent_absences_notes.pug", {

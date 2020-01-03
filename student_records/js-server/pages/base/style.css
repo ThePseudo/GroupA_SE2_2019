@@ -175,7 +175,7 @@ body {
 .table-scroll  tbody{
     display:block;
     overflow:auto;
-    max-height:200px;
+    max-height:240px;
     width:100%;
     table-layout:fixed;
 }
@@ -191,6 +191,7 @@ body {
     width: 100%;
     box-sizing: border-box; /* because of the border (Chrome needs this line, but not FF) */
     table-layout:fixed;
+    border: 0;
 }
 
 th,
