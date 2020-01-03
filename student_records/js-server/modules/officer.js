@@ -411,7 +411,7 @@ router.route("/enroll_student").get((req, res) => {
                         return;
                     }
                     con.query("INSERT INTO student(first_name, last_name, cod_fisc, class_id, parent_1, parent_2) VALUES(?, ?, ?, ?, ?, ?)",
-                        [name, surname, SSN, 0, ID1, ID2], (err, result) => {
+                        [name, surname, SSN, null, ID1, ID2], (err, result) => {
                             if (err) {
                                 res.end("DB error: " + err);
                                 return;
