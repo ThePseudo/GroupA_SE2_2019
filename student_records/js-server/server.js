@@ -31,7 +31,7 @@ const principalPage = require('./modules/principal.js');
 
 // Constants
 const HTTPPORT = 8000;
-const HTTPSPORT = 8080;
+const HTTPSPORT = 9090;
 const HOST = 'localhost';
 
 //fix for favicon.ico request
@@ -51,8 +51,7 @@ app.use('/:path', (req, res, next) => {
         } catch (err) {
             res.redirect("/");
         }
-    }
-    else {
+    } else {
         next();
     }
 });
@@ -119,13 +118,18 @@ app.get('/*', (req, res) => {
         var file = path.join(__dirname, str);
         var filename = path.basename(file);
         var mimetype = mime.lookup(file);
-
-        res.setHeader('Content-disposition', 'attachment; filename=' + filename);
-        res.setHeader('Content-type', mimetype);
-
-        var filestream = fs.createReadStream(file);
-        filestream.pipe(res);
-        return;
+        fs.lstat(file, (err, stats) => {
+            if (err) {
+                console.log(err);
+                res.render("/pages/base/404.pug");
+                return;
+            }
+            res.setHeader('Content-disposition', 'attachment; filename=' + filename);
+            res.setHeader('Content-type', mimetype);
+            var filestream = fs.createReadStream(file);
+            filestream.pipe(res);
+            return;
+        });
     } else {
         fs.readFile(req.path, (err, data) => {
             if (err) {

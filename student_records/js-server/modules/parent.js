@@ -24,13 +24,13 @@ var courseName = "";
 
 const start_time_slot = ["08:00", "09:00", "10:00", "11:00", "12:00"];
 
-router.use(/\/.*/, function (req, res, next) {
-    fullName = req.session.user.first_name + " " + req.session.user.last_name;
+router.use(/\/.*/, function(req, res, next) {
+    fullName = "Fede"; //req.session.user.first_name + " " + req.session.user.last_name;
     con = myInterface.DBconnect();
     next();
 });
 
-router.use('/:id', function (req, res, next) {
+router.use('/:id', function(req, res, next) {
     parentID = req.session.user.id;
     studentID = req.params.id;
     if (!isNaN(studentID)) {
@@ -55,7 +55,7 @@ router.use('/:id', function (req, res, next) {
     }
 });
 
-router.use("/:studentID/course/:courseID", function (req, res, next) {
+router.use("/:studentID/course/:courseID", function(req, res, next) {
     courseID = req.params.courseID;
     if (!isNaN(courseID)) {
         let sql = "SELECT course_name FROM course WHERE id = ?";
@@ -133,7 +133,7 @@ router.get("/:studentID/marks", (req, res) => {
         'WHERE mark.course_id = course.id ' +
         'AND mark.student_id = ? ' +
         'ORDER BY mark.date_mark DESC';
-    con.query(sql, [studentID], function (err, rows, fields) {
+    con.query(sql, [studentID], function(err, rows, fields) {
         if (err) {
             res.end("DB error: " + err);
             return;
@@ -142,11 +142,11 @@ router.get("/:studentID/marks", (req, res) => {
         for (var i = 0; i < rows.length; i++) {
             // Create the object to save the data.
             var mark = {
-                subject: rows[i].course_name,
-                date: rows[i].date_mark,
-                mark: rows[i].score
-            }
-            // Add object into array
+                    subject: rows[i].course_name,
+                    date: rows[i].date_mark,
+                    mark: rows[i].score
+                }
+                // Add object into array
             marks[i] = mark;
         }
         res.render("../pages/parent/parent_allmark.pug", {
@@ -305,6 +305,7 @@ router.get('/:studentID/course/:courseID/topics', (req, res) => {
 // course homeworks
 
 router.get('/:studentID/course/:courseID/material_homework', (req, res) => {
+    courseID = req.params.courseID;
     let sql = 'SELECT date_hw, description FROM homework ' +
         'WHERE class_id = ? ' +
         'AND course_id = ? ' +
@@ -337,7 +338,10 @@ router.get('/:studentID/course/:courseID/material_homework', (req, res) => {
             var materials = [];
             for (var i = 0; i < rows.length; ++i) {
                 var material = {
-                    date: rows[i].link,
+                    link: rows[i].link,
+                    date: rows[i].date_mt.getDate() + "/" +
+                        (rows[i].date_mt.getMonth() + 1) + "/" +
+                        rows[i].date_mt.getFullYear(),
                     description: rows[i].description
                 }
                 materials[i] = material;
