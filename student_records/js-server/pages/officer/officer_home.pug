@@ -5,8 +5,9 @@
 - var active = "Choose type of register function"
 
 mixin loginBtn(text, image, href)
+  div(class='hidden-sm hidden-md hidden-lg row')
   div(class='hidden-sm hidden-md hidden-lg col-xs-1')
-  div(class='col-sm-4 col-xs-10 smallMarginTop')
+  div(class='col-sm-5 col-lg-3 col-xs-10' style="margin-bottom:32px")
     a(href = href)
       button(class='btn blockButton')
         div(class='row')
@@ -23,11 +24,16 @@ html
       div(class='row')
         h1(class='title') Welcome to WebSchool
       div(class='row')
-        h2(class = 'title2') What type of person you would register?
+        h2(class = 'title2') What kind of operation do you would to do?
       div(class='row')
-        +loginBtn('Student', '../images/student.png', '/officer/enroll_student')
-        +loginBtn('Parent', '../images/parent.png', '/officer/enroll_parent')
-        +loginBtn('Class', '../images/child.png', '/officer/class_composition')
+        div(class='col-xs-12')
+          div(class='col-sm-1 hidden-lg') 
+          +loginBtn('Student', '../images/student.png', '/officer/enroll_student')
+          +loginBtn('Parent', '../images/parent.png', '/officer/enroll_parent')
+          div(class="row hidden-lg")
+          div(class='col-sm-1 hidden-lg')
+          +loginBtn('Class', '../images/classroom.png', '/officer/class_composition')
+          +loginBtn('Communication', '../images/communication.png', '/officer/insert_communication')
 
 
 
