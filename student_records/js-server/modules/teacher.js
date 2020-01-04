@@ -32,7 +32,7 @@ var studentName = "";
 var courseName = "";
 var className = "";
 
-router.use(/\/.*/, function (req, res, next) {
+router.use(/\/.*/, function(req, res, next) {
     fullName = req.session.user.first_name + " " + req.session.user.last_name;
     teacherID = req.session.user.id;
     con = myInterface.DBconnect();
@@ -70,8 +70,7 @@ router.use("/class/:classid/course/:courseid",
                     next();
                 });
             });
-        }
-        else {
+        } else {
             next();
         }
     }
@@ -98,8 +97,7 @@ router.use("/class/:classid/course/:courseid/student/:studentid",
                 studentName = rows[0].first_name + " " + rows[0].last_name;
                 next();
             });
-        }
-        else {
+        } else {
             next();
         }
     }
@@ -406,7 +404,7 @@ router.post("/class/:classid/course/:courseid/reg_mark", (req, res) => {
 });
 
 //TODO
-router.get("/class/:classid/course/:courseid/insert_homework", (req, res) => { });
+router.get("/class/:classid/course/:courseid/insert_homework", (req, res) => {});
 
 // Absences
 router.get("/class/:classid/course/:courseid/absences", (req, res) => {
@@ -460,7 +458,8 @@ router.get("/class/:classid/course/:courseid/absence_table", (req, res) => {
                     case 'Early exit':
                         student.earlyExit = true;
                         break;
-                    default: break;
+                    default:
+                        break;
                 }
                 students.set(row.student_id, student);
             });
@@ -683,13 +682,15 @@ router.get("/class/:classid/course/:courseid/add_material", (req, res) => {
   TODO: don't use res.render, instead redirect to add_material
 */
 router.post("/class/:classid/course/:courseid/up_file", (req, res) => {
-    const compiledPage = pug.compileFile("./pages/teacher/teacher_coursematerial.pug");
     res.set({ 'Content-Type': 'application/xhtml+xml; charset=utf-8' });
     var date = new Date();
+    console.log(req);
+    console.log("Class: " + req.params.classid);
+    console.log("Course: " + req.params.courseid);
     var busboy = new Busboy({ headers: req.headers });
-    busboy.on('field', function (fieldname, val, fieldnameTruncated, valTruncated, encoding, mimetype) {
+    busboy.on('field', function(fieldname, val, fieldnameTruncated, valTruncated, encoding, mimetype) {
         let desc = inspect(val);
-        busboy.on('file', function (fieldname, file, filename, encoding, mimetype) {
+        busboy.on('file', function(fieldname, file, filename, encoding, mimetype) {
             var saveTo = path.join('.', "/upload/" + filename);
             console.log('Desc: ' + desc + ' Uploading: ' + saveTo);
             file.pipe(fs.createWriteStream(saveTo));
@@ -708,17 +709,14 @@ router.post("/class/:classid/course/:courseid/up_file", (req, res) => {
             });
         });
     });
-    busboy.on('finish', function () {
+    busboy.on('finish', function() {
         console.log('Upload complete');
-        res.writeHead(200, { 'Connection': 'close' });
+        res.writeHead(302, { 'Location': '/teacher/class/' + req.params.classid + '/course/' + req.params.courseid + '/upload_file?val=1' });
 
         //fa l'upload ma non va alla pagina successiva
         //res.render non si può usare qui non provateci
         //dà problemi di header res.render
-        res.end(compiledPage({
-            classID: classID,
-            courseID: courseID,
-        }));
+        res.end();
     });
     return req.pipe(busboy);
 
@@ -743,53 +741,47 @@ router.post("/class/:classid/course/:courseid/up_file", (req, res) => {
 router.route("/class/:classid/course/:courseid/upload_file").get((req, res) => {
     console.log(req.params.classid);
     console.log(req.params.courseid);
-    let sql = "SELECT date, description, link FROM material WHERE class_id = ? AND course_id = ?";
+    let sql = "SELECT date_mt, description, link FROM material WHERE class_id = ? AND course_id = ?";
     con.query(sql, [req.params.classid, req.params.courseid], (err, rows) => {
         if (err) {
-            res.end(err);
+            res.end("Db error: " + err);
             con.end();
             return;
         }
         let upload_file_array = [];
         for (var i = 0; i < rows.length; i++) {
             upload_file_array[i] = {};
-            var date = rows[i].date.getDate() + "/" + (rows[i].date.getMonth() + 1) + "/" + rows[i].date.getFullYear();
+            var date = rows[i].date_mt.getDate() + "/" + (rows[i].date_mt.getMonth() + 1) + "/" + rows[i].date_mt.getFullYear();
             upload_file_array[i].date = date;
             upload_file_array[i].description = rows[i].description;
             upload_file_array[i].link = rows[i].link;
         }
         con.end();
         console.log(upload_file_array);
-        res.render("../pages/teacher/teacher_coursematerial.pug", { upload_file_array: upload_file_array });
+        if (req.query.val == 0)
+            res.render("../pages/teacher/teacher_coursematerial.pug", {
+                classID: classID,
+                courseID: courseID,
+                flag_ok: 0,
+                message: "ERROR: File not upload, retry",
+                upload_file_array: upload_file_array
+            });
+        else if (req.query.val == 1)
+            res.render("../pages/teacher/teacher_coursematerial.pug", {
+                classID: classID,
+                courseID: courseID,
+                flag_ok: 1,
+                message: "File upload",
+                upload_file_array: upload_file_array
+            });
+        else
+            res.render("../pages/teacher/teacher_coursematerial.pug", {
+                classID: classID,
+                courseID: courseID,
+                upload_file_array: upload_file_array
+            });
     })
-}).post(
-    [
-        body('desc').trim().escape()
-    ],
-    (req, res) => {
-        let description = req.body.description;
-        let file = req.body.file;
-
-        //sanitize file?
-        if (!description || !file) {
-            res.render("../pages/teacher/teacher_coursematerial.pug", { flag_ok: "0", message: "Please, fill the description and choose a file to upload" });
-            return;
-        }
-        /*
-       
-        // The name of the input field (i.e. "sampleFile") is used to retrieve the uploaded file
-        let sampleFile = req.files.sampleFile;
-      
-        // Use the mv() method to place the file somewhere on your server
-        sampleFile.mv('/somewhere/on/your/server/filename.jpg', function(err) {
-          if (err)
-            return res.status(500).send(err);
-      
-          res.send('File uploaded!');
-        });
-        */
-
-    });
+})
 
 router.get("/class/:classid/course/:courseid/class_timetable", (req, res) => {
     var date = new Date();
