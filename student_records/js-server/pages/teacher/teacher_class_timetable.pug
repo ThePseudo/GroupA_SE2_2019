@@ -2,7 +2,7 @@
 - var page = "Class timetable"
 - var loggedIn = true
 - var user = "teacher"
-- var active = "Class timetable"
+- var active = "Show class timetable"
 - var sidebarForceHidden = false;
 
 //- Inputs: fullName (teacher), class_courses[] {classid, courseid, classname, coursename}
@@ -13,7 +13,7 @@ html
   body
     include ../base/navbar.pug
     include ../base/sidebar.pug
-    
+
     div(class='container sidebarContainer')
       //- Time table
       div(class='row')
@@ -35,7 +35,7 @@ html
               th(style="width:15%;") Wed
               th(style="width:15%;") Thur
               th(style="width:15%;") Fri
-            
+
             - var i = 0
             for row in course_hours
               tr(class="table-row-base")
