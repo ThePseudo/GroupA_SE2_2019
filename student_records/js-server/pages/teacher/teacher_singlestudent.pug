@@ -20,9 +20,9 @@ mixin rowAbsence(date, type, justified, id)
     td(style="width:40%")= date
     td(style="width:40%")= type
     if justified
-      td(style="width:20%; cursor:pointer;" id=id class="green" onclick="unJustify(this)")
+      td(style="width:20%; cursor:pointer;" id=id class="green greenHover" onclick="unJustify(this)")
     else
-      td(style="width:20%; cursor:pointer;" id=id class="red" onclick="justify(this)")
+      td(style="width:20%; cursor:pointer;" id=id class="red redHover" onclick="justify(this)")
 
 doctype html
 html

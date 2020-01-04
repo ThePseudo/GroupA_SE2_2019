@@ -403,11 +403,14 @@ router.get("/class/:classid/course/:courseid/insert_homework", (req, res) => { }
 
 // Absences
 router.get("/class/:classid/course/:courseid/absences", (req, res) => {
+    var date = new Date();
+    var dateString = date.getDate() + "/" + (date.getMonth() + 1) + "/" + date.getFullYear()
     res.render("../pages/teacher/teacher_insertabsence.pug", {
         fullName: fullName,
         classid: classID,
         courseid: courseID,
-        className: className
+        className: className,
+        todayDate: dateString
     });
 });
 

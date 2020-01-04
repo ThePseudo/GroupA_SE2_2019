@@ -67,7 +67,7 @@ body {
     background-color: #AED581;
 }
 
-.green:hover {
+.greenHover:hover {
     background-color: #8BC34A;
 }
 
@@ -75,7 +75,7 @@ body {
     background-color: #FF8A65;
 }
 
-.red:hover {
+.redHover:hover {
     background-color: #FF5722;
 }
 
