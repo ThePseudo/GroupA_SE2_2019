@@ -9,7 +9,7 @@
 mixin subjectButton(id, subject, color)
   div(class="row hidden-md hidden-lg")
   div(class="col-xs-1 hidden-md hidden-lg")
-  div(class="col-md-4 col-xs-10")
+  div(class="col-md-4 col-xs-10" style="margin-top: 16px;")
     a(href= "/parent/"+childID+"/course/"+id class="noLinkTitle")
       button(class="btn blockButton noLinkTitle")
         div(class="row")
@@ -28,9 +28,9 @@ html
       div(class='row')
         h1(class='title') Courses
       for course in courses
-          if course
-            +subjectButton(course.course_id, course.courseName, "#"+course.color)
-    
+        if course
+          +subjectButton(course.course_id, course.courseName, "#"+course.color)
+
     div(class='container sidebarContainer')
       //- Time table
       div(class='row')
@@ -52,7 +52,7 @@ html
               th(style="width:15%;") Wed
               th(style="width:15%;") Thur
               th(style="width:15%;") Fri
-            
+
             - var i = 0
             for row in course_hours
               tr(class="table-row-base")
