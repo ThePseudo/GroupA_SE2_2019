@@ -20,7 +20,7 @@ html
   include ../base/head.pug
   body
     include ../base/navbar.pug
-    div(class='container')
+    div(class='container-fluid')
       div(class='row')
         h1(class='title') Welcome to WebSchool
       div(class='row')
@@ -28,8 +28,8 @@ html
       div(class='row')
         div(class='col-xs-12')
           div(class='col-sm-1 hidden-lg') 
-          +loginBtn('Student', '../images/student.png', '/officer/enroll_student')
-          +loginBtn('Parent', '../images/parent.png', '/officer/enroll_parent')
+          +loginBtn('Enroll student', '../images/student.png', '/officer/enroll_student')
+          +loginBtn('Register parent', '../images/parent.png', '/officer/enroll_parent')
           div(class="row hidden-lg")
           div(class='col-sm-1 hidden-lg')
           +loginBtn('Class', '../images/classroom.png', '/officer/class_composition')
