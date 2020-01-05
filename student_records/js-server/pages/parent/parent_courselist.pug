@@ -4,7 +4,7 @@
 - var user = "parent"
 - var active = "Show courses"
 
-//- Varialbes: childID, courses[] {id, name, color, newRow}, course_hours[7][6] (it only has colors)
+//- Varialbes: childID, courses[] {id, name, color, newRow}, course_hours[7][6], studentName
 
 mixin subjectButton(id, subject, color)
   div(class="row hidden-md hidden-lg")
@@ -24,17 +24,19 @@ html
     include ../base/navbar.pug
     include ../base/sidebar.pug
     div(class='container sidebarContainer')
+      div(class='row')
+        h1(class='title') #{studentName}
       //- Course list
       div(class='row')
-        h1(class='title') Courses
+        h2(class='title2') Courses
       for course in courses
         if course
-          +subjectButton(course.course_id, course.courseName, "#"+course.color)
+          +subjectButton(course.courseid, course.courseName, "#"+course.color)
 
     div(class='container sidebarContainer')
       //- Time table
       div(class='row')
-        h1(class='title2') #{className} - Class Timetable
+        h2(class='title2') #{className} - Class Timetable
       div(class='row')
         div(class="col-lg-12" style='align-content:center;')
           table(style="width:100%; text-align:center; align-content:center" class="table table-bordered")

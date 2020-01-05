@@ -4,7 +4,7 @@
 - var user = "parent"
 - var active = "Notes and absences"
 
-//- Variables used: note_array[], absence_array[] {date, type, justified}
+//- Variables used: note_array[], absence_array[] {date, type, justified}, studentName
 
 mixin rowNote(teacher, date, motivation,justified,teacherID,teacherEmail)
   tr(class="table-row table-row-base")
@@ -51,7 +51,9 @@ html
     include ../base/sidebar.pug
     div(class='container sidebarContainer')
       div(class='row')
-        h1(class='title') Notes
+        h1(class='title') #{studentName}
+      div(class='row')
+        h2(class='title2') Notes
       div(class='row' style="margin-top:16px;")
         div(class="col-md-1")
         div(class="col-md-10 col-xs-12" style='align-content:center;')
@@ -69,7 +71,7 @@ html
                 +rowNote(note.teacherFullName, note.date, note.motivation, note.justified, note.teacherID, note.teacherEmail)
       //- List of absences
       div(class="row")
-        h1(class="title") Absences
+        h2(class="title2") Absences
       div(class="row")
         div(class="col-md-1")
         div(class="col-md-10 col-xs-12" style='align-content:center;')

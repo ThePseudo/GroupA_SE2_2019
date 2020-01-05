@@ -2,12 +2,8 @@
 
 const path = require('path');
 const fs = require('fs');
-const os = require('os');
 const express = require('express');
-const upload = require('express-fileupload');
-const pug = require('pug');
 const myInterface = require('./functions.js');
-const fileUpload_handler = require('express-fileupload');
 const { body } = require('express-validator');
 const Busboy = require('busboy');
 const inspect = require('util').inspect;

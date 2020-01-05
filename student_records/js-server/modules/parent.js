@@ -226,7 +226,8 @@ router.get("/:studentID/show_courses", (req, res) => {
                 childID: studentID,
                 fullName: fullName,
                 course_hours: course_hours,
-                start_time_slot: start_time_slot
+                start_time_slot: start_time_slot,
+                studentName: studentName
             });
         });
     });
@@ -237,7 +238,9 @@ router.get('/:studentID/course/:courseID', (req, res) => {
         courseName: courseName,
         courseID: courseID,
         childID: studentID,
-        fullName: fullName
+        fullName: fullName,
+        className: className,
+        studentName: studentName
     });
 });
 
@@ -297,7 +300,8 @@ router.get('/:studentID/course/:courseID/topics', (req, res) => {
             topics: topics,
             childID: studentID,
             fullName: fullName,
-            courseID: courseID
+            courseID: courseID,
+            className: className
         });
     });
 });
@@ -352,7 +356,8 @@ router.get('/:studentID/course/:courseID/material_homework', (req, res) => {
                 childID: studentID,
                 fullName: fullName,
                 course_mtw: materials,
-                courseID: courseID
+                courseID: courseID,
+                className: className,
             });
         });
     });
@@ -396,7 +401,8 @@ router.get('/:studentID/absences_notes', (req, res) => {
                 fullName: fullName,
                 note_array: note_array,
                 absence_array: absence_array,
-                childID: studentID
+                childID: studentID,
+                studentName: studentName
             });
         });
     });
