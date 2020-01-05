@@ -201,21 +201,17 @@ router.get("/class/:classid/course/:courseid/course_home", (req, res) => {
                 }
             }
         }
-        con.query("SELECT class_name FROM class WHERE id = ?", [classID], (err, rows, fields) => {
-            if (err) {
-                res.end("DB error: " + err);
-                return;
-            }
-            res.render('../pages/teacher/teacher_coursehome.pug', {
-                classid: classID,
-                courseid: courseID,
-                fullName: fullName,
-                message: message,
-                courseName: rows[0].class_name,
-                student_array: student_array,
-                n_students: n_students
-            });
-        })
+
+        res.render('../pages/teacher/teacher_coursehome.pug', {
+            classid: classID,
+            courseid: courseID,
+            fullName: fullName,
+            message: message,
+            courseName: courseName,
+            className: className,
+            student_array: student_array,
+            n_students: n_students
+        });
     });
 });
 
