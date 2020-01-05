@@ -5,7 +5,7 @@
 - var user= "teacher"
 - var active= "Insert daily topic"
 
-//- variables used: fullName, dateString
+//- variables used: fullName, dateString, message, HomeworkList[]{date, description}, courseName, className
 
 mixin rowMark(date, description)
   tr(class="table-row table-row-base")
@@ -20,13 +20,15 @@ html
     include ../base/sidebar.pug
     div(class='container')
       div(class='row')
-        h1(class='title') Record homework
+        h1(class='title') #{className} - #{courseName}
+      div(class='row')
+        h2(class='title2') Record homework
         div(class='row')
         if flag_ok == 1
           h2(class = 'ok_msg') &nbsp #{message} &nbsp
         else
           h2(class = 'err_msg') &nbsp #{message} &nbsp
-      form(method='POST' action="/teacher/class/" + classid +"/course/" + courseid + "/reg_homework" id="regform")
+      form(method='POST' action="./reg_homework" id="regform")
         div(class='row' style='margin-top: 40px;')
           div(class='col-sm-3')
           div(class='col-sm-6')
@@ -44,14 +46,14 @@ html
           div(class='col-sm-4 col-lg-3 col-xs-10')
             input(type='SUBMIT' value='Record topic' class='btn blockButton' style='margin-top: 24px; margin-left: 25%; padding: 6px 10px; width: 75%;')
         div(class="row")
-            h1(class='title') List
+          h1(class='title') List
         div(class="row")
-            div(class="col-sm-3")
-            div(class="col-sm-6 col-xs-12" style='align-content:center;')
-              table(style="width:100%; text-align:center; align-content:center" class="table table-bordered")
-                tr(class='table-row-base')
-                  th Date
-                  th Description
-                for HW in HomeworkList
-                  +rowMark(HW.date, HW.description)
+          div(class="col-sm-3")
+          div(class="col-sm-6 col-xs-12" style='align-content:center;')
+            table(style="width:100%; text-align:center; align-content:center" class="table table-bordered")
+              tr(class='table-row-base')
+                th Date
+                th Description
+              for HW in HomeworkList
+                +rowMark(HW.date, HW.description)
 

@@ -15,7 +15,9 @@ html
     include ../base/sidebar.pug
     div(class='container')
       div(class='row')
-        h1(class='title') #{className} - #{courseName} - Insert marks
+        h1(class='title') #{className} - #{courseName}
+      div(class='row')
+        h2(class='title2') Insert marks
       if msg != ""
         div(class='row')
           h2(class=msgClass) #{msg}

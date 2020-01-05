@@ -6,8 +6,6 @@
 
 //- Variables used: courseName, className, todayDate
 
-
-
 doctype html
 html
   include ../base/head.pug
@@ -19,8 +17,8 @@ html
     div(class="container sidebarContainer")
       div(class="row")
         div(class="col-xs-12")
-          h1(class = 'title') #{className} - Student attendance on #{todayDate}
+          h1(class = 'title') #{className}
       div(class="row")
         div(class="col-xs-12")
-          h2(class="title2") Insert attendance for today
+          h2(class="title2") Student attendance on #{todayDate}
       div(class="row" id="content")
