@@ -28,7 +28,7 @@ var studentName = "";
 var courseName = "";
 var className = "";
 
-router.use(/\/.*/, function (req, res, next) {
+router.use(/\/.*/, function(req, res, next) {
     fullName = req.session.user.first_name + " " + req.session.user.last_name;
     teacherID = req.session.user.id;
     con = myInterface.DBconnect();
@@ -155,7 +155,6 @@ router.get("/teacher_home", (req, res) => { // T3
                 }
             }
 
-            con.end();
             res.render("../pages/teacher/teacher_home.pug", {
                 fullName: fullName,
                 class_courses: classCoursesMap,
@@ -174,6 +173,73 @@ router.get("/teacher_home", (req, res) => { // T3
 // ALWAYS pass classid and courseid to pages, used for sidebar
 
 //------------------------------------------
+
+router.route("/class/:classid/course/:courseid/insert_homework").get((req, res) => {
+    var dateString = myInterface.dailyDate();
+    let sql = "SELECT date_hw, description FROM homework WHERE class_id = ? AND course_id = ?";
+    con.query(sql, [req.params.classid, req.params.courseid], (err, rows) => {
+        if (err) {
+            res.end("Db error: " + err);
+            con.end();
+            return;
+        }
+        let hw_array = [];
+        for (var i = 0; i < rows.length; i++) {
+            hw_array[i] = {};
+            var date = rows[i].date_hw.getDate() + "/" + (rows[i].date_hw.getMonth() + 1) + "/" + rows[i].date_hw.getFullYear();
+            hw_array[i].date = date;
+            hw_array[i].description = rows[i].description;
+        }
+        console.log(hw_array);
+        var msg = req.query.msg;
+        var writtenMsg = "";
+        var msgClass = "";
+        switch (msg) {
+            case "err":
+                writtenMsg = "Please, fill all the data";
+                msgClass = "err_msg"
+                break;
+            case "ok":
+                writtenMsg = "Homework added correctly";
+                msgClass = "ok_msg";
+                break;
+            default:
+                break;
+        }
+        res.render("../pages/teacher/teacher_insert_homework.pug", {
+            className: className,
+            courseName: courseName,
+            dateString: dateString,
+            classID: classID,
+            msg: writtenMsg,
+            msgClass: msgClass,
+            courseID: courseID,
+            hw_array: hw_array
+        });
+    })
+}).post(
+    [
+        body('desc').trim().escape(),
+        body('date').trim().escape().toDate(),
+    ],
+    (req, res) => {
+        var desc = req.body.desc;
+        var date = req.body.date;
+        if (!desc || !date) {
+            console.log("err");
+            res.redirect("./insert_homework?msg=err");
+            return;
+        }
+        con.query("INSERT INTO homework(date_hw, class_id,course_id,description) VALUES(?, ?, ?, ?)", [date, classID, courseID, desc], (err, rows) => {
+            if (err) {
+                res.end("There is a problem in the DB connection. Please, try again later " + err);
+                return;
+            }
+            console.log("ok");
+            res.redirect("./insert_homework?msg=ok");
+        });
+    }
+);
 
 router.get("/class/:classid/course/:courseid/course_home", (req, res) => {
     let sql = "SELECT * FROM student WHERE class_id =? ORDER BY last_name"
@@ -390,8 +456,6 @@ router.post("/class/:classid/course/:courseid/reg_mark", (req, res) => {
     });
 });
 
-//TODO
-router.get("/class/:classid/course/:courseid/insert_homework", (req, res) => { });
 
 // Absences
 router.get("/class/:classid/course/:courseid/absences", (req, res) => {
@@ -678,9 +742,9 @@ router.post("/class/:classid/course/:courseid/up_file", (req, res) => {
     //console.log("Class: " + classID);
     //console.log("Course: " + courseID);
     var busboy = new Busboy({ headers: req.headers });
-    busboy.on('field', function (fieldname, val, fieldnameTruncated, valTruncated, encoding, mimetype) {
+    busboy.on('field', function(fieldname, val, fieldnameTruncated, valTruncated, encoding, mimetype) {
         let desc = inspect(val);
-        busboy.on('file', function (fieldname, file, filename, encoding, mimetype) {
+        busboy.on('file', function(fieldname, file, filename, encoding, mimetype) {
             var saveTo = path.join('.', "/upload/" + filename);
             console.log('Desc: ' + desc + ' Uploading: ' + saveTo);
             file.pipe(fs.createWriteStream(saveTo));
@@ -692,7 +756,7 @@ router.post("/class/:classid/course/:courseid/up_file", (req, res) => {
             });
         });
     });
-    busboy.on('finish', function () {
+    busboy.on('finish', function() {
         console.log('Upload complete');
         res.redirect('./upload_file?val=1');
 
@@ -745,12 +809,16 @@ router.route("/class/:classid/course/:courseid/upload_file").get((req, res) => {
             res.render("../pages/teacher/teacher_coursematerial.pug", {
                 classID: classID,
                 courseID: courseID,
+                className: className,
+                courseName: courseName,
                 flag_ok: 0,
                 message: "ERROR: File not uploaded, retry",
                 upload_file_array: upload_file_array
             });
         else if (req.query.val == 1)
             res.render("../pages/teacher/teacher_coursematerial.pug", {
+                className: className,
+                courseName: courseName,
                 classID: classID,
                 courseID: courseID,
                 flag_ok: 1,
@@ -759,6 +827,8 @@ router.route("/class/:classid/course/:courseid/upload_file").get((req, res) => {
             });
         else
             res.render("../pages/teacher/teacher_coursematerial.pug", {
+                className: className,
+                courseName: courseName,
                 classID: classID,
                 courseID: courseID,
                 upload_file_array: upload_file_array

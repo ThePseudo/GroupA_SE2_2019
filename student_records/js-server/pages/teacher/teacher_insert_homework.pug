@@ -1,15 +1,13 @@
 // Those variables should be in every page
-- var page = "Add material"
+- var page = "Add homework"
 - var loggedIn = true;
 - var user = "teacher"
-- var active = "Add material"
+- var active = "Add homework"
 
-mixin rowUploadFile(date, link, description)
+mixin rowHomework(date, description)
   tr(class="table-row table-row-base")
     td(style="text-align:left")= date
     td(style="text-align:left")= description
-    td(style="text-align:left;")
-      a(href="/download/"+link) Link
       
 
 doctype html
@@ -22,13 +20,11 @@ html
       div(class='row')
         h1(class='title') #{className} - #{courseName}
       div(class='row')
-        h1(class='title') Add material
-      div(class='row')
-        if flag_ok == 1
-          h2(class = 'ok_msg') &nbsp #{message} &nbsp
-        else
-          h2(class = 'err_msg') &nbsp #{message} &nbsp
-      form(method='POST' action="/teacher/class/"+classID+"/course/"+courseID+"/up_file" enctype="multipart/form-data")
+        h1(class='title') Add homework
+      if msg != ""
+        div(class="row")
+          h2(class=msgClass) #{msg}
+      form(method='POST' action="/teacher/class/"+classID+"/course/"+courseID+"/insert_homework" id="regform")
         div(class='row' style='margin-top: 40px;')
           div(class='col-lg-3')
           div(class='col-lg-6 col-xs-12')
@@ -39,16 +35,16 @@ html
           div(class='col-lg-3')
           div(class='col-lg-6 col-xs-12')
             div.form-group
-              label(for='file') File:
-              input(type='file' placeholder='File' name='file' class="form-control" required)
+              label(for='date') Date:
+              input(type='date' name='date' value=dateString class="form-control") 
         div(class="row")
           div(class='col-sm-5 col-lg-6')
           div(class='col-sm-4 col-lg-3 col-xs-10')
-            input(type='SUBMIT' value='Upload file' name="upload_file" class='btn blockButton' style='margin-top:24px; padding: 6px 10px; margin-left:25%; width:75%;')
+            input(type='SUBMIT' value='Add material' name="add_material" class='btn blockButton' style='margin-top:24px; padding: 6px 10px; margin-left:25%; width:75%;')
 
       div(class="h-50 d-inline-block")    
         div(class='row')
-          h1(class='title') Old Material
+          h1(class='title') Old Homework
         div(class='row')
           div(class="col-lg-2 col-sm-2 col-xs-1")
           div(class="col-lg-8 col-sm-8 col-xs-10" style='align-content:center;')
@@ -57,7 +53,6 @@ html
                 tr(class='table-row-base' style="width:99%")
                   th(style="text-align:left") Date
                   th(style="text-align:left") Description
-                  th(style="text-align:left") Link
               tbody
-                for upload_file in upload_file_array
-                  +rowUploadFile(upload_file.date, upload_file.link, upload_file.description)
+                for hw in hw_array
+                  +rowHomework(hw.date, hw.description)
