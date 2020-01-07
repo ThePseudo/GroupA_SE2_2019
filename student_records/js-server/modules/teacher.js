@@ -672,7 +672,7 @@ router.get("/class/:classid/course/:courseid/add_material", (req, res) => {
   TODO: don't use res.render, instead redirect to add_material
 */
 router.post("/class/:classid/course/:courseid/up_file", (req, res) => {
-    res.set({ 'Content-Type': 'application/xhtml+xml; charset=utf-8' });
+    //res.set({ 'Content-Type': 'application/xhtml+xml; charset=utf-8' });
     var date = new Date();
     //console.log(req);
     //console.log("Class: " + classID);
@@ -684,9 +684,9 @@ router.post("/class/:classid/course/:courseid/up_file", (req, res) => {
             var saveTo = path.join('.', "/upload/" + filename);
             console.log('Desc: ' + desc + ' Uploading: ' + saveTo);
             file.pipe(fs.createWriteStream(saveTo));
-            con.query("INSERT INTO material(course_id, class_id, description, link, date_mt) VALUES(?, ?, ?, ?, ?, ?)", [courseID, classID, desc, saveTo, date], (err, result) => {
+            con.query("INSERT INTO material(course_id, class_id, description, link, date_mt) VALUES(?, ?, ?, ?, ?)", [courseID, classID, desc, saveTo, date], (err, result) => {
                 if (err) {
-                    res.end("There is a problem in the DB connection. Please, try again later " + err);
+                    res.end("DB error: " + err);
                     return;
                 }
             });
@@ -694,15 +694,16 @@ router.post("/class/:classid/course/:courseid/up_file", (req, res) => {
     });
     busboy.on('finish', function () {
         console.log('Upload complete');
-        res.writeHead(302, { 'Location': '/teacher/class/' + req.params.classid + '/course/' + req.params.courseid + '/upload_file?val=1' });
+        res.redirect('./upload_file?val=1');
 
         //fa l'upload ma non va alla pagina successiva
         //res.render non si può usare qui non provateci
         //dà problemi di header res.render
         // Prova a usare una redirect + messaggio, 
-        res.end();
+        // res.end();
     });
-    return req.pipe(busboy);
+    req.pipe(busboy);
+    return;
 
     /*console.log(req);
     con.query("SELECT t.course_id, t.class_id, course_name, class_name FROM teacher_course_class t, course co, class cl WHERE teacher_id=1 AND t.course_id=co.id AND t.class_id=cl.id", (err, rows) => {
@@ -719,9 +720,7 @@ router.post("/class/:classid/course/:courseid/up_file", (req, res) => {
     });*/
 });
 
-/*
-  TODO: don't use res.render, instead redirect to add_material
-*/
+
 router.route("/class/:classid/course/:courseid/upload_file").get((req, res) => {
     console.log(req.params.classid);
     console.log(req.params.courseid);
