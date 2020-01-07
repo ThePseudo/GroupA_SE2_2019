@@ -668,15 +668,8 @@ router.get("/class/:classid/course/:courseid/add_material", (req, res) => {
 
 });
 
-/*
-  TODO: don't use res.render, instead redirect to add_material
-*/
 router.post("/class/:classid/course/:courseid/up_file", (req, res) => {
-    //res.set({ 'Content-Type': 'application/xhtml+xml; charset=utf-8' });
     var date = new Date();
-    //console.log(req);
-    //console.log("Class: " + classID);
-    //console.log("Course: " + courseID);
     var busboy = new Busboy({ headers: req.headers });
     busboy.on('field', function (fieldname, val, fieldnameTruncated, valTruncated, encoding, mimetype) {
         let desc = inspect(val);
@@ -695,37 +688,17 @@ router.post("/class/:classid/course/:courseid/up_file", (req, res) => {
     busboy.on('finish', function () {
         console.log('Upload complete');
         res.redirect('./upload_file?val=1');
-
-        //fa l'upload ma non va alla pagina successiva
-        //res.render non si può usare qui non provateci
-        //dà problemi di header res.render
-        // Prova a usare una redirect + messaggio, 
-        // res.end();
     });
     req.pipe(busboy);
-    return;
-
-    /*console.log(req);
-    con.query("SELECT t.course_id, t.class_id, course_name, class_name FROM teacher_course_class t, course co, class cl WHERE teacher_id=1 AND t.course_id=co.id AND t.class_id=cl.id", (err, rows) => {
-        if (err) {
-            res.end("There is a problem in the DB connection. Please, try again later " + err);
-            return;
-        }
-        con.end();
-        if (!file) {
-            res.render("../pages/teacher/teacher_coursematerial.pug", { flag_ok: "0", message: "Please fill the description and upload the file", Courses: Course_list });
-            return;
-        }
-        res.render("../pages/teacher/teacher_coursematerial.pug");
-    });*/
 });
 
 
 router.route("/class/:classid/course/:courseid/upload_file").get((req, res) => {
-    console.log(req.params.classid);
-    console.log(req.params.courseid);
     let sql = "SELECT date_mt, description, link FROM material WHERE class_id = ? AND course_id = ?";
-    con.query(sql, [req.params.classid, req.params.courseid], (err, rows) => {
+    var val = req.query.val;
+    var flag_ok = 0;
+    var message = "";
+    con.query(sql, [classID, courseID], (err, rows) => {
         if (err) {
             res.end("Db error: " + err);
             con.end();
@@ -740,29 +713,25 @@ router.route("/class/:classid/course/:courseid/upload_file").get((req, res) => {
             upload_file_array[i].link = rows[i].link;
         }
         con.end();
-        console.log(upload_file_array);
-        if (req.query.val == 0)
-            res.render("../pages/teacher/teacher_coursematerial.pug", {
-                classID: classID,
-                courseID: courseID,
-                flag_ok: 0,
-                message: "ERROR: File not uploaded, retry",
-                upload_file_array: upload_file_array
-            });
-        else if (req.query.val == 1)
-            res.render("../pages/teacher/teacher_coursematerial.pug", {
-                classID: classID,
-                courseID: courseID,
-                flag_ok: 1,
-                message: "File upload",
-                upload_file_array: upload_file_array
-            });
-        else
-            res.render("../pages/teacher/teacher_coursematerial.pug", {
-                classID: classID,
-                courseID: courseID,
-                upload_file_array: upload_file_array
-            });
+        //console.log(upload_file_array);
+        switch (val) {
+            case 0:
+                message = "ERROR: File not uploaded, retry";
+                break;
+            case 1:
+                message = "File uploaded";
+                flag_ok = 1;
+                break;
+            default: break;
+        }
+        res.render("../pages/teacher/teacher_coursematerial.pug", {
+            classid: classID,
+            courseid: courseID,
+            fullName: fullName,
+            flag_ok: flag_ok,
+            message: message,
+            upload_file_array: upload_file_array
+        });
     })
 })
 
