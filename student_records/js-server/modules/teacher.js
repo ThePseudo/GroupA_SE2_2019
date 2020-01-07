@@ -689,7 +689,6 @@ router.post("/class/:classid/course/:courseid/up_file", (req, res) => {
                     res.end("There is a problem in the DB connection. Please, try again later " + err);
                     return;
                 }
-                con.end();
             });
         });
     });
