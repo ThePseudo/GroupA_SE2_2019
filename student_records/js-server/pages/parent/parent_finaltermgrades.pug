@@ -1,0 +1,55 @@
+//- Those variables should be in every page. ALWAYS PASS childID, fullName
+- var page = "Final term grades"
+- var loggedIn = true
+- var user = "parent"
+- var active = "Show final term grades"
+
+
+doctype html
+html
+  include ../base/head.pug
+  body
+    include ../base/navbar.pug
+    include ../base/sidebar.pug
+    div(class='container sidebarContainer')
+      div(class='row')
+        h1(class='title') #{student_name}
+      div(class='row')
+        h2(class='title2') Final term grades
+      div(class='row' align='center')
+        form(method='GET' action="/parent/"+studentID+"/final_term_grade" id="regform")
+          div(class='row')
+            div(class='col-sm-3')
+            div(class='col-sm-6')
+              div.form-group
+                label(for='desc') Available Year:
+                select(placeholder='Year' name='year' class='form-control')
+                  each year in yearlist
+                    option(value=year) #{year}
+          div(class='row')
+            div(class='col-sm-3')
+            div(class='col-sm-6')
+              div.form-group
+                label(for='desc') Available Term:
+                select(placeholder='Year' name='term' class='form-control')
+                  each term in termlist
+                    option(value=term) #{term}
+          div(class='row')
+            div(class='col-sm-3')
+            div(class='col-sm-6')
+              div.form-group
+                input(type='SUBMIT' value='Select' class='btn blockButton' style='margin-top: 24px; padding: 6px 10px;')
+      div(class='row')
+        h2(class=msgclass) #{msg}
+      div(class='row')
+        div(class="col-lg-3 col-sm-2 col-xs-1")
+        div(class="col-lg-6 col-sm-8 col-xs-10" style='align-content:center;')
+          table(style="width:100%; text-align:center; align-content:center" class="table table-bordered")
+            tr(class='table-row-base')
+              th Subject
+              th Grade
+            each subject in student_final_term_grade
+              tr
+                th #{subject.subject}
+                th #{subject.grade}
+            

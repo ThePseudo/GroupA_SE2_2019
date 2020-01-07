@@ -323,7 +323,10 @@ router.get("/class/:classid/course/:courseid/class_mark", (req, res) => {
 */
 router.post("/class/:classid/course/:courseid/reg_mark", (req, res) => {
     var date_mark = req.body.date;
-    var period_mark = 0;
+    if(data_mark.getMonth()>8 && data_mark.getMonth()<1)
+        var period_mark = 1;
+    else
+        var period_mark = 2;
     var mark_subj = req.body.subject;
     var descr_mark_subj = req.body.desc;
     var type_mark_subj = req.body.type;

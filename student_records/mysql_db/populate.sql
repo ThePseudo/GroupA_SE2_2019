@@ -2,10 +2,10 @@ SET CHARSET utf8mb4;
 
 -- Teacher
 INSERT INTO teacher
-    (first_name,last_name,cod_fisc,email,password,first_access)
+    (first_name,last_name,cod_fisc,email,password,first_access,coordinator)
 VALUES
-    ("Elena", "Baralis", "AV85T", "elena.baralis.polito@gmail.com", "$2a$10$0tXRERd11hkw3zKQQmFeTOAuUcMiI6/ThiMNvfMUvKmYkWkL0BRkO", 1),
-    ("Marina", "Indri", "RVEQXX32E18B392G", "marina64@yahoo.com", "$2a$10$0tXRERd11hkw3zKQQmFeTOAuUcMiI6/ThiMNvfMUvKmYkWkL0BRkO", 1);
+    ("Elena", "Baralis", "AV85T", "elena.baralis.polito@gmail.com", "$2a$10$0tXRERd11hkw3zKQQmFeTOAuUcMiI6/ThiMNvfMUvKmYkWkL0BRkO", 1,1),
+    ("Marina", "Indri", "RVEQXX32E18B392G", "marina64@yahoo.com", "$2a$10$0tXRERd11hkw3zKQQmFeTOAuUcMiI6/ThiMNvfMUvKmYkWkL0BRkO", 1,0);
 
 -- Officer
 INSERT INTO officer
@@ -159,4 +159,18 @@ VALUES
     (2,2,4,2,1),
     (2,2,4,2,2),
     (4,2,5,1,5);
+
+-- final term grade
+-- fake data angelo rosso (id 1)for parent visualization
+INSERT INTO student_final_term_grade
+    (id_student,id_course,period_term,period_year,period_grade)
+VALUES
+    (1,1,1,2019,5),
+    (1,2,1,2019,6),
+    (1,3,1,2019,7),
+    (1,1,2,2019,8),
+    (1,2,2,2019,9),
+    (1,3,2,2019,6),
+    (1,1,1,2020,8),
+    (1,2,1,2020,7);
 
