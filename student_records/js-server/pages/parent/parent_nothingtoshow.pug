@@ -1,0 +1,18 @@
+//- Those variables should be in every page. ALWAYS PASS childID, fullName
+- var page = ""
+- var loggedIn = true
+- var user = "parent"
+- var active = ""
+
+doctype html
+html
+  include ../base/head.pug
+  body
+    include ../base/navbar.pug
+    div(class="container")
+        div(class="row")
+            a(href="/teacher/teacher_home" class="noLinkTitle backButton")
+                span(class="glyphicon glyphicon-menu-left backButton")
+        div(class="row")
+            h1(class = 'err_msg') Nothing to show
+            h1(class="err_msg") Student not yet enrolled

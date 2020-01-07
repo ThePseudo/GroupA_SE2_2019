@@ -42,7 +42,7 @@ router.use('/:id', function (req, res, next) {
                 return;
             }
             if (rows.length < 1) {
-                res.end("It's not your child you're looking for, is it?");
+                res.render("../pages/parent/parent_nothingtoshow.pug");
                 return;
             }
             classID = rows[0].class_id;
@@ -144,7 +144,8 @@ router.get("/:studentID/marks", (req, res) => {
             var mark = {
                 subject: rows[i].course_name,
                 date: rows[i].date_mark,
-                mark: rows[i].score
+                mark: rows[i].score,
+                type: rows[i].type_mark_subj 
             }
             // Add object into array
             marks[i] = mark;
@@ -246,7 +247,7 @@ router.get('/:studentID/course/:courseID', (req, res) => {
 
 /// course marks
 router.get('/:studentID/course/:courseID/marks', (req, res) => {
-    let sql = 'SELECT date_mark, score FROM mark ' +
+    let sql = 'SELECT date_mark, score, type_mark_subj  FROM mark ' +
         'WHERE mark.student_id = ? ' +
         'AND mark.course_id = ? ' +
         'ORDER BY mark.date_mark DESC';
@@ -260,7 +261,8 @@ router.get('/:studentID/course/:courseID/marks', (req, res) => {
         for (var i = 0; i < rows.length; ++i) {
             var student_mark = {
                 date: rows[i].date_mark,
-                mark: rows[i].score
+                mark: rows[i].score,
+                type: rows[i].type_mark_subj 
             }
             marks[i] = student_mark;
         }
