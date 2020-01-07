@@ -2,12 +2,8 @@
 
 const path = require('path');
 const fs = require('fs');
-const os = require('os');
 const express = require('express');
-const upload = require('express-fileupload');
-const pug = require('pug');
 const myInterface = require('./functions.js');
-const fileUpload_handler = require('express-fileupload');
 const { body } = require('express-validator');
 const Busboy = require('busboy');
 const inspect = require('util').inspect;
@@ -32,7 +28,7 @@ var studentName = "";
 var courseName = "";
 var className = "";
 
-router.use(/\/.*/, function(req, res, next) {
+router.use(/\/.*/, function (req, res, next) {
     fullName = req.session.user.first_name + " " + req.session.user.last_name;
     teacherID = req.session.user.id;
     con = myInterface.DBconnect();
@@ -155,7 +151,7 @@ router.get("/teacher_home", (req, res) => { // T3
                             i++;
                         }
                     }
-                    console.log(course_hours[timeslot][day]);
+                    //console.log(course_hours[timeslot][day]);
                 }
             }
 
@@ -205,21 +201,17 @@ router.get("/class/:classid/course/:courseid/course_home", (req, res) => {
                 }
             }
         }
-        con.query("SELECT class_name FROM class WHERE id = ?", [classID], (err, rows, fields) => {
-            if (err) {
-                res.end("DB error: " + err);
-                return;
-            }
-            res.render('../pages/teacher/teacher_coursehome.pug', {
-                classid: classID,
-                courseid: courseID,
-                fullName: fullName,
-                message: message,
-                courseName: rows[0].class_name,
-                student_array: student_array,
-                n_students: n_students
-            });
-        })
+
+        res.render('../pages/teacher/teacher_coursehome.pug', {
+            classid: classID,
+            courseid: courseID,
+            fullName: fullName,
+            message: message,
+            courseName: courseName,
+            className: className,
+            student_array: student_array,
+            n_students: n_students
+        });
     });
 });
 
@@ -267,21 +259,16 @@ router.route("/class/:classid/course/:courseid/reg_topic").get((req, res) => {
             res.redirect("./reg_topic?msg=err");
             return;
         }
-        con.query('SELECT COUNT(*) as c FROM topic', (err, rows) => { // because we have no AUTO_UPDATE available on the DB
+        con.query("INSERT INTO topic(topic_date, id_class,id_course,description) VALUES(?, ?, ?, ?, ?)", [date, classID, courseID, description], (err, rows) => {
             if (err) {
                 res.end("There is a problem in the DB connection. Please, try again later " + err);
                 return;
             }
-            con.query("INSERT INTO topic(id, topic_date, id_class,id_course,description) VALUES(?, ?, ?, ?, ?)", [rows[0].c + 1, date, req.params.classid, req.params.courseid, description], (err, rows) => {
-                if (err) {
-                    res.end("There is a problem in the DB connection. Please, try again later " + err);
-                    return;
-                }
-                con.end();
-                res.redirect("./reg_topic?msg=ok")
-            });
+            con.end();
+            res.redirect("./reg_topic?msg=ok")
         });
-    });
+    }
+);
 
 // Class marks
 router.get("/class/:classid/course/:courseid/class_mark", (req, res) => {
@@ -404,15 +391,18 @@ router.post("/class/:classid/course/:courseid/reg_mark", (req, res) => {
 });
 
 //TODO
-router.get("/class/:classid/course/:courseid/insert_homework", (req, res) => {});
+router.get("/class/:classid/course/:courseid/insert_homework", (req, res) => { });
 
 // Absences
 router.get("/class/:classid/course/:courseid/absences", (req, res) => {
+    var date = new Date();
+    var dateString = date.getDate() + "/" + (date.getMonth() + 1) + "/" + date.getFullYear()
     res.render("../pages/teacher/teacher_insertabsence.pug", {
         fullName: fullName,
         classid: classID,
         courseid: courseID,
-        className: className
+        className: className,
+        todayDate: dateString
     });
 });
 
@@ -682,43 +672,38 @@ router.get("/class/:classid/course/:courseid/add_material", (req, res) => {
   TODO: don't use res.render, instead redirect to add_material
 */
 router.post("/class/:classid/course/:courseid/up_file", (req, res) => {
-    res.set({ 'Content-Type': 'application/xhtml+xml; charset=utf-8' });
+    //res.set({ 'Content-Type': 'application/xhtml+xml; charset=utf-8' });
     var date = new Date();
-    console.log(req);
-    console.log("Class: " + req.params.classid);
-    console.log("Course: " + req.params.courseid);
+    //console.log(req);
+    //console.log("Class: " + classID);
+    //console.log("Course: " + courseID);
     var busboy = new Busboy({ headers: req.headers });
-    busboy.on('field', function(fieldname, val, fieldnameTruncated, valTruncated, encoding, mimetype) {
+    busboy.on('field', function (fieldname, val, fieldnameTruncated, valTruncated, encoding, mimetype) {
         let desc = inspect(val);
-        busboy.on('file', function(fieldname, file, filename, encoding, mimetype) {
+        busboy.on('file', function (fieldname, file, filename, encoding, mimetype) {
             var saveTo = path.join('.', "/upload/" + filename);
             console.log('Desc: ' + desc + ' Uploading: ' + saveTo);
             file.pipe(fs.createWriteStream(saveTo));
-            con.query('SELECT COUNT(*) as c FROM material', (err, rows, fields) => { // because we have no AUTO_UPDATE available on the DB
+            con.query("INSERT INTO material(course_id, class_id, description, link, date_mt) VALUES(?, ?, ?, ?, ?)", [courseID, classID, desc, saveTo, date], (err, result) => {
                 if (err) {
-                    res.end("There is a problem in the DB connection. Please, try again later " + err);
+                    res.end("DB error: " + err);
                     return;
                 }
-                con.query("INSERT INTO material(id, course_id, class_id, description, link, date_mt) VALUES(?, ?, ?, ?, ?, ?)", [rows[0].c + 1, courseID, classID, desc, saveTo, date], (err, result) => {
-                    if (err) {
-                        res.end("There is a problem in the DB connection. Please, try again later " + err);
-                        return;
-                    }
-                    con.end();
-                });
             });
         });
     });
-    busboy.on('finish', function() {
+    busboy.on('finish', function () {
         console.log('Upload complete');
-        res.writeHead(302, { 'Location': '/teacher/class/' + req.params.classid + '/course/' + req.params.courseid + '/upload_file?val=1' });
+        res.redirect('./upload_file?val=1');
 
         //fa l'upload ma non va alla pagina successiva
         //res.render non si può usare qui non provateci
         //dà problemi di header res.render
-        res.end();
+        // Prova a usare una redirect + messaggio, 
+        // res.end();
     });
-    return req.pipe(busboy);
+    req.pipe(busboy);
+    return;
 
     /*console.log(req);
     con.query("SELECT t.course_id, t.class_id, course_name, class_name FROM teacher_course_class t, course co, class cl WHERE teacher_id=1 AND t.course_id=co.id AND t.class_id=cl.id", (err, rows) => {
@@ -735,9 +720,7 @@ router.post("/class/:classid/course/:courseid/up_file", (req, res) => {
     });*/
 });
 
-/*
-  TODO: don't use res.render, instead redirect to add_material
-*/
+
 router.route("/class/:classid/course/:courseid/upload_file").get((req, res) => {
     console.log(req.params.classid);
     console.log(req.params.courseid);
@@ -763,7 +746,7 @@ router.route("/class/:classid/course/:courseid/upload_file").get((req, res) => {
                 classID: classID,
                 courseID: courseID,
                 flag_ok: 0,
-                message: "ERROR: File not upload, retry",
+                message: "ERROR: File not uploaded, retry",
                 upload_file_array: upload_file_array
             });
         else if (req.query.val == 1)
@@ -821,7 +804,7 @@ router.get("/class/:classid/course/:courseid/class_timetable", (req, res) => {
                         i++;
                     }
                 }
-                console.log(course_hours[timeslot][day]);
+                //console.log(course_hours[timeslot][day]);
             }
         }
 

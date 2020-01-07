@@ -4,13 +4,13 @@
 - var user = "teacher"
 - var active = "Course home page"
 
-//- Uses variables: courseName, childID, message
+//- Uses variables: courseName, childID, message, className, n_students, student_array[]{first_name, last_name, id}
 
 mixin button(first, last,id)
   div(class="row" style="margin-bottom: 10px")
     div(class="col-xs-1 col-lg-4")
     div(class="col-xs-10 col-lg-4")
-      a(href= "/teacher/class/"+classid+"/course/"+courseid+"/student/"+id class="noLinkTitle") 
+      a(href= "./student/"+id class="noLinkTitle") 
         button(class="btn blockButton noLinkTitle" style="margin-top: 16px") #{last} #{first}
 
 doctype html
@@ -23,7 +23,7 @@ html
       a(href="/teacher/teacher_home" class="noLinkTitle backButton")
         span(class="glyphicon glyphicon-menu-left backButton")
       div(class="row")
-        h1(class = 'title') #{courseName} - Student List
+        h1(class = 'title') #{className} - #{courseName}
         if n_students<=0
           h2(class = 'err_msg')=message
         else 

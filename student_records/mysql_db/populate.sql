@@ -28,9 +28,9 @@ INSERT INTO student
 VALUES
     ("Angelo", "Rosso", "NJRGTD35P14B145Z", 2, 1, 2),
     ("Martino", "Arte", "RLIZFH80S05E249F", 2, 1, 2),
-    ("Martinella", "Leone", "JDKDMY59L04H816S", 2, 1, 2),
-    ("Serena", "Fetta", "BSOWTD48P60F492T", 2, 2, 3),
-    ("Francesca", "Fetta", "DVBGDD76L56E934Y", 2, 2, 3),
+    ("Martinella", "Leone", "JDKDMY59L04H816S", 3, 1, 2),
+    ("Serena", "Fetta", "BSOWTD48P60F492T", 3, 2, 3),
+    ("Francesca", "Fetta", "DVBGDD76L56E934Y", 1, 2, 3),
     ("Alessandro", "Sardegna", "PPPGDD76L56E934Y",NULL, 2, 3),
     ("Alessandra", "Pugliese", "AAAGDD76L56E934Y" ,NULL, 2, 3);
 
@@ -118,32 +118,7 @@ VALUES
 INSERT INTO material
     (course_id, class_id, description, link, date_mt)
 VALUES
-    (3, 2, "questo è un test per vedere come si comporta la tabella con stringhe lunghe", "test.txt", '2019-9-12');
-
-INSERT INTO material
-    (course_id, class_id, description, link, date_mt)
-VALUES
-    (3, 2, "prova descrizione1", "file.pdf", '2019-9-12');
-
-INSERT INTO material
-    (course_id, class_id, description, link, date_mt)
-VALUES
-    (3, 2, "prova descrizione2", "file.pdf", '2019-9-12');
-
-INSERT INTO material
-    (course_id, class_id, description, link, date_mt)
-VALUES
-    (3, 2, "prova descrizione3", "file.pdf", '2019-9-12');
-
-INSERT INTO material
-    (course_id, class_id, description, link, date_mt)
-VALUES
-    (3, 2, "prova descrizione4", "file.pdf", '2019-9-12');
-
-INSERT INTO material
-    (course_id, class_id, description, link, date_mt)
-VALUES
-    (3, 2, "prova descrizione5", "file.pdf", '2019-9-12');
+    (3, 2, "questo è un test per vedere come si comporta la tabella con stringhe lunghe", "/upload/text.txt", '2019-9-12');
 
 -- Mark
 INSERT INTO mark
