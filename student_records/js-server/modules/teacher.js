@@ -259,7 +259,7 @@ router.route("/class/:classid/course/:courseid/reg_topic").get((req, res) => {
             res.redirect("./reg_topic?msg=err");
             return;
         }
-        con.query("INSERT INTO topic(topic_date, id_class,id_course,description) VALUES(?, ?, ?, ?, ?)", [date, classID, courseID, description], (err, rows) => {
+        con.query("INSERT INTO topic(topic_date, id_class,id_course,description) VALUES(?, ?, ?, ?)", [date, classID, courseID, description], (err, rows) => {
             if (err) {
                 res.end("There is a problem in the DB connection. Please, try again later " + err);
                 return;
@@ -429,13 +429,32 @@ router.get("/class/:classid/course/:courseid/absence_table", (req, res) => {
             }
             students.set(rows[i].id, student);
         }
-        sql = "SELECT student_id, absence_type, date_ab FROM absence WHERE date_ab = ?;"
-        con.query(sql, [myInterface.dailyDate()], (err, rows) => {
+        sql = "SELECT student_id, absence_type, date_ab FROM absence, student " +
+            "WHERE student.id = absence.student_id AND date_ab = ? AND class_id = ?;"
+        con.query(sql, [myInterface.dailyDate(), classID], (err, rows) => {
             if (err) {
                 res.end("Database error: " + err);
                 return;
             }
             // Absence types = ['Absent', 'Late entry', 'Early exit'];
+            for (var i = 0; i < rows.length; ++i) {
+                var student = students.get(rows[i].student_id);
+                switch (rows[i].absence_type) {
+                    case 'Absent':
+                        student.absent = true;
+                        break;
+                    case 'Late entry':
+                        student.lateEntry = true;
+                        break;
+                    case 'Early exit':
+                        student.earlyExit = true;
+                        break;
+                    default:
+                        break;
+                }
+                students.set(rows[i].student_id, student);
+            }
+            /*
             rows.forEach(row => {
                 var student = students.get(row.student_id);
                 switch (row.absence_type) {
@@ -453,7 +472,7 @@ router.get("/class/:classid/course/:courseid/absence_table", (req, res) => {
                 }
                 students.set(row.student_id, student);
             });
-
+*/
             var sortedStudents = Array.from(students.values());
             sortedStudents.sort((a, b) => a.last_name.localeCompare(b.last_name));
             res.render("../pages/teacher/teacher_insertabsence_table.pug", {
@@ -477,7 +496,7 @@ router.post("/class/:classid/course/:courseid/student/:studentid/insert_absence"
     }
     var sql = "INSERT INTO absence(student_id, date_ab, absence_type, justified) VALUES(?,?,?,?) " +
         "ON DUPLICATE KEY UPDATE absence_type = ?;";
-    con.query(sql, [studentID, myInterface.dailyDate(), absType, absType, justified], (err, result) => {
+    con.query(sql, [studentID, myInterface.dailyDate(), absType, justified, absType], (err, result) => {
         if (err) {
             res.end("Database error: " + err);
             return;
@@ -658,11 +677,11 @@ router.post("/class/:classid/course/:courseid/student/:studentid/insert_note", [
     });
 });
 
-// Class upload
+// Add material
 router.get("/class/:classid/course/:courseid/add_material", (req, res) => {
     res.render("../pages/teacher/teacher_coursematerial.pug", {
-        classID: classID,
-        courseID: courseID,
+        classid: classID,
+        courseid: courseID,
         fullName: fullName
     });
 
