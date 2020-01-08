@@ -42,11 +42,7 @@ router.use('/:id', function (req, res, next) {
                 return;
             }
             if (rows.length < 1) {
-<<<<<<< HEAD
-                res.render("../pages/parent/parent_nothingtoshow.pug");
-=======
                 myInterface.sendUnauthorized(res);
->>>>>>> pseudo-branch
                 return;
             }
             classID = rows[0].class_id;
@@ -149,7 +145,7 @@ router.get("/:studentID/marks", (req, res) => {
                 subject: rows[i].course_name,
                 date: rows[i].date_mark,
                 mark: rows[i].score,
-                type: rows[i].type_mark_subj 
+                type: rows[i].type_mark_subj
             }
             // Add object into array
             marks[i] = mark;
@@ -262,7 +258,7 @@ router.get('/:studentID/course/:courseID/marks', (req, res) => {
             var student_mark = {
                 date: rows[i].date_mark,
                 mark: rows[i].score,
-                type: rows[i].type_mark_subj 
+                type: rows[i].type_mark_subj
             }
             marks[i] = student_mark;
         }
