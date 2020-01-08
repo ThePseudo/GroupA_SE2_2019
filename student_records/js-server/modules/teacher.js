@@ -686,15 +686,6 @@ router.post("/class/:classid/course/:courseid/student/:studentid/insert_note", [
 });
 
 // Add material
-router.get("/class/:classid/course/:courseid/add_material", (req, res) => {
-    res.render("../pages/teacher/teacher_coursematerial.pug", {
-        classid: classID,
-        courseid: courseID,
-        fullName: fullName
-    });
-
-});
-
 router.post("/class/:classid/course/:courseid/up_file", [
     body('desc').escape()
 ],
@@ -703,8 +694,9 @@ router.post("/class/:classid/course/:courseid/up_file", [
         var busboy = new Busboy({ headers: req.headers });
         busboy.on('field', function (fieldname, val, fieldnameTruncated, valTruncated, encoding, mimetype) {
             let desc = inspect(val);
-            if (!desc) {
-                res.redirect('./upload_file?val=2')
+            desc = desc.substring(1, desc.length - 1);
+            if (!desc || desc == "") {
+                res.redirect("./upload_file?val=2");
                 return;
             }
             busboy.on('file', function (fieldname, file, filename, encoding, mimetype) {
@@ -718,12 +710,12 @@ router.post("/class/:classid/course/:courseid/up_file", [
                             res.end("DB error: " + err);
                             return;
                         }
+                        busboy.on('finish', function () {
+                            console.log('Upload complete');
+                            res.redirect('./upload_file?val=1');
+                        });
                     });
             });
-        });
-        busboy.on('finish', function () {
-            console.log('Upload complete');
-            res.redirect('./upload_file?val=1');
         });
         req.pipe(busboy);
     }
@@ -735,6 +727,19 @@ router.route("/class/:classid/course/:courseid/upload_file").get((req, res) => {
     var val = req.query.val;
     var flag_ok = 0;
     var message = "";
+    switch (val) {
+        case "0":
+            message = "ERROR: File not uploaded, retry";
+            break;
+        case "1":
+            message = "File uploaded";
+            flag_ok = 1;
+            break;
+        case "2":
+            message = "Description empty";
+            break;
+        default: break;
+    }
     con.query(sql, [classID, courseID], (err, rows) => {
         if (err) {
             res.end("Db error: " + err);
@@ -751,19 +756,7 @@ router.route("/class/:classid/course/:courseid/upload_file").get((req, res) => {
         }
         con.end();
         //console.log(upload_file_array);
-        switch (val) {
-            case 0:
-                message = "ERROR: File not uploaded, retry";
-                break;
-            case 1:
-                message = "File uploaded";
-                flag_ok = 1;
-                break;
-            case 2:
-                message = "Description empty";
-                break;
-            default: break;
-        }
+
         res.render("../pages/teacher/teacher_coursematerial.pug", {
             classid: classID,
             courseid: courseID,

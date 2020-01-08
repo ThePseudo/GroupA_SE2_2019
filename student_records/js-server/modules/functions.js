@@ -44,7 +44,13 @@ module.exports.getCurrentYear = function () {
 }
 
 module.exports.sendUnauthorized = function (res) {
-    res.end("Unauthorized user");
+    const demo = 1;
+    if (demo) {
+        res.redirect("https://i.imgur.com/nrxCtR4.gif");
+    }
+    else {
+        res.end("Unauthorized user");
+    }
 }
 
 /* module.exports.checkEmailFormat = function(str){
