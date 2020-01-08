@@ -58,11 +58,16 @@ html
                   div(class='col-sm-4 col-lg-3')
                     select(name='classselected' id='select_class' class="form-control smallSelect" onchange="redirect()")
                       //- option(value="Select") Select
+                      - var i = 1;
                       each classitem in classlist
+                        if classitem.separator==true
+                          optgroup(label=i)
+                          - ++i;
                         if(classselected==classitem.id)
                           option(value=classitem.id selected) #{classitem.class_name}
                         else
                           option(value=classitem.id) #{classitem.class_name}
+
             div(class='row' align='center' style="margin-top:16px;")
               div(class='col-sm-3')
               div(class='col-sm-6')
