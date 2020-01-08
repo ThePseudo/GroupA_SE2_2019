@@ -31,12 +31,12 @@ VALUES
 INSERT INTO student
     (first_name,last_name,cod_fisc,class_id,parent_1,parent_2)
 VALUES
-    ("Angelo", "Rossi", "NJRGTD35P14B145Z", 1, 1, 2),
-    ("Martino", "Rossi", "RLIZFH80S05E249F", 8, 1, 2),
-    ("Giorgia", "Rossi", "JDKDMY59L04H816S", 10, 1, 2),
-    ("Serena", "Gasparini", "BSOWTD48P60F492T", 3, 3, 4),
+    ("Martino", "Rossi", "RLIZFH80S05E249F", 1, 1, 2),
+    ("Angelo", "Rossi", "NJRGTD35P14B145Z", 3, 1, 2),
+    ("Giorgia", "Rossi", "JDKDMY59L04H816S", 15, 1, 2),
+    ("Serena", "Gasparini", "BSOWTD48P60F492T", 7, 3, 4),
     ("Alessandro", "Gasparini", "PPPGDD76L56E934Y",NULL, 3, 4),
-    ("Francesca", "Kujo", "DVBGDD76L56E934Y", 12, 5, 6),
+    ("Francesca", "Kujo", "DVBGDD76L56E934Y", 14, 5, 6),
     ("Alessandra", "Kujo", "AAAGDD76L56E934Y",NULL, 5, 6);
 
 -- Class
