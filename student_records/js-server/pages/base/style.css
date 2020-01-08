@@ -275,10 +275,10 @@ input[type="date"] {
 }
 
 .orange {
-    background-color: #FFB74D;
+    background-color: #FF9800;
 }
 .orange:hover {
-    background-color: #FF9800;
+    background-color: #f47a1c;
 }
 
 .blueHover:hover {
