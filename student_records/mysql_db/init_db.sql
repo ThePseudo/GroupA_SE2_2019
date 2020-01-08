@@ -172,7 +172,7 @@ CREATE TABLE timetable
     REFERENCES teacher_course_class(teacher_id,course_id,class_id)
         ON UPDATE CASCADE
         ON DELETE CASCADE, 
-    PRIMARY KEY(start_time_slot,day)
+    PRIMARY KEY(start_time_slot,day, class_id)
 );
 
 CREATE TABLE teacher_timeslot_meeting

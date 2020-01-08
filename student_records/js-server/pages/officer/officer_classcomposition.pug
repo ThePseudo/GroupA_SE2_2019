@@ -29,53 +29,64 @@ html
       div(class='row')
         h3(class='title') Insert new class if is necessary
       div(class='row')
-        form(method='POST' action="/officer/new_class" id="newclassform")
-          div(class='row' style='margin-top: 40px;')
-            div(class='col-sm-3')
-            div(class='col-sm-6')
-              div.form-group
-                label(for='newclass') Year of the new class:
-                input(type='number' min='1' max='5' name='newclassyear' class="form-control" required)
-              div.form-group
-                label(for='newclass') Section of the new class:
-                input(type='text' maxlength="1" name='newclasssection' class="form-control" required)
-          div(class='row')
-                div(class='col-sm-3')
-                div(class='col-sm-6')
-                  input(type='SUBMIT' value='Insert new class' class='btn blockButton' style='margin-top: 24px; padding: 6px 10px;')
+        div(class="col-xs-12")
+          form(method='POST' action="/officer/new_class" id="newclassform")
+            div(class='row' style='margin-top: 40px;')
+              div(class='col-sm-3')
+              div(class='col-sm-6')
+                div.form-group
+                  label(for='newclass') Year of the new class:
+                  input(type='number' min='1' max='5' name='newclassyear' class="form-control" required)
+                div.form-group
+                  label(for='newclass') Section of the new class:
+                  input(type='text' maxlength="1" name='newclasssection' class="form-control" required)
+            div(class='row')
+              div(class='col-sm-3')
+              div(class='col-sm-6')
+                input(type='SUBMIT' value='Insert new class' class='btn blockButton' style='margin-top: 24px; padding: 6px 10px;')
 
       div(class='row')
-        form(method='POST' action="/officer/up_class" id="regform")
-          div(class='row' align='center' style='margin-top: 40px;')
-            div(class='col-sm-3')
-            div(class='col-sm-6')
-              div.form-group
-                select(name='classselected' id='select_class' onchange="redirect()")
-                  //- option(value="Select") Select
-                  each classitem in classlist
-                    if(classselected==classitem.id)
-                      option(value=classitem.id selected) #{classitem.class_name}
-                    else
-                      option(value=classitem.id) #{classitem.class_name}
-          div(class='row' align='center')
-            div(class='col-sm-3')
-            div(class='col-sm-6')
-              div.form-group
-                //- start
-                select(id='pre-selected-options' name='pippo[]' multiple='multiple')
-                  each studentnoclassitem in studentnoclass
-                    if(studentnoclassitem.class_id!=null)
-                      option(value=studentnoclassitem.id selected) #{studentnoclassitem.first_name+ " " +studentnoclassitem.last_name}
-                    else
-                      option(value=studentnoclassitem.id) #{studentnoclassitem.first_name+ " " +studentnoclassitem.last_name}
-                script(type='text/javascript' src='/multiselect')
-                script(type='text/javascript').
-                  // run pre selected options
-                  $('#pre-selected-options').multiSelect({
-                    selectableHeader: "<div align='center'>Not Assigned Student</div>",
-                    selectionHeader: "<div align='center'>Class Student</div>"
-                  });
-          div(class='row')
-            div(class='col-sm-3')
-            div(class='col-sm-6')
-              input(type='SUBMIT' value='Update class' class='btn blockButton' style='margin-top: 24px; padding: 6px 10px;')
+        div(class="col-xs-12")
+          form(method='POST' action="/officer/up_class" id="regform")
+            div(class='row' align='center' style='margin-top: 40px;')
+              div(class='col-sm-3')
+              div(class='col-sm-6')
+                div.form-group
+                  div(class='col-sm-4')
+                  div(class='col-sm-2')
+                    label(for="select_class") Class:
+                  div(class='col-sm-4 col-lg-3')
+                    select(name='classselected' id='select_class' class="form-control smallSelect" onchange="redirect()")
+                      //- option(value="Select") Select
+                      - var i = 1;
+                      each classitem in classlist
+                        if classitem.separator==true
+                          optgroup(label=i)
+                          - ++i;
+                        if(classselected==classitem.id)
+                          option(value=classitem.id selected) #{classitem.class_name}
+                        else
+                          option(value=classitem.id) #{classitem.class_name}
+
+            div(class='row' align='center' style="margin-top:16px;")
+              div(class='col-sm-3')
+              div(class='col-sm-6')
+                div.form-group
+                  //- start
+                  select(id='pre-selected-options' name='pippo[]' multiple='multiple' class="form-control" style="font-size:large;")
+                    each studentnoclassitem in studentnoclass
+                      if(studentnoclassitem.class_id!=null)
+                        option(value=studentnoclassitem.id selected) #{studentnoclassitem.first_name+ " " +studentnoclassitem.last_name}
+                      else
+                        option(value=studentnoclassitem.id) #{studentnoclassitem.first_name+ " " +studentnoclassitem.last_name}
+                  script(type='text/javascript' src='/multiselect')
+                  script(type='text/javascript').
+                    // run pre selected options
+                    $('#pre-selected-options').multiSelect({
+                      selectableHeader: "<div align='center' class='ms-head noLinkTitle'>Not Assigned Student</div>",
+                      selectionHeader: "<div align='center' class='ms-head noLinkTitle'>Class Student</div>"
+                    });
+            div(class='row')
+              div(class='col-sm-3')
+              div(class='col-sm-6')
+                input(type='SUBMIT' value='Update class' class='btn blockButton' style='margin-top: 24px; padding: 6px 10px;')
