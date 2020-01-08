@@ -13,7 +13,7 @@ VALUES
 INSERT INTO officer
     (first_name,last_name,cod_fisc,email,password,first_access, principal)
 VALUES
-    ("Giorno", "Giovanna", "GG80X", "giovanna80@hotmail.it", "$2a$10$0tXRERd11hkw3zKQQmFeTOAuUcMiI6/ThiMNvfMUvKmYkWkL0BRkO", 1, 0),
+    ("Giorno", "Giovanna", "CP80X", "giovanna80@hotmail.it", "$2a$10$0tXRERd11hkw3zKQQmFeTOAuUcMiI6/ThiMNvfMUvKmYkWkL0BRkO", 1, 0),
     ("Tommaso", "Bodda", "FTEZMF95C47E840N", "bodda75@gmail.com", "$2a$10$0tXRERd11hkw3zKQQmFeTOAuUcMiI6/ThiMNvfMUvKmYkWkL0BRkO", 1, 0);
 
 -- Parent
@@ -98,29 +98,33 @@ INSERT INTO note
     (student_id, teacher_id, note_date, motivation, justified)
 VALUES
     (1, 1, "2019-09-30", "L'alunno fa rumore in classe", 1),
-    (1, 2, "2019-09-29", "L'alunno fa ANCORA rumore in classe", 0),
-    (1, 1, "2019-09-29", "L'alunno fa ANCORA rumore 3 ora provo a mettere una stringa lunga, ancora più lunga vediamo ora", 0),
-    (1, 2, "2019-09-29", "L'alunno fa ANCORA rumore 4", 0),
-    (1, 2, "2019-09-29", "L'alunno fa ANCORA rumore 5", 1),
-    (2, 1, "2019-09-29", "L'alunno fa ANCORA rumore 4", 0),
-    (2, 2, "2019-09-29", "L'alunno fa ANCORA rumore 5", 1);
+    (2, 2, "2019-10-19", "L'alunno disturba il compagno di banco", 0),
+    (3, 3, "2019-11-29", "L'alunno corre nel corridoio", 0),
+    (1, 4, "2019-12-18", "L'alunno fa ANCORA rumore in classe", 0),
+    (2, 1, "2019-10-28", "L'alunno risponde maleducatamente all'insegnante", 1),
+    (4, 2, "2019-11-07", "L'alunno corre nel corridoio", 0),
+    (6, 3, "2019-12-03", "L'alunno gioca con il telefono durante la lezione", 1);
 
 -- Absence
 INSERT INTO absence
     (student_id, date_ab, absence_type, justified)
-VALUES(1, "2019-09-30", "Absent", 1);
+VALUES(1, "2019-11-30", "Absent", 1);
 
 INSERT INTO absence
     (student_id, date_ab, absence_type, justified)
-VALUES(1, "2019-09-29", "Absent", 1);
+VALUES(2, "2019-10-10", "Absent", 1);
 
 INSERT INTO absence
     (student_id, date_ab, absence_type, justified)
-VALUES(1, "2019-09-28", "Absent", 1);
+VALUES(3, "2019-12-11", "Absent", 1);
 
 INSERT INTO absence
     (student_id, date_ab, absence_type, justified)
-VALUES(1, "2020-01-02", "Late entry", 0);
+VALUES(4, "2019-12-02", "Late entry", 0);
+
+INSERT INTO absence
+    (student_id, date_ab, absence_type, justified)
+VALUES(6, "2019-11-02", "Late entry", 0);
 
 
 -- Homework
