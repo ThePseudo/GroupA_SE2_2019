@@ -115,7 +115,7 @@ router.use("/class/:classid/course/:courseid/student/:studentid",
 router.get("/teacher_home", (req, res) => { // T3
     var year = myInterface.getCurrentYear();
     var course_hours = [];
-
+    var classCoursesArray = [];
     var sql = ` SELECT course_id, class_id, course_name, class_name FROM class, course, teacher_course_class
                 WHERE course_id = course.id AND class_id = class.id
                 AND year = ? AND teacher_id = ? `;
@@ -125,17 +125,18 @@ router.get("/teacher_home", (req, res) => { // T3
             res.end("Database problem: " + err);
             return;
         }
-        var classCoursesMap = [];
         for (var i = 0; i < rows.length; ++i) {
 
             var classCourse = {
-                classid: rows[i].class_id,
-                courseid: rows[i].course_id,
+                class_id: rows[i].class_id,
+                course_id: rows[i].course_id,
                 className: rows[i].class_name,
                 courseName: rows[i].course_name
             }
-            classCoursesMap[rows[i].course_id] = classCourse;
+            console.log(classCourse);
+            classCoursesArray[i] = classCourse;
         }
+        var len = classCoursesArray.length;
 
         sql = ` SELECT tt.start_time_slot as start_time_slot,tt.class_id as class_id, tt.course_id as course_id, tt.day as day 
                 FROM timetable as tt ,teacher_course_class as tcc 
@@ -143,29 +144,29 @@ router.get("/teacher_home", (req, res) => { // T3
                 ORDER BY tt.day,tt.start_time_slot `;
 
         let params = [teacherID]
-        con.query(sql, params, (err, rows, fields) => {
+        con.query(sql, params, (err, rows) => {
             if (err) {
                 res.end("DB error: " + err);
                 return;
             }
-            var i = 0;
             for (var timeslot = 0; timeslot < 5; timeslot++) {
                 course_hours[timeslot] = [];
                 for (var day = 0; day < 5; day++) {
                     course_hours[timeslot][day] = {}
-                    if (i < rows.length) {
-                        if (rows[i].start_time_slot == timeslot + 1 && rows[i].day == day + 1) {
-                            course_hours[timeslot][day] = classCoursesMap[rows[i].course_id];
-                            i++;
-                        }
+                }
+            }
+
+            for(let i= 0;i<rows.length;i++){
+                for(var j=0;j<len;j++){
+                    if(classCoursesArray[j].class_id==rows[i].class_id && classCoursesArray[j].course_id==rows[i].course_id){
+                        course_hours[rows[i].start_time_slot-1][rows[i].day-1] = classCoursesArray[j];
                     }
-                    //console.log(course_hours[timeslot][day]);
                 }
             }
 
             res.render("../pages/teacher/teacher_home.pug", {
                 fullName: fullName,
-                class_courses: classCoursesMap,
+                class_courses: classCoursesArray,
                 course_hours: course_hours,
                 start_time_slot: start_time_slot
             });
