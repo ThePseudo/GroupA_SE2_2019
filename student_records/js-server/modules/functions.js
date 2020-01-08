@@ -49,7 +49,7 @@ module.exports.sendUnauthorized = function (res) {
         res.redirect("https://i.imgur.com/nrxCtR4.gif");
     }
     else {
-        res.end("Unauthorized user");
+        res.render("../pages/base/nothing_to_show.pug");
     }
 }
 
