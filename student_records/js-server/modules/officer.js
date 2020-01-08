@@ -21,7 +21,7 @@ router.get("/officer_home", (req, res) => {
     res.render("../pages/officer/officer_home.pug");
 });
 
-router.get("/class_composition", (req, res)  => {
+router.get("/class_composition", (req, res) => {
     var classselected = req.query.classselected;
     var msg = req.query.msg;
     var writtenMsg = "";
@@ -42,7 +42,9 @@ router.get("/class_composition", (req, res)  => {
         default:
             break;
     }
-
+    if (!classselected) {
+        classselected = 1;
+    }
     con.query("SELECT id,class_name FROM class", (err, result) => {
         if (err) {
             res.end("There is a problem in the DB connection. Please, try again later " + err);
@@ -57,11 +59,11 @@ router.get("/class_composition", (req, res)  => {
             classlist[i] = classitem;
         }
         var query = "SELECT * FROM student WHERE class_id IS NULL";
-        if(classselected!='Select' && classselected!=undefined)
-            query=query+" OR class_id="+classselected;
-        console.log(classselected);
-        console.log(query);
-        con.query(query, (err, result2) => {
+        if (classselected != 'Select' && classselected != undefined)
+            query = query + " OR class_id=?";
+        //console.log(classselected);
+        //console.log(query);
+        con.query(query, [classselected], (err, result2) => {
             if (err) {
                 res.end("There is a problem in the DB connection. Please, try again later " + err);
                 return;
@@ -79,11 +81,11 @@ router.get("/class_composition", (req, res)  => {
                 }
                 studentnoclass[i] = studentnoclassitem;
             }
-           
-            console.log("print student no class");
-            console.log(studentnoclass);
-          
-            res.render("../pages/officer/officer_classcomposition.pug",{
+
+            //console.log("print student no class");
+            //console.log(studentnoclass);
+
+            res.render("../pages/officer/officer_classcomposition.pug", {
                 classlist: classlist,
                 studentnoclass: studentnoclass,
                 fullName: fullName,
@@ -96,9 +98,9 @@ router.get("/class_composition", (req, res)  => {
 });
 
 router.post("/up_class", (req, res) => {
-    var student =req.body['pippo[]'];
+    var student = req.body['pippo[]'];
     var classselected = req.body.classselected;
-    var query = "SELECT * FROM student WHERE class_id IS NULL OR class_id="+classselected;
+    var query = "SELECT * FROM student WHERE class_id IS NULL OR class_id=" + classselected;
     con.query(query, (err, result2) => {
         if (err) {
             res.end("There is a problem in the DB connection. Please, try again later " + err);
@@ -106,25 +108,25 @@ router.post("/up_class", (req, res) => {
         }
         var updatequery = "";
         console.log(student);
-        for(var i=0; i<result2.length;i++){
-            if(student!=undefined && student.includes(result2[i].id + '')){
+        for (var i = 0; i < result2.length; i++) {
+            if (student != undefined && student.includes(result2[i].id + '')) {
                 console.log("selected");
-                console.log(result2[i].id+" "+result2[i].first_name+" "+result2[i].last_name+"\n");
-                updatequery = updatequery + " UPDATE student SET class_id="+classselected+" WHERE id="+result2[i].id+";";
+                console.log(result2[i].id + " " + result2[i].first_name + " " + result2[i].last_name + "\n");
+                updatequery = updatequery + " UPDATE student SET class_id=" + classselected + " WHERE id=" + result2[i].id + ";";
             }
-            else{
+            else {
                 console.log("not selected");
-                console.log(result2[i].id+" "+result2[i].first_name+" "+result2[i].last_name+"\n");
-                updatequery = updatequery + " UPDATE student SET class_id=NULL WHERE id="+result2[i].id+";";
+                console.log(result2[i].id + " " + result2[i].first_name + " " + result2[i].last_name + "\n");
+                updatequery = updatequery + " UPDATE student SET class_id=NULL WHERE id=" + result2[i].id + ";";
             }
         }
         console.log(updatequery);
-        con.query(updatequery,(err, result) => {
+        con.query(updatequery, (err, result) => {
             if (err) {
                 res.end("There is a problem in the DB connection. Please, try again later " + err);
                 return;
-            }           
-            res.redirect("./class_composition?msg=ok&classselected="+classselected);
+            }
+            res.redirect("./class_composition?msg=ok&classselected=" + classselected);
             return;
         });
     });
@@ -133,29 +135,29 @@ router.post("/up_class", (req, res) => {
 router.post("/new_class", (req, res) => {
     var newclassyear = req.body.newclassyear;
     var newclasssection = req.body.newclasssection.toUpperCase();
-    var classname = newclassyear+newclasssection;
+    var classname = newclassyear + newclasssection;
 
-    con.query("SELECT class_name FROM class WHERE class_name = ?",[classname],(err, result) => {
+    con.query("SELECT class_name FROM class WHERE class_name = ?", [classname], (err, result) => {
         if (err) {
             res.end("There is a problem in the DB connection. Please, try again later " + err);
             return;
         }
-        if(result.length>0){
+        if (result.length > 0) {
             res.redirect("./class_composition?msg=err_class");
             con.end();
             return;
         }
-        con.query("INSERT INTO class (class_name) VALUES (?)",[classname],(err, result3) => {
+        con.query("INSERT INTO class (class_name) VALUES (?)", [classname], (err, result3) => {
             if (err) {
                 res.end("There is a problem in the DB connection. Please, try again later " + err);
                 return;
-            }           
+            }
             con.end();
             res.redirect("./class_composition?msg=ok");
             return;
         });
     });
-    
+
 });
 
 // Insert communication
