@@ -288,6 +288,7 @@ input[type="date"] {
 .smallSelect {
     margin-left: 12%;
     margin-right: 12%;
+    margin-top: -8px;
 }
 
 /* Smaller screens */
@@ -327,6 +328,7 @@ input[type="date"] {
     .smallSelect {
         margin-left: 0px;
         margin-right: 0px;
+        margin-top: 0px;
     }
 }
 
