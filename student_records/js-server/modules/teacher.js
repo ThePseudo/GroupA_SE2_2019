@@ -133,7 +133,6 @@ router.get("/teacher_home", (req, res) => { // T3
                 className: rows[i].class_name,
                 courseName: rows[i].course_name
             }
-            console.log(classCourse);
             classCoursesArray[i] = classCourse;
         }
         var len = classCoursesArray.length;
@@ -843,6 +842,13 @@ router.get("/class/:classid/course/:courseid/class_timetable", (req, res) => {
         year--;
     }
 
+    for (var timeslot = 0; timeslot < 5; timeslot++) {
+        course_hours[timeslot] = [];
+        for (var day = 0; day < 5; day++) {
+            course_hours[timeslot][day] = {}
+        }
+    }
+    
     var sql = ` SELECT first_name, last_name, course_name, class_name, tt.start_time_slot as start_time_slot,tt.class_id as class_id, tt.course_id as course_id, tt.day as day 
                 FROM timetable as tt ,teacher_course_class as tcc, class, course, teacher
                 WHERE tcc.course_id = course.id AND tcc.class_id = class.id AND tt.course_id = tcc.course_id 
@@ -855,26 +861,14 @@ router.get("/class/:classid/course/:courseid/class_timetable", (req, res) => {
             res.end("Database problem: " + err);
             return;
         }
-
-        var i = 0;
-        for (var timeslot = 0; timeslot < 5; timeslot++) {
-            course_hours[timeslot] = [];
-            for (var day = 0; day < 5; day++) {
-                course_hours[timeslot][day] = {}
-                if (i < rows.length) {
-                    if (rows[i].start_time_slot == timeslot + 1 && rows[i].day == day + 1) {
-                        var course = {
-                            courseName: rows[i].course_name,
-                            teacher_lastName: rows[i].last_name,
-                            teacher_firstName: rows[i].first_name,
-                            start_time_slot: rows[i].start_time_slot
-                        }
-                        course_hours[timeslot][day] = course;
-                        i++;
-                    }
-                }
-                //console.log(course_hours[timeslot][day]);
+        
+        for(let i= 0;i<rows.length;i++){
+            let course = {
+                courseName: rows[i].course_name,
+                teacher_lastName: rows[i].last_name,
+                teacher_firstName: rows[i].first_name,
             }
+            course_hours[rows[i].start_time_slot-1][rows[i].day-1] = course;
         }
 
         con.end();
@@ -889,7 +883,7 @@ router.get("/class/:classid/course/:courseid/class_timetable", (req, res) => {
     });
 });
 
-router.get("/class/:classid/course/:courseid/timeslot_meeting", (req, res) => {
+/* router.get("/class/:classid/course/:courseid/timeslot_meeting", (req, res) => {
     var year = myInterface.getCurrentYear();
     var course_hours = [];
     var classCoursesMap = [];
@@ -980,7 +974,7 @@ router.get("/class/:classid/course/:courseid/timeslot_meeting", (req, res) => {
             });
         });
     });
-});
+}); */
 
 
 module.exports = router;
