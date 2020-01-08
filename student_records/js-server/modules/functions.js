@@ -36,9 +36,11 @@ module.exports.checkItalianSSN = function (str) {
 
 module.exports.getCurrentYear = function () {
     var date = new Date();
+    var year = date.getFullYear();
     if (date.getMonth() < 9) { // before august
         year--;
     }
+    return year;
 }
 
 module.exports.sendUnauthorized = function (res) {

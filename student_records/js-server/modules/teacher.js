@@ -113,8 +113,7 @@ router.use("/class/:classid/course/:courseid/student/:studentid",
 );
 
 router.get("/teacher_home", (req, res) => { // T3
-    var date = myInterface.getCurrentYear();
-    var year = date.getFullYear();
+    var year = myInterface.getCurrentYear();
     var course_hours = [];
 
     var sql = ` SELECT course_id, class_id, course_name, class_name FROM class, course, teacher_course_class
@@ -696,29 +695,39 @@ router.get("/class/:classid/course/:courseid/add_material", (req, res) => {
 
 });
 
-router.post("/class/:classid/course/:courseid/up_file", (req, res) => {
-    var date = new Date();
-    var busboy = new Busboy({ headers: req.headers });
-    busboy.on('field', function (fieldname, val, fieldnameTruncated, valTruncated, encoding, mimetype) {
-        let desc = inspect(val);
-        busboy.on('file', function (fieldname, file, filename, encoding, mimetype) {
-            var saveTo = path.join('.', "/upload/" + filename);
-            console.log('Desc: ' + desc + ' Uploading: ' + saveTo);
-            file.pipe(fs.createWriteStream(saveTo));
-            con.query("INSERT INTO material(course_id, class_id, description, link, date_mt) VALUES(?, ?, ?, ?, ?)", [courseID, classID, desc, saveTo, date], (err, result) => {
-                if (err) {
-                    res.end("DB error: " + err);
-                    return;
-                }
+router.post("/class/:classid/course/:courseid/up_file", [
+    body('desc').escape()
+],
+    (req, res) => {
+        var date = new Date();
+        var busboy = new Busboy({ headers: req.headers });
+        busboy.on('field', function (fieldname, val, fieldnameTruncated, valTruncated, encoding, mimetype) {
+            let desc = inspect(val);
+            if (!desc) {
+                res.redirect('./upload_file?val=2')
+                return;
+            }
+            busboy.on('file', function (fieldname, file, filename, encoding, mimetype) {
+                var saveTo = path.join('.', "/upload/" + Date.now() + "-" + filename);
+                console.log('Desc: ' + desc + ' Uploading: ' + saveTo);
+                file.pipe(fs.createWriteStream(saveTo));
+                con.query("INSERT INTO material(course_id, class_id, description, link, date_mt) " +
+                    "VALUES(?, ?, ?, ?, ?)",
+                    [courseID, classID, desc, saveTo, date], (err, result) => {
+                        if (err) {
+                            res.end("DB error: " + err);
+                            return;
+                        }
+                    });
             });
         });
-    });
-    busboy.on('finish', function () {
-        console.log('Upload complete');
-        res.redirect('./upload_file?val=1');
-    });
-    req.pipe(busboy);
-});
+        busboy.on('finish', function () {
+            console.log('Upload complete');
+            res.redirect('./upload_file?val=1');
+        });
+        req.pipe(busboy);
+    }
+);
 
 
 router.route("/class/:classid/course/:courseid/upload_file").get((req, res) => {
@@ -749,6 +758,9 @@ router.route("/class/:classid/course/:courseid/upload_file").get((req, res) => {
             case 1:
                 message = "File uploaded";
                 flag_ok = 1;
+                break;
+            case 2:
+                message = "Description empty";
                 break;
             default: break;
         }
