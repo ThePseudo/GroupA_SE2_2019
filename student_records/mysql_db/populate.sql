@@ -63,26 +63,28 @@ VALUES
 INSERT INTO course
     (course_name, color)
 VALUES
-    ('Math', 'FF0000'),
+    ('Mathematics', 'FF0000'),
+    ('English', '008080')
     ('History', '0000FF'),
-    ('Science', '00FF00'),
-    ('Chemistry', "008080"),
-    ('Art', '008000'),
     ('Geography', '00FFFF');
+    ('Science', '00FF00'),
+    ('Art', '008000'),
+    ('Music', '09a0ba')
+    ('Physical Education', '099e22');
 
 -- Admin
 INSERT INTO admin
     (first_name,last_name,cod_fisc,email,password)
 VALUES
-    ("Giovanni", "Girrgio", "GPS67", "rossi@yahoo.com", "$2a$10$0tXRERd11hkw3zKQQmFeTOAuUcMiI6/ThiMNvfMUvKmYkWkL0BRkO"),
-    ("Arturo", "Merzario", "SJINBL63M03B687S", "racers@yahoo.com", "$2a$10$0tXRERd11hkw3zKQQmFeTOAuUcMiI6/ThiMNvfMUvKmYkWkL0BRkO");
+    ("Giovanni", "Ghirotti", "GG72A", "giova.ghirotti@yahoo.com", "$2a$10$0tXRERd11hkw3zKQQmFeTOAuUcMiI6/ThiMNvfMUvKmYkWkL0BRkO"),
+    ("Arturo", "Marzano", "AM68A", "arturo.marzano@gmail.com", "$2a$10$0tXRERd11hkw3zKQQmFeTOAuUcMiI6/ThiMNvfMUvKmYkWkL0BRkO");
 
 -- Topic
 INSERT INTO topic
     ( topic_date, id_class, id_course, description)
 VALUES
-    ("2019-09-30", 1, 1, "Monoms"),
-    ("2019-09-29", 2, 1, "Monoms"),
+    ("2019-09-29", 1, 1, "Monoms"),
+    ("2019-09-29", 7, 1, "Monoms"),
     ("2019-09-30", 2, 1, "Polynoms");
 
 -- Note
