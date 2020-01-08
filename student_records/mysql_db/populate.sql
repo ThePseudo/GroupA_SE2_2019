@@ -130,11 +130,11 @@ VALUES
 INSERT INTO homework
     (course_id, class_id, description, date_hw)
 VALUES
-    (1, 1, "Study pages 1-2", "2019-09-29");
+    (1, 1, "Ex 2-3 pag 15", "2019-09-29");
 INSERT INTO homework
     (course_id, class_id, description, date_hw)
 VALUES
-    (2, 11, "Study pages 5-6-7", "2019-09-30");
+    (2, 11, "Ex 1 pag 10", "2019-09-30");
 INSERT INTO homework
     (course_id, class_id, description, date_hw)
 VALUES
@@ -147,33 +147,28 @@ INSERT INTO homework
     (course_id, class_id, description, date_hw)
 VALUES
     (5, 12, "Study pages 30-33", "2019-12-05");
-
--- Path: Angelo Rosso -> Science -> materials and homeworks
 INSERT INTO homework
     (course_id, class_id, description, date_hw)
 VALUES
-    (3, 2, "Study pages 5-6-7", "2019-10-17");
+    (6, 9, "Study pages 5-6-7", "2019-10-22");
 INSERT INTO homework
     (course_id, class_id, description, date_hw)
 VALUES
-    (3, 2, "Ex 1 pag 12", "2019-10-17");
-
--- Material (TODO: see again links)
-INSERT INTO material
-    (course_id, class_id, description, link, date_mt)
-VALUES
-    (3, 2, "questo è un test per vedere come si comporta la tabella con stringhe lunghe", "/upload/text.txt", '2019-9-12');
+    (7, 15, "Study pages 12-14", "2019-12-18");
 
 -- Mark
 INSERT INTO mark
     (student_id, course_id, score, date_mark, period_mark,mark_subj,descr_mark_subj,type_mark_subj)
 VALUES
-    (1, 3, 6, '2019-9-10', 1, 'Science 1', '3 domande', 'Other'),
-    (1, 4, 8, '2019-9-11', 2, 'Chim 1', '3 domande', 'Other'),
-    (1, 3, 10, '2019-9-12', 1, 'Science 1', '3 domande', 'Other'),
-    (2, 3, 10, '2019-9-12', 1, 'Science 1', '3 domande', 'Other'),
-    (2, 3, 6, '2019-9-12', 1, 'Science 1', '3 domande', 'Oral');
-
+    (1, 1, 6, '2019-10-06', 1, 'math 1', '3 questions', 'Written'),
+    (2, 2, 8, '2019-10-11', 2, 'eng 1', '4 questions', 'Oral'),
+    (3, 3, 10, '2019-09-28', 1, 'history 1', '3 questions', 'Oral'),
+    (4, 4, 9, '2019-12-12', 2, 'geography 2', '2 questions', 'Written'),
+    (6, 5, 7, '2019-12-16', 1, 'science 2', '3 questions', 'Oral');
+    (1, 6, 6, '2019-09-22', 2, 'art 1', 'practice test', 'Other'),
+    (2, 7, 8, '2019-09-29', 1, 'music 1', 'practice test', 'Other'),
+    (3, 8, 9, '2019-11-15', 1, 'run', 'test 1000m', 'Other'),
+    
 -- General communication
 INSERT INTO General_Communication
     (communication, comm_date)
