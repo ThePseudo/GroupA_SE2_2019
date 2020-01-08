@@ -827,6 +827,8 @@ router.route("/class/:classid/course/:courseid/upload_file").get((req, res) => {
             fullName: fullName,
             flag_ok: flag_ok,
             message: message,
+            className: className,
+            courseName: courseName,
             upload_file_array: upload_file_array
         });
     })
