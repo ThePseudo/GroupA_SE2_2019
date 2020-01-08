@@ -65,7 +65,7 @@ INSERT INTO course
 VALUES
     ('Mathematics', 'FF0000'),
     ('English', '008080'),
-    ('History', '0000FF'),
+    ('History', '5b4ce0'),
     ('Geography', '00FFFF'),
     ('Science', '00FF00'),
     ('Art', '008000'),
@@ -83,9 +83,15 @@ VALUES
 INSERT INTO topic
     ( topic_date, id_class, id_course, description)
 VALUES
-    ("2019-09-29", 1, 1, "Monoms"),
-    ("2019-09-29", 7, 1, "Monoms"),
-    ("2019-09-30", 2, 1, "Polynoms");
+    ("2019-09-29", 1, 1, "numbers"),
+    ("2019-12-10", 6, 1, "addition"),
+    ("2019-09-30", 11, 2, "letters"),
+    ("2019-10-15", 2, 3, "ancient egyptian"),
+    ("2019-11-15", 10, 4, "china"),
+    ("2019-12-05", 12, 5, "trees"),
+    ("2019-10-22", 9, 6, "Florence"),
+    ("2019-12-18", 15, 7, "classic"),
+    ("2019-10-30", 3, 8, "basket");
 
 -- Note
 INSERT INTO note
