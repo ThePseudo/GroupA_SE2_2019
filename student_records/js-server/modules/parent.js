@@ -163,11 +163,7 @@ router.get("/:studentID/marks", (req, res) => {
 router.get("/:studentID/show_courses", (req, res) => {
     var course_hours = [];
     var coursesMap = [];
-    var date = new Date();
-    var year = date.getFullYear();
-    if (date.getMonth() < 9) { // before august
-        year--;
-    }
+    var year = myInterface.getCurrentYear();
 
     var sql = ` SELECT first_name, last_name, teacher.id as teacher_id, course_name, course.id as course_id,color,year
                 FROM course, teacher_course_class as tcc, teacher
