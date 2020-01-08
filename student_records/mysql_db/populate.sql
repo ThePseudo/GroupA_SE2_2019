@@ -173,20 +173,42 @@ VALUES
 INSERT INTO General_Communication
     (communication, comm_date)
 VALUES
-    ("2 million euros for a 5 years grant at Politecnico di Torino to pave new routes for the design of innovative materials with various technological applications. Giovanni Maria Pavan has been awarded a prestigious European Research Council (ERC) Consolidator Grant with his research project DYNAPOL - Modeling approaches toward bioinspired dynamic materials", '2019-11-26'),
-    ("In order to raise awareness inside our University on the wide variation of this concept, adv. Arianna Enrichens, Politecnico Confidential Counsellor, prepared a short video to inform the community about verbal violence on the web as well as on social media.o", '2019-11-26'),
-    ("See the pdf on site", '2019-11-27');
+    ("See the pdf on site", '2019-10-27'),
+    ("2 million euros for a 5 years grant at Politecnico di Torino to pave new routes for the design of innovative materials with various technological applications. Giovanni Maria Pavan has been awarded a prestigious European Research Council (ERC) Consolidator Grant with his research project DYNAPOL - Modeling approaches toward bioinspired dynamic materials", '2019-11-20'),
+    ("In order to raise awareness inside our University on the wide variation of this concept, adv. Arianna Enrichens, Politecnico Confidential Counsellor, prepared a short video to inform the community about verbal violence on the web as well as on social media.o", '2019-11-26');
 
 
 -- Teacher-course-class
 INSERT INTO teacher_course_class
     (teacher_id, course_id, class_id, year)
 VALUES
-    (1, 1, 1, 2019),
-    (1, 3, 1, 2019),
-    (1, 3, 2, 2019),
-    (2, 4, 2, 2019),
-    (2, 5, 1, 2019);
+    -- teacher 1
+    (1, 1, 1, 2019), -- math
+    (1, 1, 2, 2019),
+    (1, 1, 3, 2019),
+    (1, 5, 1, 2019), -- science
+    (1, 5, 2, 2019),
+    (1, 5, 3, 2019),
+    -- teacher 2
+    (2, 2, 3, 2019), -- english
+    (2, 2, 4, 2019),
+    (2, 2, 5, 2019),
+    (2, 3, 3, 2019), -- history
+    (2, 3, 4, 2019),
+    (2, 3, 5, 2019),
+    -- teacher 3
+    (3, 4, 8, 2019), -- geog
+    (3, 4, 9, 2019),
+    (3, 4, 10, 2019),
+    (3, 6, 8, 2019), -- art
+    (3, 6, 9, 2019),
+    (3, 6, 10, 2019),
+    -- teacher 4
+    (4, 8, 11, 2019), -- p.e.
+    (4, 8, 12, 2019),
+    (4, 8, 13, 2019),
+    (4, 8, 14, 2019),
+    (4, 8, 15, 2019);
 
 -- timetable
 INSERT INTO timetable
