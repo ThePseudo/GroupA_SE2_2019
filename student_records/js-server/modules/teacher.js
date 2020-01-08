@@ -886,4 +886,98 @@ router.get("/class/:classid/course/:courseid/class_timetable", (req, res) => {
     });
 });
 
+router.get("/class/:classid/course/:courseid/timeslot_meeting", (req, res) => {
+    var year = myInterface.getCurrentYear();
+    var course_hours = [];
+    var classCoursesMap = [];
+    
+    var sql = ` SELECT course_id, class_id, course_name, class_name FROM class, course, teacher_course_class
+                WHERE course_id = course.id AND class_id = class.id
+                AND year = ? AND teacher_id = ? `;
+
+    con.query(sql, [year, teacherID], (err, rows) => {
+        if (err) {
+            res.end("Database problem: " + err);
+            return;
+        }
+        
+        for (var i = 0; i < rows.length; ++i) {
+
+            var classCourse = {
+                classid: rows[i].class_id,
+                courseid: rows[i].course_id,
+                className: rows[i].class_name,
+                courseName: rows[i].course_name
+            }
+            classCoursesMap[rows[i].course_id] = classCourse;
+        }
+
+        sql = ` SELECT  * 
+                FROM    teacher_timeslot_meeting as ttm 
+                WHERE   teacher_id = ?
+                ORDER BY day, start_time_slot `; 
+
+        let params = [teacherID]
+        con.query(sql, params, (err, rows) => {
+            if (err) {
+                res.end("DB error: " + err);
+                return;
+            }
+            var i = 0;
+            for (var timeslot = 0; timeslot < 5; timeslot++) {
+                course_hours[timeslot] = [];
+                for (var day = 0; day < 5; day++) {
+                    if (i < rows.length) {
+                        if (rows[i].start_time_slot == timeslot + 1 && rows[i].day == day + 1) {
+                            course_hours[timeslot][day] = {
+                                classCourse: classCoursesMap[rows[i].course_id],
+                                available: 1
+                            }
+                            i++;
+                        }
+                    }
+                    //console.log(course_hours[timeslot][day]);
+                }
+            }
+
+            sql = ` SELECT tt.start_time_slot as start_time_slot,tt.class_id as class_id, tt.course_id as course_id, tt.day as day 
+            FROM timetable as tt ,teacher_course_class as tcc 
+            WHERE tt.course_id = tcc.course_id AND tt.class_id = tcc.class_id AND tt.teacher_id = tcc.teacher_id AND tt.teacher_id = ?
+            ORDER BY tt.day,tt.start_time_slot `;
+
+            let params = [teacherID]
+            con.query(sql, params, (err, rows) => {
+                if (err) {
+                    res.end("DB error: " + err);
+                    return;
+                }
+                var i = 0;
+                for (var timeslot = 0; timeslot < 5; timeslot++) {
+                    course_hours[timeslot] = [];
+                    for (var day = 0; day < 5; day++) {
+                        course_hours[timeslot][day] = {available: 1}
+                        if (i < rows.length) {
+                            if (rows[i].start_time_slot == timeslot + 1 && rows[i].day == day + 1) {
+                                course_hours[timeslot][day] = {
+                                    classCourse: classCoursesMap[rows[i].course_id],
+                                    available: 0
+                                }
+                                i++;
+                            }
+                        }
+                        //console.log(course_hours[timeslot][day]);
+                    }
+                } 
+                res.render("../pages/teacher/teacher_timeslot_meeting.pug", {
+                    fullName: fullName,
+                    class_courses: classCoursesMap,
+                    course_hours: course_hours,
+                    start_time_slot: start_time_slot
+                });
+            });
+        });
+    });
+});
+
+
 module.exports = router;
