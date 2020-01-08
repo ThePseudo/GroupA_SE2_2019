@@ -169,7 +169,7 @@ VALUES
     (2, 7, 8, '2019-09-29', 1, 'music 1', 'practice test', 'Other'),
     (3, 8, 9, '2019-11-15', 1, 'run', 'test 1000m', 'Other');
     
--- General communication -- DA QUIIIIIIIIIII!
+-- General communication
 INSERT INTO General_Communication
     (communication, comm_date)
 VALUES
@@ -213,13 +213,31 @@ VALUES
 -- timetable
 INSERT INTO timetable
     (start_time_slot, teacher_id, course_id, class_id,day)
-VALUES
-    (1,1,1,1,1),
-    (1,1,3,1,2),
-    (1,1,3,1,3),
-    (4,1,3,1,3),
-    (3,1,3,2,3),
-    (2,2,4,2,1),
-    (2,2,4,2,2),
-    (4,2,5,1,5);
-
+VALUES  -- example: (4,2,5,1,5),
+    -- teacher 1
+    (1, 1, 1, 1, 1), -- math
+    (2, 1, 1, 2, 1),
+    (3, 1, 1, 3, 1),
+    (5, 1, 5, 1, 2), -- science
+    (5, 1, 5, 2, 3),
+    (5, 1, 5, 3, 4),
+    -- teacher 2
+    (3, 2, 2, 3, 2), -- english
+    (4, 2, 2, 4, 2),
+    (5, 2, 2, 5, 2),
+    (2, 2, 3, 3, 3), -- history
+    (2, 2, 3, 4, 4),
+    (2, 2, 3, 5, 5),
+    -- teacher 3
+    (2, 3, 4, 8, 3), -- geog
+    (3, 3, 4, 9, 3),
+    (4, 3, 4, 10, 3),
+    (1, 3, 6, 8, 1), -- art
+    (2, 3, 6, 9, 4),
+    (3, 3, 6, 10, 5),
+    -- teacher 4
+    (1, 4, 8, 11, 1), -- p.e.
+    (2, 4, 8, 12, 1),
+    (4, 4, 8, 13, 3),
+    (4, 4, 8, 14, 4),
+    (4, 4, 8, 15, 5);
