@@ -76,7 +76,7 @@ INSERT INTO note
 VALUES
     (1, 1, "2019-09-30", "L'alunno fa rumore in classe", 1),
     (1, 2, "2019-09-29", "L'alunno fa ANCORA rumore in classe", 0),
-    (1, 1, "2019-09-29", "L'alunno fa ANCORA rumore 3 ora provo a mettere una stringa lunga, ancora piu' lunga vediamo ora", 0),
+    (1, 1, "2019-09-29", "L'alunno fa ANCORA rumore 3 ora provo a mettere una stringa lunga, ancora più lunga vediamo ora", 0),
     (1, 2, "2019-09-29", "L'alunno fa ANCORA rumore 4", 0),
     (1, 2, "2019-09-29", "L'alunno fa ANCORA rumore 5", 1),
     (2, 1, "2019-09-29", "L'alunno fa ANCORA rumore 4", 0),

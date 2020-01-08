@@ -26,12 +26,12 @@ const start_time_slot = ["08:00", "09:00", "10:00", "11:00", "12:00"];
 
 router.use(/\/.*/, function (req, res, next) {
     fullName = req.session.user.first_name + " " + req.session.user.last_name;
+    parentID = req.session.user.id;
     con = myInterface.DBconnect();
     next();
 });
 
 router.use('/:id', function (req, res, next) {
-    parentID = req.session.user.id;
     studentID = req.params.id;
     if (!isNaN(studentID)) {
         let sql = "SELECT first_name, last_name, class_id, class_name " +
@@ -42,7 +42,11 @@ router.use('/:id', function (req, res, next) {
                 return;
             }
             if (rows.length < 1) {
+<<<<<<< HEAD
                 res.render("../pages/parent/parent_nothingtoshow.pug");
+=======
+                myInterface.sendUnauthorized(res);
+>>>>>>> pseudo-branch
                 return;
             }
             classID = rows[0].class_id;
@@ -65,7 +69,7 @@ router.use("/:studentID/course/:courseID", function (req, res, next) {
                 return;
             }
             if (rows.length < 1) {
-                res.end("The subject doesn't exist");
+                myInterface.sendUnauthorized(res);
                 return;
             }
             courseName = rows[0].course_name;
@@ -164,11 +168,7 @@ router.get("/:studentID/marks", (req, res) => {
 router.get("/:studentID/show_courses", (req, res) => {
     var course_hours = [];
     var coursesMap = [];
-    var date = new Date();
-    var year = date.getFullYear();
-    if (date.getMonth() < 9) { // before august
-        year--;
-    }
+    var year = myInterface.getCurrentYear();
 
     var sql = ` SELECT first_name, last_name, teacher.id as teacher_id, course_name, course.id as course_id,color,year
                 FROM course, teacher_course_class as tcc, teacher
