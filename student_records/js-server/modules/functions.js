@@ -34,6 +34,17 @@ module.exports.checkItalianSSN = function (str) {
     return patt.test(str);
 }
 
+module.exports.getCurrentYear = function () {
+    var date = new Date();
+    if (date.getMonth() < 9) { // before august
+        year--;
+    }
+}
+
+module.exports.sendUnauthorized = function (res) {
+    res.end("Unauthorized user");
+}
+
 /* module.exports.checkEmailFormat = function(str){
     console.log(str);
     let reg = "/^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/";

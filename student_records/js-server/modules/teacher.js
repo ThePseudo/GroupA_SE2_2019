@@ -48,7 +48,7 @@ router.use("/class/:classid/course/:courseid",
                     return;
                 }
                 if (rows.length < 1) {
-                    res.end("This course does not exist");
+                    myInterface.sendUnauthorized(res);
                     return;
                 }
                 courseName = rows[0].course_name;
@@ -59,11 +59,24 @@ router.use("/class/:classid/course/:courseid",
                         return;
                     }
                     if (rows.length < 1) {
-                        res.end("This course does not exist");
+                        myInterface.sendUnauthorized(res);
                         return;
                     }
                     className = rows[0].class_name;
-                    next();
+                    sql = "SELECT teacher_id FROM teacher_course_class WHERE year = ? AND teacher_id = ? " +
+                        "AND course_id = ? AND class_id = ?";
+                    var year = myInterface.getCurrentYear();
+                    con.query(sql, [year, teacherID, courseID, classID], (err, rows) => {
+                        if (err) {
+                            res.end("DB error: " + err);
+                            return;
+                        }
+                        if (rows.length < 1) {
+                            myInterface.sendUnauthorized(res);
+                            return;
+                        }
+                        next();
+                    });
                 });
             });
         } else {
@@ -100,19 +113,15 @@ router.use("/class/:classid/course/:courseid/student/:studentid",
 );
 
 router.get("/teacher_home", (req, res) => { // T3
-    var date = new Date();
+    var date = myInterface.getCurrentYear();
     var year = date.getFullYear();
     var course_hours = [];
-
-    if (date.getMonth() < 9) { // before august
-        year--;
-    }
 
     var sql = ` SELECT course_id, class_id, course_name, class_name FROM class, course, teacher_course_class
                 WHERE course_id = course.id AND class_id = class.id
                 AND year = ? AND teacher_id = ? `;
 
-    con.query(sql, [year, req.session.user.id], (err, rows) => {
+    con.query(sql, [year, teacherID], (err, rows) => {
         if (err) {
             res.end("Database problem: " + err);
             return;
@@ -134,7 +143,7 @@ router.get("/teacher_home", (req, res) => { // T3
                 WHERE tt.course_id = tcc.course_id AND tt.class_id = tcc.class_id AND tt.teacher_id = tcc.teacher_id AND tt.teacher_id = ?
                 ORDER BY tt.day,tt.start_time_slot `;
 
-        let params = [req.session.user.id]
+        let params = [teacherID]
         con.query(sql, params, (err, rows, fields) => {
             if (err) {
                 res.end("DB error: " + err);
