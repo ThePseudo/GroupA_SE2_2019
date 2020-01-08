@@ -20,29 +20,44 @@ VALUES
 INSERT INTO parent
     (first_name, last_name,cod_fisc,email,password, first_access)
 VALUES
-    ("Alberto", "Rosso", "1111", "alberto.rosso@gmail.com", "$2a$10$0tXRERd11hkw3zKQQmFeTOAuUcMiI6/ThiMNvfMUvKmYkWkL0BRkO", 1),
-    ("Piero", "Fetta", "HDDRWU63L46D667M", "giorno@giovanna.com", "$2a$10$0tXRERd11hkw3zKQQmFeTOAuUcMiI6/ThiMNvfMUvKmYkWkL0BRkO", 1),
-    ("Jotaro", "Kujo", "DZJVSL56R55D763T", "marco@verdi.com", "$2a$10$0tXRERd11hkw3zKQQmFeTOAuUcMiI6/ThiMNvfMUvKmYkWkL0BRkO", 1);
+    ("Alberto", "Rossi", "1111", "alberto.rossi@gmail.com", "$2a$10$0tXRERd11hkw3zKQQmFeTOAuUcMiI6/ThiMNvfMUvKmYkWkL0BRkO", 1),
+    ("Stefania", "Lucci", "2222", "stefania.lucci@gmail.com", "$2a$10$0tXRERd11hkw3zKQQmFeTOAuUcMiI6/ThiMNvfMUvKmYkWkL0BRkO", 1),    
+    ("Pietro", "Gasparini", "HDDRWU63L46D667M", "pietro.gaspa@yahoo.com", "$2a$10$0tXRERd11hkw3zKQQmFeTOAuUcMiI6/ThiMNvfMUvKmYkWkL0BRkO", 1),
+    ("Alessia", "Ciani", "AC70A", "alessia70@gmail.com", "$2a$10$0tXRERd11hkw3zKQQmFeTOAuUcMiI6/ThiMNvfMUvKmYkWkL0BRkO", 1),
+    ("Jotaro", "Kujo", "DZJVSL56R55D763T", "jotaro77@hotmail.it", "$2a$10$0tXRERd11hkw3zKQQmFeTOAuUcMiI6/ThiMNvfMUvKmYkWkL0BRkO", 1),
+    ("Lucia", "Benzio", "LB75A", "lucia.benzio@hotmail.it", "$2a$10$0tXRERd11hkw3zKQQmFeTOAuUcMiI6/ThiMNvfMUvKmYkWkL0BRkO", 1);
 
 -- Student
 INSERT INTO student
     (first_name,last_name,cod_fisc,class_id,parent_1,parent_2)
 VALUES
-    ("Angelo", "Rosso", "NJRGTD35P14B145Z", 2, 1, 2),
-    ("Martino", "Arte", "RLIZFH80S05E249F", 2, 1, 2),
-    ("Martinella", "Leone", "JDKDMY59L04H816S", 3, 1, 2),
-    ("Serena", "Fetta", "BSOWTD48P60F492T", 3, 2, 3),
-    ("Francesca", "Fetta", "DVBGDD76L56E934Y", 1, 2, 3),
-    ("Alessandro", "Sardegna", "PPPGDD76L56E934Y",NULL, 2, 3),
-    ("Alessandra", "Pugliese", "AAAGDD76L56E934Y" ,NULL, 2, 3);
+    ("Angelo", "Rossi", "NJRGTD35P14B145Z", 1, 1, 2),
+    ("Martino", "Rossi", "RLIZFH80S05E249F", 8, 1, 2),
+    ("Giorgia", "Rossi", "JDKDMY59L04H816S", 10, 1, 2),
+    ("Serena", "Gasparini", "BSOWTD48P60F492T", 3, 3, 4),
+    ("Alessandro", "Gasparini", "PPPGDD76L56E934Y",NULL, 3, 4),
+    ("Francesca", "Kujo", "DVBGDD76L56E934Y", 12, 5, 6),
+    ("Alessandra", "Kujo", "AAAGDD76L56E934Y",NULL, 5, 6);
 
 -- Class
 INSERT INTO class
     (class_name)
 VALUES
     ("1A"),
+    ("2A"),
+    ("3A"),
+    ("4A"),
+    ("5A"),
     ("1B"),
-    ("1C");
+    ("2B"),
+    ("3B"),
+    ("4B"),
+    ("5B"),
+    ("1C"),
+    ("2C"),
+    ("3C"),
+    ("4C"),
+    ("5C");
 
 -- Course
 INSERT INTO course
