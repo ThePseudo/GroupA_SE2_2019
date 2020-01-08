@@ -52,9 +52,12 @@ router.get("/class_composition", (req, res) => {
         }
         var classlist = [];
         for (var i = 0; i < result.length; i++) {
+            var numClasses = result.length / 5;
+            var numClass = i % numClasses;
             var classitem = {
                 id: result[i].id,
                 class_name: result[i].class_name,
+                separator: !numClass
             }
             classlist[i] = classitem;
         }
