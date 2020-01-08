@@ -169,7 +169,7 @@ VALUES
     (2, 7, 8, '2019-09-29', 1, 'music 1', 'practice test', 'Other'),
     (3, 8, 9, '2019-11-15', 1, 'run', 'test 1000m', 'Other'),
     
--- General communication
+-- General communication -- DA QUIIIIIIIIIII!
 INSERT INTO General_Communication
     (communication, comm_date)
 VALUES
