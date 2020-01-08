@@ -28,7 +28,7 @@ INSERT INTO student
 VALUES
     ("Angelo", "Rosso", "NJRGTD35P14B145Z", 2, 1, 2),
     ("Martino", "Arte", "RLIZFH80S05E249F", 2, 1, 2),
-    ("Martinella", "Leone", "JDKDMY59L04H816S", 3, 1, 2),
+    ("Martinella", "Leone", "JDKDMY59L04H816S", NULL, 1, 2),
     ("Serena", "Fetta", "BSOWTD48P60F492T", 3, 2, 3),
     ("Francesca", "Fetta", "DVBGDD76L56E934Y", 1, 2, 3),
     ("Alessandro", "Sardegna", "PPPGDD76L56E934Y",NULL, 2, 3),
