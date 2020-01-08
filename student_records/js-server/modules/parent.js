@@ -163,7 +163,7 @@ router.get("/:studentID/marks", (req, res) => {
 
 router.get("/:studentID/show_courses", (req, res) => {
     var course_hours = [];
-    var coursesMap = [];
+    var coursesArray = [];
     var year = myInterface.getCurrentYear();
 
     var sql = ` SELECT first_name, last_name, teacher.id as teacher_id, course_name, course.id as course_id,color,year
@@ -177,15 +177,17 @@ router.get("/:studentID/show_courses", (req, res) => {
             return;
         }
 
-        for (var i = 0; i < rows.length; ++i) {
+        for (var i = 0; i < rows.length; i++) {
             var course = {
-                courseid: rows[i].course_id,
+                course_id: rows[i].course_id,
                 courseName: rows[i].course_name,
                 color: rows[i].color,
                 teacherFullName: rows[i].last_name + " " + rows[i].first_name
             }
-            coursesMap[rows[i].course_id] = course;
+            coursesArray[i] = course;
         }
+
+        var len = coursesArray.length;
 
         //console.log(coursesMap);
         sql = ` SELECT  tcc.teacher_id as teacher_id, tt.start_time_slot as start_time_slot,tt.class_id as class_id, tt.course_id as course_id, tt.day as day 
@@ -196,29 +198,30 @@ router.get("/:studentID/show_courses", (req, res) => {
                     ORDER BY tt.day,tt.start_time_slot `
 
         params = [year, classID]
-        con.query(sql, params, (err, rows, fields) => {
+        con.query(sql, params, (err, rows) => {
             if (err) {
                 res.end("DB error: " + err);
                 return;
             }
-            var i = 0;
+
             for (var timeslot = 0; timeslot < 5; timeslot++) {
                 course_hours[timeslot] = [];
                 for (var day = 0; day < 5; day++) {
                     course_hours[timeslot][day] = {}
-                    if (i < rows.length) {
-                        if (rows[i].start_time_slot == timeslot + 1 && rows[i].day == day + 1) {
-                            course_hours[timeslot][day] = coursesMap[rows[i].course_id];
-                            i++;
-                        }
+                }
+            }
+
+            for(let i= 0;i<rows.length;i++){
+                for(var j=0;j<len;j++){
+                    if(coursesArray[j].course_id==rows[i].course_id){
+                        course_hours[rows[i].start_time_slot-1][rows[i].day-1] = coursesArray[j];
                     }
-                    //console.log(course_hours[timeslot][day]);
                 }
             }
 
             con.end();
             res.render('../pages/parent/parent_courselist.pug', {
-                courses: coursesMap,
+                courses: coursesArray,
                 className: className,
                 childID: studentID,
                 fullName: fullName,

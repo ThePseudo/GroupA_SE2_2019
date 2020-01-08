@@ -34,7 +34,7 @@ VALUES
     ("Martino", "Rossi", "RLIZFH80S05E249F", 1, 1, 2),
     ("Angelo", "Rossi", "NJRGTD35P14B145Z", 3, 1, 2),
     ("Giorgia", "Rossi", "JDKDMY59L04H816S", 15, 1, 2),
-    ("Serena", "Gasparini", "BSOWTD48P60F492T", 7, 3, 4),
+    ("Serena", "Gasparini", "BSOWTD48P60F492T", 8, 3, 4),
     ("Alessandro", "Gasparini", "PPPGDD76L56E934Y",NULL, 3, 4),
     ("Francesca", "Kujo", "DVBGDD76L56E934Y", 14, 5, 6),
     ("Alessandra", "Kujo", "AAAGDD76L56E934Y",NULL, 5, 6);

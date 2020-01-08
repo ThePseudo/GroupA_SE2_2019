@@ -31,7 +31,7 @@ html
         h2(class='title2') Courses
       for course in courses
         if course
-          +subjectButton(course.courseid, course.courseName, "#"+course.color)
+          +subjectButton(course.course_id, course.courseName, "#"+course.color)
 
     div(class='container sidebarContainer')
       //- Time table
