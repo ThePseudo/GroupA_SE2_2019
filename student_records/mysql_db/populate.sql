@@ -79,20 +79,6 @@ VALUES
     ("Giovanni", "Ghirotti", "GG72A", "giova.ghirotti@yahoo.com", "$2a$10$0tXRERd11hkw3zKQQmFeTOAuUcMiI6/ThiMNvfMUvKmYkWkL0BRkO"),
     ("Arturo", "Marzano", "AM68A", "arturo.marzano@gmail.com", "$2a$10$0tXRERd11hkw3zKQQmFeTOAuUcMiI6/ThiMNvfMUvKmYkWkL0BRkO");
 
--- Topic
-INSERT INTO topic
-    ( topic_date, id_class, id_course, description)
-VALUES
-    ("2019-09-29", 1, 1, "numbers"),
-    ("2019-12-10", 6, 1, "addition"),
-    ("2019-09-30", 11, 2, "letters"),
-    ("2019-10-15", 2, 3, "ancient egyptian"),
-    ("2019-11-15", 10, 4, "china"),
-    ("2019-12-05", 12, 5, "trees"),
-    ("2019-10-22", 9, 6, "Florence"),
-    ("2019-12-18", 15, 7, "classic"),
-    ("2019-10-30", 3, 8, "basket");
-
 -- Note
 INSERT INTO note
     (student_id, teacher_id, note_date, motivation, justified)
@@ -126,12 +112,41 @@ INSERT INTO absence
     (student_id, date_ab, absence_type, justified)
 VALUES(6, "2019-11-02", "Late entry", 0);
 
+-- Topic
+INSERT INTO topic
+    ( topic_date, id_class, id_course, description)
+VALUES
+    ("2019-09-29", 1, 1, "numbers"),
+    ("2019-12-10", 6, 1, "addition"),
+    ("2019-09-30", 11, 2, "letters"),
+    ("2019-10-15", 2, 3, "ancient egyptian"),
+    ("2019-11-15", 10, 4, "china"),
+    ("2019-12-05", 12, 5, "trees"),
+    ("2019-10-22", 9, 6, "Florence"),
+    ("2019-12-18", 15, 7, "classic"),
+    ("2019-10-30", 3, 8, "basket");
 
 -- Homework
 INSERT INTO homework
     (course_id, class_id, description, date_hw)
 VALUES
-    (1, 1, "Study pages 5-6-7", "2019-10-17");
+    (1, 1, "Study pages 1-2", "2019-09-29");
+INSERT INTO homework
+    (course_id, class_id, description, date_hw)
+VALUES
+    (2, 11, "Study pages 5-6-7", "2019-09-30");
+INSERT INTO homework
+    (course_id, class_id, description, date_hw)
+VALUES
+    (3, 2, "Study pages 10-12", "2019-10-15");
+INSERT INTO homework
+    (course_id, class_id, description, date_hw)
+VALUES
+    (4, 10, "Study pages 20-21", "2019-11-15");
+INSERT INTO homework
+    (course_id, class_id, description, date_hw)
+VALUES
+    (5, 12, "Study pages 30-33", "2019-12-05");
 
 -- Path: Angelo Rosso -> Science -> materials and homeworks
 INSERT INTO homework
