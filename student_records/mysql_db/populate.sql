@@ -64,12 +64,12 @@ INSERT INTO course
     (course_name, color)
 VALUES
     ('Mathematics', 'FF0000'),
-    ('English', '008080')
+    ('English', '008080'),
     ('History', '0000FF'),
-    ('Geography', '00FFFF');
+    ('Geography', '00FFFF'),
     ('Science', '00FF00'),
     ('Art', '008000'),
-    ('Music', '09a0ba')
+    ('Music', '09a0ba'),
     ('Physical Education', '099e22');
 
 -- Admin
