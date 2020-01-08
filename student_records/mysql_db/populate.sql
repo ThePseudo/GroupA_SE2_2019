@@ -164,10 +164,10 @@ VALUES
     (2, 2, 8, '2019-10-11', 2, 'eng 1', '4 questions', 'Oral'),
     (3, 3, 10, '2019-09-28', 1, 'history 1', '3 questions', 'Oral'),
     (4, 4, 9, '2019-12-12', 2, 'geography 2', '2 questions', 'Written'),
-    (6, 5, 7, '2019-12-16', 1, 'science 2', '3 questions', 'Oral');
+    (6, 5, 7, '2019-12-16', 1, 'science 2', '3 questions', 'Oral'),
     (1, 6, 6, '2019-09-22', 2, 'art 1', 'practice test', 'Other'),
     (2, 7, 8, '2019-09-29', 1, 'music 1', 'practice test', 'Other'),
-    (3, 8, 9, '2019-11-15', 1, 'run', 'test 1000m', 'Other'),
+    (3, 8, 9, '2019-11-15', 1, 'run', 'test 1000m', 'Other');
     
 -- General communication
 INSERT INTO General_Communication
