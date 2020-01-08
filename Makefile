@@ -12,7 +12,4 @@ recover_run:
     cd ..
 fg_run:
     cd student_records
-    docker-compose down
-    docker-compose build
-    docker-compose up
-    cd ..
+    docker-compose downche
