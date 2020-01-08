@@ -4,12 +4,19 @@
 - var user = "parent"
 - var active = "Show course homeworks"
 
-//- variables used: student_name, course, student_hws
+//- variables used: student_name, course, student_hws {date, description}
 
-mixin rowMark(date, desc)
+mixin rowHomeworks(date, desc)
   tr(class="table-row table-row-base")
-    td(style="width: 30%;")= (date.getDate() + "/" + (date.getMonth()+1) + "/" + date.getFullYear())
-    td(style="width: 70%; text-align: left; padding-left: 20px;")= desc
+    td(style="width: 20%; text-align: left; padding-left: 20px;")= date
+    td(style="width: 80%; text-align: left; padding-left: 20px;")= desc
+
+mixin rowMaterials(date, title, link)
+  tr(class="table-row table-row-base")
+    td(style="width: 20%; text-align: left; padding-left: 20px;")= date
+    td(style="width: 60%; text-align: left; padding-left: 20px;")= title
+    td(style="width: 20%; text-align: left; padding-left: 20px;")
+      a(href="/download/"+link) Link
 
 doctype html
 html
@@ -21,15 +28,31 @@ html
       a(href="../"+courseID class="noLinkTitle backButton")
         span(class="glyphicon glyphicon-menu-left backButton")
       div(class='row')
-        h1(class='title') #{student_name}'s #{course} homeworks
+        h1(class='title') #{student_name}
+      div(class='row')
+        h2(class='title2') #{courseName} material
       div(class='row')
         div(class="col-lg-2 col-sm-2")
         div(class="col-lg-8 col-sm-12 col-xs-12" style='align-content:center;')
-          table(style="width:100%; text-align:center; align-content:center" class="table table-bordered")
-            tr(class='table-row-base')
-              th Date
-              th Homework
-            for hw in student_hws
-              +rowMark(hw.date, hw.description)
-
-              //- ADD DOWNLOAD
+          table(style="width:100%; text-align:center; align-content:center" class="table table-scroll")
+            thead
+              tr(class='table-row-base')
+                th(style="text-align: left; width: 20%") Date
+                th(style="text-align: left; width: 60%") Title
+                th(style="text-align: left; width: 20%") Link
+            tbody
+              for mt in course_mtw
+                +rowMaterials(mt.date, mt.description, mt.link)
+      div(class='row')
+        h2(class='title2') #{courseName} homeworks
+      div(class='row' style="margin-top: 16px;")
+        div(class="col-lg-2 col-sm-2")
+        div(class="col-lg-8 col-sm-12 col-xs-12" style='align-content:center;')
+          table(style="width:100%; text-align:center; align-content:center" class="table table-scroll")
+            thead
+              tr(class='table-row-base')
+                th(style="text-align: left; width: 20%") Date
+                th(style="text-align: left; width: 80%") Description
+            tbody
+              for hw in student_hws
+                +rowHomeworks(hw.date, hw.description)

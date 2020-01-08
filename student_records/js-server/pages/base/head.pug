@@ -1,10 +1,12 @@
 head
   case page
     when "" 
-      title BB
+      title WebSchool
     default
-      title BB - #{page}
-  // - Bootstrap
+      title WebSchool - #{page}
+  meta(name="viewport" content="width=device-width, user-scalable=no. initial-scale=1")
+  meta(charset="UTF-8")
+  //- Bootstrap
   link(rel='stylesheet', href='https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css')
   script(src='https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js')
   script(src='https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js')

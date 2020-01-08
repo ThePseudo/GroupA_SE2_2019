@@ -4,7 +4,7 @@
 - var user = "parent"
 - var active = ""
 
-//- Uses variable: courseName, childID
+//- Uses variable: courseName, childID, courseID, className
 
 mixin button(name, href)
   div(class="row" style="margin : 20px")
@@ -23,9 +23,9 @@ html
       a(href="../show_courses" class="noLinkTitle backButton")
         span(class="glyphicon glyphicon-menu-left backButton")
       div(class="row")
-        h1(class='title') #{courseName}
+        h1(class='title') #{studentName}
       div(class="row")
-        h2(class = 'title2') What do you want to see?
+        h2(class = 'title2') #{className} - #{courseName}
       +button("Marks", "marks")
       +button("Topics", "topics")
       +button("Material and homeworks", "material_homework")

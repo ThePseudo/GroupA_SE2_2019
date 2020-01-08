@@ -1,0 +1,113 @@
+//- Those variables should be in every page. ALWAYS PASS childID, fullName
+- var page = "Notes and absences"
+- var loggedIn = true
+- var user = "parent"
+- var active = "Notes and absences"
+
+//- Variables used: note_array[], absence_array[] {date, type, justified}, studentName
+
+mixin rowNote(teacher, date, motivation,justified,teacherID,teacherEmail)
+  tr(class="table-row table-row-base")
+    td(class="col-xs-2" style="text-align:left;")= teacher
+    td(class="col-xs-2" style="text-align:left;")= date
+    td(class="col-lg-10" style="text-align:left;")= motivation
+    if(justified)   
+      td(style="text-align:left; margin-left:-8px" class="col-xs-2 green")
+    else
+      td(style="text-align:left;" class="col-xs-2 red")
+    //-Add route for page slot of the teacher
+    td(style="text-align:left;" class="col-xs-3")
+      button(class='btn blockButton')
+
+    //-td(style="text-align:left;" class="col-xs-3")
+      script.
+        $(document).ready(function(){
+          $("#emailModal").on("show.bs.modal", function(event){
+          var button = $(event.relatedTarget)
+          var email = button.data("email")
+          var modal = $(this)
+          modal.find(".modal-body #teacher_email").val(email)
+          modal.find(".modal-body #email_body").val("")
+          })
+        })     
+      button(class='btn blockButton' href="javascript:void(0)" data-toggle="modal" data-target="#emailModal" data-email = teacherEmail)
+
+
+
+mixin rowAbsence(date, type, justified, id)
+  tr(class="table-row table-row-base")
+    td(style="width:40%; text-align:left;")= date
+    td(style="width:40%; text-align:left;")= type
+    if justified
+      td(style="width:20%; text-align:left;" class="green")
+    else
+      td(style="width:20%; text-align:left;" class="red")
+
+doctype html
+html
+  include ../base/head.pug
+  body
+    include ../base/navbar.pug
+    include ../base/sidebar.pug
+    div(class='container sidebarContainer')
+      div(class='row')
+        h1(class='title') #{studentName}
+      div(class='row')
+        h2(class='title2') Notes
+      div(class='row' style="margin-top:16px;")
+        div(class="col-md-1")
+        div(class="col-md-10 col-xs-12" style='align-content:center;')
+          table(style="width:100%; text-align:center; align-content:center" class="table table-scroll")
+            thead
+              tr(class='table-row-base' style="width:100%")
+                th(class="col-xs-2" style="text-align:left;") Teacher
+                th(class="col-xs-2" style="text-align:left;") Date
+                th(class="col-lg-10" style="text-align:left;") Motivation
+                th(class="col-xs-2" style="text-align:left;") Justified
+                th(class="col-xs-3" style="text-align:left;") Arrange appointment
+                //-th(class="col-xs-3" style="text-align:left;") Contact 
+            tbody
+              for note in note_array
+                +rowNote(note.teacherFullName, note.date, note.motivation, note.justified, note.teacherID, note.teacherEmail)
+      //- List of absences
+      div(class="row")
+        h2(class="title2") Absences
+      div(class="row")
+        div(class="col-md-1")
+        div(class="col-md-10 col-xs-12" style='align-content:center;')
+          table(style="width:100%; text-align:center; align-content:center" class="table table-scroll")
+            thead
+              tr(class='table-row-base' style="width:100%")
+                th(style="width:40%; text-align:left;") Date
+                th(style="width:40%; text-align:left;") Absence type
+                th(style="width:20%; text-align:left;") Justified
+            tbody
+              for absence in absence_array
+                +rowAbsence(absence.date, absence.type, absence.justified)
+
+//- Modal for PopUp email send
+//-#emailModal(class="modal fade" role = "dialog")
+  div(class="modal-dialog")
+    div(class="modal-content")
+      div(class="modal-header")
+        button.close(type="button", data-dismiss="modal") ×
+        h4(class="modal-title") Contacts teacher
+      div(class="modal-body")
+        div#msgdiv.alert.alert-danger(style="display:none")
+
+        form(method="post")
+          div(class='form-group')
+            label(for="email") teacher's email:
+            input(type="email" readonly class='form-control' id='teacher_email')
+
+          div(class='form-group')
+            label(for="subject") Subject:
+            input(type="text" readonly class='form-control' id="subject" name="subject" value = "Contact Request")
+
+          div(class='form-group')
+            label(for="text_msg") Body:
+            textarea(class = "form-control" rows="5" placeholder="Email body" id = "email_body" name = "email_body")   
+
+          button#btnemail.btn.btn-default(type="button" ) Send Email
+      div(class="modal-footer")
+        button(class = "btn btn-default" data-dismiss="modal") Close

@@ -1,0 +1,24 @@
+//- Those variables should be in every page. Always pass fullName
+- var page = "Absences"
+- var loggedIn = true
+- var user = "teacher"
+- var active = "Insert attendance"
+
+//- Variables used: courseName, className, todayDate
+
+doctype html
+html
+  include ../base/head.pug
+  body
+    include ../base/navbar.pug
+    include ../base/sidebar.pug
+    script
+      include teacher_insertabsence_scripts.js
+    div(class="container sidebarContainer")
+      div(class="row")
+        div(class="col-xs-12")
+          h1(class = 'title') #{className}
+      div(class="row")
+        div(class="col-xs-12")
+          h2(class="title2") Student attendance on #{todayDate}
+      div(class="row" id="content")

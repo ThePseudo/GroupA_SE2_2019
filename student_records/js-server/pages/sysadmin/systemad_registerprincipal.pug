@@ -1,8 +1,10 @@
-// Those variables should be in every page
-- var page = "Enroll parent"
-- var loggedIn = false;
-- var user = "admin"
-- var active = "Enroll parent"
+//- Those variables should be in every page
+- var page = "Register principal"
+- var loggedIn = true;
+- var user = "sysadmin"
+- var active = "Register principal"
+
+//- Varialbes used: msgClass, msg
 
 doctype html
 html
@@ -13,38 +15,37 @@ html
     div(class='container')
       div(class='row')
         h1(class='title') Enroll principal
-      form(method='POST' action='/reg_principal')
-        div(class='row' style='margin-top: 40px;')
-          div(class='col-sm-4')
-          div(class='col-sm-4')
-            div.form-group
-              label(for='name') First Name:
-              input(type='text' placeholder='First Name' name='name' class="form-control")
-        div(class='row')
-          div(class='col-sm-4')
-          div(class='col-sm-4')
-            div.form-group
-              label(for='surname') Last Name:
-              input(type='text' placeholder='Last Name' name='surname' class="form-control")
-        div(class='row')
-          div(class='col-sm-4')
-          div(class='col-sm-4')
-            div.form-group
-              label(for='SSN') SSN:
-              input(type='text' placeholder='SSN' name='SSN' class="form-control")
-        div(class='row')
-          div(class='col-sm-4')
-          div(class='col-sm-4')
-            div.form-group
-              label(for='Email') Email:
-              input(type='text' placeholder='Email' name='email' class="form-control")
-        div(class='row')
-          div(class='col-sm-4')
-          div(class='col-sm-4')
-            div.form-group
-              label(for='Pwd') Password:
-              input(type='text' placeholder='Password' name='password' class="form-control")
-        div(class='row')
-          div(class='col-sm-6')
-          div(class='col-sm-3')
-            input(type='SUBMIT' value='Enroll principal' class='btn blockButton' style='margin-top: 24px; padding: 6px 10px; width: 75%;')
+      if msg != ""
+        div(class="row")
+          h2(class=msgClass) #{msg}
+      div(class="row")
+        div(class="col-xs-12")
+          form(method='POST' action='/admin/enroll/principal')
+            div(class='row' style='margin-top: 40px;')
+              div(class='col-sm-4')
+              div(class='col-sm-4')
+                div.form-group
+                  label(for='name') First Name:
+                  input(type='text' placeholder='First Name' name='name' class="form-control" required)
+            div(class='row')
+              div(class='col-sm-4')
+              div(class='col-sm-4')
+                div.form-group
+                  label(for='surname') Last Name:
+                  input(type='text' placeholder='Last Name' name='surname' class="form-control" required)
+            div(class='row')
+              div(class='col-sm-4')
+              div(class='col-sm-4')
+                div.form-group
+                  label(for='SSN') SSN:
+                  input(type='text' placeholder='SSN' name='SSN' class="form-control" required)
+            div(class='row')
+              div(class='col-sm-4')
+              div(class='col-sm-4')
+                div.form-group
+                  label(for='Email') Email:
+                  input(type='email' placeholder='Email' name='email' class="form-control" required)
+            div(class="row")
+              div(class='col-sm-5 col-lg-6')
+              div(class='col-sm-4 col-lg-3 col-xs-10')
+                input(type='SUBMIT' value='Insert principal' class='btn blockButton' style='margin-top: 24px; padding: 6px 10px; width: 75%;')

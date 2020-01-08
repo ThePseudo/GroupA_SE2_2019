@@ -1,1 +1,74 @@
+//- Those variables should be in every page
+- var page = "Insert class mark"
+- var loggedIn = true;
+- var date = new Date();
+- var user= "teacher"
+- var active= "Insert marks (class)"
 
+//- Uses variables: classid, courseid, studlist[] {first_name, last_name}
+  message, studlist, courseName, className, msg, msgClass, dateString
+doctype html
+html
+  include ../base/head.pug
+  body
+    include ../base/navbar.pug
+    include ../base/sidebar.pug
+    div(class='container')
+      div(class='row')
+        h1(class='title') #{className} - #{courseName}
+      div(class='row')
+        h2(class='title2') Insert marks
+      if msg != ""
+        div(class='row')
+          h2(class=msgClass) #{msg}
+      div(class='row' style='margin-top: 40px;')
+      form(method='POST' action="/teacher/class/"+classid+"/course/"+courseid+"/reg_mark" id="regform")
+        div(class='col-sm-6')
+          div(class='row')
+            div(class='col-sm-3')
+            div(class='col-sm-6')
+              div.form-group
+                label(for='course') Subject:
+                input(type='text' placeholder='Subject' name='subject' class='form-control')
+          div(class='row')
+            div(class='col-sm-3')
+            div(class='col-sm-6')
+              div.form-group
+                label(for='desc') Description:
+                textarea(name="desc" placeholder="Description of subject" value='Description' form="regform" class="form-control" style="resize:none" rows="8")
+          div(class='row')
+            div(class='col-sm-3')
+            div(class='col-sm-6')
+              div.form-group
+                label(for='date') Date:
+                input(type='date' name='date' value=dateString max=dateString class="form-control")    
+          div(class='row')
+            div(class='col-sm-3')
+            div(class='col-sm-6')
+              div.form-group
+                label(for='desc') Type:
+                select(placeholder='Type' name='type' class='form-control')
+                  option(value="Written") Written
+                  option(value="Oral") Oral
+                  option(value="Project") Project
+                  option(value="Other") Other
+          div(class='row')
+            div(class='col-sm-3')
+            div(class='col-sm-6')
+              div.form-group
+                label(for='desc') Submit:
+                input(type='SUBMIT' value='Insert Marks' class='btn blockButton' style='margin-top: 24px; margin-left: 25%; padding: 6px 10px; width: 75%;')
+        div(class='col-sm-6')
+          div(class='row')
+            //-div(class='col-sm-3')
+            //-div(class='col-sm-6')
+            div.form-group
+              table(class='table')
+                tr(class='table-row-base')
+                  th(style="text-align:left;") Student
+                  th(style="text-align:left;") Mark
+                each student in studlist
+                  tr(class="table-row-base")
+                    td(name="studentname" style="text-align:left;") #{student.first_name + " " + student.last_name}
+                    td 
+                      input(type='number' min='1' max='10' name="mark" form="regform" class="form-control")

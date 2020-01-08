@@ -1,1 +1,70 @@
+//- Those variables should be in every page
+- var page = "Teacher homepage"
+- var loggedIn = true
+- var user = "teacher"
+- var active = "Teacher homepage"
+- var sidebarForceHidden = true;
 
+//- Inputs: fullName (teacher), class_courses[] {classid, courseid, classname, coursename}
+
+mixin classButton(classid, courseid, className, courseName)
+  div(class="row hidden-md hidden-lg")
+  div(class="col-xs-1 hidden-md hidden-lg")
+  div(class="col-md-4 col-xs-10")
+    a(class='noLinkTitle button smallMarginTop' href = "/teacher/class/"+classid+"/course/"+courseid+'/course_home')
+      button(class='btn blockButton')
+        div              
+          img(src= '../../images/student_hat.ico' style='width:50px;height:50px;')
+          text= " " + className + " - " + courseName
+
+doctype html
+html
+  include ../base/head.pug
+  body
+    include ../base/navbar.pug
+    include ../base/sidebar.pug
+    div(class="container")
+      div(class='row')
+        h1(class='title') Teacher homepage
+      div(class='row')
+        h2(class = 'title2') Choose a class and a course
+      div(class='row')
+      for classcourse in class_courses
+        if classcourse
+          +classButton(classcourse.classid, classcourse.courseid, classcourse.className, classcourse.courseName)
+    
+    div(class='container')
+      //- Time table
+      div(class='row')
+        h1(class='title2') Weekly Timetable
+      div(class='row')
+        div(class="col-lg-12" style='align-content:center;')
+          table(style="width:100%; text-align:center; align-content:center" class="table table-bordered")
+            tr(class="table-row-base hidden-xs")
+              th(style="width:10%;") Hour
+              th(style="width:15%;") Monday
+              th(style="width:15%;") Tuesday
+              th(style="width:15%;") Wednesday
+              th(style="width:15%;") Thursday
+              th(style="width:15%;") Friday
+            tr(class="table-row-base hidden-sm hidden-md hidden-lg")
+              th(style="width:10%;") H
+              th(style="width:15%;") Mon
+              th(style="width:15%;") Tue
+              th(style="width:15%;") Wed
+              th(style="width:15%;") Thur
+              th(style="width:15%;") Fri
+            
+            - var i = 0
+            for row in course_hours
+              tr(class="table-row-base")
+                td= start_time_slot[i]
+                - i++;
+                for col in row
+                  td(style = "text-align:center")
+                    |&nbsp#{col.className}&nbsp
+                    br 
+                    |&nbsp#{col.courseName}&nbsp 
+            //-Metto &nbsp prima e dopo per centrare la scritta
+            //-Metto &nbsp per avere la stessa dimensione per celle piene e celle vuote
+                  

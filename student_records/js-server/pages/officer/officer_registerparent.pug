@@ -1,8 +1,10 @@
-// Those variables should be in every page
+//- Those variables should be in every page
 - var page = "Register parent"
 - var loggedIn = true;
-- var user = "admin"
+- var user = "officer"
 - var active = "Register parent"
+
+//- Variables used: msg, classmsg
 
 doctype html
 html
@@ -12,33 +14,40 @@ html
     include ../base/sidebar.pug
     div(class='container sidebarContainer')
       div(class='row')
-        h1(class='title') Register parent
-      form(method='POST' action='/reg_parent')
-        div(class='row' style='margin-top: 40px;')
-          div(class='col-lg-3')
-          div(class='col-lg-6 col-xs-12')
-            div.form-group
-              label(for='name') First Name:
-              input(type='text' placeholder='First Name' name='name' class="form-control")
-        div(class='row')
-          div(class='col-lg-3')
-          div(class='col-lg-6 col-xs-12')
-            div.form-group
-              label(for='surname') Last Name:
-              input(type='text' placeholder='Last Name' name='surname' class="form-control")
-        div(class='row')
-          div(class='col-lg-3')
-          div(class='col-lg-6 col-xs-12')
-            div.form-group
-              label(for='SSN') SSN:
-              input(type='text' placeholder='SSN' name='SSN' class="form-control")
-        div(class='row')
-          div(class='col-lg-3')
-          div(class='col-lg-6 col-xs-12')
-            div.form-group
-              label(for='Email') Email:
-              input(type='text' placeholder='Email' name='email' class="form-control")
-        div(class='row')
-          div(class='col-sm-8 col-lg-6')
-          div(class='col-sm-4 col-lg-3 col-xs-10')
-            input(type='SUBMIT' value='Register parent' class='btn blockButton' style='margin-top:24px; padding: 6px 10px; margin-left:25%; width:75%;')
+        div(clas="col-xs-12")
+          h1(class='title') Register parent
+      if msg != ""
+        div(class="row")
+          div(class="col-xs-12")
+            h2(class=classmsg) #{msg}
+      div(class='row')
+        div(class="col-xs-12")
+          form(method='POST' action='/officer/enroll_parent')
+            div(class='row' style='margin-top: 40px;')
+              div(class='col-lg-3')
+              div(class='col-lg-6 col-xs-12')
+                div.form-group
+                  label(for='name') First Name:
+                  input(type='text' placeholder='First Name' name='name' class="form-control" required)
+            div(class='row')
+              div(class='col-lg-3')
+              div(class='col-lg-6 col-xs-12')
+                div.form-group
+                  label(for='surname') Last Name:
+                  input(type='text' placeholder='Last Name' name='surname' class="form-control" required)
+            div(class='row')
+              div(class='col-lg-3')
+              div(class='col-lg-6 col-xs-12')
+                div.form-group
+                  label(for='SSN') SSN:
+                  input(type='text' placeholder='SSN' name='SSN' class="form-control" required)
+            div(class='row')
+              div(class='col-lg-3')
+              div(class='col-lg-6 col-xs-12')
+                div.form-group
+                  label(for='Email') Email:
+                  input(type='email' placeholder='Email' name='email' class="form-control" required)
+            div(class="row")
+              div(class='col-sm-5 col-lg-6')
+              div(class='col-sm-4 col-lg-3 col-xs-10')
+                input(type='SUBMIT' value='Insert parent' class='btn blockButton' style='margin-top:24px; padding: 6px 10px; margin-left:25%; width:75%;')

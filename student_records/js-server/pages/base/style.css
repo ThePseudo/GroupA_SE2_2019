@@ -1,6 +1,9 @@
+* {
+    font-family: Arial, Helvetica, sans-serif;
+}
+
 body {
-    background: rgba(255, 174, 0, 0.075);
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #E1F5FE;
 }
 
 .container-fluid {
@@ -16,14 +19,29 @@ body {
     margin-left: 15%;
 }
 
+.navbar-item {
+    color: black;
+}
+
+.navbar-item:hover {
+    color: white !important;
+}
+
 .navbar-default {
-    background-color: #fda253 !important;
+    background-color: #00B0FF !important;
     border: 0px;
     border-radius: 0px;
     position: fixed;
     width: 100%;
     z-index: 1;
     top: -51px;
+    box-shadow: 2px 4px 10px rgba(0, 0, 0, .2)
+}
+
+.navbar-brand {
+    color: rgb(56, 56, 56) !important;
+    font-size: 24px;
+    transition-duration: 0.2s;
 }
 
 .noLinkTitle {
@@ -36,22 +54,48 @@ body {
     text-decoration: none;
 }
 
+.blueTextHover {
+    transition-duration: 0.2s;
+}
+
+.blueTextHover:hover {
+    color: #0000e0;
+    transition-duration: 0.2s;
+}
+
+.green {
+    background-color: #AED581;
+}
+
+.greenHover:hover {
+    background-color: #8BC34A;
+}
+
+.red {
+    background-color: #FF8A65;
+}
+
+.redHover:hover {
+    background-color: #FF5722;
+}
+
 .blockButton {
     display: block;
     width: 100%;
     color: black;
-    background-color: #fc9b47;
+    background-color: #00B0FF;
     padding: 14px 28px 8px 28px;
     font-size: 24px;
     cursor: pointer;
     text-align: center;
+    box-shadow: 1px 2px 5px rgba(0, 0, 0, .2);
     transition-duration: 0.2s;
 }
 
 .blockButton_child {
     display: block;
     color: black;
-    background-color: #fc9b47;
+    background-color: #00B0FF;
     cursor: pointer;
     font-size: auto;
     text-align: center;
@@ -60,52 +104,94 @@ body {
 
 .blockButton:hover {
     transition-duration: 0.2s;
-    color: black;
-    background-color: #ff8d29;
+    color: white;
+    background-color: #0091EA;
+}
+
+.activeMenuButton {
+    transition-duration: 0.2s;
+    color: white;
+    background-color: #0091EA;
 }
 
 .menuButton {
     display: block;
-    color: white;
-    background-color: #fc9b47;
+    color: black;
+    background-color: #039BE5;
     cursor: pointer;
     text-align: center;
+    position: fixed;
+    top: 9px;
+    left: 9px;
     transition-duration: 0.2s;
 }
 
 .menuButton:hover {
     transition-duration: 0.2s;
-    color: black;
-    background-color: #ff8d29;
+    color: white;
+    background-color: #0277BD;
 }
 
 .title {
-    margin-top: 20px;
+    margin-top: 24px;
     text-align: center;
-    margin-bottom: 20px;
 }
 
 .err_msg {
-    margin-top: 20px;
+    margin-top: 24px;
     text-align: center;
     color: rgb(226, 45, 45);
-    font-size: medium;
-    margin-bottom: 20px;
+    /*font-size: medium;*/
+    margin-bottom: 24px;
 }
 
-.title2 {
-    margin-bottom: 40px;
+.ok_msg{
+    margin-top: 20px;
     text-align: center;
+    color: rgb(24, 143, 13);
+    /*font-size: medium;*/
+    margin-bottom: 20px;
+}
+.title2 {
+    margin-top: 32px;
+    text-align: center;
+    margin-bottom: 24px;
 }
 
 .table-row:hover {
-    background-color: #ffd8b6;
+    background-color: #B3E5FC;
+}
+
+.table {
+    box-shadow: 1px 2px 5px rgba(0, 0, 0, .2);
+    font-size:large;
 }
 
 .table-row-base {
     background-color: white;
     text-align: center;
     align-content: center;
+}
+.table-scroll  tbody{
+    display:block;
+    overflow:auto;
+    max-height:240px;
+    width:100%;
+    table-layout:fixed;
+}
+
+.table-scroll thead{
+    display: table-header-group;
+    background-color: white;
+    table-layout:fixed;
+}
+
+.table-scroll tr {
+    display: table; /* display purpose; th's border */
+    width: 100%;
+    box-sizing: border-box; /* because of the border (Chrome needs this line, but not FF) */
+    table-layout:fixed;
+    border: 0;
 }
 
 th,
@@ -120,20 +206,21 @@ td {
     min-width: 200px;
     width: 15%;
     margin-left: 0px;
-    background: #ffc999;
+    background: #B3E5FC;
     height: 100%;
+    border-right: 1px solid rgba(0, 0, 0, .12);
     transition-duration: 0.2s;
 }
 
 .sidebar-item {
-    text-align: right;
+    text-align: left;
     font-size: larger;
     color: #222222;
     text-decoration: none;
-    background: #ffddc0;
-    padding-top: 10px;
-    padding-bottom: 10px;
-    padding-right: 32px;
+    background: #B3E5FC;
+    padding-top: 8px;
+    padding-bottom: 8px;
+    padding-left: 24px;
     display: block;
     transition: 0.2s;
 }
@@ -142,20 +229,20 @@ td {
     text-decoration: none;
     color: #222222;
     display: block;
-    background: #ffb471;
+    background: #81D4FA;
     transition: 0.2s;
 }
 
 .active-sidebar-item {
-    text-align: right;
+    text-align: left;
     font-size: larger;
     color: #222222;
+    font-weight: bold;
     display: block;
-    background: #fda253;
-    padding-top: 10px;
-    padding-bottom: 10px;
-    padding-right: 32px;
-    display: block;
+    background: #29B6F6;
+    padding-top: 8px;
+    padding-bottom: 8px;
+    padding-left: 24px;
 }
 
 .active-sidebar-item:hover {
@@ -175,12 +262,6 @@ input[type="date"] {
     margin-top: 0px;
 }
 
-.menuButton {
-    position: fixed;
-    top: 9px;
-    left: 9px;
-}
-
 .smallLogout {
     text-align: center !important;
 }
@@ -191,7 +272,17 @@ input[type="date"] {
     height: auto;
     position: absolute;
     padding: 8px;
-    
+}
+
+.orange {
+    background-color: #FFB74D;
+}
+.orange:hover {
+    background-color: #FF9800;
+}
+
+.blueHover:hover {
+    background-color: #4FC3F7;
 }
 
 /* Smaller screens */
@@ -201,29 +292,23 @@ input[type="date"] {
         margin-left: 0px;
         width: 100%;
     }
-
     .smallMarginTop {
         margin: 10px;
     }
-
     .sidebar {
         min-width: 100%;
         width: 100%;
         margin-left: -100%;
         z-index: 1;
     }
-    
     .sidebar-item {
         text-align: center;
         font-size: x-large;
     }
-
     .active-sidebar-item {
         text-align: center;
         font-size: x-large;
-
     }
-
 }
 
 @media only screen and (max-width: 768px) {
@@ -233,4 +318,99 @@ input[type="date"] {
         bottom: 0px;
         width: 100%;
     }
+}
+
+/* Multiselect */
+.ms-container{
+  background: transparent url('../img/switch.png') no-repeat 50% 50%;
+  width: 370px;
+}
+
+.ms-container:after{
+  content: ".";
+  display: block;
+  height: 0;
+  line-height: 0;
+  font-size: 0;
+  clear: both;
+  min-height: 0;
+  visibility: hidden;
+}
+
+.ms-container .ms-selectable, .ms-container .ms-selection{
+  background: #fff;
+  color: #555555;
+  float: left;
+  width: 45%;
+}
+.ms-container .ms-selection{
+  float: right;
+}
+
+.ms-container .ms-list{
+  -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+  -moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+  -webkit-transition: border linear 0.2s, box-shadow linear 0.2s;
+  -moz-transition: border linear 0.2s, box-shadow linear 0.2s;
+  -ms-transition: border linear 0.2s, box-shadow linear 0.2s;
+  -o-transition: border linear 0.2s, box-shadow linear 0.2s;
+  transition: border linear 0.2s, box-shadow linear 0.2s;
+  border: 1px solid #ccc;
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  border-radius: 3px;
+  position: relative;
+  height: 200px;
+  padding: 0;
+  overflow-y: auto;
+}
+
+.ms-container .ms-list.ms-focus{
+  border-color: rgba(82, 168, 236, 0.8);
+  -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(82, 168, 236, 0.6);
+  -moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(82, 168, 236, 0.6);
+  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(82, 168, 236, 0.6);
+  outline: 0;
+  outline: thin dotted \9;
+}
+
+.ms-container ul{
+  margin: 0;
+  list-style-type: none;
+  padding: 0;
+}
+
+.ms-container .ms-optgroup-container{
+  width: 100%;
+}
+
+.ms-container .ms-optgroup-label{
+  margin: 0;
+  padding: 5px 0px 0px 5px;
+  cursor: pointer;
+  color: #999;
+}
+
+.ms-container .ms-selectable li.ms-elem-selectable,
+.ms-container .ms-selection li.ms-elem-selection{
+  border-bottom: 1px #eee solid;
+  padding: 2px 10px;
+  color: #555;
+  font-size: 14px;
+}
+
+.ms-container .ms-selectable li.ms-hover,
+.ms-container .ms-selection li.ms-hover{
+  cursor: pointer;
+  color: #fff;
+  text-decoration: none;
+  background-color: #08c;
+}
+
+.ms-container .ms-selectable li.disabled,
+.ms-container .ms-selection li.disabled{
+  background-color: #eee;
+  color: #aaa;
+  cursor: text;
 }

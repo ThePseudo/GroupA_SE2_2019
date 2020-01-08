@@ -1,15 +1,13 @@
-//'use strict';
+'use strict';
 
+const mime = require('mime');
 const express = require('express');
 const session = require('express-session');
 const fs = require('fs');
 const https = require('https');
 const http = require('http');
-const pug = require('pug');
-const bcrypt = require('bcrypt');
-const mysql = require('mysql');
 const bodyParser = require('body-parser');
-const ethereal = require("./modules/ethereal.js");
+var path = require('path');
 
 // App
 const app = express();
@@ -26,22 +24,45 @@ app.use(session({
 
 const adminPages = require('./modules/admin.js');
 const parentPages = require('./modules/parent.js');
-const auth_router = require("./modules/Auth_manager.js");
+const auth_router = require('./modules/Auth_manager.js');
+const teacherPages = require('./modules/teacher.js');
+const officerPage = require('./modules/officer.js');
+const principalPage = require('./modules/principal.js');
 
 // Constants
 const HTTPPORT = 8000;
 const HTTPSPORT = 8080;
-const HOST = '0.0.0.0';
+const HOST = 'localhost';
 
-// other routers
-module.exports = function (app) {
-    app.use('/action/*', require('./modules'));
-};
+//fix for favicon.ico request
+app.get('/favicon.ico', (req, res) => res.status(204));
+
+app.use('/:path', (req, res, next) => {
+    const acceptedPaths = ["admin", "parent", "teacher", "officer", "principal"];
+    const curPath = req.params.path;
+    if (acceptedPaths.includes(curPath)) {
+        try {
+            if (req.session.user.user_type != curPath) {
+                res.redirect("/");
+                return;
+            } else {
+                next();
+            }
+        } catch (err) {
+            res.redirect("/");
+        }
+    } else {
+        next();
+    }
+});
 
 //mount external route, now I can access to external route via ex. /admin/routename inside adminPages module .js
 app.use('/admin', adminPages);
 app.use('/parent', parentPages);
 app.use('/auth_router', auth_router);
+app.use('/teacher', teacherPages);
+app.use('/officer', officerPage);
+app.use("/principal", principalPage);
 
 const options = {
     key: fs.readFileSync("./certs/localhost.key"),
@@ -50,438 +71,90 @@ const options = {
 
 // Main page
 app.get('/', (req, res) => {
-    const compiledPage = pug.compileFile("pages/home.pug");
-    res.end(compiledPage());
+    try {
+        switch (req.session.user.user_type) {
+            case "parent":
+                res.redirect("/parent/parent_home");
+                break;
+            case "teacher":
+                res.redirect("/teacher/teacher_home");
+                break;
+            case "admin":
+                res.redirect("/admin/admin_home");
+                break;
+            case "officer":
+                res.redirect("/officer/officer_home");
+                break;
+            default:
+                res.redirect("/auth_router/logout");
+                break;
+        }
+    } catch (err) {
+        res.render("/pages/home.pug");
+    }
 });
 
-// TEMP
-app.get("/teacher/teacher_home", (req, res) => {
-    res.redirect("/topics");
-});
-
-app.get("/admin/admin_home", (req, res) => {
-    res.redirect("/admin/enroll_parent");
-});
-
+// Routes for links
 app.get("/style", (req, res) => {
     const page = fs.readFileSync("pages/base/style.css");
     res.end(page);
 });
 
-app.get("/assets", (req, res) => {
-    const page = fs.readFileSync("pages/assets/css/main.css");
+// Multiselect
+app.get("/multiselect", (req, res) => {
+    const page = fs.readFileSync("pages/officer/multiselect/js/jquery.multi-select.js")
     res.end(page);
 });
 
-
-app.get("/topics", (req, res) => {
-    const compiledPage = pug.compileFile("pages/topics.pug");
-    res.end(compiledPage());
-});
-
-app.get("/enroll_teacher", (req, res) => {
-    const compiledPage = pug.compileFile("pages/sysadmin/systemad_registerteacher.pug");
-    res.end(compiledPage());
-});
-
-app.get("/enroll_officer", (req, res) => {
-    const compiledPage = pug.compileFile("pages/sysadmin/systemad_registerofficer.pug");
-    res.end(compiledPage());
-});
-
-app.get("/enroll_principal", (req, res) => {
-    const compiledPage = pug.compileFile("pages/sysadmin/systemad_registerprincipal.pug");
-    res.end(compiledPage());
-});
-
-app.get("/admin/enroll_student", (req, res) => {
-    const compiledPage = pug.compileFile("pages/officer/officer_registerstudent.pug");
-    res.end(compiledPage());
-});
-
-app.get("/admin/enroll_parent", (req, res) => {
-    const compiledPage = pug.compileFile("pages/officer/officer_registerparent.pug");
-    res.end(compiledPage());
-});
-
-app.get("/admin/insert_communication", (req, res) => {
-    const compiledPage = pug.compileFile("pages/officer/officer_communication.pug");
-    res.end(compiledPage());
-});
-
-// TODO: make this and fix it
-
-app.post("/insert_comm", (req, res) => {
-    let desc = req.body.desc;
-
-    var con = mysql.createConnection({
-        host: "student-db",
-        user: "root",
-        password: "pwd",
-        database: "students",
-        insecureAuth: true
-    });
-    let date = new Date();
-    con.query('SELECT COUNT(*) as c FROM General_Communication', (err, rows, fields) => { // because we have no AUTO_UPDATE available on the DB
-        if (err) {
-            res.end("There is a problem in the DB connection. Please, try again later " + err);
-            return;
-        }
-        if (rows.length <= 0) {
-            res.end("Count impossible to compute");
-            return;
-        }
-        con.query("INSERT INTO teacher(id, communication, comm_date) VALUES(?, ?, ?)", [rows[0].c + 1, desc, date], (err, result) => {
+// Download
+/*
+    TODO: req.path.search()? Could the route just be "/download"?
+    Are we really sure we should do all this mess to return the file? TODO: review this part
+*/
+app.get('/*', (req, res) => {
+    //console.log(req.path);
+    if (req.path.search("/download/") != -1) {
+        let str = req.path.replace("/download/", "");
+        var file = path.join(__dirname, str);
+        var filename = path.basename(file);
+        var mimetype = mime.lookup(file);
+        fs.lstat(file, (err, stats) => {
             if (err) {
-                res.end("There is a problem in the DB connection. Please, try again later " + err);
+                console.log(err);
+                res.render("/pages/base/404.pug");
                 return;
             }
-            console.log("Data successfully uploaded! " + result.insertId);
-            con.end();
-            res.redirect("/teachers");
+            res.setHeader('Content-disposition', 'attachment; filename=' + filename);
+            res.setHeader('Content-type', mimetype);
+            var filestream = fs.createReadStream(file);
+            filestream.pipe(res);
+            return;
         });
-    });
-});
-
-app.post("/reg_parent", (req, res) => {
-    let name = req.body.name;
-    let surname = req.body.surname;
-    let SSN = req.body.SSN;
-    let email = req.body.email;
-    //Random string of 16 chars
-    let password = Math.random().toString(36).substring(2, 10) + Math.random().toString(36).substring(2, 10)
-
-
-    var con = mysql.createConnection({
-        host: "localhost",
-        user: "root",
-        password: "pwd",
-        database: "students",
-        insecureAuth: true
-    });
-
-    con.query('SELECT COUNT(*) as c FROM parent', (err, rows, fields) => { // because we have no AUTO_UPDATE available on the DB
-        if (err) {
-            res.end("There is a problem in the DB connection. Please, try again later " + err);
-            return;
-        }
-        if (rows.length <= 0) {
-            res.end("Count impossible to compute");
-            return;
-        }
-        con.query("INSERT INTO parent(id, first_name, last_name, cod_fisc, email, password, first_access) VALUES(?, ?, ?, ?, ?, ?, ?)",
-            [rows[0].c + 1, name, surname, SSN, email, password, 0], (err, result) => {
-                if (err) {
-                    res.end("There is a problem in the DB connection. Please, try again later " + err);
-                    return;
-                }
-                // Da mettere in enroll function ! (Fede) 
-                //invece di resut[0], passare cod_fisc e password
-                //Prototipo funzione function (first_name,last_name,username,email,tmp_pwd,user_type)
-
-                ethereal.mail_handler(name, surname, SSN, email, password, "parent");
-                console.log("Data successfully uploaded! " + result.insertId);
-                con.end();
-                res.redirect("/admin/enroll_parent");
-            });
-    });
-});
-
-app.post("/reg_teacher", (req, res) => {
-    let name = req.body.name;
-    let surname = req.body.surname;
-    let SSN = req.body.SSN;
-    let email = req.body.email;
-    let password = req.body.password;
-
-    var con = mysql.createConnection({
-        host: "localhost",
-        user: "root",
-        password: "pwd",
-        database: "students",
-        insecureAuth: true
-    });
-
-    con.query('SELECT COUNT(*) as c FROM teacher', (err, rows, fields) => { // because we have no AUTO_UPDATE available on the DB
-        if (err) {
-            res.end("There is a problem in the DB connection. Please, try again later " + err);
-            return;
-        }
-        if (rows.length <= 0) {
-            res.end("Count impossible to compute");
-            return;
-        }
-        con.query("INSERT INTO teacher(id, first_name, last_name, cod_fisc, email, password, first_access) VALUES(?, ?, ?, ?, ?, ?, ?)", [rows[0].c + 1, name, surname, SSN, email, password, 1], (err, result) => {
+    } else {
+        fs.readFile(req.path, (err, data) => {
             if (err) {
-                res.end("There is a problem in the DB connection. Please, try again later " + err);
+                //console.log(err);
+                res.render("/pages/base/404.pug");
                 return;
             }
-            console.log("Data successfully uploaded! " + result.insertId);
-            con.end();
-            res.redirect("/teachers");
-        });
-    });
-});
+            res.end(data);
 
-app.post("/reg_officer", (req, res) => {
-    let name = req.body.name;
-    let surname = req.body.surname;
-    let SSN = req.body.SSN;
-    let email = req.body.email;
-    let password = req.body.password;
-
-    var con = mysql.createConnection({
-        host: "localhost",
-        user: "root",
-        password: "pwd",
-        database: "students",
-        insecureAuth: true
-    });
-
-    con.query('SELECT COUNT(*) as c FROM officer', (err, rows, fields) => { // because we have no AUTO_UPDATE available on the DB
-        if (err) {
-            res.end("There is a problem in the DB connection. Please, try again later " + err);
-            return;
-        }
-        if (rows.length <= 0) {
-            res.end("Count impossible to compute");
-            return;
-        }
-        con.query("INSERT INTO officer(id, first_name, last_name, cod_fisc, email, password, first_access) VALUES(?, ?, ?, ?, ?, ?, ?)", [rows[0].c + 1, name, surname, SSN, email, password, 1], (err, result) => {
-            if (err) {
-                res.end("There is a problem in the DB connection. Please, try again later " + err);
-                return;
-            }
-            console.log("Data successfully uploaded! " + result.insertId);
-            con.end();
-            res.redirect("/officers");
-        });
-    });
-});
-
-app.post("/reg_principal", (req, res) => {
-    let name = req.body.name;
-    let surname = req.body.surname;
-    let SSN = req.body.SSN;
-    let email = req.body.email;
-    let password = req.body.password;
-
-    var con = mysql.createConnection({
-        host: "localhost",
-        user: "root",
-        password: "pwd",
-        database: "students",
-        insecureAuth: true
-    });
-
-    con.query('SELECT COUNT(*) as c FROM collaborator', (err, rows, fields) => { // because we have no AUTO_UPDATE available on the DB
-        if (err) {
-            res.end("There is a problem in the DB connection. Please, try again later " + err);
-            return;
-        }
-        if (rows.length <= 0) {
-            res.end("Count impossible to compute");
-            return;
-        }
-        con.query("INSERT INTO collaborator(id, first_name, last_name, cod_fisc, email, password, first_access) VALUES(?, ?, ?, ?, ?, ?, ?)", [rows[0].c + 1, name, surname, SSN, email, password, 1], (err, result) => {
-            if (err) {
-                res.end("There is a problem in the DB connection. Please, try again later " + err);
-                return;
-            }
-            console.log("Data successfully uploaded! " + result.insertId);
-            con.end();
-            res.redirect("/principal");
-        });
-    });
-});
-
-app.post("/reg_student", (req, res) => {
-    let name = req.body.name;
-    let surname = req.body.surname;
-    let SSN = req.body.SSN;
-    let SSN1 = req.body.SSN1;
-    let SSN2 = req.body.SSN2;
-
-    var con = mysql.createConnection({
-        host: "localhost",
-        user: "root",
-        password: "pwd",
-        database: "students",
-        insecureAuth: true
-    });
-
-    con.query('SELECT COUNT(*) as c FROM student', (err, rows, fields) => { // because we have no AUTO_UPDATE available on the DB
-        if (err) {
-            res.end("There is a problem in the DB connection. Please, try again later " + err);
-            return;
-        }
-        if (rows.length <= 0) {
-            res.end("Count impossible to compute");
-            return;
-        }
-        let c = rows[0].c + 1;
-        con.query('SELECT ID FROM parent WHERE cod_fisc = ?', [SSN1], (err, rows, fields) => { // because we have no AUTO_UPDATE available on the DB
-            if (err) {
-                res.end("There is a problem in the DB connection. Please, try again later " + err);
-                return;
-            }
-            if (rows.length <= 0) {
-                con.query('SELECT ID FROM parent WHERE cod_fisc = ?', [SSN2], (err, rows, fields) => { // because we have no AUTO_UPDATE available on the DB
-                    if (err) {
-                        res.end("There is a problem in the DB connection. Please, try again later " + err);
-                        return;
-                    }
-                    if (rows.length <= 0) {
-                        res.end("Parent/s ID/s not found");
-                        return;
-                    }
-                    let ID2 = rows[0].ID;
-                    con.query("INSERT INTO student(id, first_name, last_name, cod_fisc, class_id, parent_1, parent_2) VALUES(?, ?, ?, ?, ?, ?, ?)", [c, name, surname, SSN, 0, ID2, ""], (err, result) => {
-                        if (err) {
-                            res.end("There is a problem in the DB connection. Please, try again later " + err);
-                            return;
-                        }
-                        console.log("Data successfully uploaded! " + result.insertId);
-                        con.end();
-                        res.redirect("/admin/enroll_student");
-                    });
-                });
-                return;
-            }
-            let ID1 = rows[0].ID;
-            con.query('SELECT ID FROM parent WHERE cod_fisc = ?', [SSN2], (err, rows, fields) => { // because we have no AUTO_UPDATE available on the DB
-                if (err) {
-                    res.end("There is a problem in the DB connection. Please, try again later " + err);
-                    return;
-                }
-                if (rows.length <= 0) {
-                    con.query("INSERT INTO student(id, first_name, last_name, cod_fisc, class_id, parent_1, parent_2) VALUES(?, ?, ?, ?, ?, ?, ?)", [c, name, surname, SSN, 0, ID1, ""], (err, result) => {
-                        if (err) {
-                            res.end("There is a problem in the DB connection. Please, try again later " + err);
-                            return;
-                        }
-                        console.log("Data successfully uploaded! " + result.insertId);
-                        con.end();
-                        res.redirect("/admin/enroll_student");
-                    });
-                    return;
-                }
-                let ID2 = rows[0].ID;
-                con.query("INSERT INTO student(id, first_name, last_name, cod_fisc, class_id, parent_1, parent_2) VALUES(?, ?, ?, ?, ?, ?, ?)", [c, name, surname, SSN, 0, ID1, ID2], (err, result) => {
-                    if (err) {
-                        res.end("There is a problem in the DB connection. Please, try again later " + err);
-                        return;
-                    }
-                    console.log("Data successfully uploaded! " + result.insertId);
-                    con.end();
-                    res.redirect("/admin/enroll_student");
-                });
-            });
-        });
-    });
-});
-
-app.post("/reg_topic", (req, res) => {
-    let course = req.body.course;
-    let date = req.body.date;
-    let classroom = req.body.class;
-    let desc = req.body.desc;
-
-    const compiledPage = pug.compileFile("pages/topics.pug");
-
-    var con = mysql.createConnection({
-        host: "localhost",
-        user: "root",
-        password: "pwd",
-        database: "students",
-        insecureAuth: true
-    });
-
-    let sql = 'SELECT id FROM class WHERE class_name = ?';
-    con.query(sql, [classroom], function (err, rows, fields) {
-        if (err) {
-            res.end("There is a problem in the DB connection. Please, try again later " + err);
-            return;
-        }
-        var class_id = rows[0].id;
-        sql = 'SELECT id FROM course WHERE course_name = ?';
-        con.query(sql, [course], (err, rows, fields) => {
-            if (err) {
-                res.end("There is a problem in the DB connection. Please, try again later " + err);
-                return;
-            }
-            var course_id = rows[0].id + 1;
-            con.query('SELECT COUNT(*) as c FROM topic', (err, rows, fields) => { // because we have no AUTO_UPDATE available on the DB
-                if (err) {
-                    res.end("There is a problem in the DB connection. Please, try again later " + err);
-                    return;
-                }
-                con.query("INSERT INTO topic(id, topic_date, id_class, id_course, description) VALUES(?, ?, ?, ?, ?)", [rows[0].c, date, class_id, course_id, desc], (err, result) => {
-                    if (err) {
-                        res.end("There is a problem in the DB connection. Please, try again later " + err);
-                        return;
-                    }
-                    console.log("Data successfully uploaded! " + result.insertId);
-                    con.end();
-                    res.redirect("/topics");
-                });
-            });
-        });
-    });
-});
-
-app.post("/register", (req, res) => {
-    var name = req.body.name;
-    var surname = req.body.surname;
-    var fiscalcode = req.body.fiscalcode;
-    var parent1 = req.body.parent1;
-    var parent2 = req.body.parent2;
-
-    con.connect(function (err) {
-        if (err) {
-            console.log("Error: " + err);
-            return;
-        }
-        console.log("Connected!");
-    });
-
-
-    let sql = 'INSERT INTO student (first_name, second_name, cod_fisc, parent_1 , parent_2) VALUES (' + name + ',' + surname + ',' + fiscalcode + ',' + parent1 + ',' + parent2 + ')';
-
-    con.query(sql, function (err, rows, fields) {
-
-        if (err) {
-            res.status(500).json({ "status_code": 500, "status_message": "internal server error" });
-        }
-    });
-    res.end();
+        })
+    }
 });
 
 // Page not found
-app.get('/*', (req, res) => {
+app.use('/', (req, res) => {
     fs.readFile(req.path, (err, data) => {
         if (err) {
-            const compiledPage = pug.compileFile("pages/base/404.pug");
-            res.end(compiledPage());
+            //console.log(err);
+            res.render("/pages/base/404.pug");
+            return;
         }
         res.end(data);
 
     })
 });
-
-app.post('/*', (req, res) => {
-    fs.readFile(req.path, (err, data) => {
-        if (err) {
-            const compiledPage = pug.compileFile("pages/base/404.pug");
-            res.end(compiledPage());
-        }
-        res.end(data);
-
-    })
-});
-
-//app.listen(PORT, HOST);
-
 
 const httpApp = express();
 httpApp.get("*", (req, res) => {
