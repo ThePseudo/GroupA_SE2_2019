@@ -2,7 +2,7 @@
 - var page = "Final term grades"
 - var loggedIn = true
 - var user = "parent"
-- var active = "Show final term grades"
+- var active = "Final term grades"
 
 
 doctype html
@@ -10,20 +10,20 @@ html
   include ../base/head.pug
   body
     script(type='text/javascript').
-        function redirect(){
-          var e = document.getElementById("year_selected");
-          var result = e.options[e.selectedIndex].value;
-          $("#year_selected").submit(); 
-          location.href="/parent/"+ #{childID} +"/final_term_grade?year="+result;
-        }
-        function redirect2(){
-          var e = document.getElementById("year_selected");
-          var f = document.getElementById("term_selected");
-          var result = e.options[e.selectedIndex].value;
-          var result2 = f.options[f.selectedIndex].value;
-          $("#term_selected").submit(); 
-          location.href="/parent/"+ #{childID} +"/final_term_grade?year="+result+"&term="+result2;
-        }
+      function redirect(){
+        var e = document.getElementById("year_selected");
+        var result = e.options[e.selectedIndex].value;
+        $("#year_selected").submit(); 
+        location.href="/parent/"+ #{childID} +"/final_term_grade?year="+result;
+      }
+      function redirect2(){
+        var e = document.getElementById("year_selected");
+        var f = document.getElementById("term_selected");
+        var result = e.options[e.selectedIndex].value;
+        var result2 = f.options[f.selectedIndex].value;
+        $("#term_selected").submit(); 
+        location.href="/parent/"+ #{childID} +"/final_term_grade?year="+result+"&term="+result2;
+      }
     include ../base/navbar.pug
     include ../base/sidebar.pug
     div(class='container sidebarContainer')
@@ -70,4 +70,4 @@ html
               tr
                 th #{subject.subject}
                 th #{subject.grade}
-            
+
