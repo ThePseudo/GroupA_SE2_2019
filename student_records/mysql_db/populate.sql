@@ -32,12 +32,14 @@ INSERT INTO student
     (first_name,last_name,cod_fisc,class_id,parent_1,parent_2)
 VALUES
     ("Martino", "Rossi", "RLIZFH80S05E249F", 1, 1, 2),
-    ("Angelo", "Rossi", "NJRGTD35P14B145Z", 3, 1, 2),
+    ("Angelo", "Rossi", "NJRGTD35P14B145Z", 3, 1, 2), -- 3A
     ("Giorgia", "Rossi", "JDKDMY59L04H816S", 15, 1, 2),
-    ("Serena", "Gasparini", "BSOWTD48P60F492T", 8, 3, 4),
+    ("Serena", "Gasparini", "BSOWTD48P60F492T", 8, 3, 4), -- 3B
     ("Alessandro", "Gasparini", "PPPGDD76L56E934Y",NULL, 3, 4),
     ("Francesca", "Kujo", "DVBGDD76L56E934Y", 14, 5, 6),
-    ("Alessandra", "Kujo", "AAAGDD76L56E934Y",NULL, 5, 6);
+    ("Alessandra", "Kujo", "AAAGDD76L56E934Y",NULL, 5, 6),
+    ("Guido", "Kujo", "GKBGDD76L56E934Y", 3, 5, 6), -- 3A
+    ("Luca", "Kujo", "LGOWTD48P60F492T", 8, 5, 6); -- 3B
 
 -- Class
 INSERT INTO class
@@ -114,7 +116,7 @@ VALUES(6, "2019-11-02", "Late entry", 0);
 
 -- Topic
 INSERT INTO topic
-    ( topic_date, id_class, id_course, description)
+    (topic_date, id_class, id_course, description)
 VALUES
     ("2019-09-29", 1, 1, "numbers"),
     ("2019-12-10", 6, 1, "addition"),
@@ -156,19 +158,7 @@ INSERT INTO homework
 VALUES
     (7, 15, "Study pages 12-14", "2019-12-18");
 
--- Mark
-INSERT INTO mark
-    (student_id, course_id, score, date_mark, period_mark,mark_subj,descr_mark_subj,type_mark_subj)
-VALUES
-    (1, 1, 6, '2019-10-06', 1, 'math 1', '3 questions', 'Written'),
-    (2, 2, 8, '2019-10-11', 2, 'eng 1', '4 questions', 'Oral'),
-    (3, 3, 10, '2019-09-28', 1, 'history 1', '3 questions', 'Oral'),
-    (4, 4, 9, '2019-12-12', 2, 'geography 2', '2 questions', 'Written'),
-    (6, 5, 7, '2019-12-16', 1, 'science 2', '3 questions', 'Oral'),
-    (1, 6, 6, '2019-09-22', 2, 'art 1', 'practice test', 'Other'),
-    (2, 7, 8, '2019-09-29', 1, 'music 1', 'practice test', 'Other'),
-    (3, 8, 9, '2019-11-15', 1, 'run', 'test 1000m', 'Other');
-    
+
 -- General communication
 INSERT INTO General_Communication
     (communication, comm_date)
@@ -242,3 +232,43 @@ VALUES  -- example: (4,2,5,1,5),
     (4, 4, 8, 14, 4),
     (4, 4, 8, 15, 5);
 
+-- Mark
+INSERT INTO mark
+    (student_id, course_id, score, date_mark, period_mark,mark_subj,descr_mark_subj,type_mark_subj) -- student class / course
+VALUES
+    (1, 1, 6, '2019-10-06', 1, 'math 1', '3 questions', 'Written'), -- 1 / 1,5
+    (1, 5, 5, '2020-04-22', 2, 'science 4', '2 questions', 'Written'), -- 1 / 1,5
+    (1, 5, 6, '2020-04-27', 2, 'science 4', '2 questions', 'Written'), -- 1 / 1,5
+
+    (2, 1, 6, '2019-10-11', 1, 'math 1', '4 questions', 'Oral'), -- 3 / 1,2,3,5
+    (2, 2, 8, '2019-09-29', 1, 'eng 1', '3 questions', 'Written'), -- 3 / 1,2,3,5
+    (2, 2, 9, '2019-10-20', 1, 'eng 2', '3 questions', 'Written'), -- 3 / 1,2,3,5
+    (2, 3, 7, '2020-03-18', 2, 'hist 3', '2 questions', 'Oral'), -- 3 / 1,2,3,5
+    (2, 5, 8, '2020-04-29', 2, 'science 4', '4 questions', 'Oral'), -- 3 / 1,2,3,5
+
+    (3, 8, 9, '2019-11-15', 1, 'run', 'test 1000m', 'Other'), -- 15 / 8
+
+    (4, 4, 8, '2019-12-12', 1, 'geography 2', '2 questions', 'Written'), -- 8 / 4,6
+    (4, 6, 9, '2020-05-12', 2, 'portrait', 'practice test', 'Other'), -- 8 / 4,6
+    
+    (6, 8, 8, '2019-12-16', 1, 'run', 'test 100m', 'Other'), -- 14 / 8
+    (6, 8, 8, '2020-03-15', 2, 'run', 'test 200m', 'Other'), -- 14 / 8
+    
+    (8, 2, 6, '2020-01-14', 1, 'eng 2', '4 questions', 'Written'), -- 3 / 1,2,3,5
+    (8, 3, 7, '2020-04-12', 2, 'hist 3', '3 questions', 'Oral'), -- 3 / 1,2,3,5
+    (8, 3, 6, '2020-05-12', 2, 'hist 4', '3 questions', 'Oral'); -- 3 / 1,2,3,5
+
+
+-- final term grade
+-- fake data angelo rosso (id 1)for parent visualization
+INSERT INTO student_final_term_grade
+    (id_student,id_course,period_term,period_year,period_grade)
+VALUES
+    (1,1,1,2019,5),
+    (1,2,1,2019,6),
+    (1,3,1,2019,7),
+    (1,1,2,2019,8),
+    (1,2,2,2019,9),
+    (1,3,2,2019,6),
+    (1,1,1,2020,8),
+    (1,2,1,2020,7);
