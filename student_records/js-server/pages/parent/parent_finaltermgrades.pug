@@ -1,0 +1,73 @@
+//- Those variables should be in every page. ALWAYS PASS childID, fullName
+- var page = "Final term grades"
+- var loggedIn = true
+- var user = "parent"
+- var active = "Show final term grades"
+
+
+doctype html
+html
+  include ../base/head.pug
+  body
+    script(type='text/javascript').
+        function redirect(){
+          var e = document.getElementById("year_selected");
+          var result = e.options[e.selectedIndex].value;
+          $("#year_selected").submit(); 
+          location.href="/parent/"+ #{childID} +"/final_term_grade?year="+result;
+        }
+        function redirect2(){
+          var e = document.getElementById("year_selected");
+          var f = document.getElementById("term_selected");
+          var result = e.options[e.selectedIndex].value;
+          var result2 = f.options[f.selectedIndex].value;
+          $("#term_selected").submit(); 
+          location.href="/parent/"+ #{childID} +"/final_term_grade?year="+result+"&term="+result2;
+        }
+    include ../base/navbar.pug
+    include ../base/sidebar.pug
+    div(class='container sidebarContainer')
+      div(class='row')
+        h1(class='title') #{student_name}
+      div(class='row')
+        h2(class='title2') Final term grades
+      div(class='row' align='center')
+        form(method='GET' action="/parent/"+childID+"/final_term_grade" id="regform")
+          div(class='row')
+            div(class='col-sm-3')
+            div(class='col-sm-6')
+              div.form-group
+                label(for='desc') Available Year:
+                select(placeholder='Year' name='year' class='form-control' id='year_selected' onchange="redirect()")
+                  option(value="select") Select
+                  each year in yearlist
+                    if(year==yearselected)
+                      option(value=year selected) #{year}
+                    else
+                      option(value=year) #{year}
+          div(class='row')
+            div(class='col-sm-3')
+            div(class='col-sm-6')
+              div.form-group
+                label(for='desc') Available Term:
+                select(placeholder='Term' name='term' class='form-control' id='term_selected' onchange="redirect2()")
+                  option(value="select") Select
+                  each term in termlist
+                    if(term==termselected)
+                      option(value=term selected) #{term}
+                    else
+                      option(value=term) #{term}
+      div(class='row')
+        h2(class=msgclass) #{msg}
+      div(class='row')
+        div(class="col-lg-3 col-sm-2 col-xs-1")
+        div(class="col-lg-6 col-sm-8 col-xs-10" style='align-content:center;')
+          table(style="width:100%; text-align:center; align-content:center" class="table table-bordered")
+            tr(class='table-row-base')
+              th Subject
+              th Grade
+            each subject in student_final_term_grade
+              tr
+                th #{subject.subject}
+                th #{subject.grade}
+            

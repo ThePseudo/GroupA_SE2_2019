@@ -1,0 +1,60 @@
+//- Those variables should be in every page
+- var page = "Final term grade"
+- var loggedIn = true;
+- var date = new Date();
+- var user= "teacher"
+- var active= "Final term grade"
+- var prec =""
+
+//- Uses variables: classid, courseid, studlist[] {first_name, last_name}
+  message, studlist, courseName, className, msg, msgClass, dateString
+doctype html
+html
+  include ../base/head.pug
+  body
+    script(type='text/javascript').
+      function redirect(){
+        var e = document.getElementById("term");
+        var result = e.options[e.selectedIndex].value;
+        $("#term").submit(); 
+        location.href="/teacher/class/"+ #{classid} +"/course/"+ #{courseid} +"/final_term_grade?periodmark="+result;
+      }
+    include ../base/navbar.pug
+    include ../base/sidebar.pug
+    div(class='container')
+      div(class='row')
+        h1(class='title') Insert final term grades for class #{className} year #{yearmark}
+      if msg != ""
+        div(class='row')
+          h2(class=msgClass) #{msg}
+      div(class='row' style='margin-top: 40px;')
+        form(method='POST' action="/teacher/class/"+classid+"/course/"+courseid+"/fin_term"  id="regform")
+          div(class='col-sm-3')
+          div(class='col-sm-6')
+            div(class='row'  style='margin-top: 40px;') 
+              select(name='periodmark' class='form-control' id='term' onchange="redirect()")
+                if(periodmark==1)
+                  option(value=1 selected) First Term
+                else
+                  option(value=1) First Term
+                if(periodmark==2)
+                  option(value=2 selected) Second Term
+                else
+                  option(value=2) Second Term
+            div(class='row'  style='margin-top: 40px;')
+              table(class='table')
+                tr(class='table-row-base')
+                  th(style="text-align:left;") Student
+                  th(style="text-align:left;") Course
+                  th(style="text-align:left;") Proposed Grade
+                  th(style="text-align:left;") Final Term Grade
+                each dato in dati
+                  tr
+                    th(style="text-align:left;") #{dato.first_name+" "+dato.last_name}
+                    th(style="text-align:left;") #{dato.course_name}
+                    th(style="text-align:left;") #{dato.grade}
+                    th 
+                      input(type='number' step=0.5 value=dato.grade min='1' max='10' name="finalgrade" form="regform" class="form-control")
+            div(class='row')
+              div.form-group
+                input(type='SUBMIT' value='Insert' class='btn blockButton' style='margin-top: 24px; margin-left: 25%; padding: 6px 10px; width: 75%;')

@@ -8,7 +8,9 @@ CREATE TABLE teacher
     cod_fisc VARCHAR(16) UNIQUE NOT NULL,
     email VARCHAR(100) NOT NULL,
     password VARCHAR(255) NOT NULL,
-    first_access BOOLEAN NOT NULL
+    first_access BOOLEAN NOT NULL,
+    coordinator BOOLEAN NOT NULL
+    /* coordinator aggiunto, da mettere not null una volta reso il codice tutto compatibile*/
     /* 1 first_access already done; 0 not yet */
 );
 
@@ -34,6 +36,7 @@ CREATE TABLE parent
     password VARCHAR(255) NOT NULL,
     first_access BOOLEAN NOT NULL
 );
+
 
 CREATE TABLE student
 (
@@ -173,4 +176,14 @@ CREATE TABLE timetable
         ON UPDATE CASCADE
         ON DELETE CASCADE, 
     PRIMARY KEY(start_time_slot,day, class_id)
+);
+
+CREATE TABLE student_final_term_grade
+(
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    id_student INT NOT NULL,
+    id_course INT NOT NULL,
+    period_term INT NOT NULL,
+    period_year INT NOT NULL,
+    period_grade INT NOT NULL
 );
