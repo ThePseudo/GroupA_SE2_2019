@@ -241,34 +241,4 @@ VALUES  -- example: (4,2,5,1,5),
     (4, 4, 8, 13, 3),
     (4, 4, 8, 14, 4),
     (4, 4, 8, 15, 5);
--- final term grade
--- fake data angelo rosso (id 1)for parent visualization
-INSERT INTO student_final_term_grade
-    (id_student,id_course,period_term,period_year,period_grade)
-VALUES
-    (1,1,1,2019,5),
-    (1,2,1,2019,6),
-    (1,3,1,2019,7),
-    (1,1,2,2019,8),
-    (1,2,2,2019,9),
-    (1,3,2,2019,6),
-    (1,1,1,2020,8),
-    (1,2,1,2020,7);
 
--- Mark
-INSERT INTO mark
-    (student_id, course_id, score, date_mark, period_mark,mark_subj,descr_mark_subj,type_mark_subj)
-VALUES
-    (1, 1, 6, '2020-9-10', 1, 'Chim 1', '3 domande', 'Other'),
-    (1, 2, 8, '2020-9-11', 2, 'Chim 1', '3 domande', 'Other'),
-    (1, 3, 10, '2020-9-12', 1, 'Chim 1', '3 domande', 'Other'),
-    (1, 1, 5, '2020-9-10', 1, 'Chim 1', '3 domande', 'Other'),
-    (1, 2, 4, '2020-9-11', 2, 'Chim 1', '3 domande', 'Other'),
-    (1, 3, 3, '2020-9-12', 1, 'Chim 1', '3 domande', 'Other'),
-    (2, 1, 10, '2020-9-10', 1, 'Chim 1', '3 domande', 'Other'),
-    (2, 1, 3, '2020-9-10', 2, 'Chim 1', '3 domande', 'Other'),
-    (2, 2, 9, '2020-9-11', 2, 'Chim 1', '3 domande', 'Other'),
-    (2, 3, 10, '2020-9-12', 1, 'Chim 1', '3 domande', 'Other'),
-    (2, 1, 7, '2020-9-10', 1, 'Chim 1', '3 domande', 'Other'),
-    (2, 2, 8, '2020-9-11', 2, 'Chim 1', '3 domande', 'Other'),
-    (2, 3, 4, '2020-9-12', 1, 'Chim 1', '3 domande', 'Other');

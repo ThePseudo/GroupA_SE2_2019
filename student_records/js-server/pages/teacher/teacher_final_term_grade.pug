@@ -42,15 +42,19 @@ html
                 else
                   option(value=2) Second Term
             div(class='row'  style='margin-top: 40px;')
-              table(class='table')
+              table(class='table' id='dati')
                 tr(class='table-row-base')
+                  th(style="text-align:left;") S_ID
                   th(style="text-align:left;") Student
+                  th(style="text-align:left;") C_ID
                   th(style="text-align:left;") Course
                   th(style="text-align:left;") Proposed Grade
                   th(style="text-align:left;") Final Term Grade
                 each dato in dati
                   tr
+                    th(style="text-align:left;") #{dato.studentid}
                     th(style="text-align:left;") #{dato.first_name+" "+dato.last_name}
+                    th(style="text-align:left;") #{dato.courseid}
                     th(style="text-align:left;") #{dato.course_name}
                     th(style="text-align:left;") #{dato.grade}
                     th 

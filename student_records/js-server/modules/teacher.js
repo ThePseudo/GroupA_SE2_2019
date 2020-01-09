@@ -905,8 +905,21 @@ router.get("/class/:classid/course/:courseid/final_term_grade", (req, res) => {
     var date = new Date();
     var yearmark = date.getFullYear();
     var dati = [];
-    var query1 = "SELECT student.id AS studid, first_name, last_name, course.id AS courid, course.course_name, AVG(score) AS grade FROM student,mark,course " +
-        "WHERE student.id=mark.student_id AND student.class_id=? AND period_mark=? AND course.id=mark.course_id AND YEAR(date_mark)=? GROUP BY student.id, first_name, last_name, course.id, course.course_name ORDER BY last_name,first_name,course_name";
+    var query1 = "SELECT student.id, first_name, last_name, course.id, course, 0 AS finalgrade "+
+        "FROM student AS st1,course AS c1,teacher_course_class "+
+        "WHERE st1.class_id = teacher_course_class.class_id "+
+        "AND c1.id NOT IN "+
+        "(SELECT DISTINCT(c2.id)"+
+        "FROM student AS st2,mark AS m2,course AS c2"+
+        "WHERE st1.id=st2.id "+
+        "AND m2.course_id=c2.id "+
+        "AND st2.id=m2.student_id "+
+        ") "+
+        " UNION "+
+        "SELECT student.id AS studid, first_name, last_name, course.id AS courid, course.course_name, AVG(score) AS grade "+
+        "FROM student,mark,course " +
+        "WHERE student.id=mark.student_id AND student.class_id=? AND period_mark=? AND course.id=mark.course_id AND YEAR(date_mark)=? " +
+        "GROUP BY student.id, first_name, last_name, course.id, course.course_name ORDER BY last_name,first_name,course_name";
 
     con.query(query1, [classID, periodmark, yearmark], (err, rows) => {
         if (err) {
@@ -942,15 +955,18 @@ router.get("/class/:classid/course/:courseid/final_term_grade", (req, res) => {
 });
 
 router.post("/class/:classid/course/:courseid/fin_term", (req, res) => {
+    var classID = parseInt(req.params.classid);
+    var courseID = parseInt(req.params.courseid);
     var finalgrade = req.body.finalgrade;
     var student = req.body.dati;
     var query = "";
     student = []; // da togliere
     //- inserire controllo se final grade è vuoto
     console.log(finalgrade);
+    console.log(student);
     for (var i = 0; i < student.length; i++) {
-        query = query + "INSERT INTO  student_final_term_grade(id_student,id_course,period_term,period_year,period_grade) " +
-            "VALUES(" + student[i].studentid + "," + student[i].courseid + "," + periodmark + "," + yearmark + "," + finalgrade[i] + ") " +
+        query = query + "INSERT INTO  student_final_term_grade(id_student,id_class,id_course,period_term,period_year,period_grade) " +
+            "VALUES(" + student[i].studentid + "," + student[i].pippo + "," + student[i].courseid + "," + periodmark + "," + yearmark + "," + finalgrade[i] + ") " +
             "ON DUPLICATE KEY UPDATE period_grade = " + finalgrade[i] + "; ";
     }
     console.log(query);
