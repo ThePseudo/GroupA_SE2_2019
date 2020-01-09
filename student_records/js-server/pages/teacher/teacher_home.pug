@@ -7,11 +7,11 @@
 
 //- Inputs: fullName (teacher), class_courses[] {classid, courseid, classname, coursename}
 
-mixin classButton(classid, courseid, className, courseName)
+mixin classButton(class_id, course_id, className, courseName)
   div(class="row hidden-md hidden-lg")
   div(class="col-xs-1 hidden-md hidden-lg")
   div(class="col-md-4 col-xs-10")
-    a(class='noLinkTitle button smallMarginTop' href = "/teacher/class/"+classid+"/course/"+courseid+'/course_home')
+    a(class='noLinkTitle button smallMarginTop' href = "/teacher/class/"+class_id+"/course/"+course_id+'/course_home')
       button(class='btn blockButton')
         div              
           img(src= '../../images/student_hat.ico' style='width:50px;height:50px;')
@@ -31,7 +31,7 @@ html
       div(class='row')
       for classcourse in class_courses
         if classcourse
-          +classButton(classcourse.classid, classcourse.courseid, classcourse.className, classcourse.courseName)
+          +classButton(classcourse.class_id, classcourse.course_id, classcourse.className, classcourse.courseName)
     
     div(class='container')
       //- Time table

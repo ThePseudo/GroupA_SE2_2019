@@ -26,12 +26,12 @@ const start_time_slot = ["08:00", "09:00", "10:00", "11:00", "12:00"];
 
 router.use(/\/.*/, function (req, res, next) {
     fullName = req.session.user.first_name + " " + req.session.user.last_name;
+    parentID = req.session.user.id;
     con = myInterface.DBconnect();
     next();
 });
 
 router.use('/:id', function (req, res, next) {
-    parentID = req.session.user.id;
     studentID = req.params.id;
     if (!isNaN(studentID)) {
         let sql = "SELECT first_name, last_name, class_id, class_name " +
@@ -42,7 +42,7 @@ router.use('/:id', function (req, res, next) {
                 return;
             }
             if (rows.length < 1) {
-                res.end("It's not your child you're looking for, is it?");
+                myInterface.sendUnauthorized(res);
                 return;
             }
             classID = rows[0].class_id;
@@ -65,7 +65,7 @@ router.use("/:studentID/course/:courseID", function (req, res, next) {
                 return;
             }
             if (rows.length < 1) {
-                res.end("The subject doesn't exist");
+                myInterface.sendUnauthorized(res);
                 return;
             }
             courseName = rows[0].course_name;
@@ -144,7 +144,8 @@ router.get("/:studentID/marks", (req, res) => {
             var mark = {
                 subject: rows[i].course_name,
                 date: rows[i].date_mark,
-                mark: rows[i].score
+                mark: rows[i].score,
+                type: rows[i].type_mark_subj
             }
             // Add object into array
             marks[i] = mark;
@@ -162,12 +163,8 @@ router.get("/:studentID/marks", (req, res) => {
 
 router.get("/:studentID/show_courses", (req, res) => {
     var course_hours = [];
-    var coursesMap = [];
-    var date = new Date();
-    var year = date.getFullYear();
-    if (date.getMonth() < 9) { // before august
-        year--;
-    }
+    var coursesArray = [];
+    var year = myInterface.getCurrentYear();
 
     var sql = ` SELECT first_name, last_name, teacher.id as teacher_id, course_name, course.id as course_id,color,year
                 FROM course, teacher_course_class as tcc, teacher
@@ -180,15 +177,17 @@ router.get("/:studentID/show_courses", (req, res) => {
             return;
         }
 
-        for (var i = 0; i < rows.length; ++i) {
+        for (var i = 0; i < rows.length; i++) {
             var course = {
-                courseid: rows[i].course_id,
+                course_id: rows[i].course_id,
                 courseName: rows[i].course_name,
                 color: rows[i].color,
                 teacherFullName: rows[i].last_name + " " + rows[i].first_name
             }
-            coursesMap[rows[i].course_id] = course;
+            coursesArray[i] = course;
         }
+
+        var len = coursesArray.length;
 
         //console.log(coursesMap);
         sql = ` SELECT  tcc.teacher_id as teacher_id, tt.start_time_slot as start_time_slot,tt.class_id as class_id, tt.course_id as course_id, tt.day as day 
@@ -199,29 +198,30 @@ router.get("/:studentID/show_courses", (req, res) => {
                     ORDER BY tt.day,tt.start_time_slot `
 
         params = [year, classID]
-        con.query(sql, params, (err, rows, fields) => {
+        con.query(sql, params, (err, rows) => {
             if (err) {
                 res.end("DB error: " + err);
                 return;
             }
-            var i = 0;
+
             for (var timeslot = 0; timeslot < 5; timeslot++) {
                 course_hours[timeslot] = [];
                 for (var day = 0; day < 5; day++) {
                     course_hours[timeslot][day] = {}
-                    if (i < rows.length) {
-                        if (rows[i].start_time_slot == timeslot + 1 && rows[i].day == day + 1) {
-                            course_hours[timeslot][day] = coursesMap[rows[i].course_id];
-                            i++;
-                        }
+                }
+            }
+
+            for(let i= 0;i<rows.length;i++){
+                for(var j=0;j<len;j++){
+                    if(coursesArray[j].course_id==rows[i].course_id){
+                        course_hours[rows[i].start_time_slot-1][rows[i].day-1] = coursesArray[j];
                     }
-                    //console.log(course_hours[timeslot][day]);
                 }
             }
 
             con.end();
             res.render('../pages/parent/parent_courselist.pug', {
-                courses: coursesMap,
+                courses: coursesArray,
                 className: className,
                 childID: studentID,
                 fullName: fullName,
@@ -246,7 +246,7 @@ router.get('/:studentID/course/:courseID', (req, res) => {
 
 /// course marks
 router.get('/:studentID/course/:courseID/marks', (req, res) => {
-    let sql = 'SELECT date_mark, score FROM mark ' +
+    let sql = 'SELECT date_mark, score, type_mark_subj  FROM mark ' +
         'WHERE mark.student_id = ? ' +
         'AND mark.course_id = ? ' +
         'ORDER BY mark.date_mark DESC';
@@ -260,7 +260,8 @@ router.get('/:studentID/course/:courseID/marks', (req, res) => {
         for (var i = 0; i < rows.length; ++i) {
             var student_mark = {
                 date: rows[i].date_mark,
-                mark: rows[i].score
+                mark: rows[i].score,
+                type: rows[i].type_mark_subj
             }
             marks[i] = student_mark;
         }
