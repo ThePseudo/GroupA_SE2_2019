@@ -811,4 +811,86 @@ router.get("/class/:classid/course/:courseid/class_timetable", (req, res) => {
     });
 });
 
+//- final term grade
+router.get("/class/:classid/course/:courseid/final_term_grade", (req, res) => {
+    var classID= parseInt(req.params.classid);
+    var courseID= parseInt(req.params.courseid);
+    var msg = req.query.msg;
+    var writtenMsg = "";
+    var classMsg = "";
+    var periodmark= 1;
+    switch (msg) {
+        case "err":
+            writtenMsg = "Some errors occured";
+            classMsg = "err_msg";
+            break;
+        case "ok":
+            writtenMsg = "Final term grades correctly inserted";
+            classMsg = "ok_msg"
+            break;
+        default:
+            break;
+    }
+    var date = new Date();
+    var yearmark = date.getFullYear();
+    var dati = [];
+    var query1 =    "SELECT student.id AS studid, first_name, last_name, course.id AS courid, course.course_name, AVG(score) AS grade FROM student,mark,course "+
+                    "WHERE student.id=mark.student_id AND student.class_id=? AND period_mark=? AND course.id=mark.course_id AND YEAR(date_mark)=? GROUP BY student.id, first_name, last_name, course.id, course.course_name ORDER BY last_name,first_name,course_name";
+               
+    con.query(query1,[classID,periodmark,yearmark], (err, rows) => {
+        if (err){
+            res.end("Database problem: " + err);
+            return;
+        }
+        if(rows.length==0)
+            console.log("non c'è nessun dato");
+        console.log(rows);
+        for (var i = 0; i < rows.length; i++) {
+            var dato = {
+                studentid: rows[i].studid,
+                first_name: rows[i].first_name,
+                courseid: rows[i].courid, 
+                course_name: rows[i].course_name,
+                last_name: rows[i].last_name,
+                grade: rows[i].grade
+            }
+            dati[i] = dato;
+        }
+        res.render("../pages/teacher/teacher_final_term_grade.pug", {
+            dati: dati,
+            yearmark: yearmark,
+            periodmark: periodmark,
+            classid: classID,
+            courseid: courseID,
+            fullName: fullName,
+            className: className,
+            msg:writtenMsg,
+            msgClass:classMsg
+        });
+    });
+});
+
+router.post("/class/:classid/course/:courseid/fin_term", (req, res) => {
+    var finalgrade = req.body.finalgrade;
+    var student = req.body.dati;
+    var query="";
+    student=[]; // da togliere
+    //- inserire controllo se final grade è vuoto
+    console.log(finalgrade);
+    for(var i=0;i<student.length;i++){
+        query = query + "INSERT INTO  student_final_term_grade(id_student,id_course,period_term,period_year,period_grade) "+ 
+                        "VALUES("+student[i].studentid+","+student[i].courseid+","+periodmark+","+yearmark+","+finalgrade[i]+") "+
+                        "ON DUPLICATE KEY UPDATE period_grade = "+finalgrade[i]+"; ";
+    }
+    console.log(query);
+    con.query(query, (err, rows) => {
+        if (err){
+            //res.end("Database problem: " + err);
+            res.redirect('./final_term_grade?msg=err');
+            return;
+        }
+        console.log("post final term grade");
+        res.redirect('./final_term_grade?msg=ok');
+    });
+});
 module.exports = router;

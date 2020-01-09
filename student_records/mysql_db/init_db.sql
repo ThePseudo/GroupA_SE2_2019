@@ -9,7 +9,7 @@ CREATE TABLE teacher
     email VARCHAR(100) NOT NULL,
     password VARCHAR(255) NOT NULL,
     first_access BOOLEAN NOT NULL,
-    coordinator BOOLEAN
+    coordinator BOOLEAN NOT NULL
     /* coordinator aggiunto, da mettere not null una volta reso il codice tutto compatibile*/
     /* 1 first_access already done; 0 not yet */
 );

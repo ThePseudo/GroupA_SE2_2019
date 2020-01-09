@@ -421,15 +421,16 @@ router.route("/:teacherID/contact").get((req, res) => {
 router.get('/:studentID/final_term_grade', (req, res) => {
     var year = req.query.year;
     var term = req.query.term;
+    var studentID = req.params.studentID;
     var writtenMsg = "";
     var msgClass = "";
-
+    console.log(year+" "+term);
     var yearlist = [];
     var termlist = [];
     var student_final_term_grade = [];
 
     var query1= "SELECT DISTINCT(period_year) AS py FROM student_final_term_grade WHERE id_student= ?";
-    var query2= "SELECT DISTINCT(period_term) AS pt FROM student_final_term_grade WHERE id_student= ?";
+    var query2= "SELECT DISTINCT(period_term) AS pt FROM student_final_term_grade WHERE id_student= ? AND period_year=?";
     var query3= "SELECT course_name, period_grade FROM course, student_final_term_grade AS sftg " +
             "WHERE course.id=sftg.id_course AND id_student = ? AND period_year= ? AND period_term= ?";
     
@@ -441,7 +442,7 @@ router.get('/:studentID/final_term_grade', (req, res) => {
         for (var i = 0; i < rows1.length; i++) {
             yearlist[i] = rows1[i].py;
         }
-        con.query(query2, [studentID], (err, rows2) => {
+        con.query(query2, [studentID,year], (err, rows2) => {
             if (err) {
                 res.end("DB error: " + err);
                 return;
@@ -451,7 +452,7 @@ router.get('/:studentID/final_term_grade', (req, res) => {
             }
             
             
-            if(year!=undefined && term!=undefined){
+            if(year!=undefined && term!=undefined && year!="select" && term!="select"){
                 con.query(query3, [studentID,year,term], (err, rows3) => {
                     if (err) {
                         res.end("DB error: " + err);
@@ -469,11 +470,13 @@ router.get('/:studentID/final_term_grade', (req, res) => {
                     res.render("../pages/parent/parent_finaltermgrades.pug", {
                         fullName: fullName,
                         studentName: studentName,
-                        studentID: studentID,
+                        childID: studentID,
                         student_final_term_grade: student_final_term_grade,
                         yearlist: yearlist,
                         termlist: termlist,
                         msg: writtenMsg,
+                        yearselected:year,
+                        termselected:term,
                         msgclass: msgClass
                     });
                 });
@@ -484,11 +487,13 @@ router.get('/:studentID/final_term_grade', (req, res) => {
             res.render("../pages/parent/parent_finaltermgrades.pug", {
                 fullName: fullName,
                 studentName: studentName,
-                studentID: studentID,
+                childID: studentID,
                 student_final_term_grade: student_final_term_grade,
                 yearlist: yearlist,
                 termlist: termlist,
                 msg: writtenMsg,
+                yearselected:year,
+                termselected:term,
                 msgclass: msgClass
             });}
         });

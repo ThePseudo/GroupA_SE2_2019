@@ -9,6 +9,21 @@ doctype html
 html
   include ../base/head.pug
   body
+    script(type='text/javascript').
+        function redirect(){
+          var e = document.getElementById("year_selected");
+          var result = e.options[e.selectedIndex].value;
+          $("#year_selected").submit(); 
+          location.href="/parent/"+ #{childID} +"/final_term_grade?year="+result;
+        }
+        function redirect2(){
+          var e = document.getElementById("year_selected");
+          var f = document.getElementById("term_selected");
+          var result = e.options[e.selectedIndex].value;
+          var result2 = f.options[f.selectedIndex].value;
+          $("#term_selected").submit(); 
+          location.href="/parent/"+ #{childID} +"/final_term_grade?year="+result+"&term="+result2;
+        }
     include ../base/navbar.pug
     include ../base/sidebar.pug
     div(class='container sidebarContainer')
@@ -17,28 +32,31 @@ html
       div(class='row')
         h2(class='title2') Final term grades
       div(class='row' align='center')
-        form(method='GET' action="/parent/"+studentID+"/final_term_grade" id="regform")
+        form(method='GET' action="/parent/"+childID+"/final_term_grade" id="regform")
           div(class='row')
             div(class='col-sm-3')
             div(class='col-sm-6')
               div.form-group
                 label(for='desc') Available Year:
-                select(placeholder='Year' name='year' class='form-control')
+                select(placeholder='Year' name='year' class='form-control' id='year_selected' onchange="redirect()")
+                  option(value="select") Select
                   each year in yearlist
-                    option(value=year) #{year}
+                    if(year==yearselected)
+                      option(value=year selected) #{year}
+                    else
+                      option(value=year) #{year}
           div(class='row')
             div(class='col-sm-3')
             div(class='col-sm-6')
               div.form-group
                 label(for='desc') Available Term:
-                select(placeholder='Year' name='term' class='form-control')
+                select(placeholder='Term' name='term' class='form-control' id='term_selected' onchange="redirect2()")
+                  option(value="select") Select
                   each term in termlist
-                    option(value=term) #{term}
-          div(class='row')
-            div(class='col-sm-3')
-            div(class='col-sm-6')
-              div.form-group
-                input(type='SUBMIT' value='Select' class='btn blockButton' style='margin-top: 24px; padding: 6px 10px;')
+                    if(term==termselected)
+                      option(value=term selected) #{term}
+                    else
+                      option(value=term) #{term}
       div(class='row')
         h2(class=msgclass) #{msg}
       div(class='row')
