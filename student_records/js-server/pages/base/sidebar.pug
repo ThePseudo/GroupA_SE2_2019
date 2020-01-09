@@ -38,11 +38,11 @@ else
         | #{fullName}
       a(class='active-sidebar-item' style="background:#B3E5FC; border-bottom: 1px solid rgba(0,0,0,.12);")
       a(class='active-sidebar-item' style="background:#B3E5FC;")
-      +sidebar_item("/officer/parents", "Manage parents")
+      //-+sidebar_item("/officer/parents", "Manage parents")
       +sidebar_item("/officer/enroll_student", "Enroll student")
       +sidebar_item("/officer/enroll_parent", "Register parent")
       +sidebar_item("/officer/insert_communication", "Insert communication")
-      +sidebar_item("/officer/time_table", "Time table composition")
+      //-+sidebar_item("/officer/time_table", "Time table composition")
       +sidebar_item("/officer/class_composition", "Class composition")
     else if(user=="teacher")
       a(class='active-sidebar-item' style="background:#B3E5FC;")

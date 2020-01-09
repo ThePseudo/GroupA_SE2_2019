@@ -142,7 +142,7 @@ router.get("/teacher_home", (req, res) => { // T3
                 WHERE tt.course_id = tcc.course_id AND tt.class_id = tcc.class_id AND tt.teacher_id = tcc.teacher_id AND tt.teacher_id = ? AND tcc.year= ?
                 ORDER BY tt.day,tt.start_time_slot `;
 
-        let params = [teacherID,year]
+        let params = [teacherID, year]
         con.query(sql, params, (err, rows) => {
             if (err) {
                 res.end("DB error: " + err);
@@ -155,10 +155,10 @@ router.get("/teacher_home", (req, res) => { // T3
                 }
             }
 
-            for(let i= 0;i<rows.length;i++){
-                for(var j=0;j<len;j++){
-                    if(classCoursesArray[j].class_id==rows[i].class_id && classCoursesArray[j].course_id==rows[i].course_id){
-                        course_hours[rows[i].start_time_slot-1][rows[i].day-1] = classCoursesArray[j];
+            for (let i = 0; i < rows.length; i++) {
+                for (var j = 0; j < len; j++) {
+                    if (classCoursesArray[j].class_id == rows[i].class_id && classCoursesArray[j].course_id == rows[i].course_id) {
+                        course_hours[rows[i].start_time_slot - 1][rows[i].day - 1] = classCoursesArray[j];
                     }
                 }
             }
@@ -397,7 +397,7 @@ router.get("/class/:classid/course/:courseid/class_mark", (req, res) => {
 */
 router.post("/class/:classid/course/:courseid/reg_mark", (req, res) => {
     var date_mark = req.body.date;
-    if(data_mark.getMonth()>8 && data_mark.getMonth()<1)
+    if (data_mark.getMonth() > 8 && data_mark.getMonth() < 1)
         var period_mark = 1;
     else
         var period_mark = 2;
@@ -838,12 +838,8 @@ router.route("/class/:classid/course/:courseid/upload_file").get((req, res) => {
 })
 
 router.get("/class/:classid/course/:courseid/class_timetable", (req, res) => {
-    var date = new Date();
-    var year = date.getFullYear();
+    var year = myInterface.getCurrentYear()
     var course_hours = [];
-    if (date.getMonth() < 9) { // before august
-        year--;
-    }
 
     for (var timeslot = 0; timeslot < 5; timeslot++) {
         course_hours[timeslot] = [];
@@ -851,7 +847,7 @@ router.get("/class/:classid/course/:courseid/class_timetable", (req, res) => {
             course_hours[timeslot][day] = {}
         }
     }
-    
+
     var sql = ` SELECT first_name, last_name, course_name, class_name, tt.start_time_slot as start_time_slot,tt.class_id as class_id, tt.course_id as course_id, tt.day as day 
                 FROM timetable as tt ,teacher_course_class as tcc, class, course, teacher
                 WHERE tcc.course_id = course.id AND tcc.class_id = class.id AND tt.course_id = tcc.course_id 
@@ -864,14 +860,14 @@ router.get("/class/:classid/course/:courseid/class_timetable", (req, res) => {
             res.end("Database problem: " + err);
             return;
         }
-        
-        for(let i= 0;i<rows.length;i++){
+
+        for (let i = 0; i < rows.length; i++) {
             let course = {
                 courseName: rows[i].course_name,
                 teacher_lastName: rows[i].last_name,
                 teacher_firstName: rows[i].first_name,
             }
-            course_hours[rows[i].start_time_slot-1][rows[i].day-1] = course;
+            course_hours[rows[i].start_time_slot - 1][rows[i].day - 1] = course;
         }
 
         con.end();
@@ -888,12 +884,12 @@ router.get("/class/:classid/course/:courseid/class_timetable", (req, res) => {
 
 //- final term grade
 router.get("/class/:classid/course/:courseid/final_term_grade", (req, res) => {
-    var classID= parseInt(req.params.classid);
-    var courseID= parseInt(req.params.courseid);
+    var classID = parseInt(req.params.classid);
+    var courseID = parseInt(req.params.courseid);
     var msg = req.query.msg;
     var writtenMsg = "";
     var classMsg = "";
-    var periodmark= 1;
+    var periodmark = 1;
     switch (msg) {
         case "err":
             writtenMsg = "Some errors occured";
@@ -909,22 +905,22 @@ router.get("/class/:classid/course/:courseid/final_term_grade", (req, res) => {
     var date = new Date();
     var yearmark = date.getFullYear();
     var dati = [];
-    var query1 =    "SELECT student.id AS studid, first_name, last_name, course.id AS courid, course.course_name, AVG(score) AS grade FROM student,mark,course "+
-                    "WHERE student.id=mark.student_id AND student.class_id=? AND period_mark=? AND course.id=mark.course_id AND YEAR(date_mark)=? GROUP BY student.id, first_name, last_name, course.id, course.course_name ORDER BY last_name,first_name,course_name";
-               
-    con.query(query1,[classID,periodmark,yearmark], (err, rows) => {
-        if (err){
+    var query1 = "SELECT student.id AS studid, first_name, last_name, course.id AS courid, course.course_name, AVG(score) AS grade FROM student,mark,course " +
+        "WHERE student.id=mark.student_id AND student.class_id=? AND period_mark=? AND course.id=mark.course_id AND YEAR(date_mark)=? GROUP BY student.id, first_name, last_name, course.id, course.course_name ORDER BY last_name,first_name,course_name";
+
+    con.query(query1, [classID, periodmark, yearmark], (err, rows) => {
+        if (err) {
             res.end("Database problem: " + err);
             return;
         }
-        if(rows.length==0)
+        if (rows.length == 0)
             console.log("non c'è nessun dato");
         console.log(rows);
         for (var i = 0; i < rows.length; i++) {
             var dato = {
                 studentid: rows[i].studid,
                 first_name: rows[i].first_name,
-                courseid: rows[i].courid, 
+                courseid: rows[i].courid,
                 course_name: rows[i].course_name,
                 last_name: rows[i].last_name,
                 grade: rows[i].grade
@@ -939,8 +935,8 @@ router.get("/class/:classid/course/:courseid/final_term_grade", (req, res) => {
             courseid: courseID,
             fullName: fullName,
             className: className,
-            msg:writtenMsg,
-            msgClass:classMsg
+            msg: writtenMsg,
+            msgClass: classMsg
         });
     });
 });
@@ -948,18 +944,18 @@ router.get("/class/:classid/course/:courseid/final_term_grade", (req, res) => {
 router.post("/class/:classid/course/:courseid/fin_term", (req, res) => {
     var finalgrade = req.body.finalgrade;
     var student = req.body.dati;
-    var query="";
-    student=[]; // da togliere
+    var query = "";
+    student = []; // da togliere
     //- inserire controllo se final grade è vuoto
     console.log(finalgrade);
-    for(var i=0;i<student.length;i++){
-        query = query + "INSERT INTO  student_final_term_grade(id_student,id_course,period_term,period_year,period_grade) "+ 
-                        "VALUES("+student[i].studentid+","+student[i].courseid+","+periodmark+","+yearmark+","+finalgrade[i]+") "+
-                        "ON DUPLICATE KEY UPDATE period_grade = "+finalgrade[i]+"; ";
+    for (var i = 0; i < student.length; i++) {
+        query = query + "INSERT INTO  student_final_term_grade(id_student,id_course,period_term,period_year,period_grade) " +
+            "VALUES(" + student[i].studentid + "," + student[i].courseid + "," + periodmark + "," + yearmark + "," + finalgrade[i] + ") " +
+            "ON DUPLICATE KEY UPDATE period_grade = " + finalgrade[i] + "; ";
     }
     console.log(query);
     con.query(query, (err, rows) => {
-        if (err){
+        if (err) {
             //res.end("Database problem: " + err);
             res.redirect('./final_term_grade?msg=err');
             return;
