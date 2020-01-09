@@ -174,15 +174,3 @@ CREATE TABLE timetable
         ON DELETE CASCADE, 
     PRIMARY KEY(start_time_slot,day, class_id)
 );
-
-CREATE TABLE teacher_timeslot_meeting
-(
-    teacher_id INT NOT NULL,
-    course_id INT NOT NULL,
-    class_id INT NOT NULL,
-    start_time_slot INT NOT NULL,
-    available BOOLEAN NOT NULL,
-    day INT NOT NULL,
-    year INT NOT NULL,
-    PRIMARY KEY(teacher_id, day,start_time_slot)
-);

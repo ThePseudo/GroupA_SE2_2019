@@ -241,11 +241,3 @@ VALUES  -- example: (4,2,5,1,5),
     (4, 4, 8, 13, 3),
     (4, 4, 8, 14, 4),
     (4, 4, 8, 15, 5);
-
--- teacher_timeslot_meeting
-INSERT INTO teacher_timeslot_meeting
-    (teacher_id, course_id, class_id, start_time_slot, available, day, year)
-VALUES
-    (1,1,1,2,0,1,2019),
-    (1,1,1,4,0,5,2019),
-    (1,1,3,3,0,5,2019);

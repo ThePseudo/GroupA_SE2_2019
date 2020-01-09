@@ -883,7 +883,7 @@ router.get("/class/:classid/course/:courseid/class_timetable", (req, res) => {
     });
 });
 
-router.get("/class/:classid/course/:courseid/timeslot_meeting", (req, res) => {
+/* router.get("/class/:classid/course/:courseid/timeslot_meeting", (req, res) => {
     var year = myInterface.getCurrentYear();
     var course_hours = [];
     var sql;
@@ -916,6 +916,7 @@ router.get("/class/:classid/course/:courseid/timeslot_meeting", (req, res) => {
                 lesson: 0
             }
             course_hours[rows[i].start_time_slot-1][rows[i].day-1] = slot;
+            console.log(course_hours[rows[i].start_time_slot-1][rows[i].day-1]);
         }
 
         var sql = ` SELECT course_name, class_name, tt.start_time_slot as start_time_slot,tt.class_id as class_id, tt.course_id as course_id, tt.day as day 
@@ -943,7 +944,7 @@ router.get("/class/:classid/course/:courseid/timeslot_meeting", (req, res) => {
                 course_hours[rows[i].start_time_slot-1][rows[i].day-1] = classCourse;
             }
 
-            console.log(course_hours);
+            //console.log(course_hours);
             res.render("../pages/teacher/teacher_timeslot_meeting.pug", {
                 fullName: fullName,
                 course_hours: course_hours,
@@ -953,6 +954,31 @@ router.get("/class/:classid/course/:courseid/timeslot_meeting", (req, res) => {
             });
         });
     });
-});
+}); 
+
+ //ADD in init_db.sql
+CREATE TABLE teacher_timeslot_meeting
+(
+    teacher_id INT NOT NULL,
+    course_id INT NOT NULL,
+    class_id INT NOT NULL,
+    start_time_slot INT NOT NULL,
+    available BOOLEAN NOT NULL,
+    day INT NOT NULL,
+    year INT NOT NULL,
+    PRIMARY KEY(teacher_id, day,start_time_slot)
+);
+
+//ADD in populate.sql
+
+-- teacher_timeslot_meeting
+INSERT INTO teacher_timeslot_meeting
+    (teacher_id, course_id, class_id, start_time_slot, available, day, year)
+VALUES
+    (1,1,1,2,0,1,2019),
+    (1,1,1,4,0,5,2019),
+    (1,1,3,3,0,5,2019);
+
+*/
 
 module.exports = router;
