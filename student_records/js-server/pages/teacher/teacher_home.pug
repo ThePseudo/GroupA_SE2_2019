@@ -11,8 +11,8 @@ mixin classButton(class_id, course_id, className, courseName)
   div(class="row hidden-md hidden-lg")
   div(class="col-xs-1 hidden-md hidden-lg")
   div(class="col-md-4 col-xs-10")
-    a(class='noLinkTitle button smallMarginTop' href = "/teacher/class/"+class_id+"/course/"+course_id+'/course_home')
-      button(class='btn blockButton')
+    a(class='noLinkTitle button' href = "/teacher/class/"+class_id+"/course/"+course_id+'/course_home')
+      button(class='btn blockButton' style="margin-top:16px;")
         div              
           img(src= '../../images/student_hat.ico' style='width:50px;height:50px;')
           text= " " + className + " - " + courseName
@@ -32,7 +32,7 @@ html
       for classcourse in class_courses
         if classcourse
           +classButton(classcourse.class_id, classcourse.course_id, classcourse.className, classcourse.courseName)
-    
+
     div(class='container')
       //- Time table
       div(class='row')
@@ -54,7 +54,7 @@ html
               th(style="width:15%;") Wed
               th(style="width:15%;") Thur
               th(style="width:15%;") Fri
-            
+
             - var i = 0
             for row in course_hours
               tr(class="table-row-base")
@@ -67,4 +67,3 @@ html
                     |&nbsp#{col.courseName}&nbsp 
             //-Metto &nbsp prima e dopo per centrare la scritta
             //-Metto &nbsp per avere la stessa dimensione per celle piene e celle vuote
-                  
