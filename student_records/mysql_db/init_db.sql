@@ -180,10 +180,10 @@ CREATE TABLE timetable
 
 CREATE TABLE student_final_term_grade
 (
-    id INT PRIMARY KEY AUTO_INCREMENT,
     id_student INT NOT NULL,
     id_course INT NOT NULL,
     period_term INT NOT NULL,
     period_year INT NOT NULL,
-    period_grade INT NOT NULL
+    period_grade INT NOT NULL,
+    PRIMARY KEY(id_student,id_course,period_term,period_year)
 );
