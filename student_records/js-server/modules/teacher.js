@@ -905,23 +905,28 @@ router.get("/class/:classid/course/:courseid/final_term_grade", (req, res) => {
     var date = new Date();
     var yearmark = date.getFullYear();
     var dati = [];
-    var query1 = "SELECT student.id, first_name, last_name, course.id, course, 0 AS finalgrade "+
-        "FROM student AS st1,course AS c1,teacher_course_class "+
-        "WHERE st1.class_id = teacher_course_class.class_id "+
-        "AND c1.id NOT IN "+
-        "(SELECT DISTINCT(c2.id)"+
-        "FROM student AS st2,mark AS m2,course AS c2"+
-        "WHERE st1.id=st2.id "+
-        "AND m2.course_id=c2.id "+
-        "AND st2.id=m2.student_id "+
-        ") "+
-        " UNION "+
+    var query1 = 
+        // "(SELECT st1.id AS studid, first_name, last_name, c1.id AS courid, c1.course_name, 0 AS grade "+
+        // "FROM student AS st1,course AS c1,teacher_course_class "+
+        // "WHERE st1.class_id = teacher_course_class.class_id AND st1.class_id=? AND teacher_course_class.year=? "+
+        // "AND c1.id NOT IN "+
+        // "(SELECT DISTINCT(c2.id) "+
+        // "FROM student AS st2,mark AS m2,course AS c2 "+
+        // "WHERE st1.id=st2.id "+
+        // "AND m2.course_id=c2.id "+
+        // "AND st2.id=m2.student_id "+
+        // "AND st2.class_id=? "+
+        // "AND YEAR(date_mark)=? "+
+        // ")) "+
+        // " UNION "+
         "SELECT student.id AS studid, first_name, last_name, course.id AS courid, course.course_name, AVG(score) AS grade "+
         "FROM student,mark,course " +
         "WHERE student.id=mark.student_id AND student.class_id=? AND period_mark=? AND course.id=mark.course_id AND YEAR(date_mark)=? " +
-        "GROUP BY student.id, first_name, last_name, course.id, course.course_name ORDER BY last_name,first_name,course_name";
-
-    con.query(query1, [classID, periodmark, yearmark], (err, rows) => {
+        "GROUP BY student.id, first_name, last_name, course.id, course.course_name "+
+        "ORDER BY last_name,first_name,course_name";
+    console.log(query1);
+    con.query(query1, [classID,yearmark, classID, yearmark, classID, periodmark, yearmark], (err, rows) => {
+        console.log(rows);
         if (err) {
             res.end("Database problem: " + err);
             return;
@@ -933,9 +938,9 @@ router.get("/class/:classid/course/:courseid/final_term_grade", (req, res) => {
             var dato = {
                 studentid: rows[i].studid,
                 first_name: rows[i].first_name,
+                last_name: rows[i].last_name,
                 courseid: rows[i].courid,
                 course_name: rows[i].course_name,
-                last_name: rows[i].last_name,
                 grade: rows[i].grade
             }
             dati[i] = dato;

@@ -262,13 +262,13 @@ VALUES
 -- final term grade
 -- fake data angelo rosso (id 1)for parent visualization
 INSERT INTO student_final_term_grade
-    (id_student,id_course,period_term,period_year,period_grade)
+    (id_student,id_class,id_course,period_term,period_year,period_grade)
 VALUES
-    (1,1,1,2019,5),
-    (1,2,1,2019,6),
-    (1,3,1,2019,7),
-    (1,1,2,2019,8),
-    (1,2,2,2019,9),
-    (1,3,2,2019,6),
-    (1,1,1,2020,8),
-    (1,2,1,2020,7);
+    (1,1,1,1,2019,5),
+    (1,1,2,1,2019,6),
+    (1,1,3,1,2019,7),
+    (1,1,1,2,2019,8),
+    (1,1,2,2,2019,9),
+    (1,1,3,2,2019,6),
+    (1,1,1,1,2020,8),
+    (1,1,2,1,2020,7);
