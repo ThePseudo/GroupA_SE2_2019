@@ -158,27 +158,6 @@ INSERT INTO homework
 VALUES
     (7, 15, "Study pages 12-14", "2019-12-18");
 
--- Mark
-INSERT INTO mark
-    (student_id, course_id, score, date_mark, period_mark,mark_subj,descr_mark_subj,type_mark_subj) -- student class / course
-VALUES
-    (1, 1, 6, '2019-10-06', 1, 'math 1', '3 questions', 'Written'), -- 1 / 1,5
-    (1, 5, 5, '2020-04-22', 2, 'science 4', '2 questions', 'Written'), -- 1 / 1,5
-
-    (2, 1, 6, '2019-10-11', 1, 'math 1', '4 questions', 'Oral'), -- 3 / 1,2,3,5
-    (2, 2, 8, '2019-09-29', 1, 'eng 1', '3 questions', 'Written'), -- 3 / 1,2,3,5
-    (2, 3, 7, '2020-03-18', 2, 'hist 3', '2 questions', 'Oral'), -- 3 / 1,2,3,5
-    (2, 5, 8, '2020-04-29', 2, 'science 4', '4 questions', 'Oral'), -- 3 / 1,2,3,5
-
-    (3, 8, 9, '2019-11-15', 1, 'run', 'test 1000m', 'Other'), -- 15 / 8
-
-    (4, 4, 8, '2019-12-12', 1, 'geography 2', '2 questions', 'Written'), -- 8 / 4,6
-    (4, 6, 9, '2020-05-12', 2, 'portrait', 'practice test', 'Other'), -- 8 / 4,6
-    
-    (6, 8, 8, '2019-12-16', 1, 'run', 'test 100m', 'Other'), -- 14 / 8
-    
-    (8, 2, 6, '2020-01-14', 1, 'eng 2', '4 questions', 'Written'), -- 3 / 1,2,3,5
-    (8, 3, 7, '2020-04-12', 2, 'hist 3', '3 questions', 'Oral'); -- 3 / 1,2,3,5
 
 -- General communication
 INSERT INTO General_Communication
@@ -253,11 +232,31 @@ VALUES  -- example: (4,2,5,1,5),
     (4, 4, 8, 14, 4),
     (4, 4, 8, 15, 5);
 
+-- Mark
+INSERT INTO mark
+    (student_id, course_id, score, date_mark, period_mark,mark_subj,descr_mark_subj,type_mark_subj) -- student class / course
+VALUES
+    (1, 1, 6, '2019-10-06', 1, 'math 1', '3 questions', 'Written'), -- 1 / 1,5
+    (1, 5, 5, '2020-04-22', 2, 'science 4', '2 questions', 'Written'), -- 1 / 1,5
+    (1, 5, 6, '2020-04-27', 2, 'science 4', '2 questions', 'Written'), -- 1 / 1,5
 
+    (2, 1, 6, '2019-10-11', 1, 'math 1', '4 questions', 'Oral'), -- 3 / 1,2,3,5
+    (2, 2, 8, '2019-09-29', 1, 'eng 1', '3 questions', 'Written'), -- 3 / 1,2,3,5
+    (2, 2, 9, '2019-10-20', 1, 'eng 2', '3 questions', 'Written'), -- 3 / 1,2,3,5
+    (2, 3, 7, '2020-03-18', 2, 'hist 3', '2 questions', 'Oral'), -- 3 / 1,2,3,5
+    (2, 5, 8, '2020-04-29', 2, 'science 4', '4 questions', 'Oral'), -- 3 / 1,2,3,5
 
+    (3, 8, 9, '2019-11-15', 1, 'run', 'test 1000m', 'Other'), -- 15 / 8
 
-
-
+    (4, 4, 8, '2019-12-12', 1, 'geography 2', '2 questions', 'Written'), -- 8 / 4,6
+    (4, 6, 9, '2020-05-12', 2, 'portrait', 'practice test', 'Other'), -- 8 / 4,6
+    
+    (6, 8, 8, '2019-12-16', 1, 'run', 'test 100m', 'Other'), -- 14 / 8
+    (6, 8, 8, '2020-03-15', 2, 'run', 'test 200m', 'Other'), -- 14 / 8
+    
+    (8, 2, 6, '2020-01-14', 1, 'eng 2', '4 questions', 'Written'), -- 3 / 1,2,3,5
+    (8, 3, 7, '2020-04-12', 2, 'hist 3', '3 questions', 'Oral'); -- 3 / 1,2,3,5
+    (8, 3, 6, '2020-05-12', 2, 'hist 4', '3 questions', 'Oral'); -- 3 / 1,2,3,5
 
 
 -- final term grade
