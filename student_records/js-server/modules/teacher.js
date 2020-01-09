@@ -889,7 +889,9 @@ router.get("/class/:classid/course/:courseid/final_term_grade", (req, res) => {
     var msg = req.query.msg;
     var writtenMsg = "";
     var classMsg = "";
-    var periodmark = 1;
+    var periodmark = parseInt(req.query.periodmark);
+    if(isNaN(periodmark))
+        periodmark = 0;
     switch (msg) {
         case "err":
             writtenMsg = "Some errors occured";
@@ -905,6 +907,7 @@ router.get("/class/:classid/course/:courseid/final_term_grade", (req, res) => {
     var date = new Date();
     var yearmark = date.getFullYear();
     var dati = [];
+    //  [classID,yearmark, classID, yearmark, classID, periodmark, yearmark]
     var query1 = 
         // "(SELECT st1.id AS studid, first_name, last_name, c1.id AS courid, c1.course_name, 0 AS grade "+
         // "FROM student AS st1,course AS c1,teacher_course_class "+
@@ -925,7 +928,7 @@ router.get("/class/:classid/course/:courseid/final_term_grade", (req, res) => {
         "GROUP BY student.id, first_name, last_name, course.id, course.course_name "+
         "ORDER BY last_name,first_name,course_name";
     console.log(query1);
-    con.query(query1, [classID,yearmark, classID, yearmark, classID, periodmark, yearmark], (err, rows) => {
+    con.query(query1,[classID,periodmark,yearmark], (err, rows) => {
         console.log(rows);
         if (err) {
             res.end("Database problem: " + err);
