@@ -185,7 +185,7 @@ CREATE TABLE student_final_term_grade
     id_course INT NOT NULL,
     period_term INT NOT NULL,
     period_year INT NOT NULL,
-    period_grade INT NOT NULL
+    period_grade INT NOT NULL,
     PRIMARY KEY(id_student,id_class,id_course,period_term,period_year)
 );
 
