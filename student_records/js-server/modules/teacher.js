@@ -400,7 +400,9 @@ router.get("/class/:classid/course/:courseid/class_mark", (req, res) => {
 */
 router.post("/class/:classid/course/:courseid/reg_mark", (req, res) => {
     var date_mark = req.body.date;
-    if (data_mark.getMonth() > 8 && data_mark.getMonth() < 1)
+    var dateArray = date_mark.split("-");
+    var month = dateArray[1];
+    if (month > 8 && month < 1)
         var period_mark = 1;
     else
         var period_mark = 2;
