@@ -219,6 +219,8 @@ router.route("/class/:classid/course/:courseid/insert_homework").get((req, res) 
             courseName: courseName,
             dateString: dateString,
             classID: classID,
+            classid: classID,
+            courseid: courseID,
             msg: writtenMsg,
             msgClass: msgClass,
             courseID: courseID,
@@ -896,7 +898,7 @@ router.get("/class/:classid/course/:courseid/final_term_grade", (req, res) => {
     var tmpmonth = newdate.getMonth();
     var yearmark = newdate.getFullYear();
     var dati = [];
-        
+
     switch (msg) {
         case "err":
             writtenMsg = "Some errors occured";
@@ -914,8 +916,7 @@ router.get("/class/:classid/course/:courseid/final_term_grade", (req, res) => {
             break;
     }
 
-    if(isNaN(periodmark))
-    {
+    if (isNaN(periodmark)) {
         res.render("../pages/teacher/teacher_final_term_grade.pug", {
             dati: dati,
             yearmark: yearmark,
@@ -928,46 +929,45 @@ router.get("/class/:classid/course/:courseid/final_term_grade", (req, res) => {
             msgClass: classMsg
         });
     }
-    else
-    {
+    else {
 
-        
+
         var queryyear = yearmark;
-        if(tmpmonth>=0 && tmpmonth<=7){
-            var queryyear = yearmark-1;
+        if (tmpmonth >= 0 && tmpmonth <= 7) {
+            var queryyear = yearmark - 1;
             var minDate = (yearmark - 1) + "-" + endYear;
             var maxDate = yearmark + "-" + endYear;
         }
-        else{
+        else {
             var minDate = yearmark + "-" + endYear;
             var maxDate = (yearmark + 1) + "-" + endYear;
         }
-        
-        
-        var query1 = 
-            "(SELECT DISTINCT st1.id AS studid, first_name, last_name, c1.id AS courid, c1.course_name AS cn, 0 AS grade "+
-            "FROM student AS st1,course AS c1,teacher_course_class "+
-            "WHERE st1.class_id = teacher_course_class.class_id AND st1.class_id=? AND teacher_course_class.course_id = c1.id AND teacher_course_class.year=? "+
-            "AND c1.id NOT IN "+
-            "(SELECT DISTINCT(c2.id) "+
-            "FROM student AS st2,mark AS m2,course AS c2 "+
-            "WHERE st1.id=st2.id "+
-            "AND m2.course_id=c2.id "+
-            "AND st2.id=m2.student_id "+
-            "AND st2.class_id=? "+
-            "AND period_mark=? "+
-            "AND date_mark BETWEEN ? AND ? ) )"+
-            " UNION "+
-            "(SELECT student.id AS studid, first_name, last_name, course.id AS courid, course.course_name AS cn, AVG(score) AS grade "+
+
+
+        var query1 =
+            "(SELECT DISTINCT st1.id AS studid, first_name, last_name, c1.id AS courid, c1.course_name AS cn, 0 AS grade " +
+            "FROM student AS st1,course AS c1,teacher_course_class " +
+            "WHERE st1.class_id = teacher_course_class.class_id AND st1.class_id=? AND teacher_course_class.course_id = c1.id AND teacher_course_class.year=? " +
+            "AND c1.id NOT IN " +
+            "(SELECT DISTINCT(c2.id) " +
+            "FROM student AS st2,mark AS m2,course AS c2 " +
+            "WHERE st1.id=st2.id " +
+            "AND m2.course_id=c2.id " +
+            "AND st2.id=m2.student_id " +
+            "AND st2.class_id=? " +
+            "AND period_mark=? " +
+            "AND date_mark BETWEEN ? AND ? ) )" +
+            " UNION " +
+            "(SELECT student.id AS studid, first_name, last_name, course.id AS courid, course.course_name AS cn, AVG(score) AS grade " +
             "FROM student,mark,course " +
             "WHERE student.id=mark.student_id AND student.class_id=? AND period_mark=? AND course.id=mark.course_id AND date_mark BETWEEN ? AND ? " +
-            "GROUP BY student.id, first_name, last_name, course.id, course.course_name) "+
+            "GROUP BY student.id, first_name, last_name, course.id, course.course_name) " +
             "ORDER BY last_name,first_name,cn";
         console.log(query1);
-        
+
         //[classID,periodmark,minDate,maxDate] se solo la mia query che funziona
         //[classID,yearmark,classID, periodmark, minDate,maxDate, classID,periodmark,minDate,maxDate] query intera 
-        con.query(query1,[classID,queryyear,classID,periodmark,minDate,maxDate,classID,periodmark,minDate,maxDate], (err, rows) => {
+        con.query(query1, [classID, queryyear, classID, periodmark, minDate, maxDate, classID, periodmark, minDate, maxDate], (err, rows) => {
             if (err) {
                 res.end("Database problem: " + err);
                 return;
@@ -1012,43 +1012,42 @@ router.post("/class/:classid/course/:courseid/fin_term", (req, res) => {
     var tmpmonth = newdate.getMonth();
     var yearmark = newdate.getFullYear();
     var queryyear = yearmark;
-    if(tmpmonth>=0 && tmpmonth<=7){
-        var queryyear = yearmark-1;
+    if (tmpmonth >= 0 && tmpmonth <= 7) {
+        var queryyear = yearmark - 1;
         var minDate = (yearmark - 1) + "-" + endYear;
         var maxDate = yearmark + "-" + endYear;
     }
-    else{
+    else {
         var minDate = yearmark + "-" + endYear;
         var maxDate = (yearmark + 1) + "-" + endYear;
     }
 
-    if(isNaN(periodmark))
-    {
+    if (isNaN(periodmark)) {
         res.redirect('./final_term_grade?msg=sel');
         return;
     }
-    else{
-        var query1= 
-            "(SELECT DISTINCT st1.id AS studid, first_name, last_name, c1.id AS courid, c1.course_name AS cn, 0 AS grade "+
-            "FROM student AS st1,course AS c1,teacher_course_class "+
-            "WHERE st1.class_id = teacher_course_class.class_id AND st1.class_id=? AND teacher_course_class.course_id = c1.id AND teacher_course_class.year=? "+
-            "AND c1.id NOT IN "+
-            "(SELECT DISTINCT(c2.id) "+
-            "FROM student AS st2,mark AS m2,course AS c2 "+
-            "WHERE st1.id=st2.id "+
-            "AND m2.course_id=c2.id "+
-            "AND st2.id=m2.student_id "+
-            "AND st2.class_id=? "+
-            "AND period_mark=? "+
-            "AND date_mark BETWEEN ? AND ? ) )"+
-            " UNION "+
-            "(SELECT student.id AS studid, first_name, last_name, course.id AS courid, course.course_name AS cn, AVG(score) AS grade "+
+    else {
+        var query1 =
+            "(SELECT DISTINCT st1.id AS studid, first_name, last_name, c1.id AS courid, c1.course_name AS cn, 0 AS grade " +
+            "FROM student AS st1,course AS c1,teacher_course_class " +
+            "WHERE st1.class_id = teacher_course_class.class_id AND st1.class_id=? AND teacher_course_class.course_id = c1.id AND teacher_course_class.year=? " +
+            "AND c1.id NOT IN " +
+            "(SELECT DISTINCT(c2.id) " +
+            "FROM student AS st2,mark AS m2,course AS c2 " +
+            "WHERE st1.id=st2.id " +
+            "AND m2.course_id=c2.id " +
+            "AND st2.id=m2.student_id " +
+            "AND st2.class_id=? " +
+            "AND period_mark=? " +
+            "AND date_mark BETWEEN ? AND ? ) )" +
+            " UNION " +
+            "(SELECT student.id AS studid, first_name, last_name, course.id AS courid, course.course_name AS cn, AVG(score) AS grade " +
             "FROM student,mark,course " +
             "WHERE student.id=mark.student_id AND student.class_id=? AND period_mark=? AND course.id=mark.course_id AND date_mark BETWEEN ? AND ? " +
-            "GROUP BY student.id, first_name, last_name, course.id, course.course_name) "+
+            "GROUP BY student.id, first_name, last_name, course.id, course.course_name) " +
             "ORDER BY last_name,first_name,cn";
         //console.log(query1);
-        con.query(query1,[classID,queryyear,classID,periodmark,minDate,maxDate,classID,periodmark,minDate,maxDate], (err, rows1) => {
+        con.query(query1, [classID, queryyear, classID, periodmark, minDate, maxDate, classID, periodmark, minDate, maxDate], (err, rows1) => {
             //console.log(rows);
             if (err) {
                 res.end("Database problem: " + err);
@@ -1059,10 +1058,10 @@ router.post("/class/:classid/course/:courseid/fin_term", (req, res) => {
                 console.log("non c'è nessun dato");
 
             console.log(rows1);
-            var query="";
+            var query = "";
             for (var i = 0; i < rows1.length; i++) {
                 query = query + "INSERT INTO  student_final_term_grade(id_student,id_class,id_course,period_term,period_year,period_grade) " +
-                    "VALUES(" + rows1[i].studid+ "," + classID + "," + rows1[i].courid + "," + periodmark + "," + yearmark + "," + finalgrade[i] + ") " +
+                    "VALUES(" + rows1[i].studid + "," + classID + "," + rows1[i].courid + "," + periodmark + "," + yearmark + "," + finalgrade[i] + ") " +
                     "ON DUPLICATE KEY UPDATE period_grade = " + finalgrade[i] + "; ";
             }
             console.log(query);
