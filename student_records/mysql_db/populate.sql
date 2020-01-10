@@ -288,3 +288,15 @@ VALUES -- example: (1,3,1,2019,5),
 
     (9, 8, 4, 1, '2019', 0), -- 8 / 4,6
     (9, 8, 6, 1, '2020', 0); -- 8 / 4,6
+
+INSERT INTO teacher_timeslot_meeting
+    (start_time_slot, teacher_id, course_id, class_id,day,available, year)
+VALUES
+    -- teacher 1
+    (1,1,1,2,3,0,2019),
+    (1,1,1,4,5,0,2019),
+    (1,1,3,3,4,0,2019),
+    -- teacher 2
+    (5,1,1,2,3,0,2019),
+    (5,1,1,4,5,0,2019),
+    (5,1,3,3,4,0,2019);

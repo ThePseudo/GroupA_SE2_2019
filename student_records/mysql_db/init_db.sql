@@ -185,6 +185,18 @@ CREATE TABLE student_final_term_grade
     id_course INT NOT NULL,
     period_term INT NOT NULL,
     period_year INT NOT NULL,
-    period_grade FLOAT NOT NULL,
+    period_grade INT NOT NULL
     PRIMARY KEY(id_student,id_class,id_course,period_term,period_year)
 );
+
+CREATE TABLE teacher_timeslot_meeting
+(
+    start_time_slot INT NOT NULL,
+    teacher_id INT NOT NULL,
+    course_id INT NOT NULL,
+    class_id INT NOT NULL,
+    day INT NOT NULL,
+    available BOOLEAN NOT NULL,
+    year INT NOT NULL,
+    PRIMARY KEY(start_time_slot,teacher_id, day,year)
+); 

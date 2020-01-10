@@ -888,6 +888,7 @@ router.get("/class/:classid/course/:courseid/class_timetable", (req, res) => {
     });
 });
 
+
 //- final term grade
 router.get("/class/:classid/course/:courseid/final_term_grade", (req, res) => {
     var classID = parseInt(req.params.classid);
@@ -1080,7 +1081,7 @@ router.post("/class/:classid/course/:courseid/fin_term", (req, res) => {
     }
 });
 
-/* router.get("/class/:classid/course/:courseid/timeslot_meeting", (req, res) => {
+router.get("/class/:classid/course/:courseid/timeslot_meeting", (req, res) => {
     var year = myInterface.getCurrentYear();
     var course_hours = [];
     var sql;
@@ -1088,13 +1089,13 @@ router.post("/class/:classid/course/:courseid/fin_term", (req, res) => {
     for (var timeslot = 0; timeslot < 5; timeslot++) {
         course_hours[timeslot] = [];
         for (var day = 0; day < 5; day++) {
-            course_hours[timeslot][day] = {}
+            course_hours[timeslot][day] = {day: day+1, start_time_slot: timeslot+1};
         }
     }
 
-    sql = ` SELECT *
-            FROM teacher_timeslot_meeting as ttm
-            WHERE year = ? AND teacher_id = ?
+    sql = ` SELECT ttm.class_id, ttm.course_id, class_name, course_name, available, start_time_slot, day
+            FROM teacher_timeslot_meeting as ttm, course, class
+            WHERE year = ? AND teacher_id = ? AND course.id = ttm.course_id AND ttm.class_id = class.id
             ORDER BY day, start_time_slot `;
 
     con.query(sql, [year, teacherID], (err, rows) => {
@@ -1110,10 +1111,11 @@ router.post("/class/:classid/course/:courseid/fin_term", (req, res) => {
                 className: rows[i].class_name,
                 courseName: rows[i].course_name,
                 available: rows[i].available,
+                start_time_slot: rows[i].start_time_slot,
+                day: rows[i].day,
                 lesson: 0
             }
             course_hours[rows[i].start_time_slot-1][rows[i].day-1] = slot;
-            console.log(course_hours[rows[i].start_time_slot-1][rows[i].day-1]);
         }
 
         var sql = ` SELECT course_name, class_name, tt.start_time_slot as start_time_slot,tt.class_id as class_id, tt.course_id as course_id, tt.day as day 
@@ -1136,6 +1138,8 @@ router.post("/class/:classid/course/:courseid/fin_term", (req, res) => {
                     course_id: rows[i].course_id,
                     className: rows[i].class_name,
                     courseName: rows[i].course_name,
+                    start_time_slot: rows[i].start_time_slot,
+                    day: rows[i].day,
                     lesson: 1
                 }
                 course_hours[rows[i].start_time_slot-1][rows[i].day-1] = classCourse;
@@ -1153,29 +1157,59 @@ router.post("/class/:classid/course/:courseid/fin_term", (req, res) => {
     });
 }); 
 
- //ADD in init_db.sql
-CREATE TABLE teacher_timeslot_meeting
-(
-    teacher_id INT NOT NULL,
-    course_id INT NOT NULL,
-    class_id INT NOT NULL,
-    start_time_slot INT NOT NULL,
-    available BOOLEAN NOT NULL,
-    day INT NOT NULL,
-    year INT NOT NULL,
-    PRIMARY KEY(teacher_id, day,start_time_slot)
-);
+router.post("/class/:classid/course/:courseid/add_timeslot_meeting",(req,res) => {
+    var class_id = req.params.classid;
+    var course_id = req.params.courseid;
+    var day = req.body.day;
+    var start_time_slot = req.body.start_time_slot;
+    var teacher_id = req.session.user.id;
+    var year = myInterface.getCurrentYear();
 
-//ADD in populate.sql
+    console.log("classid:" + class_id);
+    console.log("courseid:" + course_id);
+    console.log("day:" + day);
+    console.log("slot:" + start_time_slot);
 
--- teacher_timeslot_meeting
-INSERT INTO teacher_timeslot_meeting
-    (teacher_id, course_id, class_id, start_time_slot, available, day, year)
-VALUES
-    (1,1,1,2,0,1,2019),
-    (1,1,1,4,0,5,2019),
-    (1,1,3,3,0,5,2019);
+    var sql = ` SELECT *
+                FROM teacher_timeslot_meeting as ttm
+                WHERE ttm.day = ? AND ttm.start_time_slot =? AND teacher_id = ? AND class_id = ? AND course_id = ?`
+    var params = [day,start_time_slot,teacher_id,class_id,course_id];
+    
+    con.query(sql, params, (err, rows) => {
+        if (err) {
+            res.redirect('./timeslot_meeting?msg=err');
+            return;
+        }
+        console.log(rows);
+        if(rows.length>0){
+            console.log("cancello");
+            sql = ` DELETE FROM teacher_timeslot_meeting
+                    WHERE day = ? AND start_time_slot =? AND teacher_id = ? AND class_id = ? AND course_id = ?`;
+            params = [day,start_time_slot,teacher_id,class_id,course_id];
+            console.log(params);
+            con.query(sql, params, (err) => {
+                if (err) {
+                    res.redirect('./timeslot_meeting?msg=err');
+                    return;
+                }
+                res.redirect('./timeslot_meeting?msg=ok');
+            });
+        }else{
+            console.log("aggiungo");
+            sql = ` INSERT INTO teacher_timeslot_meeting(start_time_slot, teacher_id, course_id, class_id,day,available, year) 
+                    VALUES(?,?,?,?,?,?,?) `
 
-*/
+            var params = [start_time_slot, teacher_id, course_id, class_id,day,"0", year];
+            con.query(sql, params, (err) => {
+                if (err) {
+                    res.redirect('./timeslot_meeting?msg=err');
+                    return;
+                }
+                res.redirect('./timeslot_meeting?msg=ok');
+            });
+        }      
+    });
+});
+
 
 module.exports = router;
