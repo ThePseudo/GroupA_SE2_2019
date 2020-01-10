@@ -460,9 +460,13 @@ router.get('/:studentID/final_term_grade', (req, res) => {
                         return;
                     }
                     for (var i = 0; i < rows3.length; i++) {
+                        if(rows3[i].period_grade==0)
+                            var x = "not classifiable";
+                        else
+                            var x = rows3[i].period_grade;
                         var item = {
                             subject: rows3[i].course_name,
-                            grade: rows3[i].period_grade 
+                            grade: x
                         }
                         student_final_term_grade[i] = item;
                     }
