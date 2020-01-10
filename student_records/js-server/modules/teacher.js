@@ -215,6 +215,7 @@ router.route("/class/:classid/course/:courseid/insert_homework").get((req, res) 
                 break;
         }
         res.render("../pages/teacher/teacher_insert_homework.pug", {
+            fullName: fullName,
             className: className,
             courseName: courseName,
             dateString: dateString,
