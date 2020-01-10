@@ -196,7 +196,7 @@ CREATE TABLE teacher_timeslot_meeting
     course_id INT NOT NULL,
     class_id INT NOT NULL,
     day INT NOT NULL,
-    available BOOLEAN NOT NULL,
+    parent_id INT NOT NULL,
     year INT NOT NULL,
     PRIMARY KEY(start_time_slot,teacher_id, day,year)
 ); 

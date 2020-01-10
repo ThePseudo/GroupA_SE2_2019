@@ -137,6 +137,36 @@ body {
     text-align: center;
 }
 
+.noselect {
+    -webkit-touch-callout: none; /* iOS Safari */
+      -webkit-user-select: none; /* Safari */
+       -khtml-user-select: none; /* Konqueror HTML */
+         -moz-user-select: none; /* Old versions of Firefox */
+          -ms-user-select: none; /* Internet Explorer/Edge */
+              user-select: none; /* Non-prefixed version, currently
+                                    supported by Chrome, Opera and Firefox */
+}
+
+.timeslotFree{
+    text-align:center;
+}
+
+.timeslotFree:hover{
+    text-align:center;
+    background: rgba(187, 205, 214, 0.856);
+}
+
+
+.timeslotSelected{
+    text-align: center;
+    background-color: rgb(226, 45, 45);
+    transition: 0.2s;
+}
+.timeslotSelected:hover{
+    text-align: center;
+    background-color: rgb(177, 35, 35);
+    transition: 0.2s;
+}
 .err_msg {
     margin-top: 24px;
     text-align: center;

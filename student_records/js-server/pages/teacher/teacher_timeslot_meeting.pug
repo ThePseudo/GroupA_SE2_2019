@@ -44,7 +44,7 @@ html
         h1(class='title2') Weekly Timetable
       div(class='row')
         div(class="col-lg-12" style='align-content:center;')
-          table(style="width:100%; text-align:center; align-content:center" class="table table-bordered")
+          table(style="width:100%; text-align:center; align-content:center;" class="table table-bordered noselect")
             tr(class="table-row-base hidden-xs")
               th(style="width:10%;") Hour
               th(style="width:15%;") Monday
@@ -68,23 +68,20 @@ html
                 for col in row
                   if col.lesson == 1 
                     td(style = "text-align:center;")
-                        |Lesson
-                        br 
-                        |#{col.className} - #{col.courseName}
+                        p(style="font-weight: bold") Lesson
+                        p #{col.className} - #{col.courseName}
                   else
                     if col.available == 0 && (col.course_id == courseid && col.class_id == classid)
-                      td(style = "text-align:center; background-color:#e22d2d" onclick = "myFunction(" + col.day + ", " + col.start_time_slot + ", " + classid + ", " + courseid + ")")
-                        |Meeting
-                        br 
-                        |#{col.className} - #{col.courseName}
+                      td(class = "timeslotSelected" onclick = "myFunction(" + col.day + ", " + col.start_time_slot + ", " + classid + ", " + courseid + ")")
+                        p(style="font-weight: bold") Meeting
+                        p #{col.className} - #{col.courseName}
                     
                     else if col.available == 0 && (col.course_id != courseid || col.class_id != classid)
                       td(style = "text-align:center;")
-                        |Meeting
-                        br 
-                        |#{col.className} - #{col.courseName}
+                        p(style="font-weight: bold") Meeting
+                        p #{col.className} - #{col.courseName}
                     else
-                      td(style = "text-align:center;" onclick = "myFunction(" + col.day + ", " + col.start_time_slot + ", " + classid + ", " + courseid + ")")
+                      td(class = "timeslotFree" onclick = "myFunction(" + col.day + ", " + col.start_time_slot + ", " + classid + ", " + courseid + ")")
                         |&nbsp
                         br 
                         |&nbsp

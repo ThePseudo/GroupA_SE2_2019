@@ -1093,7 +1093,7 @@ router.get("/class/:classid/course/:courseid/timeslot_meeting", (req, res) => {
         }
     }
 
-    sql = ` SELECT ttm.class_id, ttm.course_id, class_name, course_name, available, start_time_slot, day
+    sql = ` SELECT ttm.class_id, ttm.course_id, class_name, course_name, parent_id, start_time_slot, day
             FROM teacher_timeslot_meeting as ttm, course, class
             WHERE year = ? AND teacher_id = ? AND course.id = ttm.course_id AND ttm.class_id = class.id
             ORDER BY day, start_time_slot `;
@@ -1110,7 +1110,8 @@ router.get("/class/:classid/course/:courseid/timeslot_meeting", (req, res) => {
                 course_id: rows[i].course_id,
                 className: rows[i].class_name,
                 courseName: rows[i].course_name,
-                available: rows[i].available,
+                parent_id : rows[i].parent_id,
+                available: 0,
                 start_time_slot: rows[i].start_time_slot,
                 day: rows[i].day,
                 lesson: 0
@@ -1196,10 +1197,10 @@ router.post("/class/:classid/course/:courseid/add_timeslot_meeting",(req,res) =>
             });
         }else{
             console.log("aggiungo");
-            sql = ` INSERT INTO teacher_timeslot_meeting(start_time_slot, teacher_id, course_id, class_id,day,available, year) 
+            sql = ` INSERT INTO teacher_timeslot_meeting(start_time_slot, teacher_id, course_id, class_id,day,parent_id, year) 
                     VALUES(?,?,?,?,?,?,?) `
 
-            var params = [start_time_slot, teacher_id, course_id, class_id,day,"0", year];
+            var params = [start_time_slot, teacher_id, course_id, class_id,day,-1, year];
             con.query(sql, params, (err) => {
                 if (err) {
                     res.redirect('./timeslot_meeting?msg=err');
