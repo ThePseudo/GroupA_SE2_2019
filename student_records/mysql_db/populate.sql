@@ -272,3 +272,15 @@ VALUES
     (2, 1, 7, '2020-9-10', 1, 'Chim 1', '3 domande', 'Other'),
     (2, 2, 8, '2020-9-11', 2, 'Chim 1', '3 domande', 'Other'),
     (2, 3, 4, '2020-9-12', 1, 'Chim 1', '3 domande', 'Other');
+
+INSERT INTO teacher_timeslot_meeting
+    (start_time_slot, teacher_id, course_id, class_id,day,available, year)
+VALUES
+    -- teacher 1
+    (1,1,1,2,3,0,2019),
+    (1,1,1,4,5,0,2019),
+    (1,1,3,3,4,0,2019),
+    -- teacher 2
+    (5,1,1,2,3,0,2019),
+    (5,1,1,4,5,0,2019),
+    (5,1,3,3,4,0,2019);

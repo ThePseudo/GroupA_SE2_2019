@@ -11,6 +11,30 @@ doctype html
 html
   include ../base/head.pug
   body
+    script(type='text/javascript').
+      function myFunction(day_value, start_time_slot_value, classid, courseid){
+        const form = document.createElement('form');
+        form.method = "post";
+        form.action = "/teacher/class/" + classid + "/course/" + courseid + "/add_timeslot_meeting";
+      
+        let hiddenField = document.createElement('input');
+        hiddenField.type = 'hidden';
+        hiddenField.name = "day";
+        hiddenField.value = day_value;
+
+        form.appendChild(hiddenField);
+
+        hiddenField = document.createElement('input');
+        hiddenField.type = 'hidden';
+        hiddenField.name = "start_time_slot";
+        hiddenField.value = start_time_slot_value;
+
+        form.appendChild(hiddenField);
+
+        document.body.appendChild(form);
+        form.submit();
+      }
+
     include ../base/navbar.pug
     include ../base/sidebar.pug
     
@@ -42,19 +66,25 @@ html
                 td= start_time_slot[i]
                 - i++;
                 for col in row
-                  if col.lesson == 1
+                  if col.lesson == 1 
                     td(style = "text-align:center;")
-                        |&nbsp#{col.className}&nbsp
+                        |Lesson
                         br 
-                        |&nbsp#{col.courseName}&nbsp
+                        |#{col.className} - #{col.courseName}
                   else
-                    if col.available == 0
-                      td(style = "text-align:center; background-color:#e22d2d")
-                        |&nbsp#{col.className}&nbsp
+                    if col.available == 0 && (col.course_id == courseid && col.class_id == classid)
+                      td(style = "text-align:center; background-color:#e22d2d" onclick = "myFunction(" + col.day + ", " + col.start_time_slot + ", " + classid + ", " + courseid + ")")
+                        |Meeting
                         br 
-                        |&nbsp#{col.courseName}&nbsp
-                    else
+                        |#{col.className} - #{col.courseName}
+                    
+                    else if col.available == 0 && (col.course_id != courseid || col.class_id != classid)
                       td(style = "text-align:center;")
+                        |Meeting
+                        br 
+                        |#{col.className} - #{col.courseName}
+                    else
+                      td(style = "text-align:center;" onclick = "myFunction(" + col.day + ", " + col.start_time_slot + ", " + classid + ", " + courseid + ")")
                         |&nbsp
                         br 
                         |&nbsp
