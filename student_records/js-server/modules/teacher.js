@@ -638,6 +638,7 @@ router.get("/class/:classid/course/:courseid/student/:studentid", (req, res) => 
             marks[i] = mark;
         }
         const endYear = "08-31";
+        new Date().getMonth
         var minDate = ((new Date().getFullYear()) - 1) + "-" + endYear;
         var maxDate = (new Date().getFullYear()) + "-" + endYear;
         sql = "SELECT id, date_ab, absence_type, justified FROM absence " +
@@ -904,8 +905,22 @@ router.get("/class/:classid/course/:courseid/final_term_grade", (req, res) => {
         default:
             break;
     }
-    var date = new Date();
-    var yearmark = date.getFullYear();
+
+
+    const endYear = "08-31";
+    var newdate = new Date();
+    var tmpmonth = newdate.getMonth();
+    var yearmark = newdate.getFullYear();
+    
+    if(tmpmonth>=0 && tmpmonth<=7){
+        var minDate = (yearmark - 1) + "-" + endYear;
+        var maxDate = yearmark + "-" + endYear;
+    }
+    else{
+        var minDate = yearmark + "-" + endYear;
+        var maxDate = (yearmark + 1) + "-" + endYear;
+    }
+    
     var dati = [];
     //  [classID,yearmark, classID, yearmark, classID, periodmark, yearmark]
     var query1 = 
@@ -919,17 +934,17 @@ router.get("/class/:classid/course/:courseid/final_term_grade", (req, res) => {
         // "AND m2.course_id=c2.id "+
         // "AND st2.id=m2.student_id "+
         // "AND st2.class_id=? "+
-        // "AND YEAR(date_mark)=? "+
+        // "AND date_mark BETWEEN ? AND ? "+
         // ")) "+
         // " UNION "+
         "SELECT student.id AS studid, first_name, last_name, course.id AS courid, course.course_name, AVG(score) AS grade "+
         "FROM student,mark,course " +
-        "WHERE student.id=mark.student_id AND student.class_id=? AND period_mark=? AND course.id=mark.course_id AND YEAR(date_mark)=? " +
+        "WHERE student.id=mark.student_id AND student.class_id=? AND period_mark=? AND course.id=mark.course_id AND date_mark BETWEEN ? AND ? " +
         "GROUP BY student.id, first_name, last_name, course.id, course.course_name "+
         "ORDER BY last_name,first_name,course_name";
-    console.log(query1);
-    con.query(query1,[classID,periodmark,yearmark], (err, rows) => {
-        console.log(rows);
+    //console.log(query1);
+    con.query(query1,[classID,periodmark,minDate,maxDate], (err, rows) => {
+        //console.log(rows);
         if (err) {
             res.end("Database problem: " + err);
             return;
@@ -965,27 +980,60 @@ router.get("/class/:classid/course/:courseid/final_term_grade", (req, res) => {
 router.post("/class/:classid/course/:courseid/fin_term", (req, res) => {
     var classID = parseInt(req.params.classid);
     var courseID = parseInt(req.params.courseid);
+    var periodmark = req.body.periodmark;
     var finalgrade = req.body.finalgrade;
-    var student = req.body.dati;
-    var query = "";
-    student = []; // da togliere
-    //- inserire controllo se final grade è vuoto
-    console.log(finalgrade);
-    console.log(student);
-    for (var i = 0; i < student.length; i++) {
-        query = query + "INSERT INTO  student_final_term_grade(id_student,id_class,id_course,period_term,period_year,period_grade) " +
-            "VALUES(" + student[i].studentid + "," + student[i].pippo + "," + student[i].courseid + "," + periodmark + "," + yearmark + "," + finalgrade[i] + ") " +
-            "ON DUPLICATE KEY UPDATE period_grade = " + finalgrade[i] + "; ";
+
+    const endYear = "08-31";
+    var newdate = new Date();
+    var tmpmonth = newdate.getMonth();
+    var yearmark = newdate.getFullYear();
+    
+    if(tmpmonth>=0 && tmpmonth<=7){
+        var minDate = (yearmark - 1) + "-" + endYear;
+        var maxDate = yearmark + "-" + endYear;
     }
-    console.log(query);
-    con.query(query, (err, rows) => {
+    else{
+        var minDate = yearmark + "-" + endYear;
+        var maxDate = (yearmark + 1) + "-" + endYear;
+    }
+
+    //- inserire controllo se final grade è vuoto
+    console.log("vettore final grade");
+    console.log(finalgrade);
+
+    var query1= "SELECT student.id AS studid, first_name, last_name, course.id AS courid, course.course_name, AVG(score) AS grade "+
+    "FROM student,mark,course " +
+    "WHERE student.id=mark.student_id AND student.class_id=? AND period_mark=? AND course.id=mark.course_id AND date_mark BETWEEN ? AND ? " +
+    "GROUP BY student.id, first_name, last_name, course.id, course.course_name "+
+    "ORDER BY last_name,first_name,course_name";
+    //console.log(query1);
+    con.query(query1,[classID,periodmark,minDate,maxDate], (err, rows1) => {
+        //console.log(rows);
         if (err) {
-            //res.end("Database problem: " + err);
-            res.redirect('./final_term_grade?msg=err');
+            res.end("Database problem: " + err);
             return;
         }
-        console.log("post final term grade");
-        res.redirect('./final_term_grade?msg=ok');
+
+        if (rows1.length == 0)
+            console.log("non c'è nessun dato");
+
+        console.log(rows1);
+        var query="";
+        for (var i = 0; i < rows1.length; i++) {
+            query = query + "INSERT INTO  student_final_term_grade(id_student,id_class,id_course,period_term,period_year,period_grade) " +
+                "VALUES(" + rows1[i].studid+ "," + classID + "," + rows1[i].courid + "," + periodmark + "," + yearmark + "," + finalgrade[i] + ") " +
+                "ON DUPLICATE KEY UPDATE period_grade = " + finalgrade[i] + "; ";
+        }
+        console.log(query);
+        con.query(query, (err, rows) => {
+            if (err) {
+                //res.end("Database problem: " + err);
+                res.redirect('./final_term_grade?msg=err');
+                return;
+            }
+            console.log("post final term grade");
+            res.redirect('./final_term_grade?msg=ok');
+        });
     });
 });
 

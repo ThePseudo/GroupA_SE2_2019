@@ -33,6 +33,7 @@ html
           div(class='col-sm-6')
             div(class='row'  style='margin-top: 40px;') 
               select(name='periodmark' class='form-control' id='term' onchange="redirect()")
+                option(value='select') Select
                 if(periodmark==1)
                   option(value=1 selected) First Term
                 else
@@ -42,7 +43,7 @@ html
                 else
                   option(value=2) Second Term
             div(class='row'  style='margin-top: 40px;')
-              table(class='table' id='dati')
+              table(class='table')
                 tr(class='table-row-base')
                   th(style="text-align:left;") S_ID
                   th(style="text-align:left;") Student
