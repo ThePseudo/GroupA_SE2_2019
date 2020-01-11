@@ -643,7 +643,6 @@ router.get("/class/:classid/course/:courseid/student/:studentid", (req, res) => 
             marks[i] = mark;
         }
         const endYear = "08-31";
-        new Date().getMonth()
         var minDate = ((new Date().getFullYear()) - 1) + "-" + endYear;
         var maxDate = (new Date().getFullYear()) + "-" + endYear;
         sql = "SELECT id, date_ab, absence_type, justified FROM absence " +
@@ -891,8 +890,6 @@ router.get("/class/:classid/course/:courseid/class_timetable", (req, res) => {
 
 //- final term grade
 router.get("/class/:classid/course/:courseid/final_term_grade", (req, res) => {
-    var classID = parseInt(req.params.classid);
-    var courseID = parseInt(req.params.courseid);
     var msg = req.query.msg;
     var writtenMsg = "";
     var classMsg = "";
@@ -938,7 +935,7 @@ router.get("/class/:classid/course/:courseid/final_term_grade", (req, res) => {
 
         var queryyear = yearmark;
         if (tmpmonth >= 0 && tmpmonth <= 7) {
-            var queryyear = yearmark - 1;
+            queryyear = yearmark - 1;
             var minDate = (yearmark - 1) + "-" + endYear;
             var maxDate = yearmark + "-" + endYear;
         }
@@ -1006,8 +1003,6 @@ router.get("/class/:classid/course/:courseid/final_term_grade", (req, res) => {
 });
 
 router.post("/class/:classid/course/:courseid/fin_term", (req, res) => {
-    var classID = parseInt(req.params.classid);
-    var courseID = parseInt(req.params.courseid);
     var periodmark = req.body.periodmark;
     var finalgrade = req.body.finalgrade;
 
@@ -1017,7 +1012,7 @@ router.post("/class/:classid/course/:courseid/fin_term", (req, res) => {
     var yearmark = newdate.getFullYear();
     var queryyear = yearmark;
     if (tmpmonth >= 0 && tmpmonth <= 7) {
-        var queryyear = yearmark - 1;
+        queryyear = yearmark - 1;
         var minDate = (yearmark - 1) + "-" + endYear;
         var maxDate = yearmark + "-" + endYear;
     }
@@ -1084,7 +1079,6 @@ router.post("/class/:classid/course/:courseid/fin_term", (req, res) => {
 router.get("/class/:classid/course/:courseid/timeslot_meeting", (req, res) => {
     var year = myInterface.getCurrentYear();
     var course_hours = [];
-    var sql;
 
     for (var timeslot = 0; timeslot < 5; timeslot++) {
         course_hours[timeslot] = [];
@@ -1093,7 +1087,7 @@ router.get("/class/:classid/course/:courseid/timeslot_meeting", (req, res) => {
         }
     }
 
-    sql = ` SELECT ttm.class_id, ttm.course_id, class_name, course_name, parent_id, start_time_slot, day
+    var sql = ` SELECT ttm.class_id, ttm.course_id, class_name, course_name, parent_id, start_time_slot, day
             FROM teacher_timeslot_meeting as ttm, course, class
             WHERE year = ? AND teacher_id = ? AND course.id = ttm.course_id AND ttm.class_id = class.id
             ORDER BY day, start_time_slot `;
@@ -1119,7 +1113,7 @@ router.get("/class/:classid/course/:courseid/timeslot_meeting", (req, res) => {
             course_hours[rows[i].start_time_slot - 1][rows[i].day - 1] = slot;
         }
 
-        var sql = ` SELECT course_name, class_name, tt.start_time_slot as start_time_slot,tt.class_id as class_id, tt.course_id as course_id, tt.day as day 
+        sql = ` SELECT course_name, class_name, tt.start_time_slot as start_time_slot,tt.class_id as class_id, tt.course_id as course_id, tt.day as day 
             FROM timetable as tt ,teacher_course_class as tcc, class, course
             WHERE tcc.course_id = course.id AND tcc.class_id = class.id AND tt.course_id = tcc.course_id 
             AND tt.class_id = tcc.class_id AND tt.teacher_id = tcc.teacher_id
@@ -1149,6 +1143,7 @@ router.get("/class/:classid/course/:courseid/timeslot_meeting", (req, res) => {
             //console.log(course_hours);
             res.render("../pages/teacher/teacher_timeslot_meeting.pug", {
                 fullName: fullName,
+                className: className,
                 course_hours: course_hours,
                 start_time_slot: start_time_slot,
                 classid: classID,
@@ -1159,22 +1154,17 @@ router.get("/class/:classid/course/:courseid/timeslot_meeting", (req, res) => {
 });
 
 router.post("/class/:classid/course/:courseid/add_timeslot_meeting", (req, res) => {
-    var class_id = req.params.classid;
-    var course_id = req.params.courseid;
     var day = req.body.day;
     var start_time_slot = req.body.start_time_slot;
-    var teacher_id = req.session.user.id;
     var year = myInterface.getCurrentYear();
 
-    console.log("classid:" + class_id);
-    console.log("courseid:" + course_id);
     console.log("day:" + day);
     console.log("slot:" + start_time_slot);
 
     var sql = ` SELECT *
                 FROM teacher_timeslot_meeting as ttm
                 WHERE ttm.day = ? AND ttm.start_time_slot =? AND teacher_id = ? AND class_id = ? AND course_id = ?`
-    var params = [day, start_time_slot, teacher_id, class_id, course_id];
+    var params = [day, start_time_slot, teacherID, classID, courseID];
 
     con.query(sql, params, (err, rows) => {
         if (err) {
@@ -1186,7 +1176,7 @@ router.post("/class/:classid/course/:courseid/add_timeslot_meeting", (req, res) 
             console.log("cancello");
             sql = ` DELETE FROM teacher_timeslot_meeting
                     WHERE day = ? AND start_time_slot =? AND teacher_id = ? AND class_id = ? AND course_id = ?`;
-            params = [day, start_time_slot, teacher_id, class_id, course_id];
+            params = [day, start_time_slot, teacherID, classID, courseID];
             console.log(params);
             con.query(sql, params, (err) => {
                 if (err) {
@@ -1200,7 +1190,7 @@ router.post("/class/:classid/course/:courseid/add_timeslot_meeting", (req, res) 
             sql = ` INSERT INTO teacher_timeslot_meeting(start_time_slot, teacher_id, course_id, class_id,day,parent_id, year) 
                     VALUES(?,?,?,?,?,?,?) `
 
-            var params = [start_time_slot, teacher_id, course_id, class_id, day, -1, year];
+            var params = [start_time_slot, teacherID, courseID, classID, day, -1, year];
             con.query(sql, params, (err) => {
                 if (err) {
                     res.redirect('./timeslot_meeting?msg=err');

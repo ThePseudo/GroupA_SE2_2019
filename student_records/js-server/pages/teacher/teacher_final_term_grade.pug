@@ -23,7 +23,9 @@ html
     include ../base/sidebar.pug
     div(class='container')
       div(class='row')
-        h1(class='title') Insert final term grades for class #{className} year #{yearmark}
+        h1(class='title') #{className} - #{yearmark}
+      div(class='row')
+        h2(class='title2') Final term grades insertion
       if msg != ""
         div(class='row')
           h2(class=msgClass) #{msg}

@@ -2,7 +2,7 @@
 - var page = "Teacher timeslot meeting"
 - var loggedIn = true
 - var user = "teacher"
-- var active = "Teacher timeslot meeting"
+- var active = "Meeting timeslot"
 - var sidebarForceHidden = false;
 
 //- Inputs: fullName (teacher), class_courses[] {classid, courseid, classname, coursename}
@@ -16,7 +16,7 @@ html
         const form = document.createElement('form');
         form.method = "post";
         form.action = "/teacher/class/" + classid + "/course/" + courseid + "/add_timeslot_meeting";
-      
+
         let hiddenField = document.createElement('input');
         hiddenField.type = 'hidden';
         hiddenField.name = "day";
@@ -37,11 +37,13 @@ html
 
     include ../base/navbar.pug
     include ../base/sidebar.pug
-    
+
     div(class='container sidebarContainer')
       //- Time table
+      div(class="row")
+        h1(class="title") #{className}
       div(class='row')
-        h1(class='title2') Weekly Timetable
+        h2(class='title2') Weekly Timetable
       div(class='row')
         div(class="col-lg-12" style='align-content:center;')
           table(style="width:100%; text-align:center; align-content:center;" class="table table-bordered noselect")
@@ -59,7 +61,7 @@ html
               th(style="width:15%;") Wed
               th(style="width:15%;") Thur
               th(style="width:15%;") Fri
-            
+
             - var i = 0
             for row in course_hours
               tr(class="table-row-base")
@@ -68,14 +70,14 @@ html
                 for col in row
                   if col.lesson == 1 
                     td(style = "text-align:center;")
-                        p(style="font-weight: bold") Lesson
-                        p #{col.className} - #{col.courseName}
+                      p(style="font-weight: bold") Lesson
+                      p #{col.className} - #{col.courseName}
                   else
                     if col.available == 0 && (col.course_id == courseid && col.class_id == classid)
                       td(class = "timeslotSelected" onclick = "myFunction(" + col.day + ", " + col.start_time_slot + ", " + classid + ", " + courseid + ")")
                         p(style="font-weight: bold") Meeting
                         p #{col.className} - #{col.courseName}
-                    
+
                     else if col.available == 0 && (col.course_id != courseid || col.class_id != classid)
                       td(style = "text-align:center;")
                         p(style="font-weight: bold") Meeting
@@ -87,4 +89,3 @@ html
                         |&nbsp
             //-Metto &nbsp prima e dopo per centrare la scritta
             //-Metto &nbsp per avere la stessa dimensione per celle piene e celle vuote
-                  
