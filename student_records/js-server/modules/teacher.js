@@ -643,7 +643,7 @@ router.get("/class/:classid/course/:courseid/student/:studentid", (req, res) => 
             marks[i] = mark;
         }
         const endYear = "08-31";
-        new Date().getMonth
+        new Date().getMonth()
         var minDate = ((new Date().getFullYear()) - 1) + "-" + endYear;
         var maxDate = (new Date().getFullYear()) + "-" + endYear;
         sql = "SELECT id, date_ab, absence_type, justified FROM absence " +
@@ -1089,7 +1089,7 @@ router.get("/class/:classid/course/:courseid/timeslot_meeting", (req, res) => {
     for (var timeslot = 0; timeslot < 5; timeslot++) {
         course_hours[timeslot] = [];
         for (var day = 0; day < 5; day++) {
-            course_hours[timeslot][day] = {day: day+1, start_time_slot: timeslot+1};
+            course_hours[timeslot][day] = { day: day + 1, start_time_slot: timeslot + 1 };
         }
     }
 
@@ -1103,20 +1103,20 @@ router.get("/class/:classid/course/:courseid/timeslot_meeting", (req, res) => {
             res.end("Database problem: " + err);
             return;
         }
-        
-        for(let i=0; i<rows.length;i++){
+
+        for (let i = 0; i < rows.length; i++) {
             var slot = {
                 class_id: rows[i].class_id,
                 course_id: rows[i].course_id,
                 className: rows[i].class_name,
                 courseName: rows[i].course_name,
-                parent_id : rows[i].parent_id,
+                parent_id: rows[i].parent_id,
                 available: 0,
                 start_time_slot: rows[i].start_time_slot,
                 day: rows[i].day,
                 lesson: 0
             }
-            course_hours[rows[i].start_time_slot-1][rows[i].day-1] = slot;
+            course_hours[rows[i].start_time_slot - 1][rows[i].day - 1] = slot;
         }
 
         var sql = ` SELECT course_name, class_name, tt.start_time_slot as start_time_slot,tt.class_id as class_id, tt.course_id as course_id, tt.day as day 
@@ -1132,8 +1132,8 @@ router.get("/class/:classid/course/:courseid/timeslot_meeting", (req, res) => {
                 res.end("DB error: " + err);
                 return;
             }
-        
-            for(let i= 0;i<rows.length;i++){
+
+            for (let i = 0; i < rows.length; i++) {
                 var classCourse = {
                     class_id: rows[i].class_id,
                     course_id: rows[i].course_id,
@@ -1143,7 +1143,7 @@ router.get("/class/:classid/course/:courseid/timeslot_meeting", (req, res) => {
                     day: rows[i].day,
                     lesson: 1
                 }
-                course_hours[rows[i].start_time_slot-1][rows[i].day-1] = classCourse;
+                course_hours[rows[i].start_time_slot - 1][rows[i].day - 1] = classCourse;
             }
 
             //console.log(course_hours);
@@ -1156,9 +1156,9 @@ router.get("/class/:classid/course/:courseid/timeslot_meeting", (req, res) => {
             });
         });
     });
-}); 
+});
 
-router.post("/class/:classid/course/:courseid/add_timeslot_meeting",(req,res) => {
+router.post("/class/:classid/course/:courseid/add_timeslot_meeting", (req, res) => {
     var class_id = req.params.classid;
     var course_id = req.params.courseid;
     var day = req.body.day;
@@ -1174,19 +1174,19 @@ router.post("/class/:classid/course/:courseid/add_timeslot_meeting",(req,res) =>
     var sql = ` SELECT *
                 FROM teacher_timeslot_meeting as ttm
                 WHERE ttm.day = ? AND ttm.start_time_slot =? AND teacher_id = ? AND class_id = ? AND course_id = ?`
-    var params = [day,start_time_slot,teacher_id,class_id,course_id];
-    
+    var params = [day, start_time_slot, teacher_id, class_id, course_id];
+
     con.query(sql, params, (err, rows) => {
         if (err) {
             res.redirect('./timeslot_meeting?msg=err');
             return;
         }
         console.log(rows);
-        if(rows.length>0){
+        if (rows.length > 0) {
             console.log("cancello");
             sql = ` DELETE FROM teacher_timeslot_meeting
                     WHERE day = ? AND start_time_slot =? AND teacher_id = ? AND class_id = ? AND course_id = ?`;
-            params = [day,start_time_slot,teacher_id,class_id,course_id];
+            params = [day, start_time_slot, teacher_id, class_id, course_id];
             console.log(params);
             con.query(sql, params, (err) => {
                 if (err) {
@@ -1195,12 +1195,12 @@ router.post("/class/:classid/course/:courseid/add_timeslot_meeting",(req,res) =>
                 }
                 res.redirect('./timeslot_meeting?msg=ok');
             });
-        }else{
+        } else {
             console.log("aggiungo");
             sql = ` INSERT INTO teacher_timeslot_meeting(start_time_slot, teacher_id, course_id, class_id,day,parent_id, year) 
                     VALUES(?,?,?,?,?,?,?) `
 
-            var params = [start_time_slot, teacher_id, course_id, class_id,day,-1, year];
+            var params = [start_time_slot, teacher_id, course_id, class_id, day, -1, year];
             con.query(sql, params, (err) => {
                 if (err) {
                     res.redirect('./timeslot_meeting?msg=err');
@@ -1208,7 +1208,7 @@ router.post("/class/:classid/course/:courseid/add_timeslot_meeting",(req,res) =>
                 }
                 res.redirect('./timeslot_meeting?msg=ok');
             });
-        }      
+        }
     });
 });
 
