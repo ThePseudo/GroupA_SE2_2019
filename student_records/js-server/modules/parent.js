@@ -211,10 +211,10 @@ router.get("/:studentID/show_courses", (req, res) => {
                 }
             }
 
-            for(let i= 0;i<rows.length;i++){
-                for(var j=0;j<len;j++){
-                    if(coursesArray[j].course_id==rows[i].course_id){
-                        course_hours[rows[i].start_time_slot-1][rows[i].day-1] = coursesArray[j];
+            for (let i = 0; i < rows.length; i++) {
+                for (var j = 0; j < len; j++) {
+                    if (coursesArray[j].course_id == rows[i].course_id) {
+                        course_hours[rows[i].start_time_slot - 1][rows[i].day - 1] = coursesArray[j];
                     }
                 }
             }
@@ -422,19 +422,18 @@ router.route("/:teacherID/contact").get((req, res) => {
 router.get('/:studentID/final_term_grade', (req, res) => {
     var year = req.query.year;
     var term = req.query.term;
-    var studentID = req.params.studentID;
     var writtenMsg = "";
     var msgClass = "";
-    console.log(year+" "+term);
+    console.log(year + " " + term);
     var yearlist = [];
     var termlist = [];
     var student_final_term_grade = [];
 
-    var query1= "SELECT DISTINCT(period_year) AS py FROM student_final_term_grade WHERE id_student= ?";
-    var query2= "SELECT DISTINCT(period_term) AS pt FROM student_final_term_grade WHERE id_student= ? AND period_year=?";
-    var query3= "SELECT course_name, period_grade FROM course, student_final_term_grade AS sftg " +
-            "WHERE course.id=sftg.id_course AND id_student = ? AND period_year= ? AND period_term= ?";
-    
+    var query1 = "SELECT DISTINCT(period_year) AS py FROM student_final_term_grade WHERE id_student= ?";
+    var query2 = "SELECT DISTINCT(period_term) AS pt FROM student_final_term_grade WHERE id_student= ? AND period_year=?";
+    var query3 = "SELECT course_name, period_grade FROM course, student_final_term_grade AS sftg " +
+        "WHERE course.id=sftg.id_course AND id_student = ? AND period_year= ? AND period_term= ?";
+
     con.query(query1, [studentID], (err, rows1) => {
         if (err) {
             res.end("DB error: " + err);
@@ -443,7 +442,7 @@ router.get('/:studentID/final_term_grade', (req, res) => {
         for (var i = 0; i < rows1.length; i++) {
             yearlist[i] = rows1[i].py;
         }
-        con.query(query2, [studentID,year], (err, rows2) => {
+        con.query(query2, [studentID, year], (err, rows2) => {
             if (err) {
                 res.end("DB error: " + err);
                 return;
@@ -451,16 +450,16 @@ router.get('/:studentID/final_term_grade', (req, res) => {
             for (var i = 0; i < rows2.length; i++) {
                 termlist[i] = rows2[i].pt;
             }
-            
-            
-            if(year!=undefined && term!=undefined && year!="select" && term!="select"){
-                con.query(query3, [studentID,year,term], (err, rows3) => {
+
+
+            if (year != undefined && term != undefined && year != "select" && term != "select") {
+                con.query(query3, [studentID, year, term], (err, rows3) => {
                     if (err) {
                         res.end("DB error: " + err);
                         return;
                     }
                     for (var i = 0; i < rows3.length; i++) {
-                        if(rows3[i].period_grade==0)
+                        if (rows3[i].period_grade == 0)
                             var x = "not classifiable";
                         else
                             var x = rows3[i].period_grade;
@@ -470,7 +469,7 @@ router.get('/:studentID/final_term_grade', (req, res) => {
                         }
                         student_final_term_grade[i] = item;
                     }
-                    writtenMsg = "Final "+term+"° term grades table for the year "+year;
+                    writtenMsg = "Final " + term + "° term grades table for the year " + year;
                     msgClass = "ok_msg";
                     res.render("../pages/parent/parent_finaltermgrades.pug", {
                         fullName: fullName,
@@ -480,27 +479,28 @@ router.get('/:studentID/final_term_grade', (req, res) => {
                         yearlist: yearlist,
                         termlist: termlist,
                         msg: writtenMsg,
-                        yearselected:year,
-                        termselected:term,
+                        yearselected: year,
+                        termselected: term,
                         msgclass: msgClass
                     });
                 });
             }
-            else{
-            writtenMsg = "No final term grades or no selected year and term";
-            msgClass = "err_msg";
-            res.render("../pages/parent/parent_finaltermgrades.pug", {
-                fullName: fullName,
-                studentName: studentName,
-                childID: studentID,
-                student_final_term_grade: student_final_term_grade,
-                yearlist: yearlist,
-                termlist: termlist,
-                msg: writtenMsg,
-                yearselected:year,
-                termselected:term,
-                msgclass: msgClass
-            });}
+            else {
+                writtenMsg = "No final term grades or no selected year and term";
+                msgClass = "err_msg";
+                res.render("../pages/parent/parent_finaltermgrades.pug", {
+                    fullName: fullName,
+                    studentName: studentName,
+                    childID: studentID,
+                    student_final_term_grade: student_final_term_grade,
+                    yearlist: yearlist,
+                    termlist: termlist,
+                    msg: writtenMsg,
+                    yearselected: year,
+                    termselected: term,
+                    msgclass: msgClass
+                });
+            }
         });
     });
 });
