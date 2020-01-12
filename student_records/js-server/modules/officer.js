@@ -39,6 +39,10 @@ router.get("/class_composition", (req, res) => {
             writtenMsg = "The class already exists";
             msgClass = "err_msg";
             break;
+        case "noform":
+            writtenMsg = "Please, fill all the data";
+            msgClass = "err_msg";
+            break;
         default:
             break;
     }
@@ -135,10 +139,22 @@ router.post("/up_class", (req, res) => {
     });
 });
 
-router.post("/new_class", (req, res) => {
+router.post("/new_class",
+[
+    body('newclassyear').trim().escape(),
+    body('newclasssection').trim().escape(),
+], 
+(req, res) => {
     var newclassyear = req.body.newclassyear;
     var newclasssection = req.body.newclasssection.toUpperCase();
     var classname = newclassyear + newclasssection;
+
+    //isNaN() restituisce true se passo un var che non è convertibile in un numero in base decimale tramite parseInt()
+    //controllo che newclasssection sia una stringa sempre con isNaN()
+    if (!newclassyear || !newclasssection || isNaN(parseInt(newclassyear, 10)) || !isNaN(parseInt(newclasssection))){
+        res.redirect("./class_composition?msg=noform");
+        return;
+    }
 
     con.query("SELECT class_name FROM class WHERE class_name = ?", [classname], (err, result) => {
         if (err) {
@@ -188,11 +204,13 @@ router.get("/insert_communication", (req, res) => {
 });
 
 ////////////////////////
-router.post("/insert_comm", [body('name')
+router.post("/insert_comm",
+[body('desc')
     .not().isEmpty()
     .trim()
     .escape()
-], (req, res) => {
+], 
+(req, res) => {
     let desc = req.body.desc;
 
     let date = new Date();

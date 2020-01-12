@@ -1144,6 +1144,7 @@ router.get("/class/:classid/course/:courseid/timeslot_meeting", (req, res) => {
             res.render("../pages/teacher/teacher_timeslot_meeting.pug", {
                 fullName: fullName,
                 className: className,
+                courseName: courseName,
                 course_hours: course_hours,
                 start_time_slot: start_time_slot,
                 classid: classID,
