@@ -4,11 +4,12 @@
 - var user = "parent"
 - var active = "Show all marks"
 
-mixin rowMark(subject, date, mark)
+mixin rowMark(subject, date, mark, type)
   tr(class="table-row table-row-base")
     td= (date.getDate() + "/" + (date.getMonth()+1) + "/" + date.getFullYear())
     td= subject
     td= mark
+    td= type
 
 doctype html
 html
@@ -29,5 +30,6 @@ html
               th Date
               th Subject
               th Mark
+              th Type
             for mark in student_marks
-              +rowMark(mark.subject, mark.date, mark.mark)
+              +rowMark(mark.subject, mark.date, mark.mark, mark.type)

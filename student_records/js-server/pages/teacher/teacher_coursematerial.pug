@@ -10,7 +10,7 @@ mixin rowUploadFile(date, link, description)
     td(style="text-align:left")= description
     td(style="text-align:left;")
       a(href="/download/"+link) Link
-      
+
 
 doctype html
 html
@@ -28,13 +28,13 @@ html
           h2(class = 'ok_msg') &nbsp #{message} &nbsp
         else
           h2(class = 'err_msg') &nbsp #{message} &nbsp
-      form(method='POST' action="/teacher/class/"+classID+"/course/"+courseID+"/up_file" enctype="multipart/form-data")
+      form(method='POST' action="./up_file" enctype="multipart/form-data")
         div(class='row' style='margin-top: 40px;')
           div(class='col-lg-3')
           div(class='col-lg-6 col-xs-12')
             div.form-group
               label(for='desc') Description:
-              input(type='text' placeholder='Description' name='desc' class="form-control")
+              input(type='text' placeholder='Description' name='desc' class="form-control" required)
         div(class='row')
           div(class='col-lg-3')
           div(class='col-lg-6 col-xs-12')

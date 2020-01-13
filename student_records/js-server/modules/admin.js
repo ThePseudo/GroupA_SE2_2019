@@ -95,6 +95,7 @@ router.route("/enroll/:user").get((req, res) => {
     (req, res) => {
         var table = userType;
         var principal = 0;
+        var coordinator = req.body.coordinator;
         if (userType == "principal") {
             table = "officer";
             principal = 1;
@@ -123,9 +124,18 @@ router.route("/enroll/:user").get((req, res) => {
             var params = [];
             switch (table) {
                 case "teacher":
-                    sql = "INSERT INTO teacher(first_name, last_name, cod_fisc, email, password, first_access) " +
-                        "VALUES(?, ?, ?, ?, ?, ?)";
-                    params = [first_name, last_name, SSN, email, hash_pwd, 0];
+                    var coo;
+                    if(coordinator=="on"){
+                        console.log("un coordinator");
+                        coo=1;
+                    }   
+                    else{
+                        console.log("non un coordinator");
+                        coo=0;
+                    }
+                    sql = "INSERT INTO teacher(first_name, last_name, cod_fisc, email, password, first_access,coordinator) " +
+                        "VALUES(?, ?, ?, ?, ?, ?, ?)";
+                    params = [first_name, last_name, SSN, email, hash_pwd, 0,coo];
                     break;
                 case "officer":
                     sql = "INSERT INTO officer" +

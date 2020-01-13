@@ -137,6 +137,36 @@ body {
     text-align: center;
 }
 
+.noselect {
+    -webkit-touch-callout: none; /* iOS Safari */
+      -webkit-user-select: none; /* Safari */
+       -khtml-user-select: none; /* Konqueror HTML */
+         -moz-user-select: none; /* Old versions of Firefox */
+          -ms-user-select: none; /* Internet Explorer/Edge */
+              user-select: none; /* Non-prefixed version, currently
+                                    supported by Chrome, Opera and Firefox */
+}
+
+.timeslotFree{
+    text-align:center;
+}
+
+.timeslotFree:hover{
+    text-align:center;
+    background: rgba(187, 205, 214, 0.856);
+}
+
+
+.timeslotSelected{
+    text-align: center;
+    background-color: rgb(226, 45, 45);
+    transition: 0.2s;
+}
+.timeslotSelected:hover{
+    text-align: center;
+    background-color: rgb(177, 35, 35);
+    transition: 0.2s;
+}
 .err_msg {
     margin-top: 24px;
     text-align: center;
@@ -275,14 +305,20 @@ input[type="date"] {
 }
 
 .orange {
-    background-color: #FFB74D;
+    background-color: #FF9800;
 }
 .orange:hover {
-    background-color: #FF9800;
+    background-color: #f47a1c;
 }
 
 .blueHover:hover {
     background-color: #4FC3F7;
+}
+
+.smallSelect {
+    margin-left: 12%;
+    margin-right: 12%;
+    margin-top: -8px;
 }
 
 /* Smaller screens */
@@ -318,12 +354,18 @@ input[type="date"] {
         bottom: 0px;
         width: 100%;
     }
+
+    .smallSelect {
+        margin-left: 0px;
+        margin-right: 0px;
+        margin-top: 0px;
+    }
 }
 
 /* Multiselect */
 .ms-container{
   background: transparent url('../img/switch.png') no-repeat 50% 50%;
-  width: 370px;
+  width: 100%;
 }
 
 .ms-container:after{
@@ -397,7 +439,13 @@ input[type="date"] {
   border-bottom: 1px #eee solid;
   padding: 2px 10px;
   color: #555;
-  font-size: 14px;
+  font-size: large;
+}
+
+.ms-head {
+    padding: 8px;
+    font-size: large;
+    background: #E1F5FE;
 }
 
 .ms-container .ms-selectable li.ms-hover,

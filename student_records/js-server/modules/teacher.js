@@ -28,7 +28,7 @@ var studentName = "";
 var courseName = "";
 var className = "";
 
-router.use(/\/.*/, function(req, res, next) {
+router.use(/\/.*/, function (req, res, next) {
     fullName = req.session.user.first_name + " " + req.session.user.last_name;
     teacherID = req.session.user.id;
     con = myInterface.DBconnect();
@@ -48,7 +48,7 @@ router.use("/class/:classid/course/:courseid",
                     return;
                 }
                 if (rows.length < 1) {
-                    res.end("This course does not exist");
+                    myInterface.sendUnauthorized(res);
                     return;
                 }
                 courseName = rows[0].course_name;
@@ -59,11 +59,24 @@ router.use("/class/:classid/course/:courseid",
                         return;
                     }
                     if (rows.length < 1) {
-                        res.end("This course does not exist");
+                        myInterface.sendUnauthorized(res);
                         return;
                     }
                     className = rows[0].class_name;
-                    next();
+                    sql = "SELECT teacher_id FROM teacher_course_class WHERE year = ? AND teacher_id = ? " +
+                        "AND course_id = ? AND class_id = ?";
+                    var year = myInterface.getCurrentYear();
+                    con.query(sql, [year, teacherID, courseID, classID], (err, rows) => {
+                        if (err) {
+                            res.end("DB error: " + err);
+                            return;
+                        }
+                        if (rows.length < 1) {
+                            myInterface.sendUnauthorized(res);
+                            return;
+                        }
+                        next();
+                    });
                 });
             });
         } else {
@@ -100,64 +113,59 @@ router.use("/class/:classid/course/:courseid/student/:studentid",
 );
 
 router.get("/teacher_home", (req, res) => { // T3
-    var date = new Date();
-    var year = date.getFullYear();
+    var year = myInterface.getCurrentYear();
     var course_hours = [];
-
-    if (date.getMonth() < 9) { // before august
-        year--;
-    }
-
+    var classCoursesArray = [];
     var sql = ` SELECT course_id, class_id, course_name, class_name FROM class, course, teacher_course_class
                 WHERE course_id = course.id AND class_id = class.id
                 AND year = ? AND teacher_id = ? `;
 
-    con.query(sql, [year, req.session.user.id], (err, rows) => {
+    con.query(sql, [year, teacherID], (err, rows) => {
         if (err) {
             res.end("Database problem: " + err);
             return;
         }
-        var classCoursesMap = [];
         for (var i = 0; i < rows.length; ++i) {
 
             var classCourse = {
-                classid: rows[i].class_id,
-                courseid: rows[i].course_id,
+                class_id: rows[i].class_id,
+                course_id: rows[i].course_id,
                 className: rows[i].class_name,
                 courseName: rows[i].course_name
             }
-            classCoursesMap[rows[i].course_id] = classCourse;
+            classCoursesArray[i] = classCourse;
         }
+        var len = classCoursesArray.length;
 
         sql = ` SELECT tt.start_time_slot as start_time_slot,tt.class_id as class_id, tt.course_id as course_id, tt.day as day 
                 FROM timetable as tt ,teacher_course_class as tcc 
-                WHERE tt.course_id = tcc.course_id AND tt.class_id = tcc.class_id AND tt.teacher_id = tcc.teacher_id AND tt.teacher_id = ?
+                WHERE tt.course_id = tcc.course_id AND tt.class_id = tcc.class_id AND tt.teacher_id = tcc.teacher_id AND tt.teacher_id = ? AND tcc.year= ?
                 ORDER BY tt.day,tt.start_time_slot `;
 
-        let params = [req.session.user.id]
-        con.query(sql, params, (err, rows, fields) => {
+        let params = [teacherID, year]
+        con.query(sql, params, (err, rows) => {
             if (err) {
                 res.end("DB error: " + err);
                 return;
             }
-            var i = 0;
             for (var timeslot = 0; timeslot < 5; timeslot++) {
                 course_hours[timeslot] = [];
                 for (var day = 0; day < 5; day++) {
                     course_hours[timeslot][day] = {}
-                    if (i < rows.length) {
-                        if (rows[i].start_time_slot == timeslot + 1 && rows[i].day == day + 1) {
-                            course_hours[timeslot][day] = classCoursesMap[rows[i].course_id];
-                            i++;
-                        }
+                }
+            }
+
+            for (let i = 0; i < rows.length; i++) {
+                for (var j = 0; j < len; j++) {
+                    if (classCoursesArray[j].class_id == rows[i].class_id && classCoursesArray[j].course_id == rows[i].course_id) {
+                        course_hours[rows[i].start_time_slot - 1][rows[i].day - 1] = classCoursesArray[j];
                     }
-                    //console.log(course_hours[timeslot][day]);
                 }
             }
 
             res.render("../pages/teacher/teacher_home.pug", {
                 fullName: fullName,
-                class_courses: classCoursesMap,
+                class_courses: classCoursesArray,
                 course_hours: course_hours,
                 start_time_slot: start_time_slot
             });
@@ -207,10 +215,13 @@ router.route("/class/:classid/course/:courseid/insert_homework").get((req, res) 
                 break;
         }
         res.render("../pages/teacher/teacher_insert_homework.pug", {
+            fullName: fullName,
             className: className,
             courseName: courseName,
             dateString: dateString,
             classID: classID,
+            classid: classID,
+            courseid: courseID,
             msg: writtenMsg,
             msgClass: msgClass,
             courseID: courseID,
@@ -389,7 +400,12 @@ router.get("/class/:classid/course/:courseid/class_mark", (req, res) => {
 */
 router.post("/class/:classid/course/:courseid/reg_mark", (req, res) => {
     var date_mark = req.body.date;
-    var period_mark = 0;
+    var dateArray = date_mark.split("-");
+    var month = dateArray[1];
+    if (month > 8 && month < 1)
+        var period_mark = 1;
+    else
+        var period_mark = 2;
     var mark_subj = req.body.subject;
     var descr_mark_subj = req.body.desc;
     var type_mark_subj = req.body.type;
@@ -742,38 +758,40 @@ router.post("/class/:classid/course/:courseid/student/:studentid/insert_note", [
 });
 
 // Add material
-router.get("/class/:classid/course/:courseid/add_material", (req, res) => {
-    res.render("../pages/teacher/teacher_coursematerial.pug", {
-        classid: classID,
-        courseid: courseID,
-        fullName: fullName
-    });
-
-});
-
-router.post("/class/:classid/course/:courseid/up_file", (req, res) => {
-    var date = new Date();
-    var busboy = new Busboy({ headers: req.headers });
-    busboy.on('field', function(fieldname, val, fieldnameTruncated, valTruncated, encoding, mimetype) {
-        let desc = inspect(val);
-        busboy.on('file', function(fieldname, file, filename, encoding, mimetype) {
-            var saveTo = path.join('.', "/upload/" + filename);
-            console.log('Desc: ' + desc + ' Uploading: ' + saveTo);
-            file.pipe(fs.createWriteStream(saveTo));
-            con.query("INSERT INTO material(course_id, class_id, description, link, date_mt) VALUES(?, ?, ?, ?, ?)", [courseID, classID, desc, saveTo, date], (err, result) => {
-                if (err) {
-                    res.end("DB error: " + err);
-                    return;
-                }
+router.post("/class/:classid/course/:courseid/up_file", [
+    body('desc').escape()
+],
+    (req, res) => {
+        var date = new Date();
+        var busboy = new Busboy({ headers: req.headers });
+        busboy.on('field', function (fieldname, val, fieldnameTruncated, valTruncated, encoding, mimetype) {
+            let desc = inspect(val);
+            desc = desc.substring(1, desc.length - 1);
+            if (!desc || desc == "") {
+                res.redirect("./upload_file?val=2");
+                return;
+            }
+            busboy.on('file', function (fieldname, file, filename, encoding, mimetype) {
+                var saveTo = path.join('.', "/upload/" + Date.now() + "-" + filename);
+                console.log('Desc: ' + desc + ' Uploading: ' + saveTo);
+                file.pipe(fs.createWriteStream(saveTo));
+                con.query("INSERT INTO material(course_id, class_id, description, link, date_mt) " +
+                    "VALUES(?, ?, ?, ?, ?)",
+                    [courseID, classID, desc, saveTo, date], (err, result) => {
+                        if (err) {
+                            res.end("DB error: " + err);
+                            return;
+                        }
+                        busboy.on('finish', function () {
+                            console.log('Upload complete');
+                            res.redirect('./upload_file?val=1');
+                        });
+                    });
             });
         });
-    });
-    busboy.on('finish', function() {
-        console.log('Upload complete');
-        res.redirect('./upload_file?val=1');
-    });
-    req.pipe(busboy);
-});
+        req.pipe(busboy);
+    }
+);
 
 
 router.route("/class/:classid/course/:courseid/upload_file").get((req, res) => {
@@ -781,6 +799,19 @@ router.route("/class/:classid/course/:courseid/upload_file").get((req, res) => {
     var val = req.query.val;
     var flag_ok = 0;
     var message = "";
+    switch (val) {
+        case "0":
+            message = "ERROR: File not uploaded, retry";
+            break;
+        case "1":
+            message = "File uploaded";
+            flag_ok = 1;
+            break;
+        case "2":
+            message = "Description empty";
+            break;
+        default: break;
+    }
     con.query(sql, [classID, courseID], (err, rows) => {
         if (err) {
             res.end("Db error: " + err);
@@ -797,33 +828,29 @@ router.route("/class/:classid/course/:courseid/upload_file").get((req, res) => {
         }
         con.end();
         //console.log(upload_file_array);
-        switch (val) {
-            case 0:
-                message = "ERROR: File not uploaded, retry";
-                break;
-            case 1:
-                message = "File uploaded";
-                flag_ok = 1;
-                break;
-            default: break;
-        }
+
         res.render("../pages/teacher/teacher_coursematerial.pug", {
             classid: classID,
             courseid: courseID,
             fullName: fullName,
             flag_ok: flag_ok,
             message: message,
+            className: className,
+            courseName: courseName,
             upload_file_array: upload_file_array
         });
     })
 })
 
 router.get("/class/:classid/course/:courseid/class_timetable", (req, res) => {
-    var date = new Date();
-    var year = date.getFullYear();
+    var year = myInterface.getCurrentYear()
     var course_hours = [];
-    if (date.getMonth() < 9) { // before august
-        year--;
+
+    for (var timeslot = 0; timeslot < 5; timeslot++) {
+        course_hours[timeslot] = [];
+        for (var day = 0; day < 5; day++) {
+            course_hours[timeslot][day] = {}
+        }
     }
 
     var sql = ` SELECT first_name, last_name, course_name, class_name, tt.start_time_slot as start_time_slot,tt.class_id as class_id, tt.course_id as course_id, tt.day as day 
@@ -839,25 +866,13 @@ router.get("/class/:classid/course/:courseid/class_timetable", (req, res) => {
             return;
         }
 
-        var i = 0;
-        for (var timeslot = 0; timeslot < 5; timeslot++) {
-            course_hours[timeslot] = [];
-            for (var day = 0; day < 5; day++) {
-                course_hours[timeslot][day] = {}
-                if (i < rows.length) {
-                    if (rows[i].start_time_slot == timeslot + 1 && rows[i].day == day + 1) {
-                        var course = {
-                            courseName: rows[i].course_name,
-                            teacher_lastName: rows[i].last_name,
-                            teacher_firstName: rows[i].first_name,
-                            start_time_slot: rows[i].start_time_slot
-                        }
-                        course_hours[timeslot][day] = course;
-                        i++;
-                    }
-                }
-                //console.log(course_hours[timeslot][day]);
+        for (let i = 0; i < rows.length; i++) {
+            let course = {
+                courseName: rows[i].course_name,
+                teacher_lastName: rows[i].last_name,
+                teacher_firstName: rows[i].first_name,
             }
+            course_hours[rows[i].start_time_slot - 1][rows[i].day - 1] = course;
         }
 
         con.end();
@@ -871,5 +886,322 @@ router.get("/class/:classid/course/:courseid/class_timetable", (req, res) => {
         });
     });
 });
+
+
+//- final term grade
+router.get("/class/:classid/course/:courseid/final_term_grade", (req, res) => {
+    var msg = req.query.msg;
+    var writtenMsg = "";
+    var classMsg = "";
+    var periodmark = parseInt(req.query.periodmark);
+    const endYear = "08-31";
+    var newdate = new Date();
+    var tmpmonth = newdate.getMonth();
+    var yearmark = newdate.getFullYear();
+    var dati = [];
+
+    switch (msg) {
+        case "err":
+            writtenMsg = "Some errors occured";
+            classMsg = "err_msg";
+            break;
+        case "ok":
+            writtenMsg = "Final term grades correctly inserted";
+            classMsg = "ok_msg"
+            break;
+        case "sel":
+            writtenMsg = "Please first select a term";
+            classMsg = "err_msg"
+            break;
+        default:
+            break;
+    }
+
+    if (isNaN(periodmark)) {
+        res.render("../pages/teacher/teacher_final_term_grade.pug", {
+            dati: dati,
+            yearmark: yearmark,
+            periodmark: periodmark,
+            classid: classID,
+            courseid: courseID,
+            fullName: fullName,
+            className: className,
+            msg: writtenMsg,
+            msgClass: classMsg
+        });
+    }
+    else {
+
+
+        var queryyear = yearmark;
+        if (tmpmonth >= 0 && tmpmonth <= 7) {
+            queryyear = yearmark - 1;
+            var minDate = (yearmark - 1) + "-" + endYear;
+            var maxDate = yearmark + "-" + endYear;
+        }
+        else {
+            var minDate = yearmark + "-" + endYear;
+            var maxDate = (yearmark + 1) + "-" + endYear;
+        }
+
+
+        var query1 =
+            "(SELECT DISTINCT st1.id AS studid, first_name, last_name, c1.id AS courid, c1.course_name AS cn, 0 AS grade " +
+            "FROM student AS st1,course AS c1,teacher_course_class " +
+            "WHERE st1.class_id = teacher_course_class.class_id AND st1.class_id=? AND teacher_course_class.course_id = c1.id AND teacher_course_class.year=? " +
+            "AND c1.id NOT IN " +
+            "(SELECT DISTINCT(c2.id) " +
+            "FROM student AS st2,mark AS m2,course AS c2 " +
+            "WHERE st1.id=st2.id " +
+            "AND m2.course_id=c2.id " +
+            "AND st2.id=m2.student_id " +
+            "AND st2.class_id=? " +
+            "AND period_mark=? " +
+            "AND date_mark BETWEEN ? AND ? ) )" +
+            " UNION " +
+            "(SELECT student.id AS studid, first_name, last_name, course.id AS courid, course.course_name AS cn, AVG(score) AS grade " +
+            "FROM student,mark,course " +
+            "WHERE student.id=mark.student_id AND student.class_id=? AND period_mark=? AND course.id=mark.course_id AND date_mark BETWEEN ? AND ? " +
+            "GROUP BY student.id, first_name, last_name, course.id, course.course_name) " +
+            "ORDER BY last_name,first_name,cn";
+        console.log(query1);
+
+        //[classID,periodmark,minDate,maxDate] se solo la mia query che funziona
+        //[classID,yearmark,classID, periodmark, minDate,maxDate, classID,periodmark,minDate,maxDate] query intera 
+        con.query(query1, [classID, queryyear, classID, periodmark, minDate, maxDate, classID, periodmark, minDate, maxDate], (err, rows) => {
+            if (err) {
+                res.end("Database problem: " + err);
+                return;
+            }
+            if (rows.length == 0)
+                console.log("non c'è nessun dato");
+            console.log(rows);
+            for (var i = 0; i < rows.length; i++) {
+                var dato = {
+                    studentid: rows[i].studid,
+                    first_name: rows[i].first_name,
+                    last_name: rows[i].last_name,
+                    courseid: rows[i].courid,
+                    course_name: rows[i].cn,
+                    grade: rows[i].grade
+                }
+                dati[i] = dato;
+            }
+            res.render("../pages/teacher/teacher_final_term_grade.pug", {
+                dati: dati,
+                yearmark: yearmark,
+                periodmark: periodmark,
+                classid: classID,
+                courseid: courseID,
+                fullName: fullName,
+                className: className,
+                msg: writtenMsg,
+                msgClass: classMsg
+            });
+        });
+    }
+});
+
+router.post("/class/:classid/course/:courseid/fin_term", (req, res) => {
+    var periodmark = req.body.periodmark;
+    var finalgrade = req.body.finalgrade;
+
+    const endYear = "08-31";
+    var newdate = new Date();
+    var tmpmonth = newdate.getMonth();
+    var yearmark = newdate.getFullYear();
+    var queryyear = yearmark;
+    if (tmpmonth >= 0 && tmpmonth <= 7) {
+        queryyear = yearmark - 1;
+        var minDate = (yearmark - 1) + "-" + endYear;
+        var maxDate = yearmark + "-" + endYear;
+    }
+    else {
+        var minDate = yearmark + "-" + endYear;
+        var maxDate = (yearmark + 1) + "-" + endYear;
+    }
+
+    if (isNaN(periodmark)) {
+        res.redirect('./final_term_grade?msg=sel');
+        return;
+    }
+    else {
+        var query1 =
+            "(SELECT DISTINCT st1.id AS studid, first_name, last_name, c1.id AS courid, c1.course_name AS cn, 0 AS grade " +
+            "FROM student AS st1,course AS c1,teacher_course_class " +
+            "WHERE st1.class_id = teacher_course_class.class_id AND st1.class_id=? AND teacher_course_class.course_id = c1.id AND teacher_course_class.year=? " +
+            "AND c1.id NOT IN " +
+            "(SELECT DISTINCT(c2.id) " +
+            "FROM student AS st2,mark AS m2,course AS c2 " +
+            "WHERE st1.id=st2.id " +
+            "AND m2.course_id=c2.id " +
+            "AND st2.id=m2.student_id " +
+            "AND st2.class_id=? " +
+            "AND period_mark=? " +
+            "AND date_mark BETWEEN ? AND ? ) )" +
+            " UNION " +
+            "(SELECT student.id AS studid, first_name, last_name, course.id AS courid, course.course_name AS cn, AVG(score) AS grade " +
+            "FROM student,mark,course " +
+            "WHERE student.id=mark.student_id AND student.class_id=? AND period_mark=? AND course.id=mark.course_id AND date_mark BETWEEN ? AND ? " +
+            "GROUP BY student.id, first_name, last_name, course.id, course.course_name) " +
+            "ORDER BY last_name,first_name,cn";
+        //console.log(query1);
+        con.query(query1, [classID, queryyear, classID, periodmark, minDate, maxDate, classID, periodmark, minDate, maxDate], (err, rows1) => {
+            //console.log(rows);
+            if (err) {
+                res.end("Database problem: " + err);
+                return;
+            }
+
+            if (rows1.length == 0)
+                console.log("non c'è nessun dato");
+
+            console.log(rows1);
+            var query = "";
+            for (var i = 0; i < rows1.length; i++) {
+                query = query + "INSERT INTO  student_final_term_grade(id_student,id_class,id_course,period_term,period_year,period_grade) " +
+                    "VALUES(" + rows1[i].studid + "," + classID + "," + rows1[i].courid + "," + periodmark + "," + yearmark + "," + finalgrade[i] + ") " +
+                    "ON DUPLICATE KEY UPDATE period_grade = " + finalgrade[i] + "; ";
+            }
+            console.log(query);
+            con.query(query, (err, rows) => {
+                if (err) {
+                    //res.end("Database problem: " + err);
+                    res.redirect('./final_term_grade?msg=err');
+                    return;
+                }
+                res.redirect('./final_term_grade?msg=ok');
+            });
+        });
+    }
+});
+
+router.get("/class/:classid/course/:courseid/timeslot_meeting", (req, res) => {
+    var year = myInterface.getCurrentYear();
+    var course_hours = [];
+
+    for (var timeslot = 0; timeslot < 5; timeslot++) {
+        course_hours[timeslot] = [];
+        for (var day = 0; day < 5; day++) {
+            course_hours[timeslot][day] = { day: day + 1, start_time_slot: timeslot + 1 };
+        }
+    }
+
+    var sql = ` SELECT ttm.class_id, ttm.course_id, class_name, course_name, parent_id, start_time_slot, day
+            FROM teacher_timeslot_meeting as ttm, course, class
+            WHERE year = ? AND teacher_id = ? AND course.id = ttm.course_id AND ttm.class_id = class.id
+            ORDER BY day, start_time_slot `;
+
+    con.query(sql, [year, teacherID], (err, rows) => {
+        if (err) {
+            res.end("Database problem: " + err);
+            return;
+        }
+
+        for (let i = 0; i < rows.length; i++) {
+            var slot = {
+                class_id: rows[i].class_id,
+                course_id: rows[i].course_id,
+                className: rows[i].class_name,
+                courseName: rows[i].course_name,
+                parent_id: rows[i].parent_id,
+                available: 0,
+                start_time_slot: rows[i].start_time_slot,
+                day: rows[i].day,
+                lesson: 0
+            }
+            course_hours[rows[i].start_time_slot - 1][rows[i].day - 1] = slot;
+        }
+
+        sql = ` SELECT course_name, class_name, tt.start_time_slot as start_time_slot,tt.class_id as class_id, tt.course_id as course_id, tt.day as day 
+            FROM timetable as tt ,teacher_course_class as tcc, class, course
+            WHERE tcc.course_id = course.id AND tcc.class_id = class.id AND tt.course_id = tcc.course_id 
+            AND tt.class_id = tcc.class_id AND tt.teacher_id = tcc.teacher_id
+            AND year = ? AND tcc.teacher_id = ?
+            ORDER BY tt.day,tt.start_time_slot `;
+
+        let params = [year, teacherID]
+        con.query(sql, params, (err, rows) => {
+            if (err) {
+                res.end("DB error: " + err);
+                return;
+            }
+
+            for (let i = 0; i < rows.length; i++) {
+                var classCourse = {
+                    class_id: rows[i].class_id,
+                    course_id: rows[i].course_id,
+                    className: rows[i].class_name,
+                    courseName: rows[i].course_name,
+                    start_time_slot: rows[i].start_time_slot,
+                    day: rows[i].day,
+                    lesson: 1
+                }
+                course_hours[rows[i].start_time_slot - 1][rows[i].day - 1] = classCourse;
+            }
+
+            //console.log(course_hours);
+            res.render("../pages/teacher/teacher_timeslot_meeting.pug", {
+                fullName: fullName,
+                className: className,
+                courseName: courseName,
+                course_hours: course_hours,
+                start_time_slot: start_time_slot,
+                classid: classID,
+                courseid: courseID
+            });
+        });
+    });
+});
+
+router.post("/class/:classid/course/:courseid/add_timeslot_meeting", (req, res) => {
+    var day = req.body.day;
+    var start_time_slot = req.body.start_time_slot;
+    var year = myInterface.getCurrentYear();
+
+    console.log("day:" + day);
+    console.log("slot:" + start_time_slot);
+
+    var sql = ` SELECT *
+                FROM teacher_timeslot_meeting as ttm
+                WHERE ttm.day = ? AND ttm.start_time_slot =? AND teacher_id = ? AND class_id = ? AND course_id = ?`
+    var params = [day, start_time_slot, teacherID, classID, courseID];
+
+    con.query(sql, params, (err, rows) => {
+        if (err) {
+            res.redirect('./timeslot_meeting?msg=err');
+            return;
+        }
+        console.log(rows);
+        if (rows.length > 0) {
+            console.log("cancello");
+            sql = ` DELETE FROM teacher_timeslot_meeting
+                    WHERE day = ? AND start_time_slot =? AND teacher_id = ? AND class_id = ? AND course_id = ?`;
+            params = [day, start_time_slot, teacherID, classID, courseID];
+            console.log(params);
+            con.query(sql, params, (err) => {
+                if (err) {
+                    res.redirect('./timeslot_meeting?msg=err');
+                    return;
+                }
+                res.redirect('./timeslot_meeting?msg=ok');
+            });
+        } else {
+            console.log("aggiungo");
+            sql = ` INSERT INTO teacher_timeslot_meeting(start_time_slot, teacher_id, course_id, class_id,day,parent_id, year) 
+                    VALUES(?,?,?,?,?,?,?) `
+
+            var params = [start_time_slot, teacherID, courseID, classID, day, -1, year];
+            con.query(sql, params, (err) => {
+                if (err) {
+                    res.redirect('./timeslot_meeting?msg=err');
+                    return;
+                }
+                res.redirect('./timeslot_meeting?msg=ok');
+            });
+        }
+    });
+});
+
 
 module.exports = router;

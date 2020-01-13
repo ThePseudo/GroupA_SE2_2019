@@ -8,7 +8,9 @@ CREATE TABLE teacher
     cod_fisc VARCHAR(16) UNIQUE NOT NULL,
     email VARCHAR(100) NOT NULL,
     password VARCHAR(255) NOT NULL,
-    first_access BOOLEAN NOT NULL
+    first_access BOOLEAN NOT NULL,
+    coordinator BOOLEAN NOT NULL
+    /* coordinator aggiunto, da mettere not null una volta reso il codice tutto compatibile*/
     /* 1 first_access already done; 0 not yet */
 );
 
@@ -34,6 +36,7 @@ CREATE TABLE parent
     password VARCHAR(255) NOT NULL,
     first_access BOOLEAN NOT NULL
 );
+
 
 CREATE TABLE student
 (
@@ -172,5 +175,28 @@ CREATE TABLE timetable
     REFERENCES teacher_course_class(teacher_id,course_id,class_id)
         ON UPDATE CASCADE
         ON DELETE CASCADE, 
-    PRIMARY KEY(start_time_slot,day)
-)
+    PRIMARY KEY(start_time_slot,day, class_id)
+);
+
+CREATE TABLE student_final_term_grade
+(
+    id_student INT NOT NULL,
+    id_class INT NOT NULL,
+    id_course INT NOT NULL,
+    period_term INT NOT NULL,
+    period_year INT NOT NULL,
+    period_grade INT NOT NULL,
+    PRIMARY KEY(id_student,id_class,id_course,period_term,period_year)
+);
+
+CREATE TABLE teacher_timeslot_meeting
+(
+    start_time_slot INT NOT NULL,
+    teacher_id INT NOT NULL,
+    course_id INT NOT NULL,
+    class_id INT NOT NULL,
+    day INT NOT NULL,
+    parent_id INT NOT NULL,
+    year INT NOT NULL,
+    PRIMARY KEY(start_time_slot,teacher_id, day,year)
+); 
