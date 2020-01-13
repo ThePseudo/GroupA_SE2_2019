@@ -67,23 +67,43 @@ router.get("/admin_home", (req, res) => {
 
 router.route("/enroll/:user").get((req, res) => {
     var renderPath;
-    switch (userType) {
-        case "teacher":
-            renderPath = "../pages/sysadmin/systemad_registerteacher.pug";
-            break;
-        case "officer":
-            renderPath = "../pages/sysadmin/systemad_registerofficer.pug";
-            break;
-        case "principal":
-            renderPath = "../pages/sysadmin/systemad_registerprincipal.pug";
-            break;
-        default:
-            res.redirect("/admin/admin_home");
+    var classlist=[];
+    var query = "SELECT id,class_name FROM class "+
+                "WHERE class.id NOT IN "+
+                "(SELECT DISTINCT(c2.id) FROM teacher AS t2,class AS c2 "+
+                "WHERE t2.coordinator=c2.id)";   
+    con.query(query, (err, rows) => { // because we have no AUTO_UPDATE available on the DB
+        if (err) {
+            res.end("There is a problem in the DB connection. Please, try again later " + err);
             return;
-    }
-    res.render(renderPath, {
-        msg: msgText,
-        msgClass: msgClass
+        }
+        for(var p = 0 ; p<rows.length ; p++)
+        {
+            var classitem = {
+                id: rows[p].id,
+                class_name : rows[p].class_name
+            }
+            classlist[p] = classitem;
+        }
+        switch (userType) {
+            case "teacher":
+                renderPath = "../pages/sysadmin/systemad_registerteacher.pug";
+                break;
+            case "officer":
+                renderPath = "../pages/sysadmin/systemad_registerofficer.pug";
+                break;
+            case "principal":
+                renderPath = "../pages/sysadmin/systemad_registerprincipal.pug";
+                break;
+            default:
+                res.redirect("/admin/admin_home");
+                return;
+        }
+        res.render(renderPath, {
+            msg: msgText,
+            msgClass: msgClass,
+            classlist:classlist
+        });
     });
 }).post(
     [
@@ -96,6 +116,7 @@ router.route("/enroll/:user").get((req, res) => {
         var table = userType;
         var principal = 0;
         var coordinator = req.body.coordinator;
+        var classcoordinator = req.body.classcoordinator;
         if (userType == "principal") {
             table = "officer";
             principal = 1;
@@ -126,12 +147,19 @@ router.route("/enroll/:user").get((req, res) => {
                 case "teacher":
                     var coo;
                     if(coordinator=="on"){
-                        console.log("un coordinator");
-                        coo=1;
+                        if(classcoordinator=='select')
+                        {
+                            res.redirect("./" + userType + "?msg=err");
+                        }
+                        
+                        coo=classcoordinator;
                     }   
                     else{
-                        console.log("non un coordinator");
-                        coo=0;
+                        // if(classcoordinator!='select')
+                        // {
+                        //     res.redirect("./" + userType + "?msg=err");
+                        // }
+                        coo=null;
                     }
                     sql = "INSERT INTO teacher(first_name, last_name, cod_fisc, email, password, first_access,coordinator) " +
                         "VALUES(?, ?, ?, ?, ?, ?, ?)";

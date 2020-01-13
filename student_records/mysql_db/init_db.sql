@@ -9,8 +9,8 @@ CREATE TABLE teacher
     email VARCHAR(100) NOT NULL,
     password VARCHAR(255) NOT NULL,
     first_access BOOLEAN NOT NULL,
-    coordinator BOOLEAN NOT NULL
-    /* coordinator aggiunto, da mettere not null una volta reso il codice tutto compatibile*/
+    coordinator INT 
+    /*coordinator come id della classe di cui il teacher è coordinator*/
     /* 1 first_access already done; 0 not yet */
 );
 

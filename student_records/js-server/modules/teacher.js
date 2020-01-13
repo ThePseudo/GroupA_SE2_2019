@@ -893,6 +893,7 @@ router.get("/class/:classid/course/:courseid/final_term_grade", (req, res) => {
     var msg = req.query.msg;
     var writtenMsg = "";
     var classMsg = "";
+    var iscoo;
     var periodmark = parseInt(req.query.periodmark);
     const endYear = "08-31";
     var newdate = new Date();
@@ -900,95 +901,43 @@ router.get("/class/:classid/course/:courseid/final_term_grade", (req, res) => {
     var yearmark = newdate.getFullYear();
     var dati = [];
 
-    switch (msg) {
-        case "err":
-            writtenMsg = "Some errors occured";
-            classMsg = "err_msg";
-            break;
-        case "ok":
-            writtenMsg = "Final term grades correctly inserted";
-            classMsg = "ok_msg"
-            break;
-        case "sel":
-            writtenMsg = "Please first select a term";
-            classMsg = "err_msg"
-            break;
-        default:
-            break;
-    }
-
-    if (isNaN(periodmark)) {
-        res.render("../pages/teacher/teacher_final_term_grade.pug", {
-            dati: dati,
-            yearmark: yearmark,
-            periodmark: periodmark,
-            classid: classID,
-            courseid: courseID,
-            fullName: fullName,
-            className: className,
-            msg: writtenMsg,
-            msgClass: classMsg
-        });
-    }
-    else {
-
-
-        var queryyear = yearmark;
-        if (tmpmonth >= 0 && tmpmonth <= 7) {
-            queryyear = yearmark - 1;
-            var minDate = (yearmark - 1) + "-" + endYear;
-            var maxDate = yearmark + "-" + endYear;
-        }
-        else {
-            var minDate = yearmark + "-" + endYear;
-            var maxDate = (yearmark + 1) + "-" + endYear;
+    var queryiscoo = "SELECT * FROM teacher WHERE coordinator = ? AND id = ? "
+    con.query(queryiscoo, [classID,teacherID], (err, rows) => {
+        if (err) {
+            res.end("Database problem: " + err);
+            return;
         }
 
+        if (rows.length == 0)
+            iscoo=false;
+        else
+            iscoo=true;
+                
+        switch (msg) {
+            case "err":
+                writtenMsg = "Some errors occured";
+                classMsg = "err_msg";
+                break;
+            case "ok":
+                writtenMsg = "Final term grades correctly inserted";
+                classMsg = "ok_msg"
+                break;
+            case "sel":
+                writtenMsg = "Please first select a term";
+                classMsg = "err_msg"
+                break;
+            default:
+                break;
+        }
 
-        var query1 =
-            "(SELECT DISTINCT st1.id AS studid, first_name, last_name, c1.id AS courid, c1.course_name AS cn, 0 AS grade " +
-            "FROM student AS st1,course AS c1,teacher_course_class " +
-            "WHERE st1.class_id = teacher_course_class.class_id AND st1.class_id=? AND teacher_course_class.course_id = c1.id AND teacher_course_class.year=? " +
-            "AND c1.id NOT IN " +
-            "(SELECT DISTINCT(c2.id) " +
-            "FROM student AS st2,mark AS m2,course AS c2 " +
-            "WHERE st1.id=st2.id " +
-            "AND m2.course_id=c2.id " +
-            "AND st2.id=m2.student_id " +
-            "AND st2.class_id=? " +
-            "AND period_mark=? " +
-            "AND date_mark BETWEEN ? AND ? ) )" +
-            " UNION " +
-            "(SELECT student.id AS studid, first_name, last_name, course.id AS courid, course.course_name AS cn, AVG(score) AS grade " +
-            "FROM student,mark,course " +
-            "WHERE student.id=mark.student_id AND student.class_id=? AND period_mark=? AND course.id=mark.course_id AND date_mark BETWEEN ? AND ? " +
-            "GROUP BY student.id, first_name, last_name, course.id, course.course_name) " +
-            "ORDER BY last_name,first_name,cn";
-        console.log(query1);
-
-        //[classID,periodmark,minDate,maxDate] se solo la mia query che funziona
-        //[classID,yearmark,classID, periodmark, minDate,maxDate, classID,periodmark,minDate,maxDate] query intera 
-        con.query(query1, [classID, queryyear, classID, periodmark, minDate, maxDate, classID, periodmark, minDate, maxDate], (err, rows) => {
-            if (err) {
-                res.end("Database problem: " + err);
-                return;
-            }
-            if (rows.length == 0)
-                console.log("non c'è nessun dato");
-            console.log(rows);
-            for (var i = 0; i < rows.length; i++) {
-                var dato = {
-                    studentid: rows[i].studid,
-                    first_name: rows[i].first_name,
-                    last_name: rows[i].last_name,
-                    courseid: rows[i].courid,
-                    course_name: rows[i].cn,
-                    grade: rows[i].grade
-                }
-                dati[i] = dato;
+        if (isNaN(periodmark) || !iscoo) {
+            if(!iscoo){
+                writtenMsg="You are not a teacher coordinator";
+                classMsg = "err_msg";
             }
             res.render("../pages/teacher/teacher_final_term_grade.pug", {
                 dati: dati,
+                iscoo: iscoo,
                 yearmark: yearmark,
                 periodmark: periodmark,
                 classid: classID,
@@ -998,8 +947,79 @@ router.get("/class/:classid/course/:courseid/final_term_grade", (req, res) => {
                 msg: writtenMsg,
                 msgClass: classMsg
             });
-        });
-    }
+        }
+        else {
+
+
+            var queryyear = yearmark;
+            if (tmpmonth >= 0 && tmpmonth <= 7) {
+                queryyear = yearmark - 1;
+                var minDate = (yearmark - 1) + "-" + endYear;
+                var maxDate = yearmark + "-" + endYear;
+            }
+            else {
+                var minDate = yearmark + "-" + endYear;
+                var maxDate = (yearmark + 1) + "-" + endYear;
+            }
+
+
+            var query1 =
+                "(SELECT DISTINCT st1.id AS studid, first_name, last_name, c1.id AS courid, c1.course_name AS cn, 0 AS grade " +
+                "FROM student AS st1,course AS c1,teacher_course_class " +
+                "WHERE st1.class_id = teacher_course_class.class_id AND st1.class_id=? AND teacher_course_class.course_id = c1.id AND teacher_course_class.year=? " +
+                "AND c1.id NOT IN " +
+                "(SELECT DISTINCT(c2.id) " +
+                "FROM student AS st2,mark AS m2,course AS c2 " +
+                "WHERE st1.id=st2.id " +
+                "AND m2.course_id=c2.id " +
+                "AND st2.id=m2.student_id " +
+                "AND st2.class_id=? " +
+                "AND period_mark=? " +
+                "AND date_mark BETWEEN ? AND ? ) )" +
+                " UNION " +
+                "(SELECT student.id AS studid, first_name, last_name, course.id AS courid, course.course_name AS cn, AVG(score) AS grade " +
+                "FROM student,mark,course " +
+                "WHERE student.id=mark.student_id AND student.class_id=? AND period_mark=? AND course.id=mark.course_id AND date_mark BETWEEN ? AND ? " +
+                "GROUP BY student.id, first_name, last_name, course.id, course.course_name) " +
+                "ORDER BY last_name,first_name,cn";
+            console.log(query1);
+
+            //[classID,periodmark,minDate,maxDate] se solo la mia query che funziona
+            //[classID,yearmark,classID, periodmark, minDate,maxDate, classID,periodmark,minDate,maxDate] query intera 
+            con.query(query1, [classID, queryyear, classID, periodmark, minDate, maxDate, classID, periodmark, minDate, maxDate], (err, rows) => {
+                if (err) {
+                    res.end("Database problem: " + err);
+                    return;
+                }
+                if (rows.length == 0)
+                    console.log("non c'è nessun dato");
+                console.log(rows);
+                for (var i = 0; i < rows.length; i++) {
+                    var dato = {
+                        studentid: rows[i].studid,
+                        first_name: rows[i].first_name,
+                        last_name: rows[i].last_name,
+                        courseid: rows[i].courid,
+                        course_name: rows[i].cn,
+                        grade: rows[i].grade
+                    }
+                    dati[i] = dato;
+                }
+                res.render("../pages/teacher/teacher_final_term_grade.pug", {
+                    iscoo: iscoo,
+                    dati: dati,
+                    yearmark: yearmark,
+                    periodmark: periodmark,
+                    classid: classID,
+                    courseid: courseID,
+                    fullName: fullName,
+                    className: className,
+                    msg: writtenMsg,
+                    msgClass: classMsg
+                });
+            });
+        }
+    });
 });
 
 router.post("/class/:classid/course/:courseid/fin_term", (req, res) => {
