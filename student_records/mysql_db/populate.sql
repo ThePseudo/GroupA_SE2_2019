@@ -87,11 +87,11 @@ INSERT INTO note
 VALUES
     (1, 1, "2019-09-30", "L'alunno fa rumore in classe", 1),
     (2, 2, "2019-10-19", "L'alunno disturba il compagno di banco", 0),
-    (3, 3, "2019-11-29", "L'alunno corre nel corridoio", 0),
-    (1, 4, "2019-12-18", "L'alunno fa ANCORA rumore in classe", 0),
+    (3, 4, "2019-11-29", "L'alunno corre nel corridoio", 0),
+    (1, 1, "2019-12-18", "L'alunno fa ANCORA rumore in classe", 0),
     (2, 1, "2019-10-28", "L'alunno risponde maleducatamente all'insegnante", 1),
-    (4, 2, "2019-11-07", "L'alunno corre nel corridoio", 0),
-    (6, 3, "2019-12-03", "L'alunno gioca con il telefono durante la lezione", 1);
+    (4, 3, "2019-11-07", "L'alunno corre nel corridoio", 0),
+    (6, 4, "2019-12-03", "L'alunno gioca con il telefono durante la lezione", 1);
 
 -- Absence
 INSERT INTO absence
