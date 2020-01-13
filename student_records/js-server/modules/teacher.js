@@ -932,7 +932,7 @@ router.get("/class/:classid/course/:courseid/final_term_grade", (req, res) => {
 
         if (isNaN(periodmark) || !iscoo) {
             if(!iscoo){
-                writtenMsg="You are not a teacher coordinator";
+                writtenMsg="You are not the teacher coordinator of this class";
                 classMsg = "err_msg";
             }
             res.render("../pages/teacher/teacher_final_term_grade.pug", {
