@@ -11,7 +11,7 @@
   "version": "0.9.12",
   "author": {
     "name": "lou",
-    "email" : "louiscuny@gmail.com",
+    "email": "louiscuny@gmail.com",
     "url": "https://github.com/lou"
   },
   "maintainers": [
@@ -32,6 +32,6 @@
   "docs": "http://loudev.com/",
   "download": "https://github.com/lou/multi-select/archive/master.zip",
   "dependencies": {
-    "jquery": ">= 1.8"
+    "jquery": ">= 3.5"
   }
 }
